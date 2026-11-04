@@ -208,6 +208,22 @@ const CLOUD_URL = 'https://lsmzzcfvcywbruprpszs.supabase.co';
 const CLOUD_KEY = 'sb_publishable_ZBhvn4DY2RW1vFwt2_8hsg_mlejuxSz';
 const CLOUD_SESSION_KEY = 'cmancinema_cloud_session_v1';
 let cloudReady=false, cloudEditor=false, cloudSession=null, cloudSnapshot=null, cloudVersion=null, cloudSaving=Promise.resolve(), cloudLoadFailed=false;
+let cloudPendingSaves=0, cloudRefreshPromise=null, cloudAuthPromise=null;
+const cloudExpiry=()=>cloudSession?.expires_at||(cloudSession?.expires_in&&cloudSession?.issued_at?cloudSession.issued_at+cloudSession.expires_in:0);
+function cloudStoreSession(value){cloudSession=value;if(value)localStorage.setItem(CLOUD_SESSION_KEY,JSON.stringify(value));else localStorage.removeItem(CLOUD_SESSION_KEY);sessionStorage.removeItem(CLOUD_SESSION_KEY)}
+async function cloudRenewSession(force=false){
+ if(!cloudSession?.refresh_token)return false;
+ if(!force&&cloudExpiry()&&cloudExpiry()>Date.now()/1000+120)return true;
+ if(cloudAuthPromise)return cloudAuthPromise;
+ cloudAuthPromise=(async()=>{
+  const r=await fetch(CLOUD_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':CLOUD_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:cloudSession.refresh_token})});
+  const result=await r.json();if(!r.ok)throw Error(result.error_description||result.msg||result.message||'Session renewal failed');
+  cloudStoreSession({...result,issued_at:Math.floor(Date.now()/1000),expires_at:Math.floor(Date.now()/1000)+(result.expires_in||3600)});cloudEditor=true;cloudControls();return true;
+ })().catch(e=>{console.warn('Cloud session renewal:',e);if(/invalid_grant|refresh token|invalid refresh/i.test(e.message)){cloudStoreSession(null);cloudEditor=false;cloudControls()}return false}).finally(()=>{cloudAuthPromise=null});
+ return cloudAuthPromise;
+}
+async function cloudEnsureAuth(){if(!cloudSession?.access_token)return false;return cloudRenewSession()}
+
 const cloudHeaders=(token,extra={})=>({'apikey':CLOUD_KEY,'Authorization':'Bearer '+(token||CLOUD_KEY),...extra});
 function cloudStatus(msg){const el=document.getElementById('cloud-status');if(el)el.textContent=msg}
 function cloudControls(){
@@ -231,6 +247,10 @@ function cloudApply(data){
  render();
 }
 async function cloudRefresh(){
+ if(cloudRefreshPromise)return cloudRefreshPromise;
+ cloudRefreshPromise=(async()=>{
+ if(cloudPendingSaves)return;
+ await cloudEnsureAuth();
  cloudReady=false;
  try{
   const row=await cloudFetch();
@@ -243,6 +263,8 @@ async function cloudRefresh(){
   cloudApply(fresh());console.error(e);
  }
  cloudControls();
+ })().finally(()=>{cloudRefreshPromise=null});
+ return cloudRefreshPromise;
 }
 async function cloudLogin(){
  const email=prompt('CmanCinema editor email:');if(!email)return;
@@ -251,21 +273,21 @@ async function cloudLogin(){
   const r=await fetch(CLOUD_URL+'/auth/v1/token?grant_type=password',
    {method:'POST',headers:{'apikey':CLOUD_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password})});
   const result=await r.json();if(!r.ok)throw Error(result.msg||result.error_description||result.message||'Sign-in failed');
-  cloudSession=result;
-  sessionStorage.setItem(CLOUD_SESSION_KEY,JSON.stringify(result));
+  cloudStoreSession({...result,issued_at:Math.floor(Date.now()/1000),expires_at:Math.floor(Date.now()/1000)+(result.expires_in||3600)});
   // A signed-in account is not automatically authorized to edit; check database owner policy on write.
   // The verified editor UID is not stored in this file. RLS is the final authority.
   cloudEditor=true;await cloudRefresh();toast('Signed in; database policies control editing.');
  }catch(e){cloudStatus('Sign-in failed: '+e.message);toast('Sign-in failed')}
 }
 async function cloudLogout(){
- cloudSession=null;cloudEditor=false;sessionStorage.removeItem(CLOUD_SESSION_KEY);
+ cloudStoreSession(null);cloudEditor=false;
  await cloudRefresh();toast('Signed out');
 }
 async function cloudSeed(){
  if(!cloudReady||!cloudEditor||cloudVersion!==null)return;
  if(!confirm('Initialize the EMPTY cloud database with an EMPTY collection? Do not use this to import your backup.'))return;
  try{
+  await cloudEnsureAuth();
   const u=await fetch(CLOUD_URL+'/auth/v1/user',{headers:cloudHeaders(cloudSession.access_token)});
   if(!u.ok)throw Error('Could not verify your editor account');
   const user=await u.json();
@@ -279,7 +301,9 @@ async function cloudSeed(){
 function cloudQueueSave(){
  if(!cloudReady||!cloudEditor||cloudVersion===null){cloudApply(cloudSnapshot?JSON.parse(cloudSnapshot):fresh());toast('Read-only: sign in and initialize the cloud database first');return}
  const next=JSON.stringify(db), prior=cloudSnapshot;
+ cloudPendingSaves++;
  cloudSaving=cloudSaving.then(async()=>{
+  if(!await cloudEnsureAuth())throw Error('Editor session expired. Please sign in again.');
   // Optimistic concurrency: don't silently overwrite an edit made elsewhere.
   const r=await fetch(CLOUD_URL+'/rest/v1/cinema_collection?id=eq.1&updated_at=eq.'+encodeURIComponent(cloudVersion),
    {method:'PATCH',headers:cloudHeaders(cloudSession.access_token,{'Content-Type':'application/json','Prefer':'return=representation'}),
@@ -291,7 +315,7 @@ function cloudQueueSave(){
   cloudStatus('Save failed: '+e.message);
   alert('Your last change was NOT saved to the cloud. '+e.message);
   await cloudRefresh();
- });
+ }).finally(()=>{cloudPendingSaves=Math.max(0,cloudPendingSaves-1)});
 }
 function cloudSetup(){
  const bar=document.createElement('div');
@@ -302,9 +326,18 @@ function cloudSetup(){
  document.getElementById('cloud-signin').onclick=cloudLogin;
  document.getElementById('cloud-signout').onclick=cloudLogout;
  document.getElementById('cloud-seed').onclick=cloudSeed;
- try{cloudSession=JSON.parse(sessionStorage.getItem(CLOUD_SESSION_KEY)||'null')}catch{}
+ try{cloudSession=JSON.parse(localStorage.getItem(CLOUD_SESSION_KEY)||sessionStorage.getItem(CLOUD_SESSION_KEY)||'null')}catch{}
  cloudEditor=!!cloudSession?.access_token;
  cloudControls();cloudRefresh();
+ // Background refresh while open; browsers may suspend timers during sleep.
+ setInterval(async()=>{
+  if(document.hidden||cloudPendingSaves)return;
+  await cloudEnsureAuth();
+  if(cloudReady){try{const row=await cloudFetch();if(row?.updated_at!==cloudVersion)await cloudRefresh()}catch(e){console.warn('Background sync:',e)}}
+ },30000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!cloudPendingSaves)cloudRefresh()});
+ window.addEventListener('focus',()=>{if(!cloudPendingSaves)cloudRefresh()});
+ window.addEventListener('online',()=>{if(!cloudPendingSaves)cloudRefresh()});
 }
 // Prevent anonymous visitors from triggering existing editing actions.
 // Cloud persistence also rejects unauthorized mutations and reverts them.
