@@ -520,6 +520,7 @@ const draftKey=(a,b,axis,rev='')=>'cmancinema-draft:'+String([a,b].sort().join('
 let showdownHistoryVisible=false;
 let revisitingShowdownId=null;
 let ledgerQuery=""; let ledgerAxis="all"; let archiveSelectedPair=""; let archiveFilmId=""; let archiveSort="newest";
+const ARCHIVE_PAGE_SIZE=12; let archivePage=1;
 const showdownXQuestions={
 5:'Which film presents the more consequential grounds for diminishing the integrity of its intended achievement, if any?',
 4:'Which film’s weakening more consequentially compromises its surviving core achievement?',
