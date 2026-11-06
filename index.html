@@ -191,7 +191,7 @@ input,textarea{font-family:inherit}
 #screenCard h2{margin:2px 0}
 #screenCard .frame-q{margin-top:6px;font:500 clamp(17px,2.2vw,20px) var(--body);color:rgba(243,230,200,.85)}
 #screenCard .frame-q b{color:var(--gold-hi)}
-#screenCard .show-q{max-width:760px;margin:6px auto 8px;font:italic 600 clamp(19px,2.6vw,25px)/1.3 var(--serif);color:var(--cream);text-shadow:0 0 16px rgba(255,236,190,.2)}
+#screenCard .show-q{max-width:780px;margin:4px auto 6px;font:italic 600 clamp(19px,2.6vw,25px)/1.3 var(--serif);color:var(--cream);text-shadow:0 0 16px rgba(255,236,190,.2)}
 #screenCard .how-q{max-width:720px;margin:0 auto;font:500 clamp(15px,1.9vw,17px)/1.4 var(--body);color:rgba(243,230,200,.7);font-style:normal}
 #screenCard .how-q b{color:var(--gold-hi)}
 #screenCard .orn{display:none}
@@ -206,7 +206,7 @@ input,textarea{font-family:inherit}
 .axis-tabs span.done{color:var(--gold);border-color:var(--gold-lo)}
 
 /* stage: evidence | reel | evidence */
-.stage{position:relative;z-index:2;display:grid;grid-template-columns:1fr minmax(320px,440px) 1fr;gap:clamp(14px,2.4vw,34px);align-items:start;width:min(1320px,100%);margin:22px auto 0;padding:0 clamp(16px,9vw,150px)}
+.stage{position:relative;z-index:2;display:grid;grid-template-columns:1fr minmax(320px,440px) 1fr;gap:clamp(14px,2.4vw,34px);align-items:start;width:min(1320px,100%);margin:14px auto 0;padding:0 clamp(16px,9vw,150px)}
 .card{background:linear-gradient(#f4e8cc,#e7d5aa);color:var(--ink);border-radius:3px;padding:16px 16px 18px;box-shadow:0 14px 30px rgba(0,0,0,.55);position:relative}
 .card::before{content:"";position:absolute;inset:6px;border:1px solid rgba(106,26,30,.35);pointer-events:none}
 .card .lab{font:700 11px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:#8a2a2e}
@@ -353,7 +353,7 @@ input,textarea{font-family:inherit}
   .bgrid{grid-template-columns:1fr}
   .ladder{order:2}
   .stage{grid-template-columns:1fr;padding:0 16px;gap:16px}
-  .refcol{order:0}.reel-col{order:1}.cardcol{order:2}
+  .reel-col{order:1}.ev-left{order:2}.ev-right{order:3}
   .reel-col{padding-right:26px}
   .drape{display:none}
   .arch{display:none}
@@ -656,8 +656,40 @@ button.li2:hover{border-color:var(--gold)}
 .end{position:relative;margin:0 0 8px;padding:6px 10px;border-radius:6px;background:rgba(42,20,6,.55);text-align:center;font:700 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#2a1406;background:linear-gradient(#f3d58f,#c99a4a)}
 .end.bot{margin:8px 0 0;background:linear-gradient(#c99a4a,#a87a34);color:#2a1406}
 .end span{display:block;font:italic 600 13px var(--body);letter-spacing:0;text-transform:none;opacity:.8}
-@media (max-width:900px){.refcol{order:0!important}.reel-col{order:1!important}.cardcol{order:2!important}}
-@media (max-width:640px){.refp .big{font-size:40px}.refp .dsc{display:none}.refp .rg:not(.here){display:none}.refp .now{position:static;display:inline-block;margin-bottom:8px}}
+
+
+
+
+/* ---------- slim reference bar ---------- */
+.refbar{position:relative;z-index:2;width:min(1100px,94vw);margin:12px auto 0;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:12px 16px;border-radius:12px;background:linear-gradient(#2c0d16,#1a060c);border:1.5px solid var(--gold);box-shadow:0 0 0 1px rgba(255,228,163,.3),0 0 30px rgba(255,190,90,.18),0 14px 30px rgba(0,0,0,.5)}
+.refbar .lead{display:flex;align-items:center;gap:12px}
+.refbar .big{font:800 46px/1 var(--serif);color:var(--gold-hi);text-shadow:0 0 16px rgba(255,200,110,.45)}
+.refbar .lead b{display:block;font:700 15px var(--serif);color:var(--cream)}
+.refbar .lead small{display:block;font:italic 500 13px/1.25 var(--body);color:rgba(243,230,200,.65);max-width:190px}
+.refbar .chips2{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.refbar .ch{display:flex;align-items:center;gap:7px;padding:5px 10px;border-radius:7px;border:1px solid rgba(232,190,106,.22);color:rgba(243,230,200,.45);font:600 13px var(--serif);white-space:nowrap}
+.refbar .ch i{font:normal 700 17px var(--serif);color:rgba(232,190,106,.5)}
+.refbar .ch.here{background:linear-gradient(90deg,#6a1028,#4a0c1c);border-color:var(--gold);color:#fff3d6;box-shadow:0 0 14px rgba(255,200,110,.3)}
+.refbar .ch.here i{color:var(--gold-hi);font-size:21px}
+.refbar .ch.here em{display:block;font:italic 500 12px var(--body);color:var(--gold-hi)}
+.refbar .rule2{grid-column:1/-1;padding-top:8px;border-top:1px dashed rgba(232,190,106,.35);font:500 16px/1.35 var(--body);color:var(--cream);display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.refbar .rule2 b{color:var(--gold-hi)}
+.refbar .rule2 span:last-child{color:rgba(243,230,200,.55);font:600 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;align-self:center}
+/* evaluation cards: equal height to the reel, long rationales scroll inside */
+.ev-left .note,.ev-right .note{max-height:150px;overflow:auto;scrollbar-width:thin}
+@media (max-width:900px){
+  .refbar{grid-template-columns:1fr}
+  .refbar .chips2{justify-content:flex-start}
+  .refbar .ch:not(.here){display:none}
+  .stage{grid-template-columns:1fr 1fr!important}
+  .reel-col{grid-column:1/-1}
+  .ev-left,.ev-right{padding:12px 10px 14px}
+  .ev-left .head,.ev-right .head{grid-template-columns:40px 1fr;gap:8px}
+  .ev-left .head .poster,.ev-right .head .poster{width:40px!important}
+  .ev-left .ti,.ev-right .ti{font-size:15px}
+  .ev-left .note,.ev-right .note{font-size:13px;max-height:120px}
+  .ev-left .me,.ev-right .me{font-size:10px;letter-spacing:.08em}
+}
 
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
@@ -817,9 +849,10 @@ button.li2:hover{border-color:var(--gold)}
 
     <div class="intertitle" id="screenCard"></div>
     <div class="dark" id="audDark" hidden></div>
+    <div class="refbar" id="refBand"></div>
 
     <div class="stage" id="stage">
-      <div class="refcol" id="refBand"></div>
+      <div class="card ev-left" id="evMine"></div>
       <div class="reel-col">
         <div class="machine">
           <div class="lights" id="machineLights"></div>
@@ -832,7 +865,7 @@ button.li2:hover{border-color:var(--gold)}
           <div class="reel-ctl"><button id="upBtn" aria-label="Move your film up">▲</button><span>Scroll · Drag · Swipe</span><button id="downBtn" aria-label="Move your film down">▼</button></div>
         </div>
       </div>
-      <div class="cardcol"><div class="card" id="evMine"></div><div class="card" id="evPeek"></div></div>
+      <div class="card ev-right" id="evPeek"></div>
     </div>
 
     <div class="desk" id="desk">
@@ -1716,14 +1749,9 @@ function slotHTML(f, me) {
 function refPanel(ax, level, live, next) {
   const isX = ax === 'X', levels = isX ? [5, 4, 3, 2, 1] : [5, 4, 3, 2, 1, 0];
   const nm = isX ? X_NAMES : Y_NAMES, tg = isX ? X_TAG : Y_TAG;
-  return `<div class="refp ${live ? 'live' : 'dim'}">${live ? '<span class="now">Placing now</span>' : ''}
-    <div class="hdr"><div class="big">${ax}</div><div><div class="ttl">${isX ? 'Condition of Achievement' : 'Viewing Recommendation'}</div>
-      <div class="dsc">${isX ? 'The negative case: the nature, significance and consequences of any weakening.' : 'The positive case: the nature, significance and value of what the film offers its viewer.'}</div></div></div>
-    <div class="sect">${isX ? 'Conditions of weakening' : 'Strength of recommendation'} · this group: ${ax}${level} ${nm[level]}</div>
-    <div class="rungs">${levels.map(l => `<div class="rg ${l === level ? 'here' : ''}"><b>${l}</b><div><strong>${nm[l]}</strong><small>${tg[l]}</small></div></div>`).join('')}</div>
-    <div class="rule">${isX
-      ? `Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>weaker negative case</b>: the less consequential answer to the X${level} question.`
-      : `Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>stronger positive case</b>: the more compelling answer to the Y${level} question.`}</div>${next ? `<div class="next">${next}</div>` : ''}</div>`;
+  return `<div class="lead"><div class="big">${ax}</div><div><b>${isX ? 'Condition of Achievement' : 'Viewing Recommendation'}</b><small>${isX ? 'The negative case' : 'The positive case'} · this group</small></div></div>
+    <div class="chips2">${levels.map(l => `<div class="ch ${l === level ? 'here' : ''}"><i>${l}</i><div>${nm[l]}${l === level ? `<em>${tg[l]}</em>` : ''}</div></div>`).join('')}</div>
+    <div class="rule2"><span>Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>${isX ? 'weaker negative case' : 'stronger positive case'}</b> — the ${isX ? 'less consequential' : 'more compelling'} answer to the ${ax}${level} question.</span><span>${next}</span></div>`;
 }
 function renderScreen() {
   const x = axis === 'X', c = ck(active.film), f = active.film;
@@ -1735,8 +1763,7 @@ function renderScreen() {
     <h2>${x ? 'Spin for X · ' + f.X + ' ' + X_NAMES[f.X] : 'Spin for Y · ' + f.Y + ' ' + Y_NAMES[f.Y]}</h2>
     <div class="frame-q">${x ? 'Which film has the <b>weaker negative case</b>' : 'Which film has the <b>stronger positive case</b>'} — in answer to:</div>
     <div class="show-q">“${esc(SHOW_Q[axis][x ? f.X : f.Y])}”</div>
-    <p class="how-q">${x ? 'The film with the more consequential grounds sits <b>lower</b>. Place yours above every film whose case here is more consequential, below every film whose case is less.'
-                        : 'The film with the more compelling grounds sits <b>higher</b>. Place yours above every film whose grounds are less compelling, below every film whose grounds are more.'}</p>
+
     <div class="axis-tabs"><span class="${x ? 'on' : 'done'}">X · Condition</span><span class="${x ? '' : 'on'}">Y · Recommendation</span></div>
     <div class="under" style="margin-top:6px"><button class="linkish" data-cancelreel>${active.mode === 'reconsider' ? 'Cancel the reconsideration' : 'Leave for now — it waits on the reel'}</button></div>
     <span class="orn"></span>`;
