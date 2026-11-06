@@ -188,6 +188,13 @@ input,textarea{font-family:inherit}
 .beam{position:absolute;left:50%;top:0;width:110vw;height:100%;transform:translateX(-50%);pointer-events:none;background:conic-gradient(from 180deg at 50% 0,transparent 168deg,rgba(255,236,190,.05) 176deg,rgba(255,236,190,.09) 180deg,rgba(255,236,190,.05) 184deg,transparent 192deg)}
 
 /* the screen: an intertitle card */
+#screenCard h2{margin:2px 0}
+#screenCard .frame-q{margin-top:6px;font:500 clamp(17px,2.2vw,20px) var(--body);color:rgba(243,230,200,.85)}
+#screenCard .frame-q b{color:var(--gold-hi)}
+#screenCard .show-q{max-width:760px;margin:6px auto 8px;font:italic 600 clamp(19px,2.6vw,25px)/1.3 var(--serif);color:var(--cream);text-shadow:0 0 16px rgba(255,236,190,.2)}
+#screenCard .how-q{max-width:720px;margin:0 auto;font:500 clamp(15px,1.9vw,17px)/1.4 var(--body);color:rgba(243,230,200,.7);font-style:normal}
+#screenCard .how-q b{color:var(--gold-hi)}
+#screenCard .orn{display:none}
 .intertitle{position:relative;z-index:2;align-self:center;width:min(860px,92vw);margin-top:18px;padding:16px 24px 18px;text-align:center;background:#0b0507;border:2px solid rgba(243,230,200,.75);outline:1px solid rgba(243,230,200,.35);outline-offset:5px;box-shadow:0 0 60px rgba(255,236,190,.12)}
 .intertitle .k{font:600 12px var(--serif);letter-spacing:.4em;text-transform:uppercase;color:var(--gold)}
 .intertitle h2{margin:4px 0 2px;font:400 clamp(26px,4.4vw,44px)/1.1 var(--deco);letter-spacing:.08em;color:var(--cream)}
@@ -346,7 +353,7 @@ input,textarea{font-family:inherit}
   .bgrid{grid-template-columns:1fr}
   .ladder{order:2}
   .stage{grid-template-columns:1fr;padding:0 16px;gap:16px}
-  .ev-left{order:2}.reel-col{order:1}.ev-right{order:3}
+  .refcol{order:0}.reel-col{order:1}.cardcol{order:2}
   .reel-col{padding-right:26px}
   .drape{display:none}
   .arch{display:none}
@@ -621,6 +628,37 @@ button.li2:hover{border-color:var(--gold)}
 .lock:disabled{opacity:.6}
 @media (max-width:640px){#saving{bottom:76px}}
 
+
+/* ---------- reference panels in the screening room ---------- */
+.refcol{min-width:0}
+.cardcol{display:grid;gap:16px;align-content:start;min-width:0}
+.refp .next{margin-top:10px;font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:rgba(243,230,200,.55);text-align:center}
+.refp{position:relative;border-radius:14px;padding:18px 18px 14px;background:linear-gradient(#2c0d16,#1a060c);border:1.5px solid var(--gold-lo);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,228,163,.08);transition:opacity .4s,filter .4s,box-shadow .4s}
+.refp.dim{opacity:.42;filter:saturate(.6)}
+.refp.live{border-color:var(--gold);box-shadow:0 0 0 1px rgba(255,228,163,.35),0 0 40px rgba(255,190,90,.22),0 18px 40px rgba(0,0,0,.55)}
+.refp .now{display:inline-block;margin-bottom:10px;padding:3px 10px;border-radius:20px;background:var(--gold);color:#2a0a10;font:800 10px var(--serif);letter-spacing:.22em;text-transform:uppercase}
+.refp .hdr{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.refp .big{font:800 54px/1 var(--serif);color:var(--gold-hi);text-shadow:0 0 18px rgba(255,200,110,.45)}
+.refp .ttl{font:700 21px var(--serif);color:var(--cream)}
+.refp .dsc{font:italic 500 16px/1.3 var(--body);color:rgba(243,230,200,.75);margin-top:2px}
+.refp .sect{margin:12px 0 6px;padding:7px 0;border-top:1px solid rgba(232,190,106,.3);border-bottom:1px solid rgba(232,190,106,.3);text-align:center;font:600 11px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.refp .rungs{display:grid;gap:3px}
+.refp .rg{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;padding:5px 10px;border-radius:8px;color:rgba(243,230,200,.55)}
+.refp .rg b{font:700 22px var(--serif);color:rgba(232,190,106,.55);text-align:center}
+.refp .rg strong{display:block;font:700 15px var(--serif);color:rgba(243,230,200,.7)}
+.refp .rg small{display:block;font:500 13px/1.25 var(--body)}
+.refp .rg.here{background:linear-gradient(90deg,#6a1028,#4a0c1c);box-shadow:inset 0 0 0 1px rgba(255,228,163,.4),0 6px 16px rgba(0,0,0,.35);color:var(--cream)}
+.refp .rg.here b{color:var(--gold-hi);font-size:28px}
+.refp .rg.here strong{color:#fff3d6;font-size:17px}
+.refp .rg.here small{color:var(--gold-hi)}
+.refp .rule{margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(0,0,0,.3);border:1px dashed rgba(232,190,106,.45);font:500 16px/1.4 var(--body);color:var(--cream)}
+.refp .rule b{color:var(--gold-hi);font-weight:700}
+.end{position:relative;margin:0 0 8px;padding:6px 10px;border-radius:6px;background:rgba(42,20,6,.55);text-align:center;font:700 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#2a1406;background:linear-gradient(#f3d58f,#c99a4a)}
+.end.bot{margin:8px 0 0;background:linear-gradient(#c99a4a,#a87a34);color:#2a1406}
+.end span{display:block;font:italic 600 13px var(--body);letter-spacing:0;text-transform:none;opacity:.8}
+@media (max-width:900px){.refcol{order:0!important}.reel-col{order:1!important}.cardcol{order:2!important}}
+@media (max-width:640px){.refp .big{font-size:40px}.refp .dsc{display:none}.refp .rg:not(.here){display:none}.refp .now{position:static;display:inline-block;margin-bottom:8px}}
+
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -781,18 +819,20 @@ button.li2:hover{border-color:var(--gold)}
     <div class="dark" id="audDark" hidden></div>
 
     <div class="stage" id="stage">
-      <div class="card ev-left" id="evMine"></div>
+      <div class="refcol" id="refBand"></div>
       <div class="reel-col">
         <div class="machine">
           <div class="lights" id="machineLights"></div>
+          <div class="end top" id="endTop"></div>
           <div class="reel" id="reel" tabindex="0" role="slider" aria-label="Scroll the reel to place your film" aria-valuemin="1">
             <div class="drum" id="drum"></div>
           </div>
           <div class="pointer"></div>
+          <div class="end bot" id="endBot"></div>
           <div class="reel-ctl"><button id="upBtn" aria-label="Move your film up">▲</button><span>Scroll · Drag · Swipe</span><button id="downBtn" aria-label="Move your film down">▼</button></div>
         </div>
       </div>
-      <div class="card ev-right" id="evPeek"></div>
+      <div class="cardcol"><div class="card" id="evMine"></div><div class="card" id="evPeek"></div></div>
     </div>
 
     <div class="desk" id="desk">
@@ -877,6 +917,20 @@ const COMPASS = {
        body: 'At Y5, the film’s delivered effects affect your perception or understanding in an extraordinarily profound way. This must be grounded in what you genuinely experienced, whether during viewing, afterward, or through reflection—not a significance you merely imagine it might have.',
        below: 'Y4 establishes exceptionally high-caliber realization. Y5 requires something further: extraordinarily profound affect on how you perceive or understand.',
        above: 'There is no higher Y classification. Strong emotion, intensity, and important themes alone do not substitute for genuinely experienced profundity.' },
+};
+// the showdown question for each level (from the previous site)
+const SHOW_Q = {
+  X: { 5: 'Which film presents the more consequential grounds for diminishing the integrity of its intended achievement, if any?',
+       4: 'Which film’s weakening more consequentially compromises its surviving core achievement?',
+       3: 'Which film’s weakening more consequentially invalidates the achievement it demonstrated itself capable of realizing?',
+       2: 'Which film exhibits the more consequential fundamental incapacity to realize its intended achievement?',
+       1: 'Which film’s underlying proposal is more fundamentally discredited by its defects?' },
+  Y: { 5: 'Which film offers the more consequential transformation of a viewer’s perspective or understanding?',
+       4: 'Which film offers the more compelling grounds for experiencing the exceptional caliber of how it delivers its effects?',
+       3: 'Which film delivers the more compelling grounds for considering its realized effects an experience one ought not miss?',
+       2: 'Which film provides the more compelling grounds for recommending its dependable, worthwhile viewing experience?',
+       1: 'Which film offers the more compelling grounds for taking a chance on its appeal despite uncertain effectiveness?',
+       0: 'Which film offers the stronger remaining incentive to check it out, despite insufficient grounds for recommendation?' },
 };
 // your explicit hierarchy (higher total first, then higher Y)
 const LISTED = ['5/5', '4/5', '5/4', '3/5', '4/4', '5/3', '3/4', '4/3', '5/2', '3/3', '4/2', '5/1', '3/2', '4/1', '5/0', '2/2', '3/1', '4/0', '2/1', '3/0', '1/1', '2/0', '1/0'];
@@ -1616,10 +1670,10 @@ const SLOT_DEG = 21;
 
 function resetReel() { axis = 'X'; placed = {}; lastVerdict = null; $('#consider').value = ''; }
 function setAudOpen(open) {
-  $('#audDark').hidden = open; $('#screenCard').hidden = !open; $('#stage').hidden = !open; $('#desk').hidden = !open;
+  $('#audDark').hidden = open; $('#screenCard').hidden = !open; $('#stage').hidden = !open; $('#desk').hidden = !open; $('#refBand').hidden = !open;
 }
 function enterAuditorium() {
-  if (lastVerdict) { setAudOpen(true); $('#stage').hidden = true; $('#screenCard').hidden = true; $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return; }
+  if (lastVerdict) { setAudOpen(true); $('#stage').hidden = true; $('#screenCard').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return; }
   const open = canEdit() && active && active.stage === 'reel';
   setAudOpen(!!open);
   if (!open) { $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
@@ -1649,7 +1703,7 @@ function loadAxis(ax) {
   $('#consider').value = '';
   $('#placing').style.display = '';
   $('#results').classList.remove('show');
-  $('#stage').hidden = false;
+  $('#stage').hidden = false; $('#refBand').hidden = false;
   $('#lockBtn').textContent = ax === 'X' ? 'Lock the X placement' : 'Lock the Y placement';
   $('#lockBtn').disabled = false;
   reel.setAttribute('aria-valuemax', N + 1);
@@ -1659,11 +1713,30 @@ function loadAxis(ax) {
 function slotHTML(f, me) {
   return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${esc(f.year || '')}</div></div></div>`;
 }
+function refPanel(ax, level, live, next) {
+  const isX = ax === 'X', levels = isX ? [5, 4, 3, 2, 1] : [5, 4, 3, 2, 1, 0];
+  const nm = isX ? X_NAMES : Y_NAMES, tg = isX ? X_TAG : Y_TAG;
+  return `<div class="refp ${live ? 'live' : 'dim'}">${live ? '<span class="now">Placing now</span>' : ''}
+    <div class="hdr"><div class="big">${ax}</div><div><div class="ttl">${isX ? 'Condition of Achievement' : 'Viewing Recommendation'}</div>
+      <div class="dsc">${isX ? 'The negative case: the nature, significance and consequences of any weakening.' : 'The positive case: the nature, significance and value of what the film offers its viewer.'}</div></div></div>
+    <div class="sect">${isX ? 'Conditions of weakening' : 'Strength of recommendation'} · this group: ${ax}${level} ${nm[level]}</div>
+    <div class="rungs">${levels.map(l => `<div class="rg ${l === level ? 'here' : ''}"><b>${l}</b><div><strong>${nm[l]}</strong><small>${tg[l]}</small></div></div>`).join('')}</div>
+    <div class="rule">${isX
+      ? `Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>weaker negative case</b>: the less consequential answer to the X${level} question.`
+      : `Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>stronger positive case</b>: the more compelling answer to the Y${level} question.`}</div>${next ? `<div class="next">${next}</div>` : ''}</div>`;
+}
 function renderScreen() {
-  const x = axis === 'X', c = ck(active.film);
+  const x = axis === 'X', c = ck(active.film), f = active.film;
+  $('#refBand').innerHTML = refPanel(axis, x ? f.X : f.Y, true, x ? `Next · Y${f.Y} ${Y_NAMES[f.Y]}` : `X placement locked · X${f.X} ${X_NAMES[f.X]}`);
+  $('#endTop').innerHTML = x ? 'Top · weaker negative case<span>least consequential grounds</span>' : 'Top · stronger positive case<span>most compelling grounds</span>';
+  $('#endBot').innerHTML = x ? 'Bottom · stronger negative case<span>most consequential grounds</span>' : 'Bottom · weaker positive case<span>least compelling grounds</span>';
+  $('#consider').placeholder = 'In answer to the ' + axis + (x ? f.X : f.Y) + ' question — why does it belong exactly here?';
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${c} · ${names(c)}${active.mode === 'reconsider' ? ' · Reconsideration' : ''}</div>
-    <h2>${x ? 'Spin for X' : 'Spin for Y'}</h2>
-    <p>${x ? 'Condition of Achievement — find where its strength holds among the others.' : 'Viewing Recommendation — find where it truly belongs to be seen.'}</p>
+    <h2>${x ? 'Spin for X · ' + f.X + ' ' + X_NAMES[f.X] : 'Spin for Y · ' + f.Y + ' ' + Y_NAMES[f.Y]}</h2>
+    <div class="frame-q">${x ? 'Which film has the <b>weaker negative case</b>' : 'Which film has the <b>stronger positive case</b>'} — in answer to:</div>
+    <div class="show-q">“${esc(SHOW_Q[axis][x ? f.X : f.Y])}”</div>
+    <p class="how-q">${x ? 'The film with the more consequential grounds sits <b>lower</b>. Place yours above every film whose case here is more consequential, below every film whose case is less.'
+                        : 'The film with the more compelling grounds sits <b>higher</b>. Place yours above every film whose grounds are less compelling, below every film whose grounds are more.'}</p>
     <div class="axis-tabs"><span class="${x ? 'on' : 'done'}">X · Condition</span><span class="${x ? '' : 'on'}">Y · Recommendation</span></div>
     <div class="under" style="margin-top:6px"><button class="linkish" data-cancelreel>${active.mode === 'reconsider' ? 'Cancel the reconsideration' : 'Leave for now — it waits on the reel'}</button></div>
     <span class="orn"></span>`;
