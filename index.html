@@ -948,6 +948,43 @@ button.li2:hover{border-color:var(--gold)}
   .lf-chips button{flex:none}
 }
 
+
+/* ---- coat racks ---- */
+.rack{margin:34px 0 6px}
+.rack-sign{display:flex;align-items:baseline;gap:10px 14px;flex-wrap:wrap;padding:0 6px}
+.rack-sign .no{align-self:center;padding:4px 10px;border-radius:3px;background:linear-gradient(#f3d58f,#b8873c);color:#2a0a10;font:800 10px var(--serif);letter-spacing:.22em;text-transform:uppercase;box-shadow:0 2px 0 #5a3a10}
+.rack-sign b{font:400 clamp(22px,3vw,28px) var(--deco);letter-spacing:.06em;color:var(--gold-hi)}
+.rack-sign span.d{font:700 11px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.rack-sign small{flex-basis:100%;font:italic 500 16px var(--body);color:rgba(243,230,200,.72)}
+.rack-bar{position:relative;height:14px;margin:16px 10px 0;border-radius:7px;background:linear-gradient(#fff1c8,#e8be6a 35%,#9c7334 72%,#5a3a10);box-shadow:0 8px 12px rgba(0,0,0,.5)}
+.rack-bar i{position:absolute;top:-6px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c8,#e8be6a 45%,#6f4c1c);box-shadow:0 4px 8px rgba(0,0,0,.5)}
+.rack-bar i.l{left:-12px}.rack-bar i.r{right:-12px}
+.rack-hang{position:relative;display:flex;gap:18px;overflow-x:auto;margin-top:-19px;padding:12px 22px 26px;align-items:flex-start;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#9c7334 transparent}
+.htag{position:relative;flex:none;width:196px;margin-top:44px;scroll-snap-align:start;transform-origin:50% -44px;transform:rotate(var(--r,0deg));transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.htag:hover{transform:rotate(calc(var(--r,0deg) * -1))}
+.htag::before{content:"";position:absolute;left:50%;top:-36px;width:2px;height:46px;margin-left:-1px;background:linear-gradient(#c9a46a,#8a6a3a)}
+.htag::after{content:"";position:absolute;left:50%;top:-53px;width:18px;height:18px;margin-left:-9px;border-radius:50%;border:3px solid #d9b26a;box-shadow:0 2px 3px rgba(0,0,0,.45)}
+.htag .card{position:relative;padding:24px 12px 12px;text-align:center;background:linear-gradient(#f6ead0,#e3cc9a);color:var(--ink);border-radius:4px 4px 10px 10px;box-shadow:0 12px 24px rgba(0,0,0,.55);clip-path:polygon(22% 0,78% 0,100% 9%,100% 100%,0 100%,0 9%)}
+.htag .card::before{content:"";position:absolute;left:50%;top:8px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#140806;box-shadow:0 0 0 2px #b8873c}
+.htag .card::after{content:"";position:absolute;inset:4px;border:1px dashed rgba(106,26,30,.3);border-radius:2px 2px 8px 8px;pointer-events:none;clip-path:polygon(22% 0,78% 0,100% 9%,100% 100%,0 100%,0 9%)}
+.htag .poster{margin:0 auto 8px}
+.htag .ti{font:800 16px/1.15 var(--serif);color:var(--ink)}
+.htag .yr{font:600 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a;margin:4px 0 0}
+.htag .was{display:block;margin-top:6px;font:italic 500 14px var(--body);color:#6b5236}
+.htag .acts{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed #b48a4e}
+.htag .acts button,.htag .acts select{width:100%;padding:7px 8px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 10px var(--serif);letter-spacing:.12em;text-transform:uppercase;text-align:center}
+.htag .acts .go{background:#5a0f22;color:var(--gold-hi);border-color:#5a0f22}
+.htag .acts .warn{background:#c4202f;color:#fff;border-color:#c4202f}
+.htag .acts .ask{font:italic 600 14px var(--body);color:#5a0f22}
+.rack-empty{display:flex;align-items:flex-start;gap:46px;padding:0 40px;height:80px;margin-top:-16px}
+.rack-empty i{position:relative;width:18px;height:18px;border-radius:50%;border:3px solid rgba(217,178,106,.75);box-shadow:0 2px 3px rgba(0,0,0,.45)}
+.rack-empty span{align-self:center;font:italic 500 17px var(--body);color:rgba(243,230,200,.55)}
+@media (max-width:640px){
+  .htag{width:172px}
+  .rack-hang{gap:14px;padding:0 14px 24px}
+  .rack-empty{gap:30px;padding:0 24px}
+}
+
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -1197,20 +1234,21 @@ const Y_TESTS = [
   { to: 5, gain: 'Extraordinary profundity of affect', q: 'Does that effect become extraordinarily profound in HOW it affects the viewer’s perspective or understanding?' },
 ];
 const COMPASS = {
-  3: { name: 'Highly Recommended', tag: 'The rewards of realized effects',
+  // your newest Compass wording leads; earlier guidance stays only where it agrees with it
+  3: { name: 'Highly Recommended', tag: 'The rewards of the delivered effects',
        q: 'Why does this film ought to be seen rather than simply recommended?',
-       body: 'At Y3, the realized rewards of the film are stellar and impactful enough to establish that it ought to be seen. Consider what the film actually delivered: excitement, humor, suspense, emotion, performance, or another compelling reward.',
+       body: 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc. At Y3, those realized rewards are stellar and impactful enough to establish that it ought to be seen.',
        below: 'Y2 establishes worthwhile, dependable effectiveness. Y3 goes further: the realized rewards themselves establish an ought-to-be-seen recommendation.',
-       above: 'Y4 places the decisive emphasis on the exceptional caliber of HOW those effects were realized, rather than primarily on WHAT the film gave you.' },
-  4: { name: 'Must-See', tag: 'The exceptional caliber of realization',
+       above: 'HOW is present at both levels. What changes is whether HOW serves the rewards (Y3) or becomes the distinguishing reason for the experience’s exceptional caliber (Y4). The distinction is what about that realization dominates your appreciation.' },
+  4: { name: 'Must-See', tag: 'The exceptional realization of those effects',
        q: 'Does HOW the film delivers its effects make the experience exceptionally high-caliber?',
-       body: 'At Y4, the exceptional caliber of realization becomes central to the positive case: the way the film constructs, times, develops, presents, or orchestrates its effects. A single extraordinary sequence or element may be decisive if it dominates your appreciation.',
-       below: 'Y3 emphasizes the stellar rewards of WHAT the film delivered. Y4 distinguishes the exceptional caliber of HOW those rewards came about.',
+       body: 'You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive — the way the film constructs, times, develops, presents, or orchestrates its effects. A single extraordinary sequence or element may be decisive if it dominates your appreciation.',
+       below: 'HOW is present at Y3 too, but there it serves the rewards. Y4 is reached when HOW becomes the distinguishing reason for the experience’s exceptional caliber. The distinction is what about that realization dominates your appreciation.',
        above: 'Y5 requires extraordinarily profound affect on perspective or understanding. Exceptional realization alone does not establish that profundity.' },
-  5: { name: 'Essential', tag: 'The extraordinary profundity of affect',
-       q: 'Does the delivered effect become extraordinarily profound in HOW it affects your perspective or understanding?',
-       body: 'At Y5, the film’s delivered effects affect your perception or understanding in an extraordinarily profound way. This must be grounded in what you genuinely experienced, whether during viewing, afterward, or through reflection—not a significance you merely imagine it might have.',
-       below: 'Y4 establishes exceptionally high-caliber realization. Y5 requires something further: extraordinarily profound affect on how you perceive or understand.',
+  5: { name: 'Essential', tag: 'The extraordinary profoundness of their affect',
+       q: 'Did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced?',
+       body: 'Put another way: does the delivered effect become extraordinarily profound in HOW it affects your perspective or understanding? This must be grounded in what you genuinely experienced, whether during viewing, afterward, or through reflection — not a significance you merely imagine it might have.',
+       below: 'Y4 establishes exceptionally high-caliber realization — it fills your current viewing framework. Y5 requires something further: extraordinarily profound affect on how you perceive or understand.',
        above: 'There is no higher Y classification. Strong emotion, intensity, and important themes alone do not substitute for genuinely experienced profundity.' },
 };
 // the showdown question for each level (from the previous site)
@@ -2603,16 +2641,17 @@ $('#gameroom').addEventListener('click', e => {
 const LF = [
   { id: 'caught', door: 1, name: 'Caught It Along the Way', d: 'I retain a more specific spatial/momentary element.' },
   { id: 'met', door: 1, name: 'I Know We’ve Met', d: 'The memory does not place me anywhere in time spatially enough to be grounding.' },
-  { id: 'lost', door: 2, name: 'Lost Me Along the Way', d: 'I didn’t complete the film for a variety of reasons, but not because it was physically intolerable.' },
-  { id: 'tapout', door: 2, name: 'I Had to Tap Out', d: 'I didn’t complete the film and, as a prerequisite of being “lost” whether abrupt or drifting away, I reached well beyond a point of no return, so much so that I couldn’t bear it.' },
+  { id: 'lost', door: 2, name: 'Lost Me Along the Way', d: 'I ended it on purpose after slipping away, including skimming or skipping ahead because it lost me.' },
+  { id: 'tapout', door: 2, name: 'I Had to Tap Out', d: 'I ended it on purpose, all at once, including skipping past something I couldn’t bear.' },
+  { id: 'fade', door: 2, name: 'Fade to Black', d: 'It ended without my choosing, or I can’t say how it ended: I fell asleep (whatever the cause), got interrupted and never returned, or have no memory of the ending.' },
   { id: 'once', door: 3, name: 'Once Upon a Watch', d: 'My View doesn’t retain sufficient experiential shape to support faithful judgements.' },
 ];
 const lfCat = id => LF.find(c => c.id === id) || LF[4];
 const DOORS = {
   1: { name: 'The Gateway', q: 'Does the memory I share with the film confirm there was at least an official encounter — a deliberate, formal sit-down of some kind to watch it?',
        note: 'If you can neither confirm nor deny it, you must claim no as an assumption.', fail: 'Attempting to rate these would corrupt the integrity of the framework.' },
-  2: { name: 'The Finish', q: 'Does the memory I share with the film confirm the encounter was, or must have been, seen to completion?',
-       note: 'A yes means an official encounter happened, and a denial that it was unofficial.', fail: 'Attempting to rate these could be possible, however the View is skewed.' },
+  2: { name: 'The Finish', q: 'Did I see it all the way through, without skipping, sleeping, or bailing?',
+       note: 'Pausing and coming back with nothing missed counts as finished. If you can’t confirm it, the answer is no.', fail: 'Attempting to rate these could be possible, however the View is skewed. How did the viewing end?' },
   3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what each axis asks for?',
        note: 'It does not require scene-by-scene reconstruction, exhaustive factual recall, precise recollection of every reaction, or the ability to reproduce the film’s narrative in detail. Forgettability is normal. What matters is to not allow uncertainty around a View to be able to manufacture judgements. The shape may be complex, mixed, shifting, or emotionally restrained. A remembered lack of emotion may itself constitute legitimate experiential information. An absence of emotional access caused by failure to remember, however, does not.',
        fail: '' },
@@ -2697,35 +2736,39 @@ function renderLF() {
   const n = db.lostfound.length, cnt = id => db.lostfound.filter(f => f.cat === id).length;
   $('#lfIn').innerHTML = `
     <div class="ns"><div class="k">Lost &amp; Found · CmanCinema</div><h2>Lost &amp; Found</h2><div class="dots"></div>
-      <p>Seen for Letterboxd, but not rated — the films the Memory Filter kept out of the framework.</p></div>
+      <p>Seen for Letterboxd, but not rated. Every film the Memory Filter stopped hangs on the rack for the door that stopped it.</p></div>
     <div class="lf-chips">${[['', 'All', n], ...LF.map(c => [c.id, c.name, cnt(c.id)])].map(([v, l, k]) => `<button data-lfs="${v}" class="${lfShelf === v ? 'on' : ''}">${l}<i>${k}</i></button>`).join('')}</div>
-    <div class="controls"><input class="placard" id="lfSearch" placeholder="Search Lost &amp; Found…" value="${esc(lfQuery)}" autocomplete="off"></div>
-    <div class="lf-grid" id="lfGrid"></div><div id="lfPager"></div>`;
+    <div class="controls"><input class="placard" id="lfSearch" placeholder="Search the racks…" value="${esc(lfQuery)}" autocomplete="off"></div>
+    <div id="lfGrid"></div><div id="lfPager"></div>`;
   renderLFGrid();
   $('#lfSearch').addEventListener('input', e => { lfQuery = e.target.value; lfPage = 1; renderLFGrid(); });
 }
 function renderLFGrid() {
-  const q = lfQuery.trim().toLowerCase(), order = id => LF.findIndex(c => c.id === id);
-  const list = db.lostfound.filter(f => (!lfShelf || f.cat === lfShelf) && (!q || String(f.title).toLowerCase().includes(q)))
-    .sort((a, b) => order(a.cat) - order(b.cat) || b.at - a.at);
-  const pages = Math.max(1, Math.ceil(list.length / LF_PAGE));
-  lfPage = Math.min(Math.max(1, lfPage), pages);
-  const edit = canEdit();
-  let last = null, h = '';
-  list.slice((lfPage - 1) * LF_PAGE, lfPage * LF_PAGE).forEach(f => {
-    const c = lfCat(f.cat);
-    if (c.id !== last) { last = c.id; h += `<div class="lf-shelf"><b>${c.name}</b><span>Door ${c.door} · ${DOORS[c.door].name} · ${list.filter(x => x.cat === c.id).length}</span><small>${c.d}</small></div>`; }
-    const was = (f.history || []).slice(-1)[0];
-    h += `<div class="tag-card">${posterHTML({ ...f, year: String(f.year || '') }, 64)}
-      <div><div class="ti">${esc(f.title)}</div><div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · filed ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
-        <span class="cat">Door ${c.door} · ${c.name}</span>${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}</div>
-      ${edit ? `<div class="acts">${lfAsk === f.id ? `<span style="font:italic 600 15px var(--body)">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
-        : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
-           <select data-lfmove="${esc(f.id)}" aria-label="Move to another shelf"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
-           <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div>`;
-  });
-  $('#lfGrid').innerHTML = h || `<p class="lf-empty">${n0() ? 'Nothing on this shelf.' : 'Lost & Found is empty. Films stopped by the Memory Filter at the Box Office land here.'}</p>`;
-  $('#lfPager').innerHTML = pagerHTML(lfPage, pages, 'lfp') + (list.length ? `<p class="pager-note">${list.length} film${list.length === 1 ? '' : 's'} seen, not rated</p>` : '');
+  const q = lfQuery.trim().toLowerCase(), edit = canEdit();
+  const sway = ['-2deg', '1.5deg', '-1deg', '2.2deg', '-1.6deg', '0.8deg'];
+  const racks = LF.map((c, ri) => {
+    if (lfShelf && lfShelf !== c.id) return '';
+    const all = db.lostfound.filter(f => f.cat === c.id), list = all.filter(f => !q || String(f.title).toLowerCase().includes(q) || String(f.year || "").includes(q)).sort((a, b) => b.at - a.at);
+    if (q && !list.length) return '';
+    const tags = list.map((f, i) => {
+      const was = (f.history || []).slice(-1)[0];
+      return `<div class="htag" style="--r:${sway[(i + ri) % sway.length]}"><div class="card">${posterHTML({ ...f, year: String(f.year || '') }, 92)}
+        <div class="ti">${esc(f.title)}</div><div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
+        ${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}
+        ${edit ? `<div class="acts">${lfAsk === f.id ? `<span class="ask">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
+          : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
+             <select data-lfmove="${esc(f.id)}" aria-label="Move to another rack"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
+             <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div></div>`;
+    }).join('');
+    return `<section class="rack" data-rack="${c.id}">
+      <div class="rack-sign"><span class="no">Rack ${ri + 1}</span><b>${c.name}</b><span class="d">Door ${c.door} · ${DOORS[c.door].name} · ${all.length} film${all.length === 1 ? '' : 's'}</span><small>${c.d}</small></div>
+      <div class="rack-bar"><i class="l"></i><i class="r"></i></div>
+      ${tags ? `<div class="rack-hang">${tags}</div>` : `<div class="rack-empty"><i></i><i></i><i></i><span>Nothing hanging here yet.</span></div>`}
+    </section>`;
+  }).join('');
+  $('#lfGrid').innerHTML = racks || `<p class="lf-empty">No film in Lost &amp; Found matches “${esc(lfQuery)}”.</p>`;
+  const n = db.lostfound.length;
+  $('#lfPager').innerHTML = `<p class="pager-note">${n ? `${n} film${n === 1 ? '' : 's'} seen, not rated` : 'Films stopped by the Memory Filter at the Box Office hang here.'}</p>`;
 }
 const n0 = () => db.lostfound.length;
 $('#lostfound').addEventListener('click', async e => {
