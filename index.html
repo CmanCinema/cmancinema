@@ -206,7 +206,7 @@ input,textarea{font-family:inherit}
 .axis-tabs span.done{color:var(--gold);border-color:var(--gold-lo)}
 
 /* stage: evidence | reel | evidence */
-.stage{position:relative;z-index:2;display:grid;grid-template-columns:1fr minmax(320px,440px) 1fr;gap:clamp(14px,2.4vw,34px);align-items:start;width:min(1320px,100%);margin:14px auto 0;padding:0 clamp(16px,9vw,150px)}
+.stage{position:relative;z-index:2;display:grid;grid-template-columns:1fr minmax(320px,430px) 1fr;gap:clamp(14px,2vw,28px);align-items:start;width:min(1480px,100%);margin:14px auto 0;padding:0 clamp(16px,3vw,48px)}
 .card{background:linear-gradient(#f4e8cc,#e7d5aa);color:var(--ink);border-radius:3px;padding:16px 16px 18px;box-shadow:0 14px 30px rgba(0,0,0,.55);position:relative}
 .card::before{content:"";position:absolute;inset:6px;border:1px solid rgba(106,26,30,.35);pointer-events:none}
 .card .lab{font:700 11px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:#8a2a2e}
@@ -324,6 +324,7 @@ input,textarea{font-family:inherit}
 .log label{display:block;font:700 12px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22;margin:14px 0 4px}
 .log input{width:100%;border:0;border-bottom:2px solid #a8834a;background:transparent;font:700 22px var(--serif);color:var(--ink);padding:4px 2px;outline:none}
 .log textarea{width:100%;min-height:150px;border:0;background:transparent;font:16.5px/30px var(--type);color:#2a1a10;resize:vertical;outline:none;padding:0 2px}
+.seal:disabled{opacity:.4;cursor:default}
 .seal{display:block;margin:18px auto 0;padding:14px 28px;border:0;border-radius:4px;background:linear-gradient(#a02535,#6a0f22);color:var(--gold-hi);font:800 13px var(--serif);letter-spacing:.24em;text-transform:uppercase;box-shadow:0 5px 0 #3a0714,0 10px 20px rgba(0,0,0,.4)}
 .coord{font:400 clamp(70px,13vw,130px)/1 var(--deco);color:var(--gold-hi);text-shadow:0 0 30px rgba(255,200,110,.45);margin:10px 0 4px;letter-spacing:.04em}
 .coordn{font:italic 600 clamp(19px,2.6vw,24px) var(--serif);color:var(--cream)}
@@ -676,7 +677,6 @@ button.li2:hover{border-color:var(--gold)}
 .refbar .rule2 b{color:var(--gold-hi)}
 .refbar .rule2 span:last-child{color:rgba(243,230,200,.55);font:600 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;align-self:center}
 /* evaluation cards: equal height to the reel, long rationales scroll inside */
-.ev-left .note,.ev-right .note{max-height:none;overflow:visible}
 @media (max-width:900px){
   .refbar{grid-template-columns:1fr}
   .refbar .chips2{justify-content:flex-start}
@@ -690,6 +690,20 @@ button.li2:hover{border-color:var(--gold)}
   .ev-left .note,.ev-right .note{font-size:13px}
   .ev-left .me,.ev-right .me{font-size:10px;letter-spacing:.08em}
 }
+
+
+/* ---------- evaluation panels: as tall as the wheel, text sized to fit ---------- */
+@media (min-width:901px){
+  .ev-left,.ev-right{height:var(--mh,auto);display:flex;flex-direction:column;overflow:hidden}
+  .ev-left .note,.ev-right .note{flex:1;min-height:0}
+}
+.ev-left .note,.ev-right .note{font:var(--nfs,17px)/1.45 var(--body);color:#2a1a10}
+.ev-left .note .evh,.ev-right .note .evh{font-size:1.02em;margin-bottom:4px}
+.ev-left .empty,.ev-right .empty{margin-top:8px}
+/* booth word counter */
+.wc{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
+.wc.full{color:#8a1414}
+.wc i{font:italic 500 14px var(--body);letter-spacing:0;text-transform:none}
 
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
@@ -1564,10 +1578,12 @@ function renderPane() {
     p.innerHTML = `<div class="log">
         <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
         <label for="evIn">Evidence</label><input id="evIn" maxlength="160" placeholder="The heading — the decisive evidence in a line" value="${esc(x ? bt.xEv : bt.yEv)}">
-        <label for="raIn">Rationale</label><textarea id="raIn" maxlength="8000" placeholder="The details of your reasoning…">${esc(x ? bt.xNote : bt.yNote)}</textarea>
+        <label for="raIn">Rationale</label><textarea id="raIn" maxlength="8000" placeholder="The details of your reasoning… up to ${WORD_LIMIT} words">${esc(x ? bt.xNote : bt.yNote)}</textarea>
+        <div class="wc" id="wc"></div>
       </div>
       <button class="seal" data-seal>Seal the ${bt.axis} evaluation</button>
       <div class="under"><button class="linkish" data-back>← Back to the questions</button>${cancel}</div>`;
+    updateWordCount();
   } else {
     const c = `${bt.x}/${bt.y}`, others = groupOf(c, active.film.id).length;
     const same = active.mode === 'reeval' && c === active.from;
@@ -1592,7 +1608,30 @@ function saveWriting() {
   if (bt.axis === 'X') { bt.xEv = ev.value.trim(); bt.xNote = ra.value.trim(); }
   else { bt.yEv = ev.value.trim(); bt.yNote = ra.value.trim(); }
 }
-$('#pane').addEventListener('input', () => { saveWriting(); saveDraft(); });
+const WORD_LIMIT = 150;
+const wordCount = t => (String(t || '').trim().match(/\S+/g) || []).length;
+let lastRa = '';
+function updateWordCount() {
+  const ra = $('#raIn'), wc = $('#wc'), seal = document.querySelector('[data-seal]'); if (!ra || !wc) return;
+  const n = wordCount(ra.value), over = n > WORD_LIMIT;
+  wc.className = 'wc' + (n >= WORD_LIMIT ? ' full' : '');
+  wc.innerHTML = `<span>${n} / ${WORD_LIMIT} words</span>${over ? `<i>Trim ${n - WORD_LIMIT} word${n - WORD_LIMIT === 1 ? '' : 's'} to seal</i>` : n === WORD_LIMIT ? '<i>At the limit</i>' : ''}`;
+  if (seal) seal.disabled = over;
+  lastRa = ra.value;
+}
+$('#pane').addEventListener('input', e => {
+  if (e.target.id === 'raIn') {
+    const n = wordCount(e.target.value);
+    // past the limit, new words are refused; deleting always works (older, longer rationales can be trimmed down)
+    if (n > WORD_LIMIT && n > wordCount(lastRa)) {
+      const words = e.target.value.match(/\S+\s*/g) || [];
+      e.target.value = wordCount(lastRa) >= WORD_LIMIT ? lastRa : words.slice(0, WORD_LIMIT).join('').trimEnd();   // at the limit: refuse the new word; a long paste: keep the first 150
+      toast(`Rationales are limited to ${WORD_LIMIT} words`);
+    }
+    updateWordCount();
+  }
+  saveWriting(); saveDraft();
+});
 $('#pane').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || !bt || !active) return;
   if (b.dataset.ans) {
@@ -1782,12 +1821,26 @@ function evidenceCard(f, label, current, me) {
       ? `<p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>`
       : `<p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>`}`;
 }
-function renderMine() { $('#evMine').innerHTML = evidenceCard(active.film, 'Your film · from the Projection Booth', axis, true); }
+function renderMine() { $('#evMine').innerHTML = evidenceCard(active.film, 'Your film · from the Projection Booth', axis, true); fitPanels(); }
+// Panels match the wheel's height; a rationale too long for the panel is set in smaller type rather than cut or scrolled.
+function fitPanels() {
+  const m = document.querySelector('.machine'), wide = innerWidth > 900;
+  ['#evMine', '#evPeek'].forEach(sel => {
+    const card = $(sel); if (!card) return;
+    card.style.setProperty('--mh', wide && m ? m.offsetHeight + 'px' : 'auto');
+    let fs = 17; card.style.setProperty('--nfs', fs + 'px');
+    if (!wide) return;
+    const note = card.querySelector('.note'); if (!note) return;
+    while (fs > 11 && note.scrollHeight > note.clientHeight + 1) { fs -= 0.5; card.style.setProperty('--nfs', fs + 'px'); }
+  });
+}
+addEventListener('resize', () => { if (current === 'auditorium' && active) fitPanels(); });
 function renderPeek() {
   const f = films.find(v => v.id === peekId);
   $('#evPeek').innerHTML = f ? evidenceCard(f, 'On the reel · their evaluation', axis)
     : `<div class="lab">On the reel</div><p class="empty">Hover over — or tap — any film on the reel to read the evaluation it was given in the Projection Booth.</p>`;
   drum.querySelectorAll('.slot').forEach(s => s.classList.toggle('peek', s.dataset.id === peekId));
+  fitPanels();
 }
 function pos() { return Math.round(target); }      // your film sits above films[pos]
 function renderTally() {
@@ -1811,7 +1864,7 @@ function layoutDrum() {
 }
 function place(el, d, radius, rank) {
   const ang = d * SLOT_DEG, vis = Math.abs(d) < 4.6;
-  el.style.visibility = vis ? 'visible' : 'hidden';
+  el.style.visibility = vis ? '' : 'hidden';   // '' inherits, so a hidden room's reel can't catch clicks
   if (!vis) return;
   el.style.transform = `translateZ(${-radius}px) rotateX(${-ang}deg) translateZ(${radius}px)`;
   el.style.opacity = Math.max(0, 1 - Math.abs(d) * 0.2).toFixed(3);
