@@ -676,7 +676,7 @@ button.li2:hover{border-color:var(--gold)}
 .refbar .rule2 b{color:var(--gold-hi)}
 .refbar .rule2 span:last-child{color:rgba(243,230,200,.55);font:600 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;align-self:center}
 /* evaluation cards: equal height to the reel, long rationales scroll inside */
-.ev-left .note,.ev-right .note{max-height:150px;overflow:auto;scrollbar-width:thin}
+.ev-left .note,.ev-right .note{max-height:none;overflow:visible}
 @media (max-width:900px){
   .refbar{grid-template-columns:1fr}
   .refbar .chips2{justify-content:flex-start}
@@ -687,7 +687,7 @@ button.li2:hover{border-color:var(--gold)}
   .ev-left .head,.ev-right .head{grid-template-columns:40px 1fr;gap:8px}
   .ev-left .head .poster,.ev-right .head .poster{width:40px!important}
   .ev-left .ti,.ev-right .ti{font-size:15px}
-  .ev-left .note,.ev-right .note{font-size:13px;max-height:120px}
+  .ev-left .note,.ev-right .note{font-size:13px}
   .ev-left .me,.ev-right .me{font-size:10px;letter-spacing:.08em}
 }
 
