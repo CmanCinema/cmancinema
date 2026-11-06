@@ -1778,8 +1778,9 @@ function evidenceCard(f, label, current, me) {
   const ev = t => t ? `<span class="evh">${esc(t)}</span>` : '';
   return `<div class="lab">${label}</div>
     <div class="head">${posterHTML(f, 64)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')} · ${coordLine}</div></div></div>
-    <p class="note ${current === 'X' ? '' : 'dim'}"><b>X · Condition</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
-    <p class="note ${current === 'Y' ? '' : 'dim'}"><b>Y · Recommendation</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>`;
+    ${current === 'X'
+      ? `<p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>`
+      : `<p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>`}`;
 }
 function renderMine() { $('#evMine').innerHTML = evidenceCard(active.film, 'Your film · from the Projection Booth', axis, true); }
 function renderPeek() {
