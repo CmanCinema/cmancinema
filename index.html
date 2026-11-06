@@ -49,12 +49,22 @@ input,textarea{font-family:inherit}
 /* ---------- ticket-stub navigation ---------- */
 #stub{position:fixed;z-index:30;left:50%;top:14px;transform:translateX(-50%);display:flex;gap:2px;padding:4px;background:rgba(18,6,10,.72);border:1px solid rgba(232,190,106,.35);border-radius:6px;backdrop-filter:blur(6px);transition:opacity .4s}
 #stub.hide{opacity:0;pointer-events:none}
+#stub{max-width:calc(100vw - 16px);overflow-x:auto;scrollbar-width:none}
+#stub::-webkit-scrollbar{display:none}
 #stub button{background:none;border:0;padding:7px 12px;font:600 13px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:rgba(243,230,200,.75);border-radius:4px;white-space:nowrap;display:flex;gap:6px;align-items:center}
 #stub button.on{color:var(--night);background:linear-gradient(var(--gold-hi),var(--gold))}
 #stub button:not(.on):not([disabled]):hover{color:var(--gold-hi)}
 #stub button[disabled]{opacity:.38;cursor:default}
 #stub .mono{gap:9px;font-family:var(--deco);letter-spacing:.06em;font-size:15px;color:var(--gold);padding-right:14px;border-right:1px solid rgba(232,190,106,.3);margin-right:4px}
 #stub .soon{font:italic 500 11px var(--body);letter-spacing:.02em;text-transform:none}
+@media (max-width:1300px) and (min-width:641px){
+  #stub button{padding:7px 9px;font-size:12px;letter-spacing:.1em}
+  #stub .mono{font-size:0;gap:0;padding-right:8px}
+  #stub .soon{display:none}
+}
+@media (max-width:1000px) and (min-width:641px){
+  #stub button{padding:7px 7px;font-size:11px;letter-spacing:.06em}
+}
 
 /* ===================== MARQUEE (arrival) ===================== */
 #marquee{background:radial-gradient(ellipse 80% 60% at 50% 30%,#2a0a16,#0c0306 70%)}
@@ -819,6 +829,125 @@ button.li2:hover{border-color:var(--gold)}
   .cc-bar button{padding:8px 12px;font-size:10px;letter-spacing:.12em;box-shadow:none}
 }
 
+
+/* ===================== THE PLAYBILL (framework card, every room) ===================== */
+#pbBtn{position:fixed;right:18px;bottom:18px;z-index:31;display:flex;align-items:center;gap:9px;padding:9px 16px 9px 10px;border-radius:30px;border:2px solid var(--gold);background:linear-gradient(#5a0f22,#2a0610);color:var(--gold-hi);font:700 12px var(--serif);letter-spacing:.2em;text-transform:uppercase;box-shadow:0 0 0 3px rgba(20,4,10,.8),0 8px 22px rgba(0,0,0,.6),0 0 18px rgba(232,190,106,.25);transition:transform .2s,opacity .4s}
+#pbBtn:hover{transform:translateY(-2px)}
+#pbBtn .ic{display:grid;place-items:center;width:30px;height:36px;border-radius:3px;background:linear-gradient(#f6ead0,#e3cc9a);color:#5a0f22;font:400 15px var(--deco);box-shadow:0 2px 0 #7a5420;transform:rotate(-6deg)}
+#pbBtn.hide{opacity:0;pointer-events:none}
+#saving{right:170px}
+#playbill{position:fixed;inset:0;z-index:45;display:none;align-items:flex-end;justify-content:flex-end;padding:16px 16px 76px;background:rgba(8,2,4,.6);backdrop-filter:blur(2px)}
+#playbill.show{display:flex}
+.pb{position:relative;width:min(560px,100%);max-height:calc(100vh - 110px);display:flex;flex-direction:column;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);transform-origin:100% 100%;animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
+@keyframes pbIn{from{transform:scale(.6) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
+.pb-h{padding:16px 20px 10px;text-align:center;border-bottom:3px double #b8873c}
+.pb-h .k{font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
+.pb-h h2{margin:2px 0 0;font:400 34px/1 var(--deco);letter-spacing:.12em;color:#5a0f22}
+.pb-h .s{font:italic 500 15px var(--body);color:#6b5236}
+.pb-x{position:absolute;right:10px;top:8px;width:34px;height:34px;border-radius:50%;border:1.5px solid #7a1a22;background:none;color:#7a1a22;font-size:18px;line-height:1}
+.pb-tabs{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid rgba(122,26,34,.3)}
+.pb-tabs button{border:0;background:none;padding:9px 4px 8px;font:700 10px/1.25 var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a5a3a;border-bottom:3px solid transparent}
+.pb-tabs button b{display:block;font:400 15px var(--deco);letter-spacing:.06em;color:#5a0f22}
+.pb-tabs button.on{color:#5a0f22;border-bottom-color:#c4202f;background:rgba(196,32,47,.07)}
+.pb-body{overflow-y:auto;padding:14px 20px 18px;overscroll-behavior:contain}
+.pb-sec{margin:0 0 6px;text-align:center;font:700 11px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22}
+.pb-sec small{display:block;font:italic 500 15px var(--body);letter-spacing:0;text-transform:none;color:#6b5236;margin-top:2px}
+.pb-it{position:relative;display:grid;grid-template-columns:44px 1fr;gap:4px 12px;padding:10px 0;border-bottom:1px dotted rgba(90,15,34,.35)}
+.pb-it:last-child{border-bottom:0}
+.pb-it .n{grid-row:span 2;display:grid;place-items:center;align-self:start;width:44px;height:44px;border-radius:50%;background:#5a0f22;color:var(--gold-hi);font:400 17px var(--deco);box-shadow:0 0 0 2px #e8be6a inset}
+.pb-it .t{display:flex;align-items:baseline;gap:6px;font:800 16px var(--serif);color:#2a160e}
+.pb-it .t::after{content:"";flex:1;border-bottom:2px dotted rgba(90,15,34,.35);transform:translateY(-4px)}
+.pb-it .t em{order:2;font:italic 600 13px var(--body);color:#7a1a22;white-space:nowrap}
+.pb-it p{margin:0;font:500 16px/1.4 var(--body);color:#3a2418}
+.pb-it.here{background:linear-gradient(90deg,rgba(196,32,47,.12),transparent);margin:0 -10px;padding:24px 10px 10px}
+.pb-it.here .n{background:#c4202f}
+.pb-it.here::before{content:"YOU ARE HERE";position:absolute;right:10px;top:6px;font:800 9px var(--serif);letter-spacing:.2em;color:#c4202f}
+.pb-q{font:600 17px/1.35 var(--body);color:#2a160e}
+.pb-q i{display:block;font:italic 600 13px var(--serif);letter-spacing:.06em;color:#7a1a22;margin-top:3px}
+.pb-note{margin:12px 0 0;padding:10px 14px;border-left:3px solid #c4202f;background:rgba(90,15,34,.06);font:italic 500 16px/1.45 var(--body);color:#3a2418}
+.pb-axis{display:flex;justify-content:center;gap:8px;margin:2px 0 8px}
+.pb-axis span{padding:3px 10px;border-radius:3px;background:#5a0f22;color:var(--gold-hi);font:700 10px var(--serif);letter-spacing:.18em;text-transform:uppercase}
+@media (max-width:640px){
+  #pbBtn{bottom:calc(66px + env(safe-area-inset-bottom));right:10px;padding:6px;border-radius:50%}
+  #pbBtn .lbl{display:none}
+  #pbBtn .ic{width:28px;height:32px}
+  body.cc-on #pbBtn{bottom:calc(160px + env(safe-area-inset-bottom))}
+  #saving{right:70px}
+  #playbill{padding:10px 10px 118px;align-items:flex-end;justify-content:center}
+  .pb{max-height:calc(100vh - 140px)}
+  .pb-h h2{font-size:28px}
+  .pb-body{padding:12px 14px 16px}
+  .pb-tabs button{font-size:8.5px;letter-spacing:.06em;padding:8px 2px}
+  .pb-tabs button b{font-size:12px}
+}
+
+
+/* ===================== LOST & FOUND + THE MEMORY FILTER ===================== */
+#lostfound{background:
+  radial-gradient(ellipse 60% 40% at 50% 0,rgba(255,200,120,.14),transparent 70%),
+  repeating-linear-gradient(90deg,transparent 0 120px,rgba(0,0,0,.18) 120px 124px),
+  linear-gradient(#2a1410,#140806)}
+.lf .controls{margin-top:22px}
+.lf-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.lf-chips button{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:30px;border:1.5px solid var(--gold-lo);background:transparent;color:var(--cream);font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.lf-chips button i{font:normal 400 14px var(--deco);color:var(--gold-hi)}
+.lf-chips button.on{background:var(--gold);color:#2a0a10;border-color:var(--gold)}
+.lf-chips button.on i{color:#5a0f22}
+.lf-shelf{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:18px 0 -4px;padding-bottom:8px;border-bottom:4px solid #3a2414;box-shadow:0 6px 0 -2px #1a0d08}
+.lf-shelf b{font:400 26px var(--deco);letter-spacing:.06em;color:var(--gold-hi)}
+.lf-shelf span{font:700 11px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.lf-shelf small{flex-basis:100%;font:italic 500 16px var(--body);color:rgba(243,230,200,.7)}
+.lf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:10px}
+.tag-card{position:relative;display:grid;grid-template-columns:64px 1fr;gap:12px;padding:14px 14px 14px 30px;background:linear-gradient(#f4e8cc,#e5d1a4);color:var(--ink);border-radius:4px 14px 14px 4px;box-shadow:0 10px 22px rgba(0,0,0,.5);text-align:left}
+.tag-card::before{content:"";position:absolute;left:10px;top:50%;width:11px;height:11px;margin-top:-6px;border-radius:50%;background:#140806;box-shadow:0 0 0 2px #b8873c}
+.tag-card::after{content:"";position:absolute;left:0;top:0;bottom:0;width:22px;border-right:1.5px dashed rgba(106,26,30,.35)}
+.tag-card .ti{font:800 17px/1.15 var(--serif);color:var(--ink)}
+.tag-card .yr{font:600 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#7a4a2a;margin:3px 0 6px}
+.tag-card .cat{display:inline-block;padding:3px 8px;border-radius:3px;background:#5a0f22;color:var(--gold-hi);font:700 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;transform:rotate(-2deg)}
+.tag-card .was{display:block;margin-top:6px;font:italic 500 14px var(--body);color:#6b5236}
+.tag-card .acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:10px;border-top:1px dashed #b48a4e}
+.tag-card .acts button,.tag-card .acts select{padding:6px 10px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 10px var(--serif);letter-spacing:.12em;text-transform:uppercase}
+.tag-card .acts select{max-width:140px}
+.tag-card .acts .del{margin-left:auto}
+.tag-card .acts .go{background:#5a0f22;color:var(--gold-hi);border-color:#5a0f22}
+.tag-card .acts .warn{background:#c4202f;color:#fff;border-color:#c4202f}
+.lf-empty{grid-column:1/-1;text-align:center;font:italic 500 19px var(--body);color:rgba(243,230,200,.7);padding:30px 0}
+#mf{position:fixed;inset:0;z-index:46;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.82);backdrop-filter:blur(3px)}
+#mf.show{display:grid}
+.mfc{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:22px 24px 24px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
+.mfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
+.mfc h2{margin:2px 0 0;text-align:center;font:400 30px/1.05 var(--deco);letter-spacing:.1em;color:#5a0f22}
+.mfc .film{text-align:center;font:italic 600 18px var(--body);color:#6b5236}
+.mf-doors{display:flex;justify-content:center;gap:10px;margin:16px 0 14px}
+.mf-door{width:62px;height:80px;border-radius:30px 30px 3px 3px;border:2px solid #b8873c;background:linear-gradient(#5a0f22,#2a0610);display:grid;place-items:center;color:var(--gold-hi);font:400 22px var(--deco);opacity:.45;transition:all .3s}
+.mf-door small{display:block;font:700 7px var(--serif);letter-spacing:.14em;text-transform:uppercase;margin-top:-14px}
+.mf-door.cur{opacity:1;box-shadow:0 0 0 3px rgba(196,32,47,.4),0 0 20px rgba(196,32,47,.4);transform:translateY(-3px)}
+.mf-door.ok{opacity:1;background:linear-gradient(#f3d58f,#b8873c);color:#2a0a10;border-color:#7a5420}
+.mf-door.fail{opacity:1;background:#c4202f;color:#fff}
+.mf-step h3{margin:0;text-align:center;font:800 13px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22}
+.mf-q{margin:8px 0 0;text-align:center;font:600 21px/1.35 var(--body);color:#2a160e}
+.mf-note{margin:10px 0 0;padding:10px 14px;border-left:3px solid #c4202f;background:rgba(90,15,34,.06);font:italic 500 16px/1.45 var(--body);color:#3a2418}
+.mf-yn{display:flex;justify-content:center;gap:12px;margin-top:16px}
+.mf-yn button{min-width:120px}
+.mf-opts{display:grid;gap:10px;margin-top:14px}
+.mf-opt{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:6px;border:2px solid rgba(90,15,34,.35);background:rgba(255,255,255,.35);color:#2a160e}
+.mf-opt b{display:block;font:800 16px var(--serif);color:#5a0f22}
+.mf-opt span{font:500 16px/1.4 var(--body);color:#3a2418}
+.mf-opt.on{border-color:#c4202f;background:rgba(196,32,47,.1);box-shadow:0 0 0 2px rgba(196,32,47,.25)}
+.mf-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.mf-foot .back{background:none;border:0;color:#7a1a22;font:700 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;padding:8px 0}
+.mf-pass{text-align:center;margin-top:10px;font:italic 600 17px var(--body);color:#2a6a2a}
+.scoreboard{grid-template-columns:repeat(4,1fr)}
+@media (max-width:640px){
+  .mfc{padding:18px 16px 18px}
+  .mf-q{font-size:19px}
+  .mf-door{width:54px;height:70px}
+  .lf-grid{grid-template-columns:1fr}
+  .lf-chips{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;margin:22px -16px 0;padding:0 16px 6px;scrollbar-width:none}
+  .lf-chips::-webkit-scrollbar{display:none}
+  .lf-chips button{flex:none}
+}
+
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -867,6 +996,7 @@ button.li2:hover{border-color:var(--gold)}
   <button data-go="booth">Projection Booth</button>
   <button data-go="auditorium">Auditorium</button>
   <button data-go="vault">Film Vault</button>
+  <button data-go="lostfound">Lost &amp; Found</button>
   <button data-go="gameroom">Game Room</button>
   <button data-go="office">Office</button>
 </nav>
@@ -910,8 +1040,12 @@ button.li2:hover{border-color:var(--gold)}
 
 <!-- ===================== FILM VAULT ===================== -->
 <section class="scene" id="vault"><div class="vt" id="vaultIn"></div></section>
+<section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
+<div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Film profile"><div class="prof" id="prof"></div></div>
+<button id="pbBtn" class="hide" aria-label="Open the Playbill" aria-haspopup="dialog"><span class="ic">P</span><span class="lbl">Playbill</span></button>
+<div id="playbill" role="dialog" aria-modal="true" aria-label="The Playbill"><div class="pb" id="pbCard"></div></div>
 <div id="toast" role="status"></div>
 <div id="saving" aria-live="polite"><i></i>Saving to the vault…</div>
 <div id="alert" role="alertdialog" aria-modal="true"><div class="cmp" id="alertIn" style="width:min(520px,100%)"></div></div>
@@ -1110,6 +1244,7 @@ function normalize(d) {
   d = d && Array.isArray(d.films) ? d : fresh();
   d.lists ||= []; d.showdowns ||= []; d.settings ||= { tmdb: '' };
   d.placements ||= [];
+  d.lostfound ||= [];
   if (d.workflow === undefined) d.workflow = null;
   return d;
 }
@@ -1337,6 +1472,7 @@ let current = 'marquee';
 function renderScene(id) {
   if (id === 'lobby') renderLobby();
   if (id === 'vault') renderVault();
+  if (id === 'lostfound') renderLF();
   if (id === 'gameroom') renderGame();
   if (id === 'office') renderOffice();
   if (id === 'booth') renderBooth();
@@ -1347,7 +1483,7 @@ function renderScene(id) {
 // after new data arrives, redraw rooms that only display it (never mid-evaluation or mid-placement)
 function refreshScene() {
   renderMarquee();
-  if (['lobby', 'vault', 'gameroom', 'office', 'boxoffice'].includes(current)) renderScene(current);
+  if (['lobby', 'vault', 'lostfound', 'gameroom', 'office', 'boxoffice'].includes(current)) renderScene(current);
   if ((current === 'booth' && !active) || (current === 'auditorium' && !active && !lastVerdict)) renderScene(current);
 }
 function goTo(id, viaCurtain = true) {
@@ -1355,6 +1491,9 @@ function goTo(id, viaCurtain = true) {
     document.querySelectorAll('.scene').forEach(s => s.classList.toggle('on', s.id === id));
     current = id;
     $('#stub').classList.toggle('hide', id === 'marquee');
+    $('#pbBtn').classList.toggle('hide', id === 'marquee');
+    document.body.classList.toggle('cc-on', !!(typeof hsEdit !== 'undefined' && hsEdit) && id === 'gameroom');
+    closePlaybill();
     document.querySelectorAll('#stub [data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === id));
     renderScene(id);
     document.getElementById(id).scrollTop = 0;
@@ -1585,6 +1724,8 @@ function printTicket() {
   if (p && !/^https:\/\//i.test(p)) { $('#boErr').textContent = 'Paste an address that starts with https://'; fPoster.focus(); return; }
   const dupe = db.films.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (dupe) { $('#boErr').textContent = 'That film is already in the collection — open it from the lobby to re-evaluate.'; return; }
+  const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
+  if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
   pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
@@ -1596,6 +1737,11 @@ function printTicket() {
 }
 $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
+  mfOpen({ src: 'new', film: pending });
+});
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = ''; boUpdate(); }
+function admitPending() {
+  if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
   db.films.push(pending);
   const id = pending.id; pending = null;
@@ -1603,10 +1749,9 @@ $('#takeSeat').addEventListener('click', () => {
   beginWorkflow(id, 'new');
   setTimeout(() => {
     startBooth(); goTo('booth');
-    $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show');
-    fTitle.value = fYear.value = fPoster.value = ''; boUpdate();
+    clearTicket();
   }, reduceMotion ? 0 : 650);
-});
+}
 
 /* ---------- seats ---------- */
 (function seats() {
@@ -2156,14 +2301,20 @@ function renderGame() {
       <p>${cloud.ready ? 'The machines are switched off until the first film is admitted.' : 'The machines are warming up…'}</p></div>`;
     return;
   }
+  const nLF = db.lostfound.length, seen = n + UNEVALUATED.length + nLF;
   const sb = [
-    [n, 'Films'],
+    [seen, 'Films seen'],
+    [n, 'Ranked'],
+    [nLF, 'Lost & Found'],
     [avg(all.map(total)).toFixed(1), 'Avg total / 10'],
     [avg(all.map(f => f.X)).toFixed(1), 'Avg X'],
     [avg(all.map(f => f.Y)).toFixed(1), 'Avg Y'],
     [new Set(all.map(ck)).size, 'Coordinates in use'],
     [VAULT.filter(v => byId(v.film)).length, 'Considerations'],
   ];
+  const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
+  const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
+    return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
   const count = {}; all.forEach(f => count[ck(f)] = (count[ck(f)] || 0) + 1);
   const maxC = Math.max(1, ...Object.values(count));
   let boardH = `<div></div>${[0, 1, 2, 3, 4, 5].map(y => `<div class="hd">Y${y}<small>${Y_NAMES[y]}</small></div>`).join('')}`;
@@ -2212,6 +2363,7 @@ function renderGame() {
       ${cabinet('X · Condition of Achievement', 'How often films hold their aim.', dist('X', [5, 4, 3, 2, 1], X_NAMES))}
       ${cabinet('Y · Viewing Recommendation', 'The bottleneck — how far films climb.', dist('Y', [5, 4, 3, 2, 1, 0], Y_NAMES))}
     </div>
+    ${cabinet('The Memory Filter', `${nLF ? `${nLF} film${nLF === 1 ? '' : 's'} seen but not rated, by the door that stopped ${nLF === 1 ? 'it' : 'them'}.` : 'Every film so far has made it through all three doors.'} <button class="btn-line" data-goto="lostfound" style="margin-left:6px;padding:6px 12px">Lost &amp; Found</button>`, lfBars)}
     <div class="tri">
       ${cabinet('Total Score', 'X + Y, out of 10.', hist)}
       ${cabinet('By Decade', bestDec ? `The ’${String(bestDec).slice(2)}s lead with an average of ${avg(dec[bestDec].map(total)).toFixed(1)}.` : '', decades)}
@@ -2363,6 +2515,7 @@ document.addEventListener('pointerup', ccUp);
 document.addEventListener('pointercancel', ccUp);
 function renderHS(roll) {
   const el = $('#hsIn'); if (!el || !hsCoord) return;
+  queueMicrotask(() => document.body.classList.toggle('cc-on', !!hsEdit && current === 'gameroom'));
   if (hsEdit) {
     // if the collection changed underneath (a reload), the board in hand is no longer valid
     const now = groupOf(hsEdit.coord).map(f => f.id).sort().join();
@@ -2439,6 +2592,234 @@ $('#gameroom').addEventListener('click', e => {
   if (e.target.closest('[data-hslobby]')) { lobbyQuery = ''; lobbyCoord = LISTED.includes(hsCoord) ? hsCoord : ''; lobbyPage = 1; return goTo('lobby'); }
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
 });
+
+
+
+/* =====================================================================
+   THE MEMORY FILTER · three doors before the booth
+   Pass all three and the film is rating eligible. Stopped at a door, it is
+   seen for Letterboxd but not rated, and goes on a Lost & Found shelf.
+   ===================================================================== */
+const LF = [
+  { id: 'caught', door: 1, name: 'Caught It Along the Way', d: 'I retain a more specific spatial/momentary element.' },
+  { id: 'met', door: 1, name: 'I Know We’ve Met', d: 'The memory does not place me anywhere in time spatially enough to be grounding.' },
+  { id: 'lost', door: 2, name: 'Lost Me Along the Way', d: 'I didn’t complete the film for a variety of reasons, but not because it was physically intolerable.' },
+  { id: 'tapout', door: 2, name: 'I Had to Tap Out', d: 'I didn’t complete the film and, as a prerequisite of being “lost” whether abrupt or drifting away, I reached well beyond a point of no return, so much so that I couldn’t bear it.' },
+  { id: 'once', door: 3, name: 'Once Upon a Watch', d: 'My View doesn’t retain sufficient experiential shape to support faithful judgements.' },
+];
+const lfCat = id => LF.find(c => c.id === id) || LF[4];
+const DOORS = {
+  1: { name: 'The Gateway', q: 'Does the memory I share with the film confirm there was at least an official encounter — a deliberate, formal sit-down of some kind to watch it?',
+       note: 'If you can neither confirm nor deny it, you must claim no as an assumption.', fail: 'Attempting to rate these would corrupt the integrity of the framework.' },
+  2: { name: 'The Finish', q: 'Does the memory I share with the film confirm the encounter was, or must have been, seen to completion?',
+       note: 'A yes means an official encounter happened, and a denial that it was unofficial.', fail: 'Attempting to rate these could be possible, however the View is skewed.' },
+  3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what each axis asks for?',
+       note: 'It does not require scene-by-scene reconstruction, exhaustive factual recall, precise recollection of every reaction, or the ability to reproduce the film’s narrative in detail. Forgettability is normal. What matters is to not allow uncertainty around a View to be able to manufacture judgements. The shape may be complex, mixed, shifting, or emotionally restrained. A remembered lack of emotion may itself constitute legitimate experiential information. An absence of emotional access caused by failure to remember, however, does not.',
+       fail: '' },
+};
+let mf = null;
+function mfOpen(o) { mf = { ...o, door: 1, no: false, pick: null }; mfRender(); $('#mf').classList.add('show'); }
+function mfClose() { mf = null; $('#mf').classList.remove('show'); }
+function mfRender() {
+  if (!mf) return;
+  const D = DOORS[mf.door], opts = LF.filter(c => c.door === mf.door);
+  const doors = [1, 2, 3].map(n => `<div class="mf-door ${n < mf.door ? 'ok' : n === mf.door ? (mf.no ? 'fail cur' : 'cur') : ''}">${n}<small>${DOORS[n].name.replace('The ', '')}</small></div>`).join('');
+  const body = !mf.no ? `
+      <div class="mf-step"><h3>Door ${mf.door} · ${D.name}</h3><p class="mf-q">${D.q}</p>
+        <p class="mf-note">${D.note}</p>
+        <div class="mf-yn"><button class="btn-ink solid" data-mf="yes">Yes</button><button class="btn-ink" data-mf="no">No</button></div></div>`
+    : `
+      <div class="mf-step"><h3>Stopped at Door ${mf.door} · ${D.name}</h3>
+        <p class="mf-q" style="font-size:18px">Seen for Letterboxd, but not rated. ${D.fail}</p>
+        <div class="mf-opts">${opts.map(c => `<button class="mf-opt ${mf.pick === c.id || opts.length === 1 ? 'on' : ''}" data-mfpick="${c.id}"><b>${c.name}</b><span>${c.d}</span></button>`).join('')}</div></div>`;
+  const ready = mf.no && (mf.pick || opts.length === 1);
+  $('#mfIn').innerHTML = `
+    <div class="k">${mf.src === 'rewatch' ? 'A rewatch · back through the filter' : 'Before the ticket is torn'}</div>
+    <h2>The Memory Filter</h2><div class="film">${esc(mf.film.title)}${mf.film.year ? ' · ' + esc(mf.film.year) : ''}</div>
+    <div class="mf-doors">${doors}</div>${body}
+    <div class="mf-foot"><button class="back" data-mf="${mf.door > 1 || mf.no ? 'back' : 'cancel'}">${mf.door > 1 || mf.no ? '← Back' : 'Cancel'}</button>
+      ${mf.no ? `<button class="btn-ink solid" data-mf="file" ${ready ? '' : 'disabled'}>File it in Lost &amp; Found</button>` : '<button class="back" data-mf="cancel">Close</button>'}</div>`;
+}
+$('#mf').addEventListener('click', async e => {
+  if (e.target.id === 'mf') return mfClose();
+  const p = e.target.closest('[data-mfpick]'); if (p && mf) { mf.pick = p.dataset.mfpick; return mfRender(); }
+  const b = e.target.closest('[data-mf]'); if (!b || !mf) return;
+  const a = b.dataset.mf;
+  if (a === 'cancel') return mfClose();
+  if (a === 'back') { if (mf.no) { mf.no = false; mf.pick = null; } else mf.door--; return mfRender(); }
+  if (a === 'no') { mf.no = true; mf.pick = LF.filter(c => c.door === mf.door).length === 1 ? LF.find(c => c.door === mf.door).id : null; return mfRender(); }
+  if (a === 'yes') {
+    if (mf.door < 3) { mf.door++; return mfRender(); }
+    // through all three doors: rating eligible
+    const o = mf; mfClose();
+    if (o.src === 'new') return admitPending();
+    return promoteLF(o.film.id);
+  }
+  if (a === 'file' && !b.disabled) {
+    const o = mf, cat = o.pick || LF.find(c => c.door === o.door).id; mfClose();
+    return o.src === 'new' ? fileNew(cat) : refileLF(o.film.id, cat, 'rewatch');
+  }
+});
+async function fileNew(cat) {
+  if (!pending || !canEdit()) return;
+  const f = pending; pending = null;
+  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, cat, at: Date.now(), history: [] });
+  const tk = $('#ticket'); if (tk) tk.classList.add('torn');
+  lfShelf = ''; lfPage = 1; lfQuery = '';
+  const ok = await persist();
+  setTimeout(() => { clearTicket(); if (ok) { toast(`${f.title} · filed under “${lfCat(cat).name}”`); goTo('lostfound'); } }, reduceMotion ? 0 : 650);
+}
+async function refileLF(id, cat, why) {
+  const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
+  if (e.cat !== cat) { (e.history ||= []).push({ cat: e.cat, at: e.at, why }); e.cat = cat; }
+  e.at = Date.now();
+  if (await persist()) toast(`${e.title} · now on “${lfCat(cat).name}”`);
+  renderLF();
+}
+async function promoteLF(id) {
+  const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
+  if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film up.`);
+  db.lostfound = db.lostfound.filter(f => f.id !== id);
+  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
+                  lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
+  rebuild();
+  await beginWorkflow(e.id, 'new');
+  toast(`${e.title} passed the filter · up to the booth`);
+  startBooth(); goTo('booth');
+}
+
+/* =====================================================================
+   LOST & FOUND · seen for Letterboxd, not rated
+   ===================================================================== */
+let lfShelf = '', lfQuery = '', lfPage = 1, lfAsk = null;
+const LF_PAGE = 12;
+function renderLF() {
+  const n = db.lostfound.length, cnt = id => db.lostfound.filter(f => f.cat === id).length;
+  $('#lfIn').innerHTML = `
+    <div class="ns"><div class="k">Lost &amp; Found · CmanCinema</div><h2>Lost &amp; Found</h2><div class="dots"></div>
+      <p>Seen for Letterboxd, but not rated — the films the Memory Filter kept out of the framework.</p></div>
+    <div class="lf-chips">${[['', 'All', n], ...LF.map(c => [c.id, c.name, cnt(c.id)])].map(([v, l, k]) => `<button data-lfs="${v}" class="${lfShelf === v ? 'on' : ''}">${l}<i>${k}</i></button>`).join('')}</div>
+    <div class="controls"><input class="placard" id="lfSearch" placeholder="Search Lost &amp; Found…" value="${esc(lfQuery)}" autocomplete="off"></div>
+    <div class="lf-grid" id="lfGrid"></div><div id="lfPager"></div>`;
+  renderLFGrid();
+  $('#lfSearch').addEventListener('input', e => { lfQuery = e.target.value; lfPage = 1; renderLFGrid(); });
+}
+function renderLFGrid() {
+  const q = lfQuery.trim().toLowerCase(), order = id => LF.findIndex(c => c.id === id);
+  const list = db.lostfound.filter(f => (!lfShelf || f.cat === lfShelf) && (!q || String(f.title).toLowerCase().includes(q)))
+    .sort((a, b) => order(a.cat) - order(b.cat) || b.at - a.at);
+  const pages = Math.max(1, Math.ceil(list.length / LF_PAGE));
+  lfPage = Math.min(Math.max(1, lfPage), pages);
+  const edit = canEdit();
+  let last = null, h = '';
+  list.slice((lfPage - 1) * LF_PAGE, lfPage * LF_PAGE).forEach(f => {
+    const c = lfCat(f.cat);
+    if (c.id !== last) { last = c.id; h += `<div class="lf-shelf"><b>${c.name}</b><span>Door ${c.door} · ${DOORS[c.door].name} · ${list.filter(x => x.cat === c.id).length}</span><small>${c.d}</small></div>`; }
+    const was = (f.history || []).slice(-1)[0];
+    h += `<div class="tag-card">${posterHTML({ ...f, year: String(f.year || '') }, 64)}
+      <div><div class="ti">${esc(f.title)}</div><div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · filed ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
+        <span class="cat">Door ${c.door} · ${c.name}</span>${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}</div>
+      ${edit ? `<div class="acts">${lfAsk === f.id ? `<span style="font:italic 600 15px var(--body)">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
+        : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
+           <select data-lfmove="${esc(f.id)}" aria-label="Move to another shelf"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
+           <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div>`;
+  });
+  $('#lfGrid').innerHTML = h || `<p class="lf-empty">${n0() ? 'Nothing on this shelf.' : 'Lost & Found is empty. Films stopped by the Memory Filter at the Box Office land here.'}</p>`;
+  $('#lfPager').innerHTML = pagerHTML(lfPage, pages, 'lfp') + (list.length ? `<p class="pager-note">${list.length} film${list.length === 1 ? '' : 's'} seen, not rated</p>` : '');
+}
+const n0 = () => db.lostfound.length;
+$('#lostfound').addEventListener('click', async e => {
+  const s = e.target.closest('[data-lfs]'); if (s) { lfShelf = s.dataset.lfs; lfPage = 1; return renderLF(); }
+  const p = e.target.closest('[data-lfp]'); if (p) { if (p.disabled) return; lfPage = +p.dataset.lfp; renderLFGrid(); return $('#lfGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  const b = e.target.closest('[data-lfa]'); if (!b || !canEdit()) return;
+  const a = b.dataset.lfa, id = b.dataset.id;
+  if (a === 'del') { lfAsk = id; return renderLFGrid(); }
+  if (a === 'delno') { lfAsk = null; return renderLFGrid(); }
+  if (a === 'delyes') { const t = db.lostfound.find(f => f.id === id)?.title; db.lostfound = db.lostfound.filter(f => f.id !== id); lfAsk = null; if (await persist()) toast(t + ' removed'); return renderLF(); }
+  if (a === 'rewatch') {
+    if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film through the filter.`);
+    const f = db.lostfound.find(x => x.id === id); if (f) mfOpen({ src: 'rewatch', film: { ...f, year: String(f.year || '') } });
+  }
+});
+$('#lostfound').addEventListener('change', e => { const m = e.target.closest('[data-lfmove]'); if (m && m.value) refileLF(m.dataset.lfmove, m.value, 'moved'); });
+
+/* =====================================================================
+   THE PLAYBILL · the framework on a card, one tap away in every room
+   ===================================================================== */
+const PB = {
+  X: { 5: 'It may be applicable, but it’s immaterial to what the film is actually trying to accomplish.',
+       4: 'Impacts (hinders, obstructs, delays, impedes) what the film is trying to accomplish in that it changes the final outcome away from the intended plan of the film.',
+       3: 'Fails to achieve the core aim/goal altogether, but it showed that it could.',
+       2: 'Fundamentally incapable to fulfill its aim.',
+       1: 'Film’s proposal is not worthy of being credited.' },
+  Y: { 5: 'An extraordinarily profound non-negotiable.',
+       4: 'An exceptionally high-caliber baseline experiential standard because of how it delivered its effect, rather than it affecting a perspective shift.',
+       3: 'A stellar and impactful option, but more so because what it delivered itself toward.',
+       2: 'A dependable choice that creates a strong enough impression, but doesn’t generate enough of a standout reason that it ought to be seen.',
+       1: 'Worth considering, but its value lacks the dependable effectiveness that’s necessary to be recommendable.',
+       0: 'Doesn’t provide the sufficient appeal necessary given what it’s trying to do to justify checking it out.' },
+  compass: [
+    [3, 'The rewards of the delivered effects.', 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc.'],
+    [4, 'The exceptional realization of those effects.', 'You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive.'],
+    [5, 'The extraordinary profoundness of their affect.', 'Did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced?'],
+  ],
+  compassNote: 'The distinction is what about that realization dominates your appreciation. HOW is present at both levels. What changes is whether HOW serves the rewards (Y-3) or becomes the distinguishing reason for the experience’s exceptional caliber (Y-4).',
+};
+let pbTab = 'F';
+/* where you are decides what lights up: the film on the reel, or the one in the booth */
+function pbHere() {
+  if (current === 'auditorium' && active && active.film && active.stage === 'reel') return { ax: axis, X: active.film.X, Y: active.film.Y };
+  if (current === 'booth' && bt) return { ax: bt.x != null ? 'Y' : 'X', X: bt.x, Y: bt.y };
+  if (current === 'gameroom' && hsCoord) { const [x, y] = hsCoord.split('/').map(Number); return { ax: hsAxis, X: x, Y: y }; }
+  return null;
+}
+function renderPlaybill() {
+  const here = pbHere();
+  const tabs = [['F', 'Prologue', 'Memory Filter'], ['X', 'Act I', 'X Axis'], ['Y', 'Act II', 'Y Axis'], ['C', 'Interlude', 'Compass'], ['Q', 'Act III', 'Questions']];
+  const lv = (ax, l, name, tag, body) => `<div class="pb-it ${here && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span>
+    <div class="t">${name}${tag ? `<em>${tag}</em>` : ''}</div><p>${body}</p></div>`;
+  let body = '';
+  if (pbTab === 'F') body = `<div class="pb-sec">Prologue · The Memory Filter<small>For rating eligibility · three doors before the booth</small></div>
+    ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
+      <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
+    <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
+  if (pbTab === 'X') body = `<div class="pb-sec">Act I · The X Axis<small>Condition of Achievement · starts at 5, each yes drops a level</small></div>
+    ${[5, 4, 3, 2, 1].map(l => lv('X', l, X_NAMES[l], '', PB.X[l])).join('')}`;
+  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · The Y Axis<small>Viewing Recommendation · starts at 0, each yes climbs a level</small></div>
+    ${[5, 4, 3, 2, 1, 0].map(l => lv('Y', l, Y_NAMES[l], '', PB.Y[l])).join('')}`;
+  if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Recommendation Compass<small>For the top of the Y axis</small></div>
+    ${PB.compass.map(([l, head, txt]) => lv('Y', l, head, Y_NAMES[l], txt)).join('')}
+    <p class="pb-note">${PB.compassNote}</p>`;
+  if (pbTab === 'Q') {
+    const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]}</i></div></div>`;
+    body = `<div class="pb-sec">Act III · The Ordinal Questions<small>Asked on the reel, at the level the films share</small></div>
+      <div class="pb-axis"><span>X · Condition of Achievement</span></div>
+      <p class="pb-note" style="margin:0 0 4px">The film with the more consequential weakening goes lower.</p>
+      ${[5, 4, 3, 2, 1].map(l => q('X', l)).join('')}
+      <div class="pb-axis" style="margin-top:16px"><span>Y · Viewing Recommendation</span></div>
+      <p class="pb-note" style="margin:0 0 4px">The film with the more compelling grounds goes higher.</p>
+      ${[5, 4, 3, 2, 1, 0].map(l => q('Y', l)).join('')}`;
+  }
+  $('#pbCard').innerHTML = `<button class="pb-x" data-pbx aria-label="Close">✕</button>
+    <div class="pb-h"><div class="k">CmanCinema presents</div><h2>Playbill</h2><div class="s">The program for every evaluation and every spin</div></div>
+    <div class="pb-tabs">${tabs.map(([k, a, b]) => `<button class="${pbTab === k ? 'on' : ''}" data-pbt="${k}"><b>${a}</b>${b}</button>`).join('')}</div>
+    <div class="pb-body" id="pbBody">${body}</div>`;
+  const h = $('#pbBody .here'); if (h) h.scrollIntoView({ block: 'center' });
+}
+function openPlaybill() {
+  const here = pbHere();
+  if (here && current === 'auditorium') pbTab = 'Q';
+  else if (here && current === 'booth') pbTab = here.ax;
+  else if (current === 'boxoffice' || current === 'lostfound') pbTab = 'F';
+  renderPlaybill(); $('#playbill').classList.add('show');
+}
+function closePlaybill() { const p = $('#playbill'); if (p) p.classList.remove('show'); }
+$('#pbBtn').addEventListener('click', () => $('#playbill').classList.contains('show') ? closePlaybill() : openPlaybill());
+$('#playbill').addEventListener('click', e => {
+  const t = e.target.closest('[data-pbt]'); if (t) { pbTab = t.dataset.pbt; renderPlaybill(); $('#pbBody').scrollTop = 0; const h = $('#pbBody .here'); if (h) h.scrollIntoView({ block: 'center' }); return; }
+  if (e.target.id === 'playbill' || e.target.closest('[data-pbx]')) closePlaybill();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlaybill(); if (mf) mfClose(); } });
 
 /* =====================================================================
    THE MANAGER'S OFFICE · sign-in, backup, import, removal, clearing
@@ -2531,7 +2912,7 @@ $('#office').addEventListener('click', async e => {
   if (o === 'removeyes') { const t = raw(b.dataset.id)?.title; removeFilm(b.dataset.id); askRemove = null; if (await persist()) toast(t + ' removed'); return renderOffice(); }
   if (o === 'clear') {
     endWorkflow();
-    db.films = []; db.showdowns = []; db.placements = []; db.lists.forEach(l => l.ids = []);
+    db.films = []; db.showdowns = []; db.placements = []; db.lostfound = []; db.lists.forEach(l => l.ids = []);
     if (await persist()) toast('The house is cleared'); return renderOffice();
   }
 });
