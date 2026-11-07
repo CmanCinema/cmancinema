@@ -883,10 +883,7 @@ button.li2:hover{border-color:var(--gold)}
 
 
 /* ===================== LOST & FOUND + THE MEMORY FILTER ===================== */
-#lostfound{background:
-  radial-gradient(ellipse 60% 40% at 50% 0,rgba(255,200,120,.14),transparent 70%),
-  repeating-linear-gradient(90deg,transparent 0 120px,rgba(0,0,0,.18) 120px 124px),
-  linear-gradient(#2a1410,#140806)}
+
 .lf .controls{margin-top:22px}
 .lf-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:22px}
 .lf-chips button{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:30px;border:1.5px solid var(--gold-lo);background:transparent;color:var(--cream);font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase}
@@ -949,42 +946,175 @@ button.li2:hover{border-color:var(--gold)}
 }
 
 
-/* ---- coat racks ---- */
-.rack{margin:34px 0 6px}
-.rack-sign{display:flex;align-items:baseline;gap:10px 14px;flex-wrap:wrap;padding:0 6px}
-.rack-sign .no{align-self:center;padding:4px 10px;border-radius:3px;background:linear-gradient(#f3d58f,#b8873c);color:#2a0a10;font:800 10px var(--serif);letter-spacing:.22em;text-transform:uppercase;box-shadow:0 2px 0 #5a3a10}
-.rack-sign b{font:400 clamp(22px,3vw,28px) var(--deco);letter-spacing:.06em;color:var(--gold-hi)}
-.rack-sign span.d{font:700 11px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
-.rack-sign small{flex-basis:100%;font:italic 500 16px var(--body);color:rgba(243,230,200,.72)}
-.rack-bar{position:relative;height:14px;margin:16px 10px 0;border-radius:7px;background:linear-gradient(#fff1c8,#e8be6a 35%,#9c7334 72%,#5a3a10);box-shadow:0 8px 12px rgba(0,0,0,.5)}
-.rack-bar i{position:absolute;top:-6px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c8,#e8be6a 45%,#6f4c1c);box-shadow:0 4px 8px rgba(0,0,0,.5)}
-.rack-bar i.l{left:-12px}.rack-bar i.r{right:-12px}
-.rack-hang{position:relative;display:flex;gap:18px;overflow-x:auto;margin-top:-19px;padding:12px 22px 26px;align-items:flex-start;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#9c7334 transparent}
-.htag{position:relative;flex:none;width:196px;margin-top:44px;scroll-snap-align:start;transform-origin:50% -44px;transform:rotate(var(--r,0deg));transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
-.htag:hover{transform:rotate(calc(var(--r,0deg) * -1))}
-.htag::before{content:"";position:absolute;left:50%;top:-36px;width:2px;height:46px;margin-left:-1px;background:linear-gradient(#c9a46a,#8a6a3a)}
-.htag::after{content:"";position:absolute;left:50%;top:-53px;width:18px;height:18px;margin-left:-9px;border-radius:50%;border:3px solid #d9b26a;box-shadow:0 2px 3px rgba(0,0,0,.45)}
-.htag .card{position:relative;padding:24px 12px 12px;text-align:center;background:linear-gradient(#f6ead0,#e3cc9a);color:var(--ink);border-radius:4px 4px 10px 10px;box-shadow:0 12px 24px rgba(0,0,0,.55);clip-path:polygon(22% 0,78% 0,100% 9%,100% 100%,0 100%,0 9%)}
-.htag .card::before{content:"";position:absolute;left:50%;top:8px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#140806;box-shadow:0 0 0 2px #b8873c}
-.htag .card::after{content:"";position:absolute;inset:4px;border:1px dashed rgba(106,26,30,.3);border-radius:2px 2px 8px 8px;pointer-events:none;clip-path:polygon(22% 0,78% 0,100% 9%,100% 100%,0 100%,0 9%)}
-.htag .poster{margin:0 auto 8px}
-.htag .ti{font:800 16px/1.15 var(--serif);color:var(--ink)}
-.htag .yr{font:600 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a;margin:4px 0 0}
-.htag .was{display:block;margin-top:6px;font:italic 500 14px var(--body);color:#6b5236}
-.htag .acts{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed #b48a4e}
-.htag .acts button,.htag .acts select{width:100%;padding:7px 8px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 10px var(--serif);letter-spacing:.12em;text-transform:uppercase;text-align:center}
-.htag .acts .go{background:#5a0f22;color:var(--gold-hi);border-color:#5a0f22}
-.htag .acts .warn{background:#c4202f;color:#fff;border-color:#c4202f}
-.htag .acts .ask{font:italic 600 14px var(--body);color:#5a0f22}
-.rack-empty{display:flex;align-items:flex-start;gap:46px;padding:0 40px;height:80px;margin-top:-16px}
-.rack-empty i{position:relative;width:18px;height:18px;border-radius:50%;border:3px solid rgba(217,178,106,.75);box-shadow:0 2px 3px rgba(0,0,0,.45)}
-.rack-empty span{align-self:center;font:italic 500 17px var(--body);color:rgba(243,230,200,.55)}
-@media (max-width:640px){
-  .htag{width:172px}
-  .rack-hang{gap:14px;padding:0 14px 24px}
-  .rack-empty{gap:30px;padding:0 24px}
-}
+/* ---- LOST & FOUND · a back room, one fixture per rack ---- */
+#lostfound{background:
+  radial-gradient(ellipse 70% 45% at 50% 0,rgba(255,214,150,.16),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 64px),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.10) 0 2px,transparent 2px 128px),
+  linear-gradient(#3a2a1c,#211611 60%,#160d09)}
+.lf-signbox{display:flex;justify-content:center;margin-top:4px}
+.enamel{position:relative;padding:14px 38px 12px;border-radius:12px;background:linear-gradient(#f4ead2,#e6d3a8);border:5px solid #5a0f22;box-shadow:0 0 0 2px #b8873c,0 16px 34px rgba(0,0,0,.6),inset 0 0 0 2px #b8873c;text-align:center;transform:rotate(-1deg)}
+.enamel::before,.enamel::after{content:"";position:absolute;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#eee,#888 60%,#444)}
+.enamel::before{left:12px}.enamel::after{right:12px}
+.enamel b{display:block;font:400 clamp(34px,6vw,58px)/1 var(--deco);letter-spacing:.12em;color:#5a0f22}
+.enamel small{display:block;margin-top:4px;font:700 10px var(--serif);letter-spacing:.32em;text-transform:uppercase;color:#7a4a2a}
+.lf-intro{max-width:640px;margin:16px auto 0;text-align:center;font:italic 500 18px/1.45 var(--body);color:rgba(243,230,200,.75)}
+.counter{position:relative;max-width:760px;margin:22px auto 0;padding:16px 18px 18px;border-radius:6px 6px 2px 2px;background:linear-gradient(#7a4a26,#5a3418 40%,#3e230f);box-shadow:0 -4px 0 #9a6a3a inset,0 14px 0 -6px #1a0d06,0 22px 30px rgba(0,0,0,.6);display:flex;align-items:center;gap:14px}
+.counter .placard{flex:1;margin:0}
+.bell{flex:none;position:relative;width:46px;height:34px}
+.bell::before{content:"";position:absolute;left:5px;right:5px;bottom:6px;height:24px;border-radius:24px 24px 4px 4px;background:radial-gradient(circle at 35% 30%,#fff6d0,#e8be6a 45%,#8a6026)}
+.bell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;border-radius:3px;background:linear-gradient(#3a2a1a,#140c06)}
+.bell i{position:absolute;left:50%;top:-1px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#e8be6a}
+.counter .note{flex:none;font:700 9px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#f3d58f;opacity:.75;max-width:70px;line-height:1.3}
+.lf-room{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 20px;margin-top:30px}
+.lf-room.solo{grid-template-columns:minmax(0,1fr)}
+.fx{position:relative;min-width:0;display:flex;flex-direction:column}
+.plate{display:flex;align-items:center;gap:9px;margin:0 auto 10px;padding:6px 12px 6px 8px;border-radius:4px;background:linear-gradient(#f6dc9a,#c99a4a 55%,#9c7334);color:#2a0a10;box-shadow:0 3px 0 #5a3a10,0 6px 12px rgba(0,0,0,.5);max-width:100%}
+.plate .no{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#5a0f22;color:var(--gold-hi);font:400 13px var(--deco)}
+.plate b{min-width:0;font:800 12px var(--serif);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate .ct{flex:none;font:400 15px var(--deco);color:#5a0f22;padding-left:8px;border-left:1px solid rgba(90,15,34,.35)}
+.fx-d{margin:10px 6px 0;text-align:center;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.6)}
+.fx-body{position:relative;height:250px;border-radius:6px;overflow:hidden}
+.fx-scroll{position:absolute;inset:0;display:flex;align-items:flex-start;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(232,190,106,.5) transparent}
+.fx-empty{position:absolute;left:0;right:0;bottom:16px;text-align:center;font:italic 600 15px var(--body);z-index:3}
+.it{position:relative;flex:none;padding:0;border:0;background:none;cursor:pointer;text-align:center;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.it:hover,.it:focus-visible{z-index:5}
+.it .t{display:block;font:700 11px/1.15 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* 1 · corkboard of snapshots */
+.fx-caught .fx-body{border:10px solid #6a4224;border-image:linear-gradient(#8a5a30,#5a3418) 1;background:radial-gradient(circle,rgba(0,0,0,.18) 1px,transparent 1.5px) 0 0/7px 7px,radial-gradient(circle,rgba(255,255,255,.12) 1px,transparent 1.5px) 3px 4px/9px 9px,linear-gradient(135deg,#c99a62,#b07f4a 50%,#c4925a);box-shadow:inset 0 0 20px rgba(0,0,0,.4),0 10px 22px rgba(0,0,0,.5)}
+.fx-caught .fx-scroll{padding:22px 16px;align-items:center;gap:16px}
+.it.pol{width:96px;padding:7px 7px 6px;background:#fbf8f0;box-shadow:0 6px 12px rgba(0,0,0,.4);transform:rotate(var(--r))}
+.it.pol .poster{width:82px!important;margin:0 auto}
+.it.pol .t{margin-top:5px;font:italic 600 13px var(--body);color:#2a1a10}
+.it.pol .pin{position:absolute;left:50%;top:-6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 55%,#6a0a14);box-shadow:0 3px 3px rgba(0,0,0,.45);z-index:2}
+.it.pol:hover{transform:rotate(0) scale(1.05)}
+.fx-caught .fx-empty{color:rgba(60,30,10,.7)}
+
+/* 2 · the unclaimed bin */
+.fx-met .fx-body{background:radial-gradient(ellipse 70% 30% at 50% 100%,rgba(0,0,0,.4),transparent)}
+.fx-met .fx-scroll{padding:44px 22px 0;gap:0}
+.it.fog{width:74px;margin-right:-14px;transform:rotate(var(--r)) translateY(var(--y));filter:grayscale(.75) blur(1.3px) brightness(.85);transition:filter .3s,transform .35s}
+.it.fog .poster{width:74px!important;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.it.fog:hover{filter:none;transform:rotate(0) translateY(-14px)}
+.bin{position:absolute;left:6px;right:6px;bottom:0;height:36%;z-index:4;pointer-events:none;border-radius:3px 3px 6px 6px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 3px,transparent 3px 6px),linear-gradient(#c9a06a,#a87c48 60%,#8a6236);box-shadow:inset 0 6px 0 rgba(255,255,255,.18),inset 0 -10px 18px rgba(0,0,0,.25),0 12px 20px rgba(0,0,0,.5);display:grid;place-items:center}
+.bin::before{content:"";position:absolute;left:38%;top:0;width:24%;height:100%;background:linear-gradient(rgba(220,200,150,.55),rgba(200,180,130,.45));border-left:1px solid rgba(0,0,0,.08);border-right:1px solid rgba(0,0,0,.08)}
+.bin span{position:relative;font:800 13px/1.2 var(--serif);letter-spacing:.28em;text-transform:uppercase;color:rgba(40,20,10,.72);text-align:center;transform:rotate(-2deg)}
+.bin span small{display:block;font-size:9px;letter-spacing:.3em}
+.fx-met .fx-empty{bottom:auto;top:40px;color:rgba(243,230,200,.5)}
+
+/* 3 · the coat-hook board: each tag drifts lower down the line */
+.fx-lost .fx-body{background:linear-gradient(#3a2414,#2a190e)}
+.fx-lost .fx-body::before{content:"";position:absolute;left:0;right:0;top:14px;height:30px;background:linear-gradient(#a0703e,#7a4f28 55%,#5a3418);box-shadow:0 6px 10px rgba(0,0,0,.45)}
+.fx-lost .fx-scroll{padding:30px 20px 0;gap:14px}
+.it.coat{width:88px;margin-top:var(--y);transform-origin:50% -24px;transform:rotate(var(--r));opacity:var(--o)}
+.it.coat::before{content:"";position:absolute;left:50%;top:-24px;width:2px;height:30px;margin-left:-1px;background:#c9a46a}
+.it.coat::after{content:"";position:absolute;left:50%;top:-33px;width:10px;height:14px;margin-left:-5px;border:3px solid #e8be6a;border-top:0;border-radius:0 0 8px 8px}
+.it.coat .card{display:block;padding:16px 6px 7px;background:linear-gradient(#f6ead0,#e3cc9a);border-radius:3px 3px 8px 8px;box-shadow:0 8px 14px rgba(0,0,0,.5);clip-path:polygon(24% 0,76% 0,100% 9%,100% 100%,0 100%,0 9%)}
+.it.coat .card::before{content:"";position:absolute;left:50%;top:5px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#140806}
+.it.coat .poster{width:58px!important;margin:0 auto 4px}
+.it.coat .t{color:var(--ink)}
+.it.coat:hover{transform:rotate(0);opacity:1}
+.hooks{position:absolute;left:0;right:0;top:20px;height:18px;z-index:1;background:radial-gradient(circle at 50% 50%,#f3d58f 3px,#9c7334 5px,transparent 6px) 30px 0/102px 18px repeat-x}
+.fx-lost .fx-empty{color:rgba(243,230,200,.5)}
+
+/* 4 · pegboard of torn ticket stubs */
+.fx-tapout .fx-body{background:radial-gradient(circle,#1a1a1a 2.4px,transparent 3px) 0 0/18px 18px,linear-gradient(#8a8578,#6e6a60);box-shadow:inset 0 0 0 6px #4a463e,inset 0 0 24px rgba(0,0,0,.45),0 10px 22px rgba(0,0,0,.5)}
+.fx-tapout .fx-scroll{padding:26px 18px;gap:14px}
+.it.stub{width:84px;padding:10px 7px 18px;background:linear-gradient(#f2e2c0,#e2c896);transform:rotate(var(--r));clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),92% 100%,82% calc(100% - 9px),70% 100%,58% calc(100% - 8px),47% 100%,36% calc(100% - 10px),24% 100%,13% calc(100% - 7px),0 100%);filter:drop-shadow(0 5px 6px rgba(0,0,0,.45))}
+.it.stub::before{content:"ADMIT ONE";display:block;margin-bottom:5px;padding:2px 0;border-top:1px dashed #9a2a2a;border-bottom:1px dashed #9a2a2a;font:800 7.5px var(--serif);letter-spacing:.2em;color:#9a2a2a}
+.it.stub::after{content:"";position:absolute;left:50%;top:-4px;width:26px;height:12px;margin-left:-13px;border-radius:2px;background:linear-gradient(#555,#222);box-shadow:0 2px 2px rgba(0,0,0,.4)}
+.it.stub .poster{width:62px!important;margin:0 auto 5px}
+.it.stub .t{color:#3a0c14}
+.it.stub:hover{transform:rotate(0) translateY(-3px)}
+.fx-tapout .fx-empty{color:rgba(20,20,20,.75)}
+
+/* 5 · the dark shelf: tapes fade into the night */
+.fx-fade .fx-body{background:radial-gradient(ellipse 55% 70% at 14% 0,rgba(255,214,140,.28),transparent 70%),linear-gradient(#141010,#050404)}
+.fx-fade .fx-body::after{content:"";position:absolute;left:0;right:0;bottom:30px;height:14px;background:linear-gradient(#5a3a22,#2a1a10);box-shadow:0 8px 14px rgba(0,0,0,.8)}
+.fx-fade .fx-body::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,transparent 30%,rgba(0,0,0,.75) 100%)}
+.fx-fade .fx-scroll{align-items:flex-end;padding:0 18px 44px;gap:10px}
+.lamp{position:absolute;left:10%;top:0;width:30px;height:16px;border-radius:0 0 16px 16px;background:linear-gradient(#5a4a3a,#2a2018);z-index:5}
+.lamp::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#ffe2a0;box-shadow:0 0 18px 6px rgba(255,200,110,.45);animation:lampDim 6s ease-in-out infinite}
+@keyframes lampDim{0%,100%{opacity:1}45%{opacity:.75}50%{opacity:.35}55%{opacity:.8}}
+.zz{position:absolute;right:16px;top:14px;z-index:5;font:italic 600 18px var(--body);color:rgba(200,210,255,.55);letter-spacing:.2em;animation:zz 3.5s ease-in-out infinite}
+@keyframes zz{50%{transform:translateY(-6px);opacity:.3}}
+.it.vhs{width:70px;filter:brightness(var(--b));transition:filter .4s}
+.it.vhs .poster{width:70px!important;box-shadow:0 6px 10px rgba(0,0,0,.7)}
+.it.vhs .t{margin-top:4px;color:#d8c8a8}
+.it.vhs:hover{filter:brightness(1)}
+.fx-fade .fx-empty{color:rgba(243,230,200,.4)}
+
+/* 6 · the old steamer trunk */
+.fx-once .fx-body{overflow:visible}
+.trunk-lid{position:absolute;left:4%;right:4%;top:0;height:30%;border-radius:14px 14px 0 0;background:linear-gradient(#5a3418,#3a200e);box-shadow:inset 0 0 0 4px #2a1508,inset 0 -8px 14px rgba(0,0,0,.5);transform:perspective(300px) rotateX(18deg);transform-origin:bottom}
+.trunk-lid::before{content:"";position:absolute;inset:8px 12px;border:2px solid rgba(232,190,106,.35);border-radius:8px 8px 0 0}
+.trunk-in{position:absolute;left:4%;right:4%;top:30%;bottom:0;border-radius:0 0 8px 8px;background:radial-gradient(ellipse at 50% 30%,#4a3020,#1e120a 80%);box-shadow:inset 0 0 0 6px #6a4222,inset 0 0 0 9px #2a1508,inset 0 10px 24px rgba(0,0,0,.7),0 14px 24px rgba(0,0,0,.6);overflow:hidden}
+.trunk-in::before,.trunk-in::after{content:"";position:absolute;bottom:0;width:22px;height:22px;background:linear-gradient(135deg,#f3d58f,#9c7334);z-index:4}
+.trunk-in::before{left:0;clip-path:polygon(0 0,100% 100%,0 100%)}
+.trunk-in::after{right:0;clip-path:polygon(100% 0,100% 100%,0 100%)}
+.fx-once .fx-scroll{padding:14px 18px 10px;align-items:center;gap:6px}
+.it.sepia{width:84px;padding:6px 6px 14px;background:#e9dcc0;transform:rotate(var(--r));box-shadow:0 5px 10px rgba(0,0,0,.55);filter:sepia(.85) contrast(.9) brightness(.92);transition:filter .4s,transform .35s}
+.it.sepia .poster{width:72px!important;margin:0 auto}
+.it.sepia .t{margin-top:4px;font:italic 600 12px var(--body);color:#4a3220}
+.it.sepia:hover{filter:none;transform:rotate(0) scale(1.05)}
+.cobweb{position:absolute;right:4%;top:30%;width:60px;height:60px;z-index:6;pointer-events:none;opacity:.55}
+.dust{position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle,rgba(255,240,210,.35) .8px,transparent 1.3px) 0 0/23px 19px,radial-gradient(circle,rgba(255,240,210,.25) .8px,transparent 1.3px) 9px 7px/31px 27px}
+.fx-once .fx-empty{bottom:30px;color:rgba(243,230,200,.45)}
+
+@media (max-width:1100px){ .lf-room{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:640px){
+  .lf-room{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px;margin:20px -6px 0}
+  .lf-room .fx-body{zoom:.6}
+  .lf-room.solo .fx-body{zoom:1}
+  .fx-d{display:none}
+  .lf-room.solo .fx-d{display:block}
+  .plate{gap:6px;padding:5px 8px 5px 5px;margin-bottom:8px;width:100%;justify-content:space-between}
+  .plate .no{width:18px;height:18px;font-size:11px}
+  .plate b{white-space:normal;font-size:9px;letter-spacing:.06em;line-height:1.2;text-align:center;flex:1}
+  .plate .ct{font-size:12px;padding-left:6px}
+  .lf-room.solo .plate{width:auto}
+  .counter{padding:12px;gap:10px}
+  .counter .note{display:none}
+  .enamel{padding:10px 26px 9px}
+}
+/* claim slip for a tag */
+#lfSlip{position:fixed;inset:0;z-index:46;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.75);backdrop-filter:blur(2px)}
+#lfSlip.show{display:grid}
+.slip{position:relative;width:min(400px,100%);display:grid;grid-template-columns:96px 1fr;gap:14px;padding:22px 20px 18px 34px;background:linear-gradient(#f6ead0,#e3cc9a);color:var(--ink);border-radius:4px 14px 14px 4px;box-shadow:0 0 0 2px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .3s cubic-bezier(.2,1.3,.4,1)}
+.slip::before{content:"";position:absolute;left:12px;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#140806;box-shadow:0 0 0 2px #b8873c}
+.slip::after{content:"";position:absolute;left:0;top:0;bottom:0;width:26px;border-right:1.5px dashed rgba(106,26,30,.35)}
+.slip .x{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;border:1.5px solid #7a1a22;background:none;color:#7a1a22}
+.slip .k{font:700 10px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:#7a1a22}
+.slip h3{margin:4px 0 2px;font:800 21px/1.15 var(--serif);color:var(--ink);padding-right:24px}
+.slip .yr{font:600 11px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
+.slip .cat{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:3px;background:#5a0f22;color:var(--gold-hi);font:700 10px var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.slip .was{display:block;margin-top:6px;font:italic 500 15px var(--body);color:#6b5236}
+.slip .acts{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:12px;border-top:1px dashed #b48a4e}
+.slip .acts button,.slip .acts select{padding:9px 10px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 11px var(--serif);letter-spacing:.12em;text-transform:uppercase;text-align:center}
+.slip .acts .go{grid-column:1/-1;background:#5a0f22;color:var(--gold-hi);border-color:#5a0f22}
+.slip .acts .warn{background:#c4202f;color:#fff;border-color:#c4202f}
+.slip .acts .ask{grid-column:1/-1;text-align:center;font:italic 600 16px var(--body);color:#5a0f22}
+@media (max-width:1100px){ .rack-wall{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:640px){
+  .rack-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px -6px 0}
+  .rack-wall.solo{grid-template-columns:minmax(0,1fr)}
+  .rack{padding-top:10px}
+  .rack-sign{gap:6px;padding:0 8px;align-items:flex-start}
+  .rack-sign .no{width:22px;height:22px;font-size:12px}
+  .rack-sign b{white-space:normal;font-size:14.5px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:2.3em}
+  .rack-sign .ct{min-width:20px;padding:1px 5px;font-size:11px}
+  .rack-d{display:none}
+  .rack-wall.solo .rack-d{display:-webkit-box;margin-left:38px}
+  .rack-bar{margin:8px 8px 0;height:8px}
+  .rack-bar i{width:16px;height:16px;top:-4px}
+  .rack-hang{gap:10px;padding:10px 12px 12px}
+  .htag{width:80px}
+  .htag .poster{width:50px!important}
+  .htag .ti{font-size:11px}
+  .rack-empty{gap:14px;padding:4px 16px 10px;min-height:40px}
+  .rack-empty span{font-size:13px}
+}
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -1078,6 +1208,7 @@ button.li2:hover{border-color:var(--gold)}
 <!-- ===================== FILM VAULT ===================== -->
 <section class="scene" id="vault"><div class="vt" id="vaultIn"></div></section>
 <section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
+<div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
 <div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Film profile"><div class="prof" id="prof"></div></div>
@@ -1531,7 +1662,7 @@ function goTo(id, viaCurtain = true) {
     $('#stub').classList.toggle('hide', id === 'marquee');
     $('#pbBtn').classList.toggle('hide', id === 'marquee');
     document.body.classList.toggle('cc-on', !!(typeof hsEdit !== 'undefined' && hsEdit) && id === 'gameroom');
-    closePlaybill();
+    closePlaybill(); if (typeof closeSlip === 'function') closeSlip();
     document.querySelectorAll('#stub [data-go]').forEach(b => b.classList.toggle('on', b.dataset.go === id));
     renderScene(id);
     document.getElementById(id).scrollTop = 0;
@@ -2735,55 +2866,94 @@ const LF_PAGE = 12;
 function renderLF() {
   const n = db.lostfound.length, cnt = id => db.lostfound.filter(f => f.cat === id).length;
   $('#lfIn').innerHTML = `
-    <div class="ns"><div class="k">Lost &amp; Found · CmanCinema</div><h2>Lost &amp; Found</h2><div class="dots"></div>
-      <p>Seen for Letterboxd, but not rated. Every film the Memory Filter stopped hangs on the rack for the door that stopped it.</p></div>
+    <div class="lf-signbox"><div class="enamel"><b>Lost &amp; Found</b><small>CmanCinema · Back of house</small></div></div>
+    <p class="lf-intro">Seen for Letterboxd, but not rated. Whatever the Memory Filter stopped at the door ends up back here, kept the way it was left.</p>
     <div class="lf-chips">${[['', 'All', n], ...LF.map(c => [c.id, c.name, cnt(c.id)])].map(([v, l, k]) => `<button data-lfs="${v}" class="${lfShelf === v ? 'on' : ''}">${l}<i>${k}</i></button>`).join('')}</div>
-    <div class="controls"><input class="placard" id="lfSearch" placeholder="Search the racks…" value="${esc(lfQuery)}" autocomplete="off"></div>
+    <div class="counter"><span class="bell"><i></i></span><input class="placard" id="lfSearch" placeholder="Ask the counter · title or year…" value="${esc(lfQuery)}" autocomplete="off"><span class="note">Claims by slip only</span></div>
     <div id="lfGrid"></div><div id="lfPager"></div>`;
   renderLFGrid();
   $('#lfSearch').addEventListener('input', e => { lfQuery = e.target.value; lfPage = 1; renderLFGrid(); });
 }
+const FX_EMPTY = { caught: 'Nothing pinned up yet', met: 'The bin is empty', lost: 'No tags on the hooks', tapout: 'No stubs on the board', fade: 'The shelf sits dark and empty', once: 'The trunk is empty' };
+const COBWEB = `<svg class="cobweb" viewBox="0 0 60 60" fill="none" stroke="#e8dcc0" stroke-width=".8"><path d="M60 0L10 50M60 0L30 58M60 0L2 28M60 0L60 60M60 0L0 0"/><path d="M48 0q2 10 12 12M36 0q3 18 24 24M24 0q5 26 36 36M12 0q6 34 48 48"/></svg>`;
+function fxItem(c, f, i) {
+  const p = w => posterHTML({ ...f, year: String(f.year || '') }, w), t = `<span class="t">${esc(f.title)}</span>`;
+  const a = `data-lftag="${esc(f.id)}" title="${esc(f.title)}${f.year ? ' (' + esc(f.year) + ')' : ''}"`;
+  const r = ['-4deg', '3deg', '-2deg', '5deg', '-3deg', '2deg'][i % 6];
+  switch (c.id) {
+    case 'caught': return `<button class="it pol" style="--r:${r}" ${a}><i class="pin"></i>${p(82)}${t}</button>`;
+    case 'met':    return `<button class="it fog" style="--r:${r};--y:${[0, 10, 4, 14, 2, 8][i % 6]}px" ${a}>${p(74)}</button>`;
+    case 'lost':   return `<button class="it coat" style="--r:${Math.min(2 + i * 3, 16)}deg;--y:${Math.min(i * 8, 48)}px;--o:${Math.max(1 - i * .07, .6)}" ${a}><span class="card">${p(58)}${t}</span></button>`;
+    case 'tapout': return `<button class="it stub" style="--r:${r}" ${a}>${p(62)}${t}</button>`;
+    case 'fade':   return `<button class="it vhs" style="--b:${Math.max(1 - i * .14, .3)}" ${a}>${p(70)}${t}</button>`;
+    default:       return `<button class="it sepia" style="--r:${r}" ${a}>${p(72)}${t}</button>`;
+  }
+}
+function fxBody(c, items) {
+  const empty = items ? '' : `<div class="fx-empty">${FX_EMPTY[c.id]}</div>`;
+  const scroll = `<div class="fx-scroll">${items}</div>`;
+  switch (c.id) {
+    case 'met':  return `<div class="fx-body">${scroll}<div class="bin"><span>Unclaimed<small>No name · no date</small></span></div>${empty}</div>`;
+    case 'lost': return `<div class="fx-body">${scroll}${empty}</div>`;
+    case 'fade': return `<div class="fx-body"><span class="lamp"></span><span class="zz">z z z</span>${scroll}${empty}</div>`;
+    case 'once': return `<div class="fx-body"><div class="trunk-lid"></div><div class="trunk-in">${scroll}<div class="dust"></div></div>${COBWEB}${empty}</div>`;
+    default:     return `<div class="fx-body">${scroll}${empty}</div>`;
+  }
+}
 function renderLFGrid() {
-  const q = lfQuery.trim().toLowerCase(), edit = canEdit();
-  const sway = ['-2deg', '1.5deg', '-1deg', '2.2deg', '-1.6deg', '0.8deg'];
-  const racks = LF.map((c, ri) => {
+  const q = lfQuery.trim().toLowerCase();
+  const room = LF.map((c, ri) => {
     if (lfShelf && lfShelf !== c.id) return '';
-    const all = db.lostfound.filter(f => f.cat === c.id), list = all.filter(f => !q || String(f.title).toLowerCase().includes(q) || String(f.year || "").includes(q)).sort((a, b) => b.at - a.at);
+    const all = db.lostfound.filter(f => f.cat === c.id), list = all.filter(f => !q || String(f.title).toLowerCase().includes(q) || String(f.year || '').includes(q)).sort((a, b) => b.at - a.at);
     if (q && !list.length) return '';
-    const tags = list.map((f, i) => {
-      const was = (f.history || []).slice(-1)[0];
-      return `<div class="htag" style="--r:${sway[(i + ri) % sway.length]}"><div class="card">${posterHTML({ ...f, year: String(f.year || '') }, 92)}
-        <div class="ti">${esc(f.title)}</div><div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
-        ${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}
-        ${edit ? `<div class="acts">${lfAsk === f.id ? `<span class="ask">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
-          : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
-             <select data-lfmove="${esc(f.id)}" aria-label="Move to another rack"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
-             <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div></div>`;
-    }).join('');
-    return `<section class="rack" data-rack="${c.id}">
-      <div class="rack-sign"><span class="no">Rack ${ri + 1}</span><b>${c.name}</b><span class="d">Door ${c.door} · ${DOORS[c.door].name} · ${all.length} film${all.length === 1 ? '' : 's'}</span><small>${c.d}</small></div>
-      <div class="rack-bar"><i class="l"></i><i class="r"></i></div>
-      ${tags ? `<div class="rack-hang">${tags}</div>` : `<div class="rack-empty"><i></i><i></i><i></i><span>Nothing hanging here yet.</span></div>`}
+    return `<section class="fx fx-${c.id}" data-rack="${c.id}">
+      <div class="plate" title="Door ${c.door} · ${DOORS[c.door].name}"><span class="no">${ri + 1}</span><b>${c.name}</b><span class="ct">${all.length}</span></div>
+      ${fxBody(c, list.map((f, i) => fxItem(c, f, i)).join(''))}
+      <div class="fx-d">Door ${c.door} · ${c.d}</div>
     </section>`;
   }).join('');
-  $('#lfGrid').innerHTML = racks || `<p class="lf-empty">No film in Lost &amp; Found matches “${esc(lfQuery)}”.</p>`;
+  $('#lfGrid').innerHTML = room ? `<div class="lf-room ${lfShelf ? 'solo' : ''}">${room}</div>` : `<p class="lf-empty">Nothing at the counter matches “${esc(lfQuery)}”.</p>`;
   const n = db.lostfound.length;
-  $('#lfPager').innerHTML = `<p class="pager-note">${n ? `${n} film${n === 1 ? '' : 's'} seen, not rated` : 'Films stopped by the Memory Filter at the Box Office hang here.'}</p>`;
+  $('#lfPager').innerHTML = `<p class="pager-note">${n ? `${n} film${n === 1 ? '' : 's'} seen, not rated · tap anything for its claim slip` : 'Films stopped by the Memory Filter at the Box Office end up back here.'}</p>`;
+  renderSlip();
+}
+/* the claim slip: a tag's details and, for the editor, what to do with it */
+let lfOpen = null;
+function renderSlip() {
+  const f = lfOpen && db.lostfound.find(x => x.id === lfOpen), el = $('#lfSlip');
+  if (!f) { lfOpen = null; el.classList.remove('show'); return; }
+  const c = lfCat(f.cat), was = (f.history || []).slice(-1)[0], edit = canEdit();
+  el.innerHTML = `<div class="slip"><button class="x" data-slipx aria-label="Close">✕</button>
+    ${posterHTML({ ...f, year: String(f.year || '') }, 96)}
+    <div><div class="k">Claim slip · No. ${LF.indexOf(c) + 1}</div><h3>${esc(f.title)}</h3>
+      <div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · filed ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
+      <span class="cat">Door ${c.door} · ${c.name}</span>${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}</div>
+    ${edit ? `<div class="acts">${lfAsk === f.id ? `<span class="ask">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
+      : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
+         <select data-lfmove="${esc(f.id)}" aria-label="Move to another rack"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
+         <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div>`;
+  el.classList.add('show');
 }
 const n0 = () => db.lostfound.length;
-$('#lostfound').addEventListener('click', async e => {
+function closeSlip() { lfOpen = null; lfAsk = null; const el = $('#lfSlip'); if (el) el.classList.remove('show'); }
+function lfAct(e) { const t = e.target.closest('[data-lftag]'); if (t) { lfOpen = t.dataset.lftag; lfAsk = null; renderSlip(); } }
+$('#lfSlip').addEventListener('click', e => { if (e.target.id === 'lfSlip' || e.target.closest('[data-slipx]')) return closeSlip(); lfClick(e); });
+$('#lfSlip').addEventListener('change', e => { const m = e.target.closest('[data-lfmove]'); if (m && m.value) { lfOpen = null; refileLF(m.dataset.lfmove, m.value, 'moved'); } });
+$('#lostfound').addEventListener('click', e => { if (e.target.closest('[data-lftag]')) return lfAct(e); lfClick(e); });
+async function lfClick(e) {
   const s = e.target.closest('[data-lfs]'); if (s) { lfShelf = s.dataset.lfs; lfPage = 1; return renderLF(); }
   const p = e.target.closest('[data-lfp]'); if (p) { if (p.disabled) return; lfPage = +p.dataset.lfp; renderLFGrid(); return $('#lfGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   const b = e.target.closest('[data-lfa]'); if (!b || !canEdit()) return;
   const a = b.dataset.lfa, id = b.dataset.id;
-  if (a === 'del') { lfAsk = id; return renderLFGrid(); }
-  if (a === 'delno') { lfAsk = null; return renderLFGrid(); }
-  if (a === 'delyes') { const t = db.lostfound.find(f => f.id === id)?.title; db.lostfound = db.lostfound.filter(f => f.id !== id); lfAsk = null; if (await persist()) toast(t + ' removed'); return renderLF(); }
+  if (a === 'del') { lfAsk = id; return renderSlip(); }
+  if (a === 'delno') { lfAsk = null; return renderSlip(); }
+  if (a === 'delyes') { const t = db.lostfound.find(f => f.id === id)?.title; db.lostfound = db.lostfound.filter(f => f.id !== id); lfAsk = null; lfOpen = null; if (await persist()) toast(t + ' removed'); return renderLF(); }
   if (a === 'rewatch') {
+    lfOpen = null; renderSlip();
     if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film through the filter.`);
     const f = db.lostfound.find(x => x.id === id); if (f) mfOpen({ src: 'rewatch', film: { ...f, year: String(f.year || '') } });
   }
-});
+}
 $('#lostfound').addEventListener('change', e => { const m = e.target.closest('[data-lfmove]'); if (m && m.value) refileLF(m.dataset.lfmove, m.value, 'moved'); });
 
 /* =====================================================================
@@ -2862,7 +3032,7 @@ $('#playbill').addEventListener('click', e => {
   const t = e.target.closest('[data-pbt]'); if (t) { pbTab = t.dataset.pbt; renderPlaybill(); $('#pbBody').scrollTop = 0; const h = $('#pbBody .here'); if (h) h.scrollIntoView({ block: 'center' }); return; }
   if (e.target.id === 'playbill' || e.target.closest('[data-pbx]')) closePlaybill();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlaybill(); if (mf) mfClose(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlaybill(); if (mf) mfClose(); closeSlip(); } });
 
 /* =====================================================================
    THE MANAGER'S OFFICE · sign-in, backup, import, removal, clearing
