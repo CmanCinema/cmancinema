@@ -1350,7 +1350,7 @@ const uid = () => String(Date.now()) + Math.random().toString(36).slice(2, 8);
 const X_NAMES = { 5: 'Unscathed', 4: 'Qualified', 3: 'Invalidated', 2: 'Defective', 1: 'Uncreditable' };
 const Y_NAMES = { 0: 'Not Recommendable', 1: 'Your Call', 2: 'Recommendable', 3: 'Highly Recommended', 4: 'Must-See', 5: 'Essential' };
 const X_TAG = { 5: 'Vulnerability to meaningful qualification', 4: 'Nature and consequences of compromise', 3: 'Failure that defeats demonstrated capacity', 2: 'Nature of fundamental incapacity', 1: 'Nature and extent of underlying discredit' };
-const Y_TAG = { 5: 'Profundity · transformation of understanding', 4: 'Exceptional delivery · caliber of effects', 3: 'Impact · consequential effects', 2: 'Worthwhile effectiveness · dependable rewards', 1: 'Appeal · enticement despite uncertainty', 0: 'Residual appeal · limited incentive to view' };
+const Y_TAG = { 5: 'Profundity · transformation of understanding', 4: 'Must-see · ought not miss', 3: 'Impact · stellar option', 2: 'Worthwhile effectiveness · dependable rewards', 1: 'Appeal · enticement despite uncertainty', 0: 'Residual appeal · limited incentive to view' };
 const X_TESTS = [
   { to: 4, gain: 'Material compromise', q: 'Has the weakening materially changed the outcome away from the intended aim?' },
   { to: 3, gain: 'Invalidation despite demonstrated capability', q: 'Has the core aim failed altogether, even though the film showed it could achieve it?' },
@@ -1360,26 +1360,26 @@ const X_TESTS = [
 const Y_TESTS = [
   { to: 1, gain: 'Sufficient appeal', q: 'Does the film offer sufficient appeal, given what it is trying to do, to justify considering it?' },
   { to: 2, gain: 'Dependable effectiveness', q: 'Is its effectiveness dependable enough to justify actively recommending it?' },
-  { to: 3, gain: 'Compelling ought-to-see reason', q: 'Is WHAT the film delivered stellar and impactful enough that it ought to be seen?' },
-  { to: 4, gain: 'Exceptional experiential effect', q: 'Does HOW it delivers its effect make the experience exceptionally high-caliber?' },
-  { to: 5, gain: 'Extraordinary profundity of affect', q: 'Does that effect become extraordinarily profound in HOW it affects the viewer’s perspective or understanding?' },
+  { to: 3, gain: 'Highly rewarding effects', q: 'Does the film’s realization deliver highly rewarding effects?' },
+  { to: 4, gain: 'Exceptional defining caliber', q: 'Do those highly rewarding effects come with an exceptional caliber of realization that becomes the defining quality of the experience?' },
+  { to: 5, gain: 'Extraordinary broader significance', q: 'Is that defining quality so extraordinary that it profoundly affects my broader conception of what an experience can be?' },
 ];
 const COMPASS = {
-  // your newest Compass wording leads; earlier guidance stays only where it agrees with it
+  // the Bylaws lead; earlier Compass wording stays only where it agrees with them
   3: { name: 'Highly Recommended', tag: 'The rewards of the delivered effects',
-       q: 'Why does this film ought to be seen rather than simply recommended?',
-       body: 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc. At Y3, those realized rewards are stellar and impactful enough to establish that it ought to be seen.',
-       below: 'Y2 establishes worthwhile, dependable effectiveness. Y3 goes further: the realized rewards themselves establish an ought-to-be-seen recommendation.',
-       above: 'HOW is present at both levels. What changes is whether HOW serves the rewards (Y3) or becomes the distinguishing reason for the experience’s exceptional caliber (Y4). The distinction is what about that realization dominates your appreciation.' },
+       q: 'Does the film’s realization deliver highly rewarding effects?',
+       body: 'The film’s realization delivers highly rewarding effects: excitement, laughter, warmth, fascination, emotional investment, suspense, satisfaction, delight, and other forms of positive engagement. You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you; the realization is appreciated primarily through the rewards it delivers. Recognizing a clever premise, a well-executed performance, or a satisfying resolution is fully compatible with Y3, and a natural cap at Y3 is a successful classification, not a failed attempt at Y4.',
+       below: 'Y2 establishes worthwhile, dependable effectiveness. Y3 goes further: the realized effects themselves are highly rewarding.',
+       above: 'Y4 is hierarchically higher: it keeps Y3’s highly rewarding effects and adds an exceptional caliber of realization that becomes the defining quality of the experience. HOW is present at both levels; what changes is whether HOW serves the rewards (Y3) or becomes the defining quality (Y4). Once Y3 is established, Y4 is immediately in contention: does the appreciation naturally cap at Y3, or does the evidence already express Y4?' },
   4: { name: 'Must-See', tag: 'The exceptional realization of those effects',
-       q: 'Does HOW the film delivers its effects make the experience exceptionally high-caliber?',
-       body: 'You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive — the way the film constructs, times, develops, presents, or orchestrates its effects. A single extraordinary sequence or element may be decisive if it dominates your appreciation.',
-       below: 'HOW is present at Y3 too, but there it serves the rewards. Y4 is reached when HOW becomes the distinguishing reason for the experience’s exceptional caliber. The distinction is what about that realization dominates your appreciation.',
-       above: 'Y5 requires extraordinarily profound affect on perspective or understanding. Exceptional realization alone does not establish that profundity.' },
+       q: 'Do those highly rewarding effects come with an exceptional caliber of realization that becomes the defining quality of the experience?',
+       body: 'The film’s realization delivers those highly rewarding effects with an exceptional caliber that becomes the defining quality of the experience. You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber — the way it constructs, times, develops, presents, or orchestrates its effects. It may be one performance, sequence, relationship, progression, perceptual effect, or overarching method, or several together; experiential dominance is not runtime dominance. The exceptional caliber must be experienced, not inferred from the film’s construction or reputation.',
+       below: 'Being able to explain how an effect was produced, or loving a film deeply, does not by itself establish Y4. At Y3 the appreciation is defined by highly rewarding effects; Y4 is reached when the exceptional caliber of their realization defines it. Once Y4 accurately describes the experience, Y3 is superseded.',
+       above: 'Y5 requires that defining quality to be so extraordinary that it profoundly affects your broader conception of what an experience can be. Exceptional realization alone does not establish that.' },
   5: { name: 'Essential', tag: 'The extraordinary profoundness of their affect',
-       q: 'Did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced?',
-       body: 'Put another way: does the delivered effect become extraordinarily profound in HOW it affects your perspective or understanding? This must be grounded in what you genuinely experienced, whether during viewing, afterward, or through reflection — not a significance you merely imagine it might have.',
-       below: 'Y4 establishes exceptionally high-caliber realization — it fills your current viewing framework. Y5 requires something further: extraordinarily profound affect on how you perceive or understand.',
+       q: 'Is that defining quality so extraordinary that it profoundly affects my broader conception of what an experience can be?',
+       body: 'This is not a stronger version of enthusiasm, excitement, admiration, or astonishment; its significance reaches beyond the film into how you understand the possibilities of experience. An illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? Y5 must be affirmatively supported by what you genuinely experienced — never assigned because Y4 is established, because the film is celebrated, or because the experience was unusually powerful.',
+       below: 'At Y4 the experience fills the existing vessel to an exceptional degree. At Y5 the vessel itself no longer seems adequate. If the experience supports exceptional realization but not that broader significance, it naturally remains Y4.',
        above: 'There is no higher Y classification. Strong emotion, intensity, and important themes alone do not substitute for genuinely experienced profundity.' },
 };
 // the showdown question for each level (from the previous site)
@@ -1390,8 +1390,8 @@ const SHOW_Q = {
        2: 'Which film exhibits the more consequential fundamental incapacity to realize its intended achievement?',
        1: 'Which film’s underlying proposal is more fundamentally discredited by its defects?' },
   Y: { 5: 'Which film offers the more consequential transformation of a viewer’s perspective or understanding?',
-       4: 'Which film offers the more compelling grounds for experiencing the exceptional caliber of how it delivers its effects?',
-       3: 'Which film delivers the more compelling grounds for considering its realized effects an experience one ought not miss?',
+       4: 'Considering both are exceptionally high-caliber, which film offers a prospective viewer the more compelling grounds for an experience they ought not miss?',
+       3: 'Considering both are highly rewarding, which film offers a prospective viewer the more compelling grounds as an impactful option?',
        2: 'Which film provides the more compelling grounds for recommending its dependable, worthwhile viewing experience?',
        1: 'Which film offers the more compelling grounds for taking a chance on its appeal despite uncertain effectiveness?',
        0: 'Which film offers the stronger remaining incentive to check it out, despite insufficient grounds for recommendation?' },
@@ -2965,18 +2965,18 @@ const PB = {
        3: 'Fails to achieve the core aim/goal altogether, but it showed that it could.',
        2: 'Fundamentally incapable to fulfill its aim.',
        1: 'Film’s proposal is not worthy of being credited.' },
-  Y: { 5: 'An extraordinarily profound non-negotiable.',
-       4: 'An exceptionally high-caliber baseline experiential standard because of how it delivered its effect, rather than it affecting a perspective shift.',
-       3: 'A stellar and impactful option, but more so because what it delivered itself toward.',
+  Y: { 5: 'The defining quality of the film’s realization is so extraordinary that it profoundly affects my broader conception of what an experience can be.',
+       4: 'The film’s realization delivers those highly rewarding effects with an exceptional caliber that becomes the defining quality of the experience.',
+       3: 'The film’s realization delivers highly rewarding effects.',
        2: 'A dependable choice that creates a strong enough impression, but doesn’t generate enough of a standout reason that it ought to be seen.',
        1: 'Worth considering, but its value lacks the dependable effectiveness that’s necessary to be recommendable.',
        0: 'Doesn’t provide the sufficient appeal necessary given what it’s trying to do to justify checking it out.' },
   compass: [
-    [3, 'The rewards of the delivered effects.', 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc.'],
-    [4, 'The exceptional realization of those effects.', 'You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive.'],
-    [5, 'The extraordinary profoundness of their affect.', 'Did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced?'],
+    [3, 'The rewards of the delivered effects.', 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc. A natural cap at Y3 is a successful classification, not a failed attempt at Y4.'],
+    [4, 'The exceptional realization of those effects.', 'Y4 keeps Y3’s highly rewarding effects and adds an exceptional caliber of realization that becomes the defining quality of the experience. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive. Experiential dominance is not runtime dominance.'],
+    [5, 'The extraordinary profoundness of their affect.', 'The defining quality is so extraordinary that it profoundly affects my broader conception of what an experience can be. As an illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? It must be affirmatively supported by what I genuinely experienced.'],
   ],
-  compassNote: 'The distinction is what about that realization dominates your appreciation. HOW is present at both levels. What changes is whether HOW serves the rewards (Y-3) or becomes the distinguishing reason for the experience’s exceptional caliber (Y-4).',
+  compassNote: 'HOW is present at both Y3 and Y4. What changes is whether HOW serves the rewards (Y3) or becomes the defining quality of the experience (Y4). The difference is hierarchical, not merely descriptive: once Y3 is established, Y4 is immediately in contention, and once Y4 describes the experience, Y3 is superseded.',
 };
 let pbTab = 'F';
 /* where you are decides what lights up: the film on the reel, or the one in the booth */
