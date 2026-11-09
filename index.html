@@ -994,9 +994,16 @@ button.li2:hover{border-color:var(--gold)}
 /* 2 · the unclaimed bin */
 .fx-met .fx-body{background:radial-gradient(ellipse 70% 30% at 50% 100%,rgba(0,0,0,.4),transparent)}
 .fx-met .fx-scroll{padding:44px 22px 0;gap:0}
-.it.fog{width:74px;margin-right:-14px;transform:rotate(var(--r)) translateY(var(--y));filter:grayscale(.75) blur(1.3px) brightness(.85);transition:filter .3s,transform .35s}
-.it.fog .poster{width:74px!important;box-shadow:0 4px 10px rgba(0,0,0,.5)}
-.it.fog:hover{filter:none;transform:rotate(0) translateY(-14px)}
+.it.fog{width:74px;margin-right:-14px;transform:rotate(var(--r)) translateY(var(--y));transition:transform .35s}
+.it.fog .poster{width:74px!important;box-shadow:0 4px 10px rgba(0,0,0,.5);filter:saturate(.6) brightness(.92);transition:filter .3s}
+.it.fog:hover{transform:rotate(0) translateY(-14px)}
+.it.fog:hover .poster{filter:none}
+/* a blank "HELLO my name is" tag: you know the face, not the name or the when */
+.hello{position:absolute;left:50%;top:14px;z-index:2;width:62px;margin-left:-31px;border-radius:4px;overflow:hidden;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.45);transform:rotate(calc(var(--r) * -1.6));transition:transform .35s}
+.hello b{display:block;padding:2px 0 0;background:#c4202f;color:#fff;font:900 9px/1 var(--serif);letter-spacing:.14em}
+.hello small{display:block;padding:1px 0 2px;background:#c4202f;color:#fff;font:600 5.5px/1 var(--serif);letter-spacing:.18em;text-transform:uppercase}
+.hello i{display:block;padding:2px 0 3px;font:italic 700 17px/1 var(--body);color:#2a3a8a}
+.it.fog:hover .hello{transform:rotate(0) translateY(-2px)}
 .bin{position:absolute;left:6px;right:6px;bottom:0;height:36%;z-index:4;pointer-events:none;border-radius:3px 3px 6px 6px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 3px,transparent 3px 6px),linear-gradient(#c9a06a,#a87c48 60%,#8a6236);box-shadow:inset 0 6px 0 rgba(255,255,255,.18),inset 0 -10px 18px rgba(0,0,0,.25),0 12px 20px rgba(0,0,0,.5);display:grid;place-items:center}
 .bin::before{content:"";position:absolute;left:38%;top:0;width:24%;height:100%;background:linear-gradient(rgba(220,200,150,.55),rgba(200,180,130,.45));border-left:1px solid rgba(0,0,0,.08);border-right:1px solid rgba(0,0,0,.08)}
 .bin span{position:relative;font:800 13px/1.2 var(--serif);letter-spacing:.28em;text-transform:uppercase;color:rgba(40,20,10,.72);text-align:center;transform:rotate(-2deg)}
@@ -2882,7 +2889,7 @@ function fxItem(c, f, i) {
   const r = ['-4deg', '3deg', '-2deg', '5deg', '-3deg', '2deg'][i % 6];
   switch (c.id) {
     case 'caught': return `<button class="it pol" style="--r:${r}" ${a}><i class="pin"></i>${p(82)}${t}</button>`;
-    case 'met':    return `<button class="it fog" style="--r:${r};--y:${[0, 10, 4, 14, 2, 8][i % 6]}px" ${a}>${p(74)}</button>`;
+    case 'met':    return `<button class="it fog" style="--r:${r};--y:${[0, 10, 4, 14, 2, 8][i % 6]}px" ${a}>${p(74)}<span class="hello"><b>HELLO</b><small>my name is</small><i>?</i></span></button>`;
     case 'lost':   return `<button class="it coat" style="--r:${Math.min(2 + i * 3, 16)}deg;--y:${Math.min(i * 8, 48)}px;--o:${Math.max(1 - i * .07, .6)}" ${a}><span class="card">${p(58)}${t}</span></button>`;
     case 'tapout': return `<button class="it stub" style="--r:${r}" ${a}>${p(62)}${t}</button>`;
     case 'fade':   return `<button class="it vhs" style="--b:${Math.max(1 - i * .14, .3)}" ${a}>${p(70)}${t}</button>`;
