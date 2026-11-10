@@ -1256,10 +1256,12 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
 .argue{position:relative;z-index:2;width:min(1100px,94vw);margin:22px auto 0;padding:18px 20px 16px;border-radius:8px;background:linear-gradient(#f6ead0,#e8d4a8);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 14px 30px rgba(0,0,0,.5)}
 .argue .k{text-align:center;font:700 10px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:#7a1a22}
 .argue h4{margin:2px 0 10px;text-align:center;font:400 22px var(--deco);letter-spacing:.06em;color:#5a0f22}
+.argue .aq{margin:-4px auto 12px;max-width:760px;text-align:center;font:italic 600 16px/1.4 var(--body);color:#5a3a26}
 .argue .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .case{padding:12px 14px;border-radius:6px;border:1.5px solid rgba(90,15,34,.25);background:rgba(255,255,255,.4)}
 .case .lab{font:800 11px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a1a22;margin-bottom:6px}
-.case p{margin:0;font:500 17px/1.5 var(--body);color:#2a160e}
+.case p{margin:0;font:500 18px/1.55 var(--body);color:#2a160e}
+.case p b{color:#5a0f22}
 .case q{font-style:italic;color:#5a0f22}
 .case q::before{content:"“"}.case q::after{content:"”"}
 .case .miss{display:inline-block;padding:0 6px;border-radius:3px;background:#c4202f;color:#fff;font:700 11px/1.6 var(--serif);letter-spacing:.08em;text-transform:uppercase;font-style:normal}
@@ -1395,7 +1397,8 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
               <div><label for="fYear">Year</label><input id="fYear" inputmode="numeric" maxlength="4" placeholder="1942"></div>
             </div>
             <label for="fG1">Sub-genre <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· always two parts</span></label>
-            <div class="genre2"><input id="fG1" placeholder="Silent" maxlength="24"><i>·</i><input id="fG2" placeholder="Comedy" maxlength="24"></div>
+            <a class="dvd-btn" id="genreBtn" href="#" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
+            <div class="genre2"><input id="fG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="fG2" placeholder="Film" maxlength="24"></div>
             <label>Poster</label>
             <a class="dvd-btn" id="dvdBtn" href="#" target="_blank" rel="noopener">Find the DVD on Google ↗</a>
             <input id="fPoster" placeholder="Paste the picture address here" inputmode="url">
@@ -1983,8 +1986,8 @@ function openProfile(id) {
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
       <div class="pev"><p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
         <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>
-        <p class="note"><b>Ordinal brief · ${ck(f)}</b>${f.brief ? `<span class="evh">X · ${esc(BRIEF.X[f.X].word)}</span>${esc(f.brief.x)}<br><span class="evh" style="margin-top:6px">Y · ${esc(BRIEF.Y[f.Y].word)}</span>${esc(f.brief.y)}` : `<i>Not written yet${f.genre ? '' : ', and no sub-genre set'}.</i>`}</p></div>
-      ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.brief && f.genre ? 'Edit sub-genre &amp; brief' : 'Write sub-genre &amp; brief'}</button></div>` : ''}
+        <p class="note"><b>Ordinal brief · ${ck(f)}</b>${f.brief ? `X rationale · <i>${esc(f.brief.x)}</i> &nbsp;·&nbsp; Y rationale · <i>${esc(f.brief.y)}</i>` : `<i>No adjectives yet${f.genre ? '' : ', and no sub-genre set'}.</i>`}</p></div>
+      ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.brief && f.genre ? 'Edit sub-genre &amp; adjectives' : 'Add sub-genre &amp; adjectives'}</button></div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         <button class="btn-line" data-reopen="reeval">Re-evaluate in the booth</button>
@@ -2038,6 +2041,7 @@ const capWord = w => w.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])\S/g, m => 
 function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
+  $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' film sub-genre');
   $('#pvPoster').outerHTML = posterHTML({ title: t || 'Your film', year: y, poster: fPoster.value.trim(), style: 2 }, 170).replace('class="poster', 'id="pvPoster" class="poster');
 }
 function renderBoxOffice() {
@@ -2061,7 +2065,7 @@ function printTicket() {
   if (y && !/^(18|19|20|21)\d{2}$/.test(y)) { $('#boErr').textContent = 'Use a four-digit year, like 1940, or leave it blank.'; fYear.focus(); return; }
   if (p && !/^https:\/\//i.test(p)) { $('#boErr').textContent = 'Paste an address that starts with https://'; fPoster.focus(); return; }
   const g1 = capWord(fG1.value), g2 = capWord(fG2.value);
-  if (!g1 || !g2) { $('#boErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy or Action · Thriller.'; (g1 ? fG2 : fG1).focus(); return; }
+  if (!g1 || !g2) { $('#boErr').textContent = 'Give the sub-genre in two parts, like Gangster · Film or Silent · Comedy.'; (g1 ? fG2 : fG1).focus(); return; }
   const dupe = db.films.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (dupe) { $('#boErr').textContent = 'That film is already in the collection — open it from the lobby to re-evaluate.'; return; }
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
@@ -3084,45 +3088,30 @@ $('#gameroom').addEventListener('click', e => {
    One short entry per axis: the specific thing that level's ordinal
    compares. With the sub-genre, it builds the argument card on the reel.
    ===================================================================== */
-const BRIEF = {
-  X: { 5: { word: 'vulnerability', ask: 'Its vulnerability to meaningful qualification' },
-       4: { word: 'compromise', ask: 'The nature and consequences of its compromise' },
-       3: { word: 'failure', ask: 'The failure that defeats its demonstrated capacity' },
-       2: { word: 'incapacity', ask: 'The nature of its fundamental incapacity' },
-       1: { word: 'discredit', ask: 'The nature and extent of its discredit' } },
-  Y: { 5: { word: 'transformation', ask: 'Its transformation of understanding', cmp: 'a more consequential transformation of perspective or understanding' },
-       4: { word: 'must-see grounds', ask: 'Its must-see, ought-not-miss grounds', cmp: 'more compelling grounds for an experience they ought not miss' },
-       3: { word: 'impact', ask: 'Its impact as a stellar option', cmp: 'more compelling grounds as an impactful, stellar option' },
-       2: { word: 'dependency', ask: 'Its dependency: grounds for active recommendation', cmp: 'more compelling grounds for an active recommendation' },
-       1: { word: 'appeal', ask: 'Its appeal: enticement despite uncertainty', cmp: 'more compelling grounds for taking a chance on its appeal' },
-       0: { word: 'incentive', ask: 'Its residual incentive to view', cmp: 'a stronger remaining incentive to check it out' } },
-};
-const BRIEF_MAX = 160;
+const ADJ_MAX = 30;
+const oneWord = v => /^[A-Za-z][A-Za-z'’-]*$/.test(v);
 let bf = null;
 function briefOpen(id, mode) {
   const r = raw(id); if (!r) return;
   const x = r.x, y = r.y, c = x + '/' + y, b = briefOf(r) || {}, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ');
   bf = { id, mode };
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
+  const box = (ax, lvl, nm, ev, note, val) => `<div class="bf-sec"><h4><b>${ax}${lvl}</b>${nm} · one adjective for your ${ax} rationale</h4>
+      <p class="q" style="margin-top:8px">${ev ? `<b style="font-style:normal">“${esc(ev)}”</b> — ` : ''}${esc(note || 'No rationale written.')}</p>
+      <input id="bf${ax}" maxlength="${ADJ_MAX}" placeholder="${ax === 'X' ? 'e.g. damaging' : 'e.g. attractive'}" value="${esc(val || '')}" autocomplete="off"></div>`;
   $('#bfIn').innerHTML = `
     <div class="k">${mode === 'reel' ? 'Before the Screening Room' : 'Film profile'} · ${c} ${names(c)}</div>
     <h2>The Ordinal Brief</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
-    <p class="intro">Name the specific thing each ordinal question will compare. On the reel, these become the argument card for every showdown in ${c}.</p>
+    <p class="intro">Boil each rationale down to one adjective. On the reel it completes the argument card: <i>“I think [evidence] is more <b>[adjective]</b> to viewing its [sub-genre] than…”</i></p>
     <div class="bf-sec"><h4>Sub-genre</h4>
-      <div class="genre2" style="margin-top:8px"><input id="bfG1" placeholder="Silent" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Comedy" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4><b>X${x}</b>${X_NAMES[x]} · ${BRIEF.X[x].word}</h4>
-      <div class="ask">${BRIEF.X[x].ask}</div><p class="q">${esc(SHOW_Q.X[x])}</p>
-      <textarea id="bfX" rows="2" maxlength="${BRIEF_MAX}" placeholder="In a phrase or a sentence…">${esc(b.x || '')}</textarea><div class="cnt" id="bfXc"></div></div>
-    <div class="bf-sec"><h4><b>Y${y}</b>${Y_NAMES[y]} · ${BRIEF.Y[y].word}</h4>
-      <div class="ask">${BRIEF.Y[y].ask}</div><p class="q">${esc(SHOW_Q.Y[y])}</p>
-      <textarea id="bfY" rows="2" maxlength="${BRIEF_MAX}" placeholder="In a phrase or a sentence…">${esc(b.y || '')}</textarea><div class="cnt" id="bfYc"></div></div>
+      <div class="genre2" style="margin-top:8px"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
+    ${box('X', x, X_NAMES[x], r.xEv, r.xNote, b.x)}
+    ${box('Y', y, Y_NAMES[y], r.yEv, r.yNote, b.y)}
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
       <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
-  const cnt = () => { $('#bfXc').textContent = $('#bfX').value.length + ' / ' + BRIEF_MAX; $('#bfYc').textContent = $('#bfY').value.length + ' / ' + BRIEF_MAX; };
-  ['#bfX', '#bfY'].forEach(s => $(s).addEventListener('input', () => { cnt(); $('#bfErr').textContent = ''; }));
-  cnt();
+  ['#bfX', '#bfY'].forEach(s => $(s).addEventListener('input', () => { $('#bfErr').textContent = ''; }));
   $('#brief').classList.add('show');
 }
 function briefClose() { bf = null; $('#brief').classList.remove('show'); }
@@ -3130,44 +3119,40 @@ $('#brief').addEventListener('click', async e => {
   if (!bf) return;
   if (e.target.closest('[data-bflater]')) { const m = bf.mode; briefClose(); if (m === 'reel') goTo('lobby'); return; }
   if (!e.target.closest('[data-bfgo]')) return;
-  const g1 = capWord($('#bfG1').value), g2 = capWord($('#bfG2').value), x = $('#bfX').value.trim(), y = $('#bfY').value.trim();
+  const g1 = capWord($('#bfG1').value), g2 = capWord($('#bfG2').value), x = $('#bfX').value.trim().toLowerCase(), y = $('#bfY').value.trim().toLowerCase();
   if (!g1 || !g2) return $('#bfErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
-  if (!x || !y) return $('#bfErr').textContent = 'Fill in both entries — the X and the Y.';
+  if (!x || !y) return $('#bfErr').textContent = 'Give one adjective for each — the X and the Y.';
+  if (!oneWord(x) || !oneWord(y)) return $('#bfErr').textContent = 'One word each, like attractive or memorable.';
   const r = raw(bf.id); if (!r || !canEdit()) return briefClose();
   r.genre = [g1, g2];
   r.brief = { coord: r.x + '/' + r.y, x, y, at: Date.now() };
   const m = bf.mode; briefClose(); rebuild();
   const ok = await persist();
   if (m === 'reel') { if (current === 'auditorium') enterAuditorium(); }
-  else { if (ok) toast('Sub-genre and brief saved'); openProfile(r.id); }
+  else { if (ok) toast('Sub-genre and adjectives saved'); openProfile(r.id); }
 });
 
-/* the argument card: the case for each film, built both ways from the brief, sub-genre and evaluation */
-function firstSentence(t, n = 220) {
-  t = String(t || '').trim(); if (!t) return '';
-  const m = t.match(/^[\s\S]*?[.!?](\s|$)/); let s = (m ? m[0] : t).trim();
-  if (s.length > n) s = s.slice(0, n).replace(/\s+\S*$/, '') + '…';
-  return s.replace(/[.!?]$/, '');
-}
+/* the argument card: your template, built both ways
+   "I think [A's evidence] is more [A's adjective] to viewing its [A's sub-genre]
+    than [B's evidence] is as [B's adjective] to [B's title]'s [B's sub-genre]."
+   On X the higher film has the weaker negative case, so "more" becomes "less". */
+const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
-  const lvl = ax === 'X' ? A.X : A.Y, Bk = BRIEF[ax][lvl];
-  const ev = f => (ax === 'X' ? f.xEv : f.yEv) ? `<q>${esc(ax === 'X' ? f.xEv : f.yEv)}</q>` : miss('no evidence header');
-  const br = f => f.brief ? `<q>${esc(ax === 'X' ? f.brief.x : f.brief.y)}</q>` : miss('brief not written');
-  const gn = f => f.genre ? `<b>${esc(f.genre.toLowerCase())}</b>` : miss('sub-genre not set');
-  const rat = f => { const s = firstSentence(ax === 'X' ? f.xNote : f.yNote); return s ? esc(s.charAt(0).toLowerCase() + s.slice(1)) : miss('no rationale'); };
-  if (ax === 'Y') return `I think <b>${esc(A.title)}</b>’s ${ev(A)} offers a viewer watching a ${gn(A)} ${Bk.cmp} — given its ${Bk.word}, ${br(A)} — because ${rat(A)}, than <b>${esc(B.title)}</b>’s ${ev(B)} offers a viewer watching a ${gn(B)}, given its ${Bk.word}, ${br(B)}.`;
-  return `I think <b>${esc(A.title)}</b>’s ${Bk.word} — ${br(A)} — is less consequential to what a ${gn(A)} sets out to achieve, given ${ev(A)}, because ${rat(A)}, than <b>${esc(B.title)}</b>’s ${Bk.word} — ${br(B)} — is to a ${gn(B)}.`;
+  const ev = f => { const e = ax === 'X' ? f.xEv : f.yEv; return e ? `<q>${esc(e)}</q>` : miss('no evidence header'); };
+  const adj = f => f.brief ? `<b>${esc(ax === 'X' ? f.brief.x : f.brief.y)}</b>` : miss('no adjective');
+  const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
+  return `I think ${esc(poss(A.title))} ${ev(A)} is ${ax === 'X' ? 'less' : 'more'} ${adj(A)} to viewing its ${gn(A)} than ${ev(B)} is as ${adj(B)} to ${esc(poss(B.title))} ${gn(B)}.`;
 }
 function argueHTML(A, B, ax, id) {
   const lvl = ax === 'X' ? A.X : A.Y;
   return `<div class="argue" ${id ? `id="${id}"` : ''}><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative case goes higher' : 'the stronger positive case goes higher'}</div>
     <h4>${esc(A.title)} <span style="font-family:var(--serif);font-size:14px;letter-spacing:.2em">VS</span> ${esc(B.title)}</h4>
+    <p class="aq">“${esc(SHOW_Q[ax][lvl])}”</p>
     <div class="two"><div class="case"><div class="lab">The case for ${esc(A.title)}</div><p>${argueCase(A, B, ax)}</p></div>
       <div class="case"><div class="lab">The case for ${esc(B.title)}</div><p>${argueCase(B, A, ax)}</p></div></div>
-    <div class="foot">${ax === 'Y' ? 'Your experience is the evidence; the comparison is for a prospective viewer.' : 'Both cases are built from the evaluations — you decide which one holds.'}</div></div>`;
+    <div class="foot">${ax === 'Y' ? 'Your experience is the evidence; the comparison is for a prospective viewer.' : 'Both cases come from the evaluations — you decide which one holds.'}</div></div>`;
 }
-
 /* =====================================================================
    THE MEMORY FILTER · three doors before the booth
    Pass all three and the film is rating eligible. Stopped at a door, it is
