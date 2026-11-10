@@ -1122,6 +1122,156 @@ button.li2:hover{border-color:var(--gold)}
   .rack-empty{gap:14px;padding:4px 16px 10px;min-height:40px}
   .rack-empty span{font-size:13px}
 }
+
+/* ===================== THE ARCADE CABINET + THE GAME ===================== */
+.arc{position:relative;max-width:1060px;margin:6px auto 0;padding:0 clamp(10px,2vw,22px) 0;border-radius:22px 22px 10px 10px;background:linear-gradient(90deg,#1a0408,#3a0a16 6%,#5a0f22 14%,#4a0c1c 86%,#3a0a16 94%,#1a0408);box-shadow:0 0 0 3px #b8873c,0 0 0 6px #1a0509,0 30px 60px rgba(0,0,0,.6)}
+.arc-marquee{position:relative;margin:0 calc(clamp(10px,2vw,22px) * -1);padding:14px 10px 12px;border-radius:20px 20px 0 0;text-align:center;background:radial-gradient(ellipse 80% 120% at 50% 0,#fff2c4,#f3cf7e 40%,#c9902e 75%,#8a5a18);box-shadow:inset 0 -4px 0 rgba(0,0,0,.25),0 4px 0 #2a0a10}
+.arc-marquee b{display:block;font:400 clamp(26px,5vw,44px)/1 var(--deco);letter-spacing:.14em;color:#5a0f22;text-shadow:0 1px 0 rgba(255,255,255,.6),0 0 18px rgba(255,240,190,.9)}
+.arc-marquee small{display:block;margin-top:2px;font:800 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#6a1a1e}
+.arc-bezel{margin:14px 0 0;padding:14px;border-radius:16px;background:linear-gradient(#0c0605,#1a0e08);box-shadow:inset 0 0 0 3px #2a1806,inset 0 0 30px rgba(0,0,0,.9)}
+.arc-bezel .hs-screens{gap:14px}
+.arc-bezel .crt{padding:8px}
+.arc-panel{position:relative;margin:16px calc(clamp(10px,2vw,22px) * -1) 0;padding:16px 22px 14px;display:flex;align-items:center;justify-content:center;gap:clamp(18px,5vw,56px);background:linear-gradient(#2a1a10,#140a06);border-top:3px solid #b8873c;transform:perspective(500px) rotateX(10deg);transform-origin:top}
+.arc-joy{position:relative;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#3a3a3a,#111 70%);box-shadow:inset 0 3px 6px rgba(255,255,255,.12),0 4px 8px rgba(0,0,0,.6)}
+.arc-joy::before{content:"";position:absolute;left:50%;bottom:50%;width:8px;height:30px;margin-left:-4px;border-radius:4px;background:linear-gradient(90deg,#666,#ddd,#666)}
+.arc-joy::after{content:"";position:absolute;left:50%;top:-6px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 55%,#6a0a14);box-shadow:0 4px 6px rgba(0,0,0,.5)}
+.arc-btns{display:flex;gap:14px}
+.arc-btns i{width:38px;height:38px;border-radius:50%;box-shadow:inset 0 -4px 0 rgba(0,0,0,.35),0 4px 0 #0a0503,0 6px 10px rgba(0,0,0,.5)}
+.arc-btns i:nth-child(1){background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 60%)}
+.arc-btns i:nth-child(2){background:radial-gradient(circle at 35% 30%,#fff1b0,#e8be6a 60%)}
+.arc-door{display:flex;justify-content:center;padding:14px 0 18px}
+.coin-door{display:flex;align-items:center;gap:14px;padding:10px 18px;border-radius:8px;border:2px solid #b8873c;background:linear-gradient(#3a2a1a,#140c06);box-shadow:inset 0 0 0 4px #0a0503,0 6px 14px rgba(0,0,0,.5);color:#ffd27a}
+.coin-door .mouth{position:relative;width:12px;height:40px;border-radius:4px;background:#000;box-shadow:0 0 0 3px #b8873c,0 0 14px rgba(255,60,40,.9),inset 0 0 8px rgba(255,60,40,.9)}
+.coin-door .drop{position:absolute;left:50%;top:-40px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff3c8,#e8be6a 45%,#8a6026);box-shadow:0 0 0 2px #6f4c1c;opacity:0;pointer-events:none}
+.coin-door.paid .drop{animation:coinDrop .7s cubic-bezier(.5,0,.8,.4) forwards}
+.coin-door .txt{text-align:left}
+.coin-door .txt b{display:block;font:400 19px var(--deco);letter-spacing:.14em;color:#ff7a6a;text-shadow:0 0 10px rgba(255,90,70,.8);animation:hiBlink 1.1s steps(1) infinite}
+.coin-door .txt small{font:700 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,210,122,.75)}
+.coin-door.free{cursor:default;opacity:.7}
+.coin-door.free .txt b{animation:none;color:#ffd27a;text-shadow:none}
+/* the zoom: the cabinet screen opens up into the game */
+#arFlash{position:fixed;inset:0;z-index:61;pointer-events:none;background:#fff8e0;opacity:0}
+#arFlash.go{animation:arFlash .55s ease-out}
+@keyframes arFlash{0%{opacity:0}30%{opacity:.85}100%{opacity:0}}
+#arcade{position:fixed;inset:0;z-index:60;display:none;background:radial-gradient(ellipse 80% 70% at 50% 45%,#2a1508,#0a0503 85%);color:#ffd27a;clip-path:inset(var(--ct,0) var(--cr,0) var(--cb,0) var(--cl,0) round var(--cround,0));transition:clip-path .6s cubic-bezier(.6,0,.2,1)}
+#arcade.show{display:block}
+#arcade::before{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+#arcade::after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(ellipse 120% 100% at 50% 50%,transparent 60%,rgba(0,0,0,.75))}
+body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
+.ar-in{position:relative;height:100%;display:flex;flex-direction:column;padding:14px 16px calc(12px + env(safe-area-inset-bottom));transition:transform .6s cubic-bezier(.6,0,.2,1),opacity .4s}
+#arcade.zooming .ar-in{transform:scale(.9);opacity:.2}
+.ar-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font:400 15px var(--deco);letter-spacing:.14em;text-shadow:0 0 8px rgba(255,190,80,.7)}
+.ar-hud .cr{color:#ff7a6a;text-shadow:0 0 8px rgba(255,90,70,.8);animation:hiBlink 1.2s steps(1) infinite}
+.ar-hud .mid{text-align:center}
+.ar-hud .mid b{display:block;font:400 clamp(26px,5vw,40px)/1 var(--deco);color:#ffe2a8}
+.ar-hud .mid small{display:block;margin-top:2px;font:700 10px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:rgba(255,210,122,.8);text-shadow:none}
+.ar-hud .ta{text-align:right;font-size:13px}
+.ar-hud .ta i{font-style:normal;color:#fff1b8;font-size:18px}
+.ar-axes{display:flex;justify-content:center;gap:8px;margin:8px 0 2px}
+.ar-axes span{padding:3px 12px;border-radius:3px;border:1px solid rgba(255,210,122,.4);font:700 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,210,122,.6)}
+.ar-axes span.on{background:#ffd27a;color:#1a0c04;border-color:#ffd27a}
+.ar-stage{position:relative;flex:1;min-height:0;display:flex;justify-content:center}
+.ar-reel{position:relative;width:min(620px,100%);height:100%;overflow:hidden;perspective:1100px;touch-action:none;cursor:ns-resize;outline:none}
+.ar-drum{position:absolute;left:0;right:0;top:50%;height:0;transform-style:preserve-3d}
+.ar-band{position:absolute;left:4px;right:4px;top:50%;height:calc(var(--sh) + 10px);margin-top:calc((var(--sh) + 10px) / -2);border-top:2px solid rgba(255,210,122,.55);border-bottom:2px solid rgba(255,210,122,.55);pointer-events:none;z-index:20;box-shadow:0 0 18px rgba(255,190,80,.15) inset}
+.ar-band::before,.ar-band::after{content:"";position:absolute;top:50%;width:0;height:0;margin-top:-10px;border:10px solid transparent}
+.ar-band::before{left:-4px;border-left-color:#ff5a4a;filter:drop-shadow(0 0 6px rgba(255,90,70,.9))}
+.ar-band::after{right:-4px;border-right-color:#ff5a4a;filter:drop-shadow(0 0 6px rgba(255,90,70,.9))}
+.ar-slot{position:absolute;left:18px;right:18px;height:var(--sh);margin-top:calc(var(--sh) / -2);display:grid;grid-template-columns:62px 44px 1fr auto;gap:12px;align-items:center;padding:0 14px 0 8px;border-radius:6px;border:1.5px solid rgba(255,210,122,.35);background:linear-gradient(#1e1008,#120904);color:#ffe2a8;backface-visibility:hidden;cursor:pointer}
+.ar-slot > b{font:400 22px var(--deco);color:#ffd27a;text-align:right;text-shadow:0 0 8px rgba(255,190,80,.7)}
+.ar-slot .poster{width:44px;box-shadow:0 0 0 1px rgba(255,210,122,.4)}
+.ar-slot > span{min-width:0;font:700 16px/1.15 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ar-slot > em{font:normal 800 12px var(--serif);letter-spacing:.06em}
+.ar-slot em.up{color:#8cf08c;text-shadow:0 0 6px rgba(120,255,120,.6)}
+.ar-slot em.dn{color:#ff8a7a;text-shadow:0 0 6px rgba(255,90,70,.6)}
+.ar-slot em.eq{color:rgba(255,226,168,.35)}
+.ar-slot.cur{border-color:#ffd27a;background:linear-gradient(#2e1a0a,#1a0e06)}
+.ar-slot.held{border-color:#ff8a7a;background:linear-gradient(#7a1420,#4a0a14);box-shadow:0 0 0 2px #ff5a4a,0 0 28px rgba(255,90,70,.55)}
+.ar-slot.held > span::after{content:"HELD · SPIN TO MOVE";display:block;margin-top:3px;font:800 9px var(--serif);letter-spacing:.24em;color:#ffb0a0}
+.ar-msg{min-height:22px;margin:6px 0 8px;text-align:center;font:700 12px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#ffe2a8;text-shadow:0 0 6px rgba(255,190,80,.5)}
+.ar-msg.warn{color:#ff8a7a}
+.ar-deck{position:relative;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;max-width:760px;width:100%;margin:0 auto;padding:14px 18px;border-radius:14px;background:linear-gradient(#3a2414,#1a0e06);border:2px solid #b8873c;box-shadow:0 -6px 20px rgba(0,0,0,.5)}
+.joy{position:relative;justify-self:start;width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#3a3a3a,#0e0e0e 70%);box-shadow:inset 0 3px 8px rgba(255,255,255,.1),0 5px 10px rgba(0,0,0,.6);touch-action:none}
+.joy button{position:absolute;left:0;right:0;height:50%;border:0;background:none;color:rgba(255,210,122,.55);font-size:14px;z-index:2}
+.joy button.u{top:0;padding-bottom:30px}.joy button.d{bottom:0;padding-top:30px}
+.joy .stick{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 55%,#6a0a14);box-shadow:0 6px 8px rgba(0,0,0,.6);transition:transform .08s;pointer-events:none}
+.joy.up .stick{transform:translateY(-16px) scale(.96)}
+.joy.down .stick{transform:translateY(16px) scale(.96)}
+.ar-mid{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ar-mid button{min-width:96px;padding:7px 14px;border-radius:20px;border:1.5px solid #b8873c;background:#140a06;color:#ffd27a;font:800 11px var(--serif);letter-spacing:.2em;text-transform:uppercase}
+.ar-mid button.save{background:linear-gradient(#f3d58f,#b8873c);color:#2a0a10}
+.ar-mid button.save:disabled{opacity:.4}
+.ar-mid small{font:600 9px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:rgba(255,210,122,.5);text-align:center}
+.ar-ab{justify-self:end;display:flex;gap:16px;align-items:flex-end}
+.ab{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:none;padding:0;color:#ffd27a;font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase}
+.ab i{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;font:400 22px var(--deco);font-style:normal;color:#fff;box-shadow:inset 0 -6px 0 rgba(0,0,0,.35),0 6px 0 #0a0503,0 8px 14px rgba(0,0,0,.5);transition:transform .06s,box-shadow .06s}
+.ab.a i{background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 60%)}
+.ab.b i{background:radial-gradient(circle at 35% 30%,#fff1b0,#e8be6a 60%);color:#5a0f22;width:50px;height:50px;font-size:17px}
+.ab:active i,.ab.press i{transform:translateY(4px);box-shadow:inset 0 -2px 0 rgba(0,0,0,.35),0 2px 0 #0a0503}
+@media (max-width:640px){
+  .arc-panel{gap:22px;padding:12px}
+  .arc-joy{width:50px;height:50px}
+  .ar-in{padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
+  .ar-hud{font-size:12px}
+  .ar-hud .ta{font-size:11px}
+  .ar-slot{left:8px;right:8px;grid-template-columns:46px 36px 1fr auto;gap:8px;padding:0 8px 0 4px}
+  .ar-slot > b{font-size:17px}
+  .ar-slot .poster{width:36px}
+  .ar-slot > span{font-size:14px}
+  .ar-deck{padding:10px 12px;gap:8px}
+  .joy{width:92px;height:92px}
+  .joy .stick{width:38px;height:38px;margin:-19px 0 0 -19px}
+  .ab i{width:54px;height:54px}
+  .ab.b i{width:44px;height:44px}
+  .ar-mid button{min-width:76px;padding:6px 10px;font-size:10px}
+  .ar-mid small{display:none}
+}
+
+
+/* ===================== SUB-GENRE · ORDINAL BRIEF · ARGUMENT CARD ===================== */
+.genre2{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.genre2 i{font:400 22px var(--deco);color:#a8834a;padding-bottom:20px}
+.cbadge2{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:3px;border:1px solid rgba(232,190,106,.5);font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi);vertical-align:2px}
+#brief{position:fixed;inset:0;z-index:47;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.85);backdrop-filter:blur(3px)}
+#brief.show{display:grid}
+.bfc{position:relative;width:min(720px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:24px 26px 22px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
+.bfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
+.bfc h2{margin:2px 0 0;text-align:center;font:400 30px/1.05 var(--deco);letter-spacing:.1em;color:#5a0f22}
+.bfc .film{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 4px;font:italic 600 18px var(--body);color:#6b5236}
+.bfc .film .poster{width:40px}
+.bfc .intro{margin:6px 0 0;text-align:center;font:italic 500 16px/1.45 var(--body);color:#5a3a26}
+.bf-sec{margin-top:16px;padding:14px 16px;border-radius:6px;border:1.5px solid rgba(90,15,34,.25);background:rgba(255,255,255,.35)}
+.bf-sec h4{margin:0;display:flex;align-items:center;gap:10px;font:800 12px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a1a22}
+.bf-sec h4 b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#5a0f22;color:var(--gold-hi);font:400 15px var(--deco);letter-spacing:0}
+.bf-sec .ask{margin:8px 0 4px;font:800 17px/1.3 var(--serif);color:#2a160e}
+.bf-sec .q{margin:0 0 8px;font:italic 500 15px/1.4 var(--body);color:#6b5236}
+.bf-sec textarea,.bf-sec input{width:100%;border:0;border-bottom:2px solid #a8834a;background:rgba(255,255,255,.4);border-radius:4px 4px 0 0;font:500 18px/1.4 var(--body);color:#2a160e;padding:8px 10px;outline:none;resize:vertical}
+.bf-sec textarea:focus,.bf-sec input:focus{border-color:#6a1a1e}
+.bf-sec .genre2 i{padding-bottom:8px}
+.bf-sec .cnt{text-align:right;font:600 11px var(--serif);letter-spacing:.14em;color:#8a6a4a;margin-top:4px}
+.bf-err{min-height:20px;margin-top:10px;text-align:center;font:italic 600 16px var(--body);color:#c4202f}
+.bf-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.bf-foot .later{background:none;border:0;color:#7a1a22;font:700 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;padding:8px 0}
+.bf-go{padding:12px 20px;border-radius:30px;border:0;background:#5a0f22;color:var(--gold-hi);font:700 12px var(--serif);letter-spacing:.2em;text-transform:uppercase}
+.argue{position:relative;z-index:2;width:min(1100px,94vw);margin:22px auto 0;padding:18px 20px 16px;border-radius:8px;background:linear-gradient(#f6ead0,#e8d4a8);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 14px 30px rgba(0,0,0,.5)}
+.argue .k{text-align:center;font:700 10px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:#7a1a22}
+.argue h4{margin:2px 0 10px;text-align:center;font:400 22px var(--deco);letter-spacing:.06em;color:#5a0f22}
+.argue .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.case{padding:12px 14px;border-radius:6px;border:1.5px solid rgba(90,15,34,.25);background:rgba(255,255,255,.4)}
+.case .lab{font:800 11px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a1a22;margin-bottom:6px}
+.case p{margin:0;font:500 17px/1.5 var(--body);color:#2a160e}
+.case q{font-style:italic;color:#5a0f22}
+.case q::before{content:"“"}.case q::after{content:"”"}
+.case .miss{display:inline-block;padding:0 6px;border-radius:3px;background:#c4202f;color:#fff;font:700 11px/1.6 var(--serif);letter-spacing:.08em;text-transform:uppercase;font-style:normal}
+.argue .foot{margin-top:10px;text-align:center;font:italic 500 14px var(--body);color:#6b5236}
+.argue.idle{text-align:center;font:italic 500 17px var(--body);color:#6b5236}
+.ar-argue{position:absolute;inset:6px;z-index:25;overflow-y:auto;padding:14px;border-radius:10px;background:rgba(10,5,3,.96);border:1.5px solid #b8873c;box-shadow:0 0 30px rgba(0,0,0,.8)}
+.ar-argue .argue{width:100%;margin:0}
+.ar-argue .x{position:sticky;top:0;float:right;width:34px;height:34px;border-radius:50%;border:1.5px solid #b8873c;background:#140a06;color:#ffd27a;z-index:5}
+.ar-argue .argue{z-index:1}
+@media (max-width:900px){ .argue .two{grid-template-columns:1fr} }
+@media (max-width:640px){ .bfc{padding:18px 14px} .case p{font-size:16px} }
+
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -1215,10 +1365,12 @@ button.li2:hover{border-color:var(--gold)}
 <!-- ===================== FILM VAULT ===================== -->
 <section class="scene" id="vault"><div class="vt" id="vaultIn"></div></section>
 <section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
+<div id="brief" role="dialog" aria-modal="true" aria-label="The Ordinal Brief"><div class="bfc" id="bfIn"></div></div>
 <div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
 <div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Film profile"><div class="prof" id="prof"></div></div>
+<div id="arcade" role="dialog" aria-modal="true" aria-label="The High Score Machine"></div><div id="arFlash"></div>
 <button id="pbBtn" class="hide" aria-label="Open the Playbill" aria-haspopup="dialog"><span class="ic">P</span><span class="lbl">Playbill</span></button>
 <div id="playbill" role="dialog" aria-modal="true" aria-label="The Playbill"><div class="pb" id="pbCard"></div></div>
 <div id="toast" role="status"></div>
@@ -1242,6 +1394,8 @@ button.li2:hover{border-color:var(--gold)}
               <div><label for="fTitle">Film title</label><input id="fTitle" placeholder="e.g. Casablanca" maxlength="90"></div>
               <div><label for="fYear">Year</label><input id="fYear" inputmode="numeric" maxlength="4" placeholder="1942"></div>
             </div>
+            <label for="fG1">Sub-genre <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· always two parts</span></label>
+            <div class="genre2"><input id="fG1" placeholder="Silent" maxlength="24"><i>·</i><input id="fG2" placeholder="Comedy" maxlength="24"></div>
             <label>Poster</label>
             <a class="dvd-btn" id="dvdBtn" href="#" target="_blank" rel="noopener">Find the DVD on Google ↗</a>
             <input id="fPoster" placeholder="Paste the picture address here" inputmode="url">
@@ -1305,6 +1459,7 @@ button.li2:hover{border-color:var(--gold)}
       <div class="card ev-right" id="evPeek"></div>
     </div>
 
+    <div class="argue idle" id="argue"></div>
     <div class="desk" id="desk">
       <div id="placing">
         <div class="verdict" id="verdict"></div>
@@ -1449,6 +1604,8 @@ function axisStandings(list, axis, ids) {
   stats.forEach((v, i) => { const p = stats[i - 1]; const tied = i > 0 && v.net === p.net && v.rate === p.rate && v.w === p.w; rank.set(v.f.id, { rank: tied ? rank.get(p.f.id).rank : i + 1, order: i, w: v.w, l: v.l, n: v.n }); });
   return rank;
 }
+const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
+const briefOf = f => f.brief && f.brief.coord === f.x + '/' + f.y ? f.brief : null;
 function rebuild() {
   const ev = db.films.filter(evaluated);
   UNEVALUATED = db.films.filter(f => !evaluated(f));
@@ -1462,6 +1619,7 @@ function rebuild() {
       const x = xs.get(f.id), y = ys.get(f.id);
       COLL.push({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
         X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0,
+        genre: genreOf(f), brief: briefOf(f),
         xr: x.rank, yr: y.rank, xo: x.order, yo: y.order, xw: x.w, xl: x.l, yw: y.w, yl: y.l,
         provisional: list.length > 1 && (x.n < list.length - 1 || y.n < list.length - 1) });
     });
@@ -1715,7 +1873,7 @@ function syncActive() {
   const w = db.workflow;
   if (!w || !raw(w.film)) { active = null; return; }
   const r = raw(w.film);
-  const film = byId(w.film) || { id: r.id, title: r.title, year: String(r.year || ''), poster: r.poster || '', style: styleFor(r.id), X: r.x, Y: r.y, xEv: r.xEv || '', xNote: r.xNote || '', yEv: r.yEv || '', yNote: r.yNote || '', added: r.added };
+  const film = byId(w.film) || { id: r.id, title: r.title, year: String(r.year || ''), poster: r.poster || '', style: styleFor(r.id), X: r.x, Y: r.y, xEv: r.xEv || '', xNote: r.xNote || '', yEv: r.yEv || '', yNote: r.yNote || '', added: r.added, genre: genreOf(r), brief: briefOf(r) };
   if (active && active.film.id === w.film && active.mode === w.mode && active.stage === w.stage) { active.film = film; return; }
   active = { film, mode: w.mode, from: w.from || null, stage: w.stage };
   if (w.stage === 'booth' && (!bt || bt.film !== w.film)) startBooth();
@@ -1817,14 +1975,16 @@ function openProfile(id) {
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
       <div class="k">Film profile · ${st.overall ? 'Overall #' + st.overall + ' of ' + st.of : 'Awaiting placement'}</div>
       <h3>${esc(f.title)}</h3>
-      <div class="sub">${esc(f.year || '')} · <span class="cbadge">${ck(f)}</span>${names(ck(f))}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
+      <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge">${ck(f)}</span>${names(ck(f))}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
       <div class="pstats">
         <div><b>#${f.xr}</b><span>X standing</span></div><div><b>#${f.yr}</b><span>Y standing</span></div>
         <div><b>${f.xr + f.yr}</b><span>Combined</span></div><div><b>#${st.inGroup}</b><span>of ${st.groupSize} in ${ck(f)}</span></div>
       </div>
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
       <div class="pev"><p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
-        <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p></div>
+        <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>
+        <p class="note"><b>Ordinal brief · ${ck(f)}</b>${f.brief ? `<span class="evh">X · ${esc(BRIEF.X[f.X].word)}</span>${esc(f.brief.x)}<br><span class="evh" style="margin-top:6px">Y · ${esc(BRIEF.Y[f.Y].word)}</span>${esc(f.brief.y)}` : `<i>Not written yet${f.genre ? '' : ', and no sub-genre set'}.</i>`}</p></div>
+      ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.brief && f.genre ? 'Edit sub-genre &amp; brief' : 'Write sub-genre &amp; brief'}</button></div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         <button class="btn-line" data-reopen="reeval">Re-evaluate in the booth</button>
@@ -1841,6 +2001,7 @@ $('#sheet').addEventListener('click', e => {
   if (e.target.id === 'sheet' || e.target.closest('.x')) return closeSheet();
   const id = $('#sheet').dataset.id, f = byId(id);
   if (!f) return closeSheet();
+  if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
   const r = e.target.closest('[data-reopen]');
   if (r) {
     confirming = r.dataset.reopen;
@@ -1872,7 +2033,8 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#c
 /* =====================================================================
    BOX OFFICE
    ===================================================================== */
-const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster');
+const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2');
+const capWord = w => w.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])\S/g, m => m.toUpperCase());
 function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
@@ -1885,7 +2047,7 @@ function renderBoxOffice() {
   $('#boClosed').hidden = !closed;
   $('#printBtn').disabled = !!closed;
 }
-[fTitle, fYear, fPoster].forEach(i => i.addEventListener('input', () => { if (i === fYear) fYear.value = fYear.value.replace(/\D/g, ''); $('#boErr').textContent = ''; boUpdate(); }));
+[fTitle, fYear, fPoster, fG1, fG2].forEach(i => i.addEventListener('input', () => { if (i === fYear) fYear.value = fYear.value.replace(/\D/g, ''); $('#boErr').textContent = ''; boUpdate(); }));
 $('#ticketForm').addEventListener('submit', e => { e.preventDefault(); printTicket(); });
 $('#printBtn').addEventListener('click', printTicket);
 boUpdate();
@@ -1898,14 +2060,16 @@ function printTicket() {
   if (!t) { $('#boErr').textContent = 'The box office needs a title before it prints a ticket.'; fTitle.focus(); return; }
   if (y && !/^(18|19|20|21)\d{2}$/.test(y)) { $('#boErr').textContent = 'Use a four-digit year, like 1940, or leave it blank.'; fYear.focus(); return; }
   if (p && !/^https:\/\//i.test(p)) { $('#boErr').textContent = 'Paste an address that starts with https://'; fPoster.focus(); return; }
+  const g1 = capWord(fG1.value), g2 = capWord(fG2.value);
+  if (!g1 || !g2) { $('#boErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy or Action · Thriller.'; (g1 ? fG2 : fG1).focus(); return; }
   const dupe = db.films.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (dupe) { $('#boErr').textContent = 'That film is already in the collection — open it from the lobby to re-evaluate.'; return; }
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
-  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
+  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
-      <div class="t-main">${posterHTML(pending, 62)}<div><div class="admit">Admit one</div><div class="t-title">${esc(t)}</div><div class="t-meta">${esc(y || 'Year unknown')} · Ticket Nº ${no}</div></div></div>
+      <div class="t-main">${posterHTML(pending, 62)}<div><div class="admit">Admit one</div><div class="t-title">${esc(t)}</div><div class="t-meta">${esc(y || 'Year unknown')} · ${esc(g1 + ' ' + g2)} · Ticket Nº ${no}</div></div></div>
       <div class="t-stub"><img src="${LOGO_S}" alt=""><b>Nº ${no}</b><span>CmanCinema</span></div></div>`;
   requestAnimationFrame(() => requestAnimationFrame(() => $('#ticket').classList.add('out')));
   $('#takeSeat').classList.add('show');
@@ -1915,7 +2079,7 @@ $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
   mfOpen({ src: 'new', film: pending });
 });
-function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = ''; boUpdate(); }
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = ''; boUpdate(); }
 function admitPending() {
   if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
@@ -2187,6 +2351,8 @@ function enterAuditorium() {
   const f = byId(active.film.id);
   if (!f) { setAudOpen(false); $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   active.film = f;
+  if (!f.brief || !f.genre) { $('#stage').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#argue').hidden = true; return briefOpen(f.id, 'reel'); }
+  $('#argue').hidden = false;
   loadAxis(placed.X ? 'Y' : 'X');
 }
 // the others in the group, in their current order on this axis, judged among themselves
@@ -2275,6 +2441,7 @@ function renderPeek() {
   $('#evPeek').innerHTML = f ? evidenceCard(f, 'On the reel · their evaluation', axis)
     : `<div class="lab">On the reel</div><p class="empty">Hover over — or tap — any film on the reel to read the evaluation it was given in the Projection Booth.</p>`;
   drum.querySelectorAll('.slot').forEach(s => s.classList.toggle('peek', s.dataset.id === peekId));
+  $('#argue').outerHTML = f ? argueHTML(active.film, f, axis, 'argue') : `<div class="argue idle" id="argue">Tap a film on the reel to see the case for each film, side by side.</div>`;
   fitPanels();
 }
 function pos() { return Math.round(target); }      // your film sits above films[pos]
@@ -2559,7 +2726,6 @@ const HS_PAGE = 10;
 const hsList = (c, ax) => groupOf(c).sort((a, b) => ax === 'X' ? a.xo - b.xo : a.yo - b.yo);
 const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', 'ND', 'RD'][n % 10] || 'TH');
 function hsScreen(c, ax, roll) {
-  if (hsEdit) return ccScreen(c, ax, roll);
   const list = hsList(c, ax), pages = Math.max(1, Math.ceil(list.length / HS_PAGE));
   const p = hsPage[ax] = Math.min(Math.max(1, hsPage[ax]), pages);
   const lvl = +c.split('/')[ax === 'X' ? 0 : 1], nm = (ax === 'X' ? X_NAMES : Y_NAMES)[lvl];
@@ -2576,19 +2742,6 @@ function hsScreen(c, ax, roll) {
       <div class="crt-f"><button data-hp="${ax}:${p - 1}" ${p === 1 ? 'disabled' : ''} aria-label="Previous page">◀</button><span>PAGE ${p}/${pages}</span><button data-hp="${ax}:${p + 1}" ${p === pages ? 'disabled' : ''} aria-label="Next page">▶</button></div>
     </div></div>`;
 }
-function ccScreen(c, ax, roll) {
-  const ids = hsEdit[ax], lvl = +c.split('/')[ax === 'X' ? 0 : 1], nm = (ax === 'X' ? X_NAMES : Y_NAMES)[lvl];
-  const rows = ids.map((id, i) => {
-    const f = byId(id), was = ax === 'X' ? f.xr : f.yr, d = was - (i + 1);
-    return `<div class="hs-row ${i < 3 ? 'm' + (i + 1) : ''}" data-cc="${esc(id)}" style="--d:${i * 40}ms">
-      <span class="hs-grip" aria-hidden="true">⠿</span><b>${ordinal(i + 1)}</b>${posterHTML(f)}<span>${esc(f.title)}</span>
-      <em class="dlt ${d > 0 ? 'up' : d < 0 ? 'dn' : 'eq'}">${d > 0 ? '▲' + d : d < 0 ? '▼' + -d : '—'}</em></div>`;
-  }).join('');
-  return `<div class="crt ${ax.toLowerCase()} ${roll ? 'roll' : ''}"><div class="crt-in">
-      <div class="crt-h"><b>${ax}</b><span>${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${lvl} ${nm}<small>${ax === 'X' ? 'Drag the weaker negative case to the top' : 'Drag the stronger positive case to the top'}</small></span><em class="hi">EDIT</em></div>
-      <div class="hs-rows" data-ccax="${ax}">${rows}</div>
-    </div></div>`;
-}
 /* the matchups a new order would change: missing pairs are new, pairs with a different winner flip */
 function ccDiff(ax) {
   let flip = 0, add = 0;
@@ -2602,19 +2755,19 @@ function ccDiff(ax) {
 }
 function ccTally() {
   const x = ccDiff('X'), y = ccDiff('Y'), flip = x.flip + y.flip, add = x.add + y.add;
-  const el = $('#ccTally'); if (el) el.innerHTML = !flip && !add ? 'Drag a film to change the board' :
-    `<i>${flip}</i> matchup${flip === 1 ? '' : 's'} flip${flip === 1 ? 's' : ''}${add ? ` · <i>${add}</i> new` : ''}`;
-  const sv = $('#ccSave'); if (sv) sv.disabled = !flip && !add;
+  const el = $('#arTally'); if (el) el.innerHTML = `FLIPS <i>${flip}</i>${add ? ` · NEW <i>${add}</i>` : ''}`;
+  const sv = $('#arSave'); if (sv) sv.disabled = !flip && !add;
   return { flip, add };
 }
 function ccStart() {
+  if (ar) return;
   if (!canEdit()) return toast('Sign in as the editor at the Office to play the Command Center');
   if (db.workflow) return alertBox('The Command Center is closed', `“${raw(db.workflow.film)?.title || 'A film'}” is still in the middle of its ${db.workflow.stage === 'reel' ? 'screening room placement' : 'evaluation'}. Finish or withdraw it first.`);
-  const slot = $('.coinslot'); if (slot) slot.classList.add('paid');
+  const door = $('.coin-door'); if (door) door.classList.add('paid');
   setTimeout(() => {
     hsEdit = { coord: hsCoord, X: hsList(hsCoord, 'X').map(f => f.id), Y: hsList(hsCoord, 'Y').map(f => f.id), dirty: { X: false, Y: false } };
-    hsSel = null; renderHS(true);
-  }, 650);
+    hsSel = null; arOpen();
+  }, reduceMotion ? 0 : 650);
 }
 function ccSave() {
   const { flip, add } = ccTally(); if (!flip && !add) return;
@@ -2632,83 +2785,234 @@ function ccSave() {
     }
   });
   hsEdit = null;
-  persist().then(ok => {
+  arClose(() => persist().then(ok => {
     if (ok) toast(`Board saved · ${flip} matchup${flip === 1 ? '' : 's'} flipped${add ? ' · ' + add + ' new' : ''}`);
     renderGame();
+  }));
+}
+/* =====================================================================
+   THE GAME · insert a coin, zoom into the screen, spin the reel
+   A: grab / drop the film on the center line · B: switch X ⇄ Y
+   joystick, scroll wheel, arrow keys or a swipe spin the reel
+   ===================================================================== */
+const AR_DEG = 20;
+let ar = null;
+const arSH = () => innerWidth <= 640 ? 62 : 74;
+function arRect() {
+  const el = $('.arc-bezel') || $('#hsCab');
+  const r = el ? el.getBoundingClientRect() : { top: innerHeight / 2, left: innerWidth / 2, right: innerWidth / 2, bottom: innerHeight / 2 };
+  const vis = r.bottom > 0 && r.top < innerHeight;
+  return vis ? r : { top: innerHeight * .4, bottom: innerHeight * .6, left: innerWidth * .3, right: innerWidth * .7 };
+}
+function arClip(r) {
+  const el = $('#arcade');
+  if (!r) { ['--ct', '--cr', '--cb', '--cl'].forEach(k => el.style.setProperty(k, '0px')); el.style.setProperty('--cround', '0px'); return; }
+  el.style.setProperty('--ct', Math.max(0, r.top) + 'px'); el.style.setProperty('--cl', Math.max(0, r.left) + 'px');
+  el.style.setProperty('--cr', Math.max(0, innerWidth - r.right) + 'px'); el.style.setProperty('--cb', Math.max(0, innerHeight - r.bottom) + 'px');
+  el.style.setProperty('--cround', '16px');
+}
+function arOpen() {
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  ar = { ax: hsAxis, cur: { X: 0, Y: 0 }, held: null, g: 0, p: {}, quitArm: false, raf: null, msg: '' };
+  const el = $('#arcade');
+  arClip(arRect()); el.classList.add('show', 'zooming'); document.body.classList.add('arcade-on');
+  arBuild();
+  $('#arFlash').classList.remove('go'); void $('#arFlash').offsetWidth; $('#arFlash').classList.add('go');
+  requestAnimationFrame(() => requestAnimationFrame(() => { arClip(null); el.classList.remove('zooming'); }));
+  setTimeout(() => { const r = $('#arReel'); if (r) r.focus({ preventScroll: true }); }, 650);
+}
+function arClose(after) {
+  const el = $('#arcade');
+  if (!el.classList.contains('show')) { if (after) after(); return; }
+  el.classList.add('zooming'); arClip(arRect());
+  setTimeout(() => {
+    el.classList.remove('show', 'zooming'); el.innerHTML = ''; document.body.classList.remove('arcade-on');
+    if (ar && ar.raf) cancelAnimationFrame(ar.raf); ar = null; arJoyStop();
+    if (after) after(); else renderHS(true);
+  }, reduceMotion ? 0 : 620);
+}
+function arIds() { return hsEdit ? hsEdit[ar.ax] : []; }
+function arBuild() {
+  if (!ar || !hsEdit) return;
+  const c = hsEdit.coord, ax = ar.ax, lvl = +c.split('/')[ax === 'X' ? 0 : 1], nm = (ax === 'X' ? X_NAMES : Y_NAMES)[lvl];
+  const ids = arIds();
+  ids.forEach((id, i) => { if (ar.p[id] == null) ar.p[id] = i; });
+  ar.g = ar.cur[ax];
+  $('#arcade').innerHTML = `<div class="ar-in">
+    <div class="ar-hud"><span class="cr">CREDIT 01</span>
+      <span class="mid"><b>${ax} · ${c}</b><small>${ax === 'X' ? 'Condition · ' + ax + lvl + ' ' + nm + ' · weaker negative case on top' : 'Recommendation · ' + ax + lvl + ' ' + nm + ' · stronger positive case on top'}</small></span>
+      <span class="ta" id="arTally"></span></div>
+    <div class="ar-axes"><span class="${ax === 'X' ? 'on' : ''}">X reel</span><span class="${ax === 'Y' ? 'on' : ''}">Y reel</span></div>
+    <div class="ar-stage"><div class="ar-reel" id="arReel" tabindex="0" style="--sh:${arSH()}px" aria-label="${ax} reel for ${c}"><div class="ar-band"></div><div class="ar-drum" id="arDrum">
+      ${ids.map(id => { const f = byId(id); return `<div class="ar-slot" data-ar="${esc(id)}"><b></b>${posterHTML(f)}<span>${esc(f.title)}</span><em></em></div>`; }).join('')}
+    </div></div></div>
+    <div class="ar-msg" id="arMsg"></div>
+    <div class="ar-deck">
+      <div class="joy" id="arJoy"><button class="u" data-arj="-1" aria-label="Spin up">▲</button><button class="d" data-arj="1" aria-label="Spin down">▼</button><span class="stick"></span></div>
+      <div class="ar-mid"><button class="save" id="arSave" data-arsave>Save</button><button data-arargue>Argue</button><button data-arquit>Quit</button><small>↑↓ spin · space grab · B switch · C argue</small></div>
+      <div class="ar-ab"><button class="ab b" data-arb aria-label="Switch reel"><i>B</i>${ax === 'X' ? 'To Y' : 'To X'}</button><button class="ab a" data-ara aria-label="Grab or drop"><i>A</i><span id="arALabel">Grab</span></button></div>
+    </div></div>`;
+  arLayout(); arStatus(); ccTally();
+}
+function arLayout() {
+  if (!ar || !hsEdit) return;
+  const drum = $('#arDrum'); if (!drum) return;
+  const ids = arIds(), sh = arSH(), radius = (sh / 2 + 4) / Math.tan(AR_DEG / 2 * Math.PI / 180);
+  const orig = hsList(hsEdit.coord, ar.ax).map(f => f.id);
+  [...drum.children].forEach(el => {
+    const id = el.dataset.ar, idx = ids.indexOf(id), d = ar.p[id] - ar.g, vis = Math.abs(d) < 4.6;
+    el.style.visibility = vis ? '' : 'hidden';
+    if (!vis) return;
+    el.style.transform = `translateZ(${-radius}px) rotateX(${-d * AR_DEG}deg) translateZ(${radius}px)`;
+    el.style.opacity = Math.max(0, 1 - Math.abs(d) * 0.2).toFixed(3);
+    el.style.zIndex = id === ar.held ? 15 : Math.round(10 - Math.abs(d) * 2);
+    el.classList.toggle('cur', idx === ar.cur[ar.ax]);
+    el.classList.toggle('held', id === ar.held);
+    el.querySelector(':scope > b').textContent = ordinal(idx + 1);
+    const was = orig.indexOf(id), dl = was - idx, em = el.querySelector(':scope > em');
+    em.className = dl > 0 ? 'up' : dl < 0 ? 'dn' : 'eq'; em.textContent = dl > 0 ? '▲' + dl : dl < 0 ? '▼' + -dl : '—';
   });
 }
-/* grab and drop: mouse anywhere on a row, touch on the grip */
-let ccDrag = null;
-function ccDown(e) {
+function arAnimate() {
+  if (!ar || !hsEdit) { if (ar) ar.raf = null; return; }
+  const ids = arIds(), target = ar.cur[ar.ax];
+  let busy = false;
+  const k = reduceMotion ? 1 : 0.25;
+  if (Math.abs(target - ar.g) > 0.002) { ar.g += (target - ar.g) * k; busy = true; } else ar.g = target;
+  ids.forEach((id, i) => { const v = ar.p[id]; if (Math.abs(i - v) > 0.002) { ar.p[id] = v + (i - v) * k; busy = true; } else ar.p[id] = i; });
+  arLayout();
+  ar.raf = busy ? requestAnimationFrame(arAnimate) : null;
+}
+function arKick() { if (ar && !ar.raf) ar.raf = requestAnimationFrame(arAnimate); }
+function arStatus(text, warn) {
+  if (!ar) return;
+  const ids = arIds(), cur = ids[ar.cur[ar.ax]], f = cur && byId(cur);
+  const m = $('#arMsg'); if (!m) return;
+  m.classList.toggle('warn', !!warn);
+  m.textContent = text || (ar.held ? `Holding ${byId(ar.held).title} · spin to move · A to drop` : f ? `On the line: ${f.title} · A to grab · spin to browse` : '');
+  const al = $('#arALabel'); if (al) al.textContent = ar.held ? 'Drop' : 'Grab';
+}
+function arDirty() {
   if (!hsEdit) return;
-  const row = e.target.closest('[data-cc]'); if (!row) return;
-  if (e.pointerType !== 'mouse' && !e.target.closest('.hs-grip')) return;
-  if (e.button > 0) return;
-  e.preventDefault();
-  const list = row.parentElement, rows = [...list.children], from = rows.indexOf(row);
-  const pitch = rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : row.offsetHeight + 2;
-  const top0 = list.getBoundingClientRect().top;
-  ccDrag = { ax: list.dataset.ccax, list, rows, row, from, to: from, pitch, grab: e.clientY - (top0 + from * pitch), y: e.clientY, id: e.pointerId, scroller: $('#gameroom') };
-  row.classList.add('dragging'); rows.forEach(r => r !== row && r.classList.add('shift'));
-  try { row.setPointerCapture(e.pointerId); } catch (_) {}
-  ccLoop();
+  const orig = hsList(hsEdit.coord, ar.ax).map(f => f.id);
+  hsEdit.dirty[ar.ax] = arIds().some((id, i) => id !== orig[i]);
 }
-function ccPlace() {
-  const d = ccDrag; if (!d) return;
-  const top = d.list.getBoundingClientRect().top, n = d.rows.length;
-  const pos = d.y - top - d.grab;
-  d.row.style.transform = `translateY(${pos - d.from * d.pitch}px)`;
-  d.to = Math.max(0, Math.min(n - 1, Math.round(pos / d.pitch)));
-  d.rows.forEach((r, i) => {
-    if (r === d.row) return;
-    let sh = 0;
-    if (d.from < d.to && i > d.from && i <= d.to) sh = -d.pitch;
-    if (d.from > d.to && i < d.from && i >= d.to) sh = d.pitch;
-    r.style.transform = sh ? `translateY(${sh}px)` : '';
-  });
-}
-function ccLoop() {
-  const d = ccDrag; if (!d) return;
-  const edge = 70, h = innerHeight;
-  if (d.y < edge) d.scroller.scrollTop -= Math.ceil((edge - d.y) / 5);
-  else if (d.y > h - edge) d.scroller.scrollTop += Math.ceil((d.y - (h - edge)) / 5);
-  ccPlace();
-  d.raf = requestAnimationFrame(ccLoop);
-}
-function ccMove(e) { if (ccDrag && e.pointerId === ccDrag.id) { ccDrag.y = e.clientY; e.preventDefault(); } }
-function ccUp(e) {
-  const d = ccDrag; if (!d || e.pointerId !== d.id) return;
-  cancelAnimationFrame(d.raf); ccDrag = null;
-  if (e.type === 'pointerup' && d.to !== d.from) {
-    const ids = hsEdit[d.ax], [m] = ids.splice(d.from, 1); ids.splice(d.to, 0, m);
-    hsEdit.dirty[d.ax] = hsEdit.dirty[d.ax] || ids.some((id, i) => id !== hsList(hsEdit.coord, d.ax)[i].id);
+function arStep(dir) {
+  if (!ar || !hsEdit) return;
+  { const p = $('.ar-argue'); if (p) p.remove(); }
+  const ids = arIds(), n = ids.length, ax = ar.ax;
+  ar.quitArm = false;
+  if (ar.held) {
+    const i = ids.indexOf(ar.held), j = i + dir;
+    if (j < 0 || j >= n) return arStatus(j < 0 ? 'Already at the top' : 'Already at the bottom', true);
+    [ids[i], ids[j]] = [ids[j], ids[i]]; ar.cur[ax] = j; arDirty(); ccTally();
+  } else {
+    const c = Math.max(0, Math.min(n - 1, ar.cur[ax] + dir));
+    if (c === ar.cur[ax]) return arStatus(dir < 0 ? 'Top of the reel' : 'End of the reel', true);
+    ar.cur[ax] = c;
   }
-  renderHS(false);
+  arStatus(); arKick();
 }
-document.addEventListener('pointerdown', ccDown);
-document.addEventListener('pointermove', ccMove, { passive: false });
-document.addEventListener('pointerup', ccUp);
-document.addEventListener('pointercancel', ccUp);
+function arGrab() {
+  if (!ar) return;
+  const ids = arIds();
+  ar.held = ar.held ? null : ids[ar.cur[ar.ax]];
+  ar.quitArm = false;
+  const a = $('.ab.a'); if (a) { a.classList.add('press'); setTimeout(() => a.classList.remove('press'), 120); }
+  arLayout(); arStatus();
+}
+function arSwitch() {
+  if (!ar) return;
+  ar.held = null; ar.ax = ar.ax === 'X' ? 'Y' : 'X'; hsAxis = ar.ax; arBuild();
+}
+function arJump(idx) {
+  if (!ar) return;
+  const ids = arIds(), ax = ar.ax;
+  if (idx === ar.cur[ax]) return arGrab();
+  if (ar.held) { const i = ids.indexOf(ar.held); ids.splice(i, 1); ids.splice(idx, 0, ar.held); arDirty(); ccTally(); }
+  ar.cur[ax] = idx; arStatus(); arKick();
+}
+function arQuit() {
+  if (!ar) return;
+  const dirty = hsEdit && (hsEdit.dirty.X || hsEdit.dirty.Y);
+  if (dirty && !ar.quitArm) { ar.quitArm = true; return arStatus('Press Quit again to throw away your moves', true); }
+  hsEdit = null; arClose();
+}
+function arSaveBtn() {
+  const { flip, add } = ccTally();
+  if (!flip && !add) return arStatus('Nothing to save yet · move a film first', true);
+  ccSave();
+}
+let arJoyT = null;
+function arJoyStop() { clearTimeout(arJoyT); clearInterval(arJoyT); arJoyT = null; const j = $('#arJoy'); if (j) j.classList.remove('up', 'down'); }
+$('#arcade').addEventListener('pointerdown', e => {
+  const jb = e.target.closest('[data-arj]');
+  if (jb) {
+    e.preventDefault(); const dir = +jb.dataset.arj;
+    $('#arJoy').classList.add(dir < 0 ? 'up' : 'down'); arStep(dir);
+    arJoyT = setTimeout(() => { arJoyT = setInterval(() => arStep(dir), 150); }, 380);
+    return;
+  }
+  const reel = e.target.closest('#arReel');
+  if (reel) ar && (ar.drag = { y: e.clientY, acc: 0, moved: false, id: e.pointerId, slot: e.target.closest('[data-ar]') });
+});
+addEventListener('pointerup', () => arJoyStop());
+addEventListener('pointercancel', () => arJoyStop());
+$('#arcade').addEventListener('pointermove', e => {
+  if (!ar || !ar.drag || e.pointerId !== ar.drag.id) return;
+  const dy = e.clientY - ar.drag.y; ar.drag.y = e.clientY;
+  ar.drag.acc += dy;
+  if (Math.abs(ar.drag.acc) > 6) ar.drag.moved = true;
+  const step = arSH() * 0.8;
+  while (Math.abs(ar.drag.acc) >= step) { const dir = ar.drag.acc > 0 ? -1 : 1; arStep(dir); ar.drag.acc += dir * step; }
+});
+$('#arcade').addEventListener('pointerup', e => {
+  if (!ar || !ar.drag) return;
+  const d = ar.drag; ar.drag = null;
+  if (!d.moved && d.slot) arJump(arIds().indexOf(d.slot.dataset.ar));
+});
+$('#arcade').addEventListener('click', e => {
+  if (e.target.closest('[data-ara]')) return arGrab();
+  if (e.target.closest('[data-arb]')) return arSwitch();
+  if (e.target.closest('[data-arsave]')) return arSaveBtn();
+  if (e.target.closest('[data-arquit]')) return arQuit();
+  if (e.target.closest('[data-arargue]')) return arArgue();
+  if (e.target.closest('[data-arargx]')) { const p = $('.ar-argue'); if (p) p.remove(); return; }
+});
+function arArgue() {
+  if (!ar) return;
+  const old = $('.ar-argue'); if (old) return old.remove();
+  const ids = arIds(), i = ar.cur[ar.ax], other = i > 0 ? i - 1 : i + 1;
+  if (other >= ids.length) return arStatus('Only one film here', true);
+  const A = byId(ids[i]), B = byId(ids[other]);
+  const p = document.createElement('div'); p.className = 'ar-argue';
+  p.innerHTML = `<button class="x" data-arargx aria-label="Close">✕</button>${argueHTML(A, B, ar.ax)}`;
+  $('.ar-stage').appendChild(p);
+}
+let arWheel = 0;
+$('#arcade').addEventListener('wheel', e => {
+  if (!ar) return; e.preventDefault();
+  arWheel += e.deltaY; const steps = Math.trunc(arWheel / 60);
+  if (steps) { arWheel -= steps * 60; for (let i = 0; i < Math.abs(steps); i++) arStep(Math.sign(steps)); }
+}, { passive: false });
+document.addEventListener('keydown', e => {
+  if (!ar) return;
+  const k = e.key;
+  if (k === 'ArrowUp' || k === 'w' || k === 'W') { e.preventDefault(); arStep(-1); }
+  else if (k === 'ArrowDown' || k === 's' || k === 'S') { e.preventDefault(); arStep(1); }
+  else if (k === ' ' || k === 'Enter' || k === 'a' || k === 'A') { e.preventDefault(); arGrab(); }
+  else if (k === 'b' || k === 'B' || k === 'Tab') { e.preventDefault(); arSwitch(); }
+  else if (k === 'c' || k === 'C') { e.preventDefault(); arArgue(); }
+  else if (k === 'Escape') { e.preventDefault(); const p = $('.ar-argue'); if (p) p.remove(); else arQuit(); }
+});
+addEventListener('resize', () => { if (ar) { const r = $('#arReel'); if (r) r.style.setProperty('--sh', arSH() + 'px'); arLayout(); } });
 function renderHS(roll) {
   const el = $('#hsIn'); if (!el || !hsCoord) return;
-  queueMicrotask(() => document.body.classList.toggle('cc-on', !!hsEdit && current === 'gameroom'));
   if (hsEdit) {
     // if the collection changed underneath (a reload), the board in hand is no longer valid
     const now = groupOf(hsEdit.coord).map(f => f.id).sort().join();
-    if (now !== [...hsEdit.X].sort().join() || hsEdit.coord !== hsCoord || !canEdit()) { hsEdit = null; toast('The Command Center closed because the collection changed'); }
-  }
-  if (hsEdit) {
-    const g = groupOf(hsCoord);
-    el.innerHTML = `
-      <div class="hs-coins locked"><button class="hs-coin on" disabled>${hsCoord}<small>${g.length}</small></button></div>
-      <div class="hs-top"><div class="c">${hsCoord}</div><div class="n">${names(hsCoord)}</div></div>
-      <div class="cc-title">Command Center<small>Grab a film and drop it where it belongs. Wins, losses and the math update when you save.</small></div>
-      <div class="hs-lever"><div class="sw ${hsAxis === 'Y' ? 'y' : ''}"><span class="knob"></span><button class="${hsAxis === 'X' ? 'on' : ''}" data-hsax="X">X · Condition</button><button class="${hsAxis === 'Y' ? 'on' : ''}" data-hsax="Y">Y · Recommend</button></div></div>
-      <div class="hs-screens editing" data-ax="${hsAxis}">${hsScreen(hsCoord, 'X', roll)}${hsScreen(hsCoord, 'Y', roll)}</div>
-      <div class="cc-bar"><span class="credit">CREDIT 01</span><span class="tally" id="ccTally"></span>
-        <button class="btn-line" data-cc-reset>Reset</button><button class="btn-line" data-cc-cancel>Cancel</button><button class="btn-gold" id="ccSave" data-cc-save>Save the board</button></div>`;
-    ccTally();
-    return;
+    if (now !== [...hsEdit.X].sort().join() || !canEdit()) { hsEdit = null; toast('The game ended because the collection changed'); arClose(); return; }
+    if (ar) return;
   }
   const counts = {}; COLL.forEach(f => counts[ck(f)] = (counts[ck(f)] || 0) + 1);
   const coords = [...LISTED.filter(c => counts[c]), ...Object.keys(counts).filter(c => !LISTED.includes(c))];
@@ -2726,19 +3030,22 @@ function renderHS(roll) {
     <div class="hs-top"><div class="c">${hsCoord}</div><div class="n">${names(hsCoord)}</div>
       <div class="m">${g.length} film${g.length === 1 ? '' : 's'}${LISTED.includes(hsCoord) ? ' · hierarchy step ' + (LISTED.indexOf(hsCoord) + 1) + ' of 23' : ' · awaiting placement'}${prov ? ' · * provisional' : ''}</div></div>
     <div class="hs-lever"><div class="sw ${hsAxis === 'Y' ? 'y' : ''}"><span class="knob"></span><button class="${hsAxis === 'X' ? 'on' : ''}" data-hsax="X">X · Condition</button><button class="${hsAxis === 'Y' ? 'on' : ''}" data-hsax="Y">Y · Recommend</button></div></div>
-    <div class="hs-screens" data-ax="${hsAxis}">${hsScreen(hsCoord, 'X', roll)}${hsScreen(hsCoord, 'Y', roll)}</div>
+    <div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${hsCoord} ${names(hsCoord)}</small></div>
+      <div class="arc-bezel"><div class="hs-screens" data-ax="${hsAxis}">${hsScreen(hsCoord, 'X', roll)}${hsScreen(hsCoord, 'Y', roll)}</div></div>
+      <div class="arc-panel" aria-hidden="true"><span class="arc-joy"></span><span class="arc-btns"><i></i><i></i></span></div>
+      <div class="arc-door">${canEdit() && g.length > 1
+        ? `<button class="coin-door" data-cc-coin><span class="mouth"><span class="drop"></span></span><span class="txt"><b>INSERT COIN</b><small>Play ${hsCoord} · move the films</small></span></button>`
+        : `<div class="coin-door free"><span class="mouth"></span><span class="txt"><b>FREE PLAY</b><small>${canEdit() ? 'One film here · nothing to move' : 'View only · editor plays at the Office'}</small></span></div>`}</div>
+    </div>
     ${ticket}
     <div class="hs-foot">${sel ? `<button class="btn-line" data-film="${esc(sel.id)}">Open its profile</button>` : ''}<button class="btn-line" data-hslobby>See ${hsCoord} in the lobby</button></div>
-    ${canEdit() && g.length > 1 ? `<div class="hs-slot"><button class="coinslot" data-cc-coin><span class="mouth"><span class="drop"></span></span><span class="txt"><b>INSERT COIN</b><small>Open the Command Center for ${hsCoord}</small></span></button></div>` : ''}`;
+`;
 }
 function pageOf(id, ax) { const i = hsList(hsCoord, ax).findIndex(f => f.id === id); return i < 0 ? 1 : Math.floor(i / HS_PAGE) + 1; }
 $('#gameroom').addEventListener('click', e => {
   if (e.target.closest('[data-cc-coin]')) return ccStart();
-  if (e.target.closest('[data-cc-save]')) return ccSave();
-  if (e.target.closest('[data-cc-cancel]')) { hsEdit = null; return renderHS(true); }
-  if (e.target.closest('[data-cc-reset]')) { if (hsEdit) { const c = hsEdit.coord; hsEdit = { coord: c, X: hsList(c, 'X').map(f => f.id), Y: hsList(c, 'Y').map(f => f.id), dirty: { X: false, Y: false } }; renderHS(true); } return; }
   const coin = e.target.closest('[data-hc],[data-coord]');
-  if (coin && hsEdit) { toast('Save or cancel the Command Center first'); $('#hsCab').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (coin && hsEdit) { toast('Finish the game first'); $('#hsCab').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   if (coin) {
     hsCoord = coin.dataset.hc || coin.dataset.coord; hsSel = null; hsPage = { X: 1, Y: 1 };
     renderHS(true);
@@ -2770,6 +3077,96 @@ $('#gameroom').addEventListener('click', e => {
 });
 
 
+
+
+/* =====================================================================
+   THE ORDINAL BRIEF · after the evaluation, before the reel
+   One short entry per axis: the specific thing that level's ordinal
+   compares. With the sub-genre, it builds the argument card on the reel.
+   ===================================================================== */
+const BRIEF = {
+  X: { 5: { word: 'vulnerability', ask: 'Its vulnerability to meaningful qualification' },
+       4: { word: 'compromise', ask: 'The nature and consequences of its compromise' },
+       3: { word: 'failure', ask: 'The failure that defeats its demonstrated capacity' },
+       2: { word: 'incapacity', ask: 'The nature of its fundamental incapacity' },
+       1: { word: 'discredit', ask: 'The nature and extent of its discredit' } },
+  Y: { 5: { word: 'transformation', ask: 'Its transformation of understanding', cmp: 'a more consequential transformation of perspective or understanding' },
+       4: { word: 'must-see grounds', ask: 'Its must-see, ought-not-miss grounds', cmp: 'more compelling grounds for an experience they ought not miss' },
+       3: { word: 'impact', ask: 'Its impact as a stellar option', cmp: 'more compelling grounds as an impactful, stellar option' },
+       2: { word: 'dependency', ask: 'Its dependency: grounds for active recommendation', cmp: 'more compelling grounds for an active recommendation' },
+       1: { word: 'appeal', ask: 'Its appeal: enticement despite uncertainty', cmp: 'more compelling grounds for taking a chance on its appeal' },
+       0: { word: 'incentive', ask: 'Its residual incentive to view', cmp: 'a stronger remaining incentive to check it out' } },
+};
+const BRIEF_MAX = 160;
+let bf = null;
+function briefOpen(id, mode) {
+  const r = raw(id); if (!r) return;
+  const x = r.x, y = r.y, c = x + '/' + y, b = briefOf(r) || {}, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ');
+  bf = { id, mode };
+  const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
+  $('#bfIn').innerHTML = `
+    <div class="k">${mode === 'reel' ? 'Before the Screening Room' : 'Film profile'} · ${c} ${names(c)}</div>
+    <h2>The Ordinal Brief</h2>
+    <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
+    <p class="intro">Name the specific thing each ordinal question will compare. On the reel, these become the argument card for every showdown in ${c}.</p>
+    <div class="bf-sec"><h4>Sub-genre</h4>
+      <div class="genre2" style="margin-top:8px"><input id="bfG1" placeholder="Silent" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Comedy" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
+    <div class="bf-sec"><h4><b>X${x}</b>${X_NAMES[x]} · ${BRIEF.X[x].word}</h4>
+      <div class="ask">${BRIEF.X[x].ask}</div><p class="q">${esc(SHOW_Q.X[x])}</p>
+      <textarea id="bfX" rows="2" maxlength="${BRIEF_MAX}" placeholder="In a phrase or a sentence…">${esc(b.x || '')}</textarea><div class="cnt" id="bfXc"></div></div>
+    <div class="bf-sec"><h4><b>Y${y}</b>${Y_NAMES[y]} · ${BRIEF.Y[y].word}</h4>
+      <div class="ask">${BRIEF.Y[y].ask}</div><p class="q">${esc(SHOW_Q.Y[y])}</p>
+      <textarea id="bfY" rows="2" maxlength="${BRIEF_MAX}" placeholder="In a phrase or a sentence…">${esc(b.y || '')}</textarea><div class="cnt" id="bfYc"></div></div>
+    <div class="bf-err" id="bfErr"></div>
+    <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
+      <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
+  const cnt = () => { $('#bfXc').textContent = $('#bfX').value.length + ' / ' + BRIEF_MAX; $('#bfYc').textContent = $('#bfY').value.length + ' / ' + BRIEF_MAX; };
+  ['#bfX', '#bfY'].forEach(s => $(s).addEventListener('input', () => { cnt(); $('#bfErr').textContent = ''; }));
+  cnt();
+  $('#brief').classList.add('show');
+}
+function briefClose() { bf = null; $('#brief').classList.remove('show'); }
+$('#brief').addEventListener('click', async e => {
+  if (!bf) return;
+  if (e.target.closest('[data-bflater]')) { const m = bf.mode; briefClose(); if (m === 'reel') goTo('lobby'); return; }
+  if (!e.target.closest('[data-bfgo]')) return;
+  const g1 = capWord($('#bfG1').value), g2 = capWord($('#bfG2').value), x = $('#bfX').value.trim(), y = $('#bfY').value.trim();
+  if (!g1 || !g2) return $('#bfErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
+  if (!x || !y) return $('#bfErr').textContent = 'Fill in both entries — the X and the Y.';
+  const r = raw(bf.id); if (!r || !canEdit()) return briefClose();
+  r.genre = [g1, g2];
+  r.brief = { coord: r.x + '/' + r.y, x, y, at: Date.now() };
+  const m = bf.mode; briefClose(); rebuild();
+  const ok = await persist();
+  if (m === 'reel') { if (current === 'auditorium') enterAuditorium(); }
+  else { if (ok) toast('Sub-genre and brief saved'); openProfile(r.id); }
+});
+
+/* the argument card: the case for each film, built both ways from the brief, sub-genre and evaluation */
+function firstSentence(t, n = 220) {
+  t = String(t || '').trim(); if (!t) return '';
+  const m = t.match(/^[\s\S]*?[.!?](\s|$)/); let s = (m ? m[0] : t).trim();
+  if (s.length > n) s = s.slice(0, n).replace(/\s+\S*$/, '') + '…';
+  return s.replace(/[.!?]$/, '');
+}
+function argueCase(A, B, ax) {
+  const miss = w => `<span class="miss">${w}</span>`;
+  const lvl = ax === 'X' ? A.X : A.Y, Bk = BRIEF[ax][lvl];
+  const ev = f => (ax === 'X' ? f.xEv : f.yEv) ? `<q>${esc(ax === 'X' ? f.xEv : f.yEv)}</q>` : miss('no evidence header');
+  const br = f => f.brief ? `<q>${esc(ax === 'X' ? f.brief.x : f.brief.y)}</q>` : miss('brief not written');
+  const gn = f => f.genre ? `<b>${esc(f.genre.toLowerCase())}</b>` : miss('sub-genre not set');
+  const rat = f => { const s = firstSentence(ax === 'X' ? f.xNote : f.yNote); return s ? esc(s.charAt(0).toLowerCase() + s.slice(1)) : miss('no rationale'); };
+  if (ax === 'Y') return `I think <b>${esc(A.title)}</b>’s ${ev(A)} offers a viewer watching a ${gn(A)} ${Bk.cmp} — given its ${Bk.word}, ${br(A)} — because ${rat(A)}, than <b>${esc(B.title)}</b>’s ${ev(B)} offers a viewer watching a ${gn(B)}, given its ${Bk.word}, ${br(B)}.`;
+  return `I think <b>${esc(A.title)}</b>’s ${Bk.word} — ${br(A)} — is less consequential to what a ${gn(A)} sets out to achieve, given ${ev(A)}, because ${rat(A)}, than <b>${esc(B.title)}</b>’s ${Bk.word} — ${br(B)} — is to a ${gn(B)}.`;
+}
+function argueHTML(A, B, ax, id) {
+  const lvl = ax === 'X' ? A.X : A.Y;
+  return `<div class="argue" ${id ? `id="${id}"` : ''}><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative case goes higher' : 'the stronger positive case goes higher'}</div>
+    <h4>${esc(A.title)} <span style="font-family:var(--serif);font-size:14px;letter-spacing:.2em">VS</span> ${esc(B.title)}</h4>
+    <div class="two"><div class="case"><div class="lab">The case for ${esc(A.title)}</div><p>${argueCase(A, B, ax)}</p></div>
+      <div class="case"><div class="lab">The case for ${esc(B.title)}</div><p>${argueCase(B, A, ax)}</p></div></div>
+    <div class="foot">${ax === 'Y' ? 'Your experience is the evidence; the comparison is for a prospective viewer.' : 'Both cases are built from the evaluations — you decide which one holds.'}</div></div>`;
+}
 
 /* =====================================================================
    THE MEMORY FILTER · three doors before the booth
@@ -2840,7 +3237,7 @@ $('#mf').addEventListener('click', async e => {
 async function fileNew(cat) {
   if (!pending || !canEdit()) return;
   const f = pending; pending = null;
-  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, cat, at: Date.now(), history: [] });
+  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, cat, at: Date.now(), history: [] });
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
   lfShelf = ''; lfPage = 1; lfQuery = '';
   const ok = await persist();
@@ -2857,7 +3254,7 @@ async function promoteLF(id) {
   const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
   if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film up.`);
   db.lostfound = db.lostfound.filter(f => f.id !== id);
-  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
+  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
                   lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
   rebuild();
   await beginWorkflow(e.id, 'new');
