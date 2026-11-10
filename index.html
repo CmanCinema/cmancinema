@@ -3105,7 +3105,9 @@ const ADJ_MAX = 30;
 const X_CASE = { 5: 'conditional', 4: 'compromising', 3: 'invalidating', 2: 'debilitating', 1: 'discrediting' };
 /* Y: the effect (Y0–Y4) or affect (Y5) — evidence line plus rationale — described by what it does to the viewing.
    Like X's words, these name an action, not a quality, so a praise word in the evidence can't simply match them. */
-const Y_REG = { 5: 'redefining', 4: 'obligating', 3: 'heightening', 2: 'striking', 1: 'inviting', 0: 'incentivizing' };
+const Y_REG = { 5: 'redefining', 4: 'obligating', 3: 'influencing', 2: 'encouraging', 1: 'inviting', 0: 'incentivizing' };
+// card verbs: Y0–Y4 are calls to action toward a prospective viewer, rising in push; Y5 is the affect
+const Y_VERB = { 5: 'redefines', 4: 'obligates', 3: 'influences', 2: 'encourages', 1: 'invites', 0: 'incentivizes' };
 const yNoun = l => l === 5 ? 'affect' : 'effect';
 const oneWord = v => /^[A-Za-z][A-Za-z'’-]*$/.test(v);
 let bf = null;
@@ -3147,9 +3149,9 @@ $('#brief').addEventListener('click', async e => {
    X: the evidence line is a case (something against), described against the film's condition
       "I think [A]'s "[evidence]" case is less [case word] to viewing its [sub-genre]
        than [B]'s case in "[evidence]" is as [case word] to its [sub-genre]."
-   Y: the evidence line is an affect, described in the experiential register of its stance
-      "I think [A]'s "[evidence]" affect is more [register word] to viewing its [sub-genre]
-       than [B]'s affect in "[evidence]" is as [register word] to its [sub-genre]." */
+   Y: the evidence line names an effect (Y0–Y4) or affect (Y5); the verb is the level's call to action
+      "I think [A]'s "[evidence]" effect [verb]s the viewing of its [sub-genre]
+       more than [B]'s effect in "[evidence]" [verb]s the viewing of its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
 function argueCase(A, B, ax, swap) {
@@ -3163,8 +3165,8 @@ function argueCase(A, B, ax, swap) {
     const word = `<b>${X_CASE[A.X]}</b>`;
     return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
   }
-  const word = `<b>${Y_REG[A.Y]}</b>`, n = yNoun(A.Y);
-  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} is more ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} ${n} in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
+  const verb = `<b>${Y_VERB[A.Y]}</b>`, n = yNoun(A.Y);
+  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} ${verb} the viewing of its ${gn(A)} more than ${esc(poss(B.title))} ${n} in ${ev(evB)} ${verb} the viewing of its ${gn(B)}.`;
 }
 function argueHTML(A, B, ax, id, swap) {
   const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'case' : yNoun(lvl);
