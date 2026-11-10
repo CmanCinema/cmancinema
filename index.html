@@ -1986,8 +1986,8 @@ function openProfile(id) {
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
       <div class="pev"><p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
         <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>
-        <p class="note"><b>Ordinal brief · ${ck(f)}</b>${f.brief ? `Y register · <i>${esc(f.brief.y)}</i> &nbsp;·&nbsp; X case · <i>${X_CASE[f.X]}</i>` : `<i>No register yet${f.genre ? '' : ', and no sub-genre set'}.</i>`}</p></div>
-      ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.brief && f.genre ? 'Edit sub-genre &amp; register' : 'Add sub-genre &amp; register'}</button></div>` : ''}
+        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · case: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · affect: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
+      ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         <button class="btn-line" data-reopen="reeval">Re-evaluate in the booth</button>
@@ -2355,7 +2355,7 @@ function enterAuditorium() {
   const f = byId(active.film.id);
   if (!f) { setAudOpen(false); $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   active.film = f;
-  if (!f.brief || !f.genre) { $('#stage').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#argue').hidden = true; return briefOpen(f.id, 'reel'); }
+  if (!f.genre) { $('#stage').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#argue').hidden = true; return briefOpen(f.id, 'reel'); }
   $('#argue').hidden = false;
   loadAxis(placed.X ? 'Y' : 'X');
 }
@@ -3091,29 +3091,27 @@ $('#gameroom').addEventListener('click', e => {
 const ADJ_MAX = 30;
 /* X is always a case, judged by one fixed word per level; Y is always a register, in my own word */
 const X_CASE = { 5: 'conditional', 4: 'compromising', 3: 'invalidating', 2: 'debilitating', 1: 'discrediting' };
+/* Y: an affect measured against the viewing-recommendation stance, in that level's experiential register */
+const Y_REG = { 5: 'transformative', 4: 'unmissable', 3: 'impactful', 2: 'worthwhile', 1: 'appealing', 0: 'incentivizing' };
 const oneWord = v => /^[A-Za-z][A-Za-z'’-]*$/.test(v);
 let bf = null;
 function briefOpen(id, mode) {
   const r = raw(id); if (!r) return;
-  const x = r.x, y = r.y, c = x + '/' + y, b = briefOf(r) || {}, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ');
+  const x = r.x, y = r.y, c = x + '/' + y, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ').filter(Boolean);
   bf = { id, mode };
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
-  const box = (ax, lvl, nm, ev, note, val) => `<div class="bf-sec"><h4><b>${ax}${lvl}</b>${nm} · one adjective for your register</h4>
-      <p class="q" style="margin-top:8px">${unq(ev) ? `<b style="font-style:normal">“${esc(unq(ev))}”</b> — ` : ''}${esc(note || 'No rationale written.')}</p>
-      <input id="bf${ax}" maxlength="${ADJ_MAX}" placeholder="e.g. magical" value="${esc(val || '')}" autocomplete="off"></div>`;
+  const t = encodeURIComponent((r.title || '') + ' ' + (r.year || '') + ' film sub-genre');
   $('#bfIn').innerHTML = `
     <div class="k">${mode === 'reel' ? 'Before the Screening Room' : 'Film profile'} · ${c} ${names(c)}</div>
-    <h2>The Ordinal Brief</h2>
+    <h2>Sub-genre</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
-    <p class="intro">Boil your Y rationale down to one adjective — your register. On the reel it completes the argument card: <i>“I think [film]’s “[evidence]” register is more <b>[adjective]</b> to viewing a [sub-genre] than…”</i></p>
-    <div class="bf-sec"><h4>Sub-genre</h4>
-      <div class="genre2" style="margin-top:8px"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4><b>X${x}</b>${X_NAMES[x]} · case</h4><p class="q" style="margin-top:8px">${unq(r.xEv) ? `<b style="font-style:normal">“${esc(unq(r.xEv))}”</b> case — ` : ''}set automatically: X${x} cases are always judged as <b style="font-style:normal">${X_CASE[x]}</b>.</p></div>
-    ${box('Y', y, Y_NAMES[y], r.yEv, r.yNote, b.y)}
+    <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel — the argument card reads every film against its own.' : 'The argument card reads every film against its own sub-genre.'}</p>
+    <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
+      <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
+    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">An X${x} ${X_NAMES[x]} case is described as <b style="font-style:normal">${X_CASE[x]}</b>; a Y${y} ${Y_NAMES[y]} affect as <b style="font-style:normal">${Y_REG[y]}</b>. Both are pulled from your evidence lines.</p></div>
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
       <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
-  $('#bfY').addEventListener('input', () => { $('#bfErr').textContent = ''; });
   $('#brief').classList.add('show');
 }
 function briefClose() { bf = null; $('#brief').classList.remove('show'); }
@@ -3121,24 +3119,23 @@ $('#brief').addEventListener('click', async e => {
   if (!bf) return;
   if (e.target.closest('[data-bflater]')) { const m = bf.mode; briefClose(); if (m === 'reel') goTo('lobby'); return; }
   if (!e.target.closest('[data-bfgo]')) return;
-  const g1 = capWord($('#bfG1').value), g2 = capWord($('#bfG2').value), y = $('#bfY').value.trim().toLowerCase();
+  const g1 = capWord($('#bfG1').value), g2 = capWord($('#bfG2').value);
   if (!g1 || !g2) return $('#bfErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
-  if (!y) return $('#bfErr').textContent = 'Give one adjective for your register.';
-  if (!oneWord(y)) return $('#bfErr').textContent = 'One word, like magical or unrelenting.';
   const r = raw(bf.id); if (!r || !canEdit()) return briefClose();
   r.genre = [g1, g2];
-  r.brief = { coord: r.x + '/' + r.y, y, at: Date.now() };
   const m = bf.mode; briefClose(); rebuild();
   const ok = await persist();
   if (m === 'reel') { if (current === 'auditorium') enterAuditorium(); }
-  else { if (ok) toast('Sub-genre and register saved'); openProfile(r.id); }
+  else { if (ok) toast('Sub-genre saved'); openProfile(r.id); }
 });
 
-/* the argument card, built both ways from your two templates
-   Y: "I think [A]'s "[evidence]" register is more [my adjective] to viewing a [sub-genre]
-       than [B]'s "[evidence]" is as [B's adjective] to [B]'s [sub-genre]."
-   X: "I think [A]'s "[evidence]" case is less [level's fixed word] to viewing a [sub-genre]
-       than [B]'s case in "[evidence]" is as [that word] to a [sub-genre]." */
+/* the argument card, built both ways; X and Y mirror each other
+   X: the evidence line is a case (something against), described against the film's condition
+      "I think [A]'s "[evidence]" case is less [case word] to viewing a [sub-genre]
+       than [B]'s case in "[evidence]" is as [case word] to a [sub-genre]."
+   Y: the evidence line is an affect, described in the experiential register of its stance
+      "I think [A]'s "[evidence]" affect is more [register word] to viewing a [sub-genre]
+       than [B]'s affect in "[evidence]" is as [register word] to a [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
 function argueCase(A, B, ax) {
@@ -3149,8 +3146,8 @@ function argueCase(A, B, ax) {
     const word = `<b>${X_CASE[A.X]}</b>`;
     return `I think ${esc(poss(A.title))} ${ev(A)} case is less ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} case in ${ev(B)} is as ${word} to a ${gn(B)}.`;
   }
-  const reg = f => f.brief && f.brief.y ? `<b>${esc(f.brief.y)}</b>` : miss('no register');
-  return `I think ${esc(poss(A.title))} ${ev(A)} register is more ${reg(A)} to viewing a ${gn(A)} than ${esc(poss(B.title))} ${ev(B)} is as ${reg(B)} to ${esc(poss(B.title))} ${gn(B)}.`;
+  const word = `<b>${Y_REG[A.Y]}</b>`;
+  return `I think ${esc(poss(A.title))} ${ev(A)} affect is more ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} affect in ${ev(B)} is as ${word} to a ${gn(B)}.`;
 }
 function argueHTML(A, B, ax, id) {
   const lvl = ax === 'X' ? A.X : A.Y;
