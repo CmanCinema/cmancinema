@@ -1274,6 +1274,15 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
 @media (max-width:900px){ .argue .two{grid-template-columns:1fr} }
 @media (max-width:640px){ .bfc{padding:18px 14px} .case p{font-size:16px} }
 
+
+.case .story{margin-top:10px;padding-top:10px;border-top:1px dashed #b48a4e;font:500 16px/1.5 var(--body);color:#3a2418;white-space:pre-line}
+.case .story span{display:block;margin-bottom:4px;font:800 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a4a2a}
+.argue .foot{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.swapbtn{padding:6px 14px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 10px var(--serif);letter-spacing:.18em;text-transform:uppercase}
+.argue.swapped{box-shadow:0 0 0 2px #c4202f,0 14px 30px rgba(0,0,0,.5)}
+.argue.swapped .swapbtn{background:#c4202f;color:#fff;border-color:#c4202f}
+.swapnote{margin:-2px 0 12px;padding:8px 12px;border-radius:4px;background:rgba(196,32,47,.1);border-left:3px solid #c4202f;font:italic 600 15px/1.4 var(--body);color:#6a1a1e;text-align:center}
+
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
 #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);z-index:48;padding:12px 18px;border-radius:4px;background:#14040a;border:1px solid var(--gold-lo);color:var(--gold-hi);font:600 14px var(--serif);letter-spacing:.06em;opacity:0;transition:all .4s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
@@ -1986,7 +1995,7 @@ function openProfile(id) {
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
       <div class="pev"><p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
         <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>
-        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · case: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · affect: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
+        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · case: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · ${yNoun(f.Y)}: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
@@ -3091,8 +3100,10 @@ $('#gameroom').addEventListener('click', e => {
 const ADJ_MAX = 30;
 /* X is always a case, judged by one fixed word per level; Y is always a register, in my own word */
 const X_CASE = { 5: 'conditional', 4: 'compromising', 3: 'invalidating', 2: 'debilitating', 1: 'discrediting' };
-/* Y: an affect measured against the viewing-recommendation stance, in that level's experiential register */
-const Y_REG = { 5: 'transformative', 4: 'unmissable', 3: 'impactful', 2: 'worthwhile', 1: 'appealing', 0: 'incentivizing' };
+/* Y: the effect (Y0–Y4) or affect (Y5) — evidence line plus rationale — described by what it does to the viewing.
+   Like X's words, these name an action, not a quality, so a praise word in the evidence can't simply match them. */
+const Y_REG = { 5: 'redefining', 4: 'obligating', 3: 'distinguishing', 2: 'assuring', 1: 'inviting', 0: 'incentivizing' };
+const yNoun = l => l === 5 ? 'affect' : 'effect';
 const oneWord = v => /^[A-Za-z][A-Za-z'’-]*$/.test(v);
 let bf = null;
 function briefOpen(id, mode) {
@@ -3108,7 +3119,7 @@ function briefOpen(id, mode) {
     <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel — the argument card reads every film against its own.' : 'The argument card reads every film against its own sub-genre.'}</p>
     <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
       <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">An X${x} ${X_NAMES[x]} case is described as <b style="font-style:normal">${X_CASE[x]}</b>; a Y${y} ${Y_NAMES[y]} affect as <b style="font-style:normal">${Y_REG[y]}</b>. Both are pulled from your evidence lines.</p></div>
+    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">Its X${x} ${X_NAMES[x]} case — evidence line and rationale together — is described as <b style="font-style:normal">${X_CASE[x]}</b>; its Y${y} ${Y_NAMES[y]} ${yNoun(y)} as <b style="font-style:normal">${Y_REG[y]}</b>.</p></div>
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
       <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
@@ -3138,26 +3149,40 @@ $('#brief').addEventListener('click', async e => {
        than [B]'s affect in "[evidence]" is as [register word] to a [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
-function argueCase(A, B, ax) {
+function argueCase(A, B, ax, swap) {
   const miss = w => `<span class="miss">${w}</span>`;
-  const ev = f => { const e = unq(ax === 'X' ? f.xEv : f.yEv); return e ? `<q>${esc(e)}</q>` : miss('no evidence header'); };
+  // the swap test trades the evidence lines (the names of the packages); each rationale stays with its film
+  const line = f => unq(ax === 'X' ? f.xEv : f.yEv);
+  const evA = swap ? line(B) : line(A), evB = swap ? line(A) : line(B);
+  const ev = e => e ? `<q>${esc(e)}</q>` : miss('no evidence line');
   const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
   if (ax === 'X') {
     const word = `<b>${X_CASE[A.X]}</b>`;
-    return `I think ${esc(poss(A.title))} ${ev(A)} case is less ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} case in ${ev(B)} is as ${word} to a ${gn(B)}.`;
+    return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to a ${gn(B)}.`;
   }
-  const word = `<b>${Y_REG[A.Y]}</b>`;
-  return `I think ${esc(poss(A.title))} ${ev(A)} affect is more ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} affect in ${ev(B)} is as ${word} to a ${gn(B)}.`;
+  const word = `<b>${Y_REG[A.Y]}</b>`, n = yNoun(A.Y);
+  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} is more ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} ${n} in ${ev(evB)} is as ${word} to a ${gn(B)}.`;
 }
-function argueHTML(A, B, ax, id) {
-  const lvl = ax === 'X' ? A.X : A.Y;
-  return `<div class="argue" ${id ? `id="${id}"` : ''}><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative case goes higher' : 'the stronger positive case goes higher'}</div>
+function argueHTML(A, B, ax, id, swap) {
+  const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'case' : yNoun(lvl);
+  const story = f => { const t = ax === 'X' ? f.xNote : f.yNote; return t ? esc(t) : '<i>No rationale written.</i>'; };
+  const box = (P, Q) => `<div class="case"><div class="lab">The ${pkg} for ${esc(P.title)}</div><p>${argueCase(P, Q, ax, swap)}</p>
+      <div class="story"><span>${esc(P.title)} · the full ${pkg}</span>${story(P)}</div></div>`;
+  return `<div class="argue ${swap ? 'swapped' : ''}" ${id ? `id="${id}"` : ''} data-a="${esc(A.id)}" data-b="${esc(B.id)}" data-ax="${ax}"><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative case goes higher' : 'the stronger positive case goes higher'}</div>
     <h4>${esc(A.title)} <span style="font-family:var(--serif);font-size:14px;letter-spacing:.2em">VS</span> ${esc(B.title)}</h4>
     <p class="aq">“${esc(SHOW_Q[ax][lvl])}”</p>
-    <div class="two"><div class="case"><div class="lab">The case for ${esc(A.title)}</div><p>${argueCase(A, B, ax)}</p></div>
-      <div class="case"><div class="lab">The case for ${esc(B.title)}</div><p>${argueCase(B, A, ax)}</p></div></div>
-    <div class="foot">${ax === 'Y' ? 'Your experience is the evidence; the comparison is for a prospective viewer.' : 'Both cases come from the evaluations — you decide which one holds.'}</div></div>`;
+    ${swap ? `<div class="swapnote">Swap test · the evidence lines have traded places; each rationale stays with its own film. Would you answer differently now? If so, the words are leading, not the ${pkg}.</div>` : ''}
+    <div class="two">${box(A, B)}${box(B, A)}</div>
+    <div class="foot"><button class="swapbtn" data-swap>${swap ? 'Undo the swap' : 'Swap test'}</button><span>${ax === 'Y' ? 'Each ' + pkg + ' is the evidence line and its rationale together; the comparison is for a prospective viewer.' : 'Each case is the evidence line and its rationale together — you decide which one holds.'}</span></div></div>`;
 }
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-swap]'); if (!b) return;
+  const card = b.closest('.argue'), A = byId(card.dataset.a), B = byId(card.dataset.b); if (!A || !B) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = argueHTML(A, B, card.dataset.ax, card.id || '', !card.classList.contains('swapped'));
+  card.replaceWith(tmp.firstElementChild);
+});
+
 /* =====================================================================
    THE MEMORY FILTER · three doors before the booth
    Pass all three and the film is rating eligible. Stopped at a door, it is
