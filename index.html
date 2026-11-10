@@ -3099,7 +3099,7 @@ function briefOpen(id, mode) {
   bf = { id, mode };
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
   const box = (ax, lvl, nm, ev, note, val) => `<div class="bf-sec"><h4><b>${ax}${lvl}</b>${nm} · one adjective for your register</h4>
-      <p class="q" style="margin-top:8px">${ev ? `<b style="font-style:normal">“${esc(ev)}”</b> — ` : ''}${esc(note || 'No rationale written.')}</p>
+      <p class="q" style="margin-top:8px">${unq(ev) ? `<b style="font-style:normal">“${esc(unq(ev))}”</b> — ` : ''}${esc(note || 'No rationale written.')}</p>
       <input id="bf${ax}" maxlength="${ADJ_MAX}" placeholder="e.g. magical" value="${esc(val || '')}" autocomplete="off"></div>`;
   $('#bfIn').innerHTML = `
     <div class="k">${mode === 'reel' ? 'Before the Screening Room' : 'Film profile'} · ${c} ${names(c)}</div>
@@ -3108,7 +3108,7 @@ function briefOpen(id, mode) {
     <p class="intro">Boil your Y rationale down to one adjective — your register. On the reel it completes the argument card: <i>“I think [film]’s “[evidence]” register is more <b>[adjective]</b> to viewing a [sub-genre] than…”</i></p>
     <div class="bf-sec"><h4>Sub-genre</h4>
       <div class="genre2" style="margin-top:8px"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4><b>X${x}</b>${X_NAMES[x]} · case</h4><p class="q" style="margin-top:8px">${r.xEv ? `<b style="font-style:normal">“${esc(r.xEv)}”</b> case — ` : ''}set automatically: X${x} cases are always judged as <b style="font-style:normal">${X_CASE[x]}</b>.</p></div>
+    <div class="bf-sec"><h4><b>X${x}</b>${X_NAMES[x]} · case</h4><p class="q" style="margin-top:8px">${unq(r.xEv) ? `<b style="font-style:normal">“${esc(unq(r.xEv))}”</b> case — ` : ''}set automatically: X${x} cases are always judged as <b style="font-style:normal">${X_CASE[x]}</b>.</p></div>
     ${box('Y', y, Y_NAMES[y], r.yEv, r.yNote, b.y)}
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
@@ -3140,9 +3140,10 @@ $('#brief').addEventListener('click', async e => {
    X: "I think [A]'s "[evidence]" case is less [level's fixed word] to viewing a [sub-genre]
        than [B]'s case in "[evidence]" is as [that word] to a [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
+const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
 function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
-  const ev = f => { const e = ax === 'X' ? f.xEv : f.yEv; return e ? `<q>${esc(e)}</q>` : miss('no evidence header'); };
+  const ev = f => { const e = unq(ax === 'X' ? f.xEv : f.yEv); return e ? `<q>${esc(e)}</q>` : miss('no evidence header'); };
   const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
   if (ax === 'X') {
     const word = `<b>${X_CASE[A.X]}</b>`;
