@@ -3145,11 +3145,11 @@ $('#brief').addEventListener('click', async e => {
 
 /* the argument card, built both ways; X and Y mirror each other
    X: the evidence line is a case (something against), described against the film's condition
-      "I think [A]'s "[evidence]" case is less [case word] to viewing a [sub-genre]
-       than [B]'s case in "[evidence]" is as [case word] to a [sub-genre]."
+      "I think [A]'s "[evidence]" case is less [case word] to viewing its [sub-genre]
+       than [B]'s case in "[evidence]" is as [case word] to its [sub-genre]."
    Y: the evidence line is an affect, described in the experiential register of its stance
-      "I think [A]'s "[evidence]" affect is more [register word] to viewing a [sub-genre]
-       than [B]'s affect in "[evidence]" is as [register word] to a [sub-genre]." */
+      "I think [A]'s "[evidence]" affect is more [register word] to viewing its [sub-genre]
+       than [B]'s affect in "[evidence]" is as [register word] to its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
 function argueCase(A, B, ax, swap) {
@@ -3161,10 +3161,10 @@ function argueCase(A, B, ax, swap) {
   const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
   if (ax === 'X') {
     const word = `<b>${X_CASE[A.X]}</b>`;
-    return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to a ${gn(B)}.`;
+    return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
   }
   const word = `<b>${Y_REG[A.Y]}</b>`, n = yNoun(A.Y);
-  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} is more ${word} to viewing a ${gn(A)} than ${esc(poss(B.title))} ${n} in ${ev(evB)} is as ${word} to a ${gn(B)}.`;
+  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} is more ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} ${n} in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
 }
 function argueHTML(A, B, ax, id, swap) {
   const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'case' : yNoun(lvl);
