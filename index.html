@@ -714,6 +714,7 @@ button.li2:hover{border-color:var(--gold)}
 .ev-left .note .evh,.ev-right .note .evh{font-size:1.02em;margin-bottom:4px}
 .ev-left .empty,.ev-right .empty{margin-top:8px}
 /* booth word counter */
+.tplhint{font:italic 500 13px/1.4 var(--body);color:#8a6a3a;margin:6px 0 0}
 .wc{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
 .wc.full{color:#8a1414}
 .wc i{font:italic 500 14px var(--body);letter-spacing:0;text-transform:none}
@@ -2188,7 +2189,8 @@ function renderPane() {
     const x = bt.axis === 'X';
     p.innerHTML = `<div class="log">
         <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
-        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(x ? bt.xNote : bt.yNote)}</textarea>
+        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && templateFor(bt.axis, bt.level, active && active.film) ? templateFor(bt.axis, bt.level, active && active.film) : (x ? bt.xNote : bt.yNote))}</textarea>
+        ${templateFor(bt.axis, bt.level, active && active.film) ? '<div class="tplhint">The ' + bt.axis + bt.level + ' template is filled in · replace each [bracketed part] · click a bracket to select it, Tab jumps to the next</div>' : ''}
         <div class="wc" id="wc"></div>
       </div>
       <button class="seal" data-seal>Seal the ${bt.axis} evaluation</button>
@@ -2219,6 +2221,28 @@ function saveWriting() {
   if (bt.axis === 'X') { bt.xEv = ''; bt.xNote = ra.value.trim(); }
   else { bt.yEv = ''; bt.yNote = ra.value.trim(); }
 }
+// ---------- Booth templates: each level's Claim / Case frame (claude/booth-templates.md) ----------
+// Bracketed parts are slots to fill; everything else is the level's preset. X2 / X1 have none yet.
+const WEAK = '[The presumed state of weakening: what it is and where it is] because [why, or how specifically].';
+const TEMPLATES = {
+  X: { 5: WEAK + ' This claim is immaterial to [the outcome] because [the intended plan] itself is not [failure word] in its effect.',
+       4: WEAK + ' This claim is material to [the outcome] because [the intended plan] itself is [failure word] in its effect. It doesn’t fail the core aim altogether because [what still achieves it] is not invalidated.',
+       3: WEAK + ' Despite failing the core aim altogether, the film is not fundamentally incapable in fulfilling its aim as evident in [where it showed it could].' },
+  Y: { 5: 'The film’s [defining quality] is so extraordinary that it profoundly alters my broader conception of what [the kind of experience it strives for] can be.',
+       4: 'I appreciate how the film delivers [the highly rewarding effects] because the realization through [how it is realized] itself makes the experience exceptionally high-caliber. It’s this caliber of realization that dominates my appreciation. This defining quality is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
+       3: 'I appreciate how the film [delivers its highly rewarding effects] because [what those stellar and impactful rewards give you]. In addition to [further rewards along the way — optional, delete this sentence if unused]. It’s these rewards of realization that dominate my appreciation.',
+       2: '[The appeal] is dependable enough because it’s driven by [what makes it dependable]. This justifies actively recommending it. It doesn’t justify “ought to be seen” status because its forms of positive engagement aren’t superlatively sufficient on experiential grounds.',
+       1: '[The appeal]. This justifies considering it; however, its effectiveness is not dependable enough to justify active recommendation because [why its effectiveness isn’t dependable].',
+       0: 'While [the residual appeal], it’s insufficient for checking out the film because it doesn’t override [what outweighs it].' },
+};
+function templateFor(ax, lvl, film) {
+  const t = TEMPLATES[ax][lvl]; if (!t) return '';
+  const g = film && film.genre ? String(film.genre).toLowerCase() : '';
+  return t.replace('{genre}', g || '[sub-genre]');
+}
+// an untouched template (of any level) counts as empty, so moving between levels swaps the frame
+const isSeed = (ax, txt, film) => { const v = String(txt || '').trim(); return !v || Object.keys(TEMPLATES[ax]).some(l => templateFor(ax, +l, film) === v); };
+const SLOT = /\[[^\]\n]{1,120}\]/;
 const WORD_LIMIT = 150;
 const wordCount = t => (String(t || '').trim().match(/\S+/g) || []).length;
 let lastRa = '';
@@ -2230,6 +2254,23 @@ function updateWordCount() {
   if (seal) seal.disabled = over;
   lastRa = ra.value;
 }
+function selectSlot(ra, from, forward) {
+  const v = ra.value, re = /\[[^\]\n]{1,120}\]/g; let m, hit = null, first = null;
+  while ((m = re.exec(v))) { if (!first) first = m; if (forward ? m.index >= from : (m.index <= from && from <= m.index + m[0].length)) { hit = m; break; } }
+  if (!hit && forward) hit = first;
+  if (hit) { ra.setSelectionRange(hit.index, hit.index + hit[0].length); return true; }
+  return false;
+}
+// click (or tap) inside a [bracketed part] selects it, so typing replaces it; after the browser places the caret
+$('#pane').addEventListener('mouseup', e => {
+  const ra = e.target.id === 'raIn' ? e.target : null; if (!ra) return;
+  setTimeout(() => { if (ra.selectionStart === ra.selectionEnd) selectSlot(ra, ra.selectionStart, false); }, 0);
+});
+$('#pane').addEventListener('keydown', e => {
+  if (e.target.id === 'raIn' && e.key === 'Tab' && !e.shiftKey && SLOT.test(e.target.value)) {
+    e.preventDefault(); selectSlot(e.target, e.target.selectionEnd, true);
+  }
+});
 $('#pane').addEventListener('input', e => {
   if (e.target.id === 'raIn') {
     const n = wordCount(e.target.value);
@@ -2255,6 +2296,11 @@ $('#pane').addEventListener('click', e => {
     const h = bt.history.pop(); if (!h) return;
     bt.axis = h.axis; bt.level = h.level; bt.qi = h.qi; bt.phase = 'ask';
   } else if (b.dataset.seal !== undefined) {
+    const ra = $('#raIn');
+    if (ra && SLOT.test(ra.value)) {
+      const m = ra.value.match(SLOT); ra.focus(); ra.setSelectionRange(m.index, m.index + m[0].length);
+      return toast('Fill in the bracketed parts of the template before sealing');
+    }
     saveWriting();
     if (bt.axis === 'X') { bt.x = bt.level; bt.axis = 'Y'; bt.level = 0; bt.qi = 0; bt.history = []; bt.phase = 'ask'; }
     else { bt.y = bt.level; bt.phase = 'done'; }
