@@ -2438,10 +2438,10 @@ const SLOT_DEG = 21;
 
 function resetReel() { axis = 'X'; placed = {}; lastVerdict = null; $('#consider').value = ''; }
 function setAudOpen(open) {
-  $('#audDark').hidden = open; $('#screenCard').hidden = !open; $('#stage').hidden = !open; $('#desk').hidden = !open; $('#refBand').hidden = !open;
+  $('#audDark').hidden = open; $('#screenCard').hidden = !open; $('#stage').hidden = !open; $('#desk').hidden = !open; $('#refBand').hidden = !open; $('#argue').hidden = !open;
 }
 function enterAuditorium() {
-  if (lastVerdict) { setAudOpen(true); $('#stage').hidden = true; $('#screenCard').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return; }
+  if (lastVerdict) { setAudOpen(true); $('#stage').hidden = true; $('#argue').hidden = true; $('#screenCard').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return; }
   const open = canEdit() && active && active.stage === 'reel';
   setAudOpen(!!open);
   if (!open) { $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
@@ -2473,7 +2473,7 @@ function loadAxis(ax) {
   $('#consider').value = '';
   $('#placing').style.display = '';
   $('#results').classList.remove('show');
-  $('#stage').hidden = false; $('#refBand').hidden = false;
+  $('#stage').hidden = false; $('#refBand').hidden = false; $('#argue').hidden = false;
   $('#lockBtn').textContent = ax === 'X' ? 'Lock the X placement' : 'Lock the Y placement';
   $('#lockBtn').disabled = false;
   reel.setAttribute('aria-valuemax', N + 1);
