@@ -3150,8 +3150,8 @@ $('#brief').addEventListener('click', async e => {
       "I think [A]'s "[evidence]" case is less [case word] to viewing its [sub-genre]
        than [B]'s case in "[evidence]" is as [case word] to its [sub-genre]."
    Y: the evidence line names an effect (Y0–Y4) or affect (Y5); the verb is the level's call to action
-      "I think [A]'s "[evidence]" effect [verb]s the viewing of its [sub-genre]
-       more than [B]'s effect in "[evidence]" [verb]s the viewing of its [sub-genre]." */
+      "I think [A]'s "[evidence]" effect [verb]s viewing its [sub-genre]
+       more than [B]'s effect in "[evidence]" [verb]s viewing its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
 function argueCase(A, B, ax, swap) {
@@ -3166,7 +3166,7 @@ function argueCase(A, B, ax, swap) {
     return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
   }
   const verb = `<b>${Y_VERB[A.Y]}</b>`, n = yNoun(A.Y);
-  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} ${verb} the viewing of its ${gn(A)} more than ${esc(poss(B.title))} ${n} in ${ev(evB)} ${verb} the viewing of its ${gn(B)}.`;
+  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} ${verb} viewing its ${gn(A)} more than ${esc(poss(B.title))} ${n} in ${ev(evB)} ${verb} viewing its ${gn(B)}.`;
 }
 function argueHTML(A, B, ax, id, swap) {
   const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'case' : yNoun(lvl);
