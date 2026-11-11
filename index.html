@@ -1312,6 +1312,42 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
   .pstats{grid-template-columns:repeat(2,1fr)}
   #toast{bottom:80px}
 }
+
+/* Screening Room: the argument card carries both films' claim/case under the wheel.
+   On desktop the sides hold lobby display cases — a tale of the tape, no text that repeats the card. All static. */
+#auditorium .argue{margin-top:16px}
+@media (max-width:1100px){
+  #evMine,#evPeek{display:none!important}
+  #auditorium .stage{grid-template-columns:minmax(0,430px)!important;justify-content:center}
+  #auditorium .reel-col{grid-column:auto}
+}
+@media (min-width:1101px){
+  #auditorium .stage{grid-template-columns:1fr minmax(320px,430px) 1fr}
+  #evMine,#evPeek{background:none!important;box-shadow:none!important;padding:0!important;height:auto!important;overflow:visible!important;display:flex!important;justify-content:center}
+  #evMine::before,#evPeek::before{display:none}
+}
+.lc{position:relative;width:min(270px,100%);padding:12px 12px 16px;border-radius:6px;
+  background:linear-gradient(145deg,#f6dd8a,#b8862e 38%,#7a5418 62%,#d8ae55);box-shadow:0 18px 40px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,240,190,.35)}
+.lc-top{margin:-2px -2px 10px;padding:7px 6px 6px;text-align:center;border-radius:3px;background:#2a0c10;
+  font:800 11px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#f3d98a;
+  background-image:radial-gradient(circle,#ffe9a8 0 2px,transparent 2.5px);background-size:16px 100%;background-position:center bottom;background-repeat:repeat-x;padding-bottom:12px}
+.lc-glass{position:relative;padding:10px;border-radius:3px;background:#140608;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 8px 24px rgba(0,0,0,.7)}
+.lc-glass .poster{width:100%!important;display:block}
+.lc-glass::after{content:"";position:absolute;inset:0;border-radius:3px;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.16) 0 12%,transparent 30% 70%,rgba(255,255,255,.07) 85%)}
+.lc-empty{aspect-ratio:2/3;display:grid;place-items:center;text-align:center;padding:18px;border:1px dashed rgba(243,217,138,.35);border-radius:2px;
+  font:italic 500 16px/1.4 var(--body);color:rgba(243,230,200,.7)}
+.lc-plate{margin-top:10px;padding:8px 8px 9px;text-align:center;border-radius:3px;background:linear-gradient(#2a0c10,#1a0609);box-shadow:inset 0 0 0 1px rgba(243,217,138,.3)}
+.lc-plate .t{font:800 18px/1.15 var(--serif);color:#f6e6bd}
+.lc-plate .y{font:600 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#d8b46a;margin-top:3px}
+.lc-genre{margin:8px auto 0;width:max-content;max-width:100%;padding:3px 12px;border-radius:20px;background:#f4e8cc;color:#5a1a1e;
+  font:italic 600 14px var(--body);box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.lc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.lc-stats span{padding:6px 2px 5px;text-align:center;border-radius:3px;background:rgba(26,6,9,.88);font:600 9px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#d8b46a}
+.lc-stats b{display:block;font:800 17px var(--serif);letter-spacing:0;color:#f6e6bd;margin-bottom:2px}
+.lc-rope{position:relative;height:30px;margin:6px 14px -8px}
+.lc-rope::before,.lc-rope::after{content:"";position:absolute;bottom:0;width:10px;height:30px;border-radius:5px 5px 2px 2px;background:linear-gradient(90deg,#7a5418,#f6dd8a 45%,#9a6a22)}
+.lc-rope::before{left:0}.lc-rope::after{right:0}
+.lc-rope i{position:absolute;left:8px;right:8px;top:4px;height:16px;border:5px solid #8a1622;border-top:0;border-radius:0 0 50% 50%/0 0 100% 100%;box-shadow:0 3px 0 rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -2480,7 +2516,19 @@ function evidenceCard(f, label, current, me) {
       ? `<p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>`
       : `<p class="note"><b>Y · Case · ${f.Y} ${Y_NAMES[f.Y]}</b>${esc(f.yNote || '—')}</p>`}`;
 }
-function renderMine() { $('#evMine').innerHTML = evidenceCard(active.film, 'Your film · from the Projection Booth', axis, true); fitPanels(); }
+// a lobby display case: poster, nameplate, sub-genre plaque and standings (tale of the tape)
+function lobbyCase(f, me) {
+  if (!f) return `<div class="lc"><div class="lc-top">On the reel</div><div class="lc-glass"><div class="lc-empty">Tap a film on the reel to bring its one-sheet to the case.</div></div><div class="lc-rope"><i></i></div></div>`;
+  const stats = me
+    ? `<span><b>${ck(f)}</b>Coordinate</span><span><b id="lcLive">—</b>Now on ${axis}</span><span><b>${(axis === 'X' ? f.X : f.Y)}</b>${axis} level</span>`
+    : `<span><b>${ck(f)}</b>Coordinate</span><span><b>#${f.xr}</b>X rank</span><span><b>#${f.yr}</b>Y rank</span>`;
+  return `<div class="lc"><div class="lc-top">${me ? 'Now placing' : 'On the reel'}</div>
+    <div class="lc-glass">${posterHTML(f)}</div>
+    <div class="lc-plate"><div class="t">${esc(f.title)}</div><div class="y">${esc(f.year || '')}</div></div>
+    <div class="lc-genre">${f.genre ? esc(f.genre) : 'no sub-genre'}</div>
+    <div class="lc-stats">${stats}</div><div class="lc-rope"><i></i></div></div>`;
+}
+function renderMine() { $('#evMine').innerHTML = lobbyCase(active.film, true); }
 // Panels match the wheel's height; a rationale too long for the panel is set in smaller type rather than cut or scrolled.
 function fitPanels() {
   const m = document.querySelector('.machine'), wide = innerWidth > 900;
@@ -2496,8 +2544,7 @@ function fitPanels() {
 addEventListener('resize', () => { if (current === 'auditorium' && active) fitPanels(); });
 function renderPeek() {
   const f = films.find(v => v.id === peekId);
-  $('#evPeek').innerHTML = f ? evidenceCard(f, 'On the reel · their evaluation', axis)
-    : `<div class="lab">On the reel</div><p class="empty">Hover over — or tap — any film on the reel to read the evaluation it was given in the Projection Booth.</p>`;
+  $('#evPeek').innerHTML = lobbyCase(f, false);
   drum.querySelectorAll('.slot').forEach(s => s.classList.toggle('peek', s.dataset.id === peekId));
   $('#argue').outerHTML = f ? argueHTML(active.film, f, axis, 'argue') : `<div class="argue idle" id="argue">Tap a film on the reel to see each film’s ${axis === 'X' ? 'claim' : 'case'}, side by side.</div>`;
   fitPanels();
@@ -2506,6 +2553,7 @@ function pos() { return Math.round(target); }      // your film sits above films
 function renderTally() {
   const p = pos(), rank = p + 1, wins = N - p, losses = p;
   $('#verdict').innerHTML = `Your film stands <b>#${rank}</b> of ${N + 1} on ${axis}`;
+  const lv = $('#lcLive'); if (lv) lv.textContent = `#${rank}`;
   $('#tally').innerHTML = `<span class="w">${wins} win${wins === 1 ? '' : 's'}</span><span class="l">${losses} loss${losses === 1 ? '' : 'es'}</span>`;
   reel.setAttribute('aria-valuenow', rank);
   reel.setAttribute('aria-valuetext', `#${rank} of ${N + 1}`);
