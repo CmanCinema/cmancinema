@@ -1281,10 +1281,6 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
 .case .story{margin-top:10px;padding-top:10px;border-top:1px dashed #b48a4e;font:500 16px/1.5 var(--body);color:#3a2418;white-space:pre-line}
 .case .story span{display:block;margin-bottom:4px;font:800 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a4a2a}
 .argue .foot{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-.swapbtn{padding:6px 14px;border-radius:20px;border:1.5px solid #7a1a22;background:transparent;color:#5a0f22;font:700 10px var(--serif);letter-spacing:.18em;text-transform:uppercase}
-.argue.swapped{box-shadow:0 0 0 2px #c4202f,0 14px 30px rgba(0,0,0,.5)}
-.argue.swapped .swapbtn{background:#c4202f;color:#fff;border-color:#c4202f}
-.swapnote{margin:-2px 0 12px;padding:8px 12px;border-radius:4px;background:rgba(196,32,47,.1);border-left:3px solid #c4202f;font:italic 600 15px/1.4 var(--body);color:#6a1a1e;text-align:center}
 
 /* empty / locked states */
 .dark{width:min(900px,100%);margin:110px auto 0;padding:0 16px;position:relative;z-index:2}
@@ -1504,7 +1500,7 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
      showdowns[]  { id, a, b, winner, axis, coord, note, at, verdictHistory? }
      lists[], settings{}
    This site adds, without changing anything above:
-     films[].xEv / .yEv   the Evidence headings
+     films[].xEv / .yEv   legacy header fields (no longer entered; X claim = xNote, Y case = yNote)
      placements[]         { id, film, axis, coord, rank, of, note, at }  (the Film Vault)
      workflow             the one film currently in the booth or on the reel
    ===================================================================== */
@@ -1547,7 +1543,7 @@ const COMPASS = {
        q: 'Does the film’s realization deliver highly rewarding effects?',
        body: 'The film’s realization delivers highly rewarding effects: excitement, laughter, warmth, fascination, emotional investment, suspense, satisfaction, delight, and other forms of positive engagement. You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you; the realization is appreciated primarily through the rewards it delivers. Recognizing a clever premise, a well-executed performance, or a satisfying resolution is fully compatible with Y3, and a natural cap at Y3 is a successful classification, not a failed attempt at Y4.',
        below: 'Y2 establishes worthwhile, dependable effectiveness. Y3 goes further: the realized effects themselves are highly rewarding.',
-       above: 'Y4 is hierarchically higher: it keeps Y3’s highly rewarding effects and adds an exceptional caliber of realization that becomes the defining quality of the experience. HOW is present at both levels; what changes is whether HOW serves the rewards (Y3) or becomes the defining quality (Y4). Once Y3 is established, Y4 is immediately in contention: does the appreciation naturally cap at Y3, or does the evidence already express Y4?' },
+       above: 'Y4 is hierarchically higher: it keeps Y3’s highly rewarding effects and adds an exceptional caliber of realization that becomes the defining quality of the experience. HOW is present at both levels; what changes is whether HOW serves the rewards (Y3) or becomes the defining quality (Y4). Once Y3 is established, Y4 is immediately in contention: does the appreciation naturally cap at Y3, or does the case already express Y4?' },
   4: { name: 'Must-See', tag: 'The exceptional realization of those effects',
        q: 'Do those highly rewarding effects come with an exceptional caliber of realization that becomes the defining quality of the experience?',
        body: 'The film’s realization delivers those highly rewarding effects with an exceptional caliber that becomes the defining quality of the experience. You appreciate HOW the film delivers something because the realization itself makes the experience exceptionally high-caliber — the way it constructs, times, develops, presents, or orchestrates its effects. It may be one performance, sequence, relationship, progression, perceptual effect, or overarching method, or several together; experiential dominance is not runtime dominance. The exceptional caliber must be experienced, not inferred from the film’s construction or reputation.',
@@ -1555,7 +1551,7 @@ const COMPASS = {
        above: 'Y5 requires that defining quality to be so extraordinary that it profoundly affects your broader conception of what an experience can be. Exceptional realization alone does not establish that.' },
   5: { name: 'Essential', tag: 'The extraordinary profoundness of their affect',
        q: 'Is that defining quality so extraordinary that it profoundly affects my broader conception of what an experience can be?',
-       body: 'This is not a stronger version of enthusiasm, excitement, admiration, or astonishment; its significance reaches beyond the film into how you understand the possibilities of experience. An illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? Y5 must be affirmatively supported by what you genuinely experienced — never assigned because Y4 is established, because the film is celebrated, or because the experience was unusually powerful.',
+       body: 'This is not a stronger version of enthusiasm, excitement, admiration, or astonishment; its significance reaches beyond the film into how you understand the possibilities of experience. An illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? Y5 must be affirmatively supported by what you genuinely experienced — never assigned because Y4 is established, because the film is celebrated, or because the experience was unusually powerful. “An” experience means an experience of the kind the film strives for, not experience in general.',
        below: 'At Y4 the experience fills the existing vessel to an exceptional degree. At Y5 the vessel itself no longer seems adequate. If the experience supports exceptional realization but not that broader significance, it naturally remains Y4.',
        above: 'There is no higher Y classification. Strong emotion, intensity, and important themes alone do not substitute for genuinely experienced profundity.' },
 };
@@ -1996,9 +1992,9 @@ function openProfile(id) {
         <div><b>${f.xr + f.yr}</b><span>Combined</span></div><div><b>#${st.inGroup}</b><span>of ${st.groupSize} in ${ck(f)}</span></div>
       </div>
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
-      <div class="pev"><p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>
-        <p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>
-        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · case: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · ${yNoun(f.Y)}: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
+      <div class="pev"><p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>
+        <p class="note"><b>Y · Case · ${f.Y} ${Y_NAMES[f.Y]}</b>${esc(f.yNote || '—')}</p>
+        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · claim: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · case: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
@@ -2192,8 +2188,7 @@ function renderPane() {
     const x = bt.axis === 'X';
     p.innerHTML = `<div class="log">
         <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
-        <label for="evIn">Evidence</label><input id="evIn" maxlength="160" placeholder="The heading — the decisive evidence in a line" value="${esc(x ? bt.xEv : bt.yEv)}">
-        <label for="raIn">Rationale</label><textarea id="raIn" maxlength="8000" placeholder="The details of your reasoning… up to ${WORD_LIMIT} words">${esc(x ? bt.xNote : bt.yNote)}</textarea>
+        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(x ? bt.xNote : bt.yNote)}</textarea>
         <div class="wc" id="wc"></div>
       </div>
       <button class="seal" data-seal>Seal the ${bt.axis} evaluation</button>
@@ -2218,10 +2213,11 @@ function renderPane() {
   }
 }
 function saveWriting() {
-  const ev = $('#evIn'), ra = $('#raIn');
-  if (!ev) return;
-  if (bt.axis === 'X') { bt.xEv = ev.value.trim(); bt.xNote = ra.value.trim(); }
-  else { bt.yEv = ev.value.trim(); bt.yNote = ra.value.trim(); }
+  const ra = $('#raIn');
+  if (!ra) return;
+  // one box per axis: X is the claim, Y is the case (the old header fields are no longer used)
+  if (bt.axis === 'X') { bt.xEv = ''; bt.xNote = ra.value.trim(); }
+  else { bt.yEv = ''; bt.yNote = ra.value.trim(); }
 }
 const WORD_LIMIT = 150;
 const wordCount = t => (String(t || '').trim().match(/\S+/g) || []).length;
@@ -2241,7 +2237,7 @@ $('#pane').addEventListener('input', e => {
     if (n > WORD_LIMIT && n > wordCount(lastRa)) {
       const words = e.target.value.match(/\S+\s*/g) || [];
       e.target.value = wordCount(lastRa) >= WORD_LIMIT ? lastRa : words.slice(0, WORD_LIMIT).join('').trimEnd();   // at the limit: refuse the new word; a long paste: keep the first 150
-      toast(`Rationales are limited to ${WORD_LIMIT} words`);
+      toast(`${bt.axis === 'X' ? 'Claims' : 'Cases'} are limited to ${WORD_LIMIT} words`);
     }
     updateWordCount();
   }
@@ -2435,8 +2431,8 @@ function evidenceCard(f, label, current, me) {
   return `<div class="lab">${label}</div>
     <div class="head">${posterHTML(f, 64)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')} · ${coordLine}</div></div></div>
     ${current === 'X'
-      ? `<p class="note"><b>X · Condition · ${f.X} ${X_NAMES[f.X]}</b>${ev(f.xEv)}${esc(f.xNote || '—')}</p>`
-      : `<p class="note"><b>Y · Recommendation · ${f.Y} ${Y_NAMES[f.Y]}</b>${ev(f.yEv)}${esc(f.yNote || '—')}</p>`}`;
+      ? `<p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>`
+      : `<p class="note"><b>Y · Case · ${f.Y} ${Y_NAMES[f.Y]}</b>${esc(f.yNote || '—')}</p>`}`;
 }
 function renderMine() { $('#evMine').innerHTML = evidenceCard(active.film, 'Your film · from the Projection Booth', axis, true); fitPanels(); }
 // Panels match the wheel's height; a rationale too long for the panel is set in smaller type rather than cut or scrolled.
@@ -2457,7 +2453,7 @@ function renderPeek() {
   $('#evPeek').innerHTML = f ? evidenceCard(f, 'On the reel · their evaluation', axis)
     : `<div class="lab">On the reel</div><p class="empty">Hover over — or tap — any film on the reel to read the evaluation it was given in the Projection Booth.</p>`;
   drum.querySelectorAll('.slot').forEach(s => s.classList.toggle('peek', s.dataset.id === peekId));
-  $('#argue').outerHTML = f ? argueHTML(active.film, f, axis, 'argue') : `<div class="argue idle" id="argue">Tap a film on the reel to see the case for each film, side by side.</div>`;
+  $('#argue').outerHTML = f ? argueHTML(active.film, f, axis, 'argue') : `<div class="argue idle" id="argue">Tap a film on the reel to see each film’s ${axis === 'X' ? 'claim' : 'case'}, side by side.</div>`;
   fitPanels();
 }
 function pos() { return Math.round(target); }      // your film sits above films[pos]
@@ -3103,8 +3099,8 @@ $('#gameroom').addEventListener('click', e => {
 const ADJ_MAX = 30;
 /* X is always a case, judged by one fixed word per level; Y is always a register, in my own word */
 const X_CASE = { 5: 'conditional', 4: 'compromising', 3: 'invalidating', 2: 'debilitating', 1: 'discrediting' };
-/* Y: the effect (Y0–Y4) or affect (Y5) — evidence line plus rationale — described by what it does to the viewing.
-   Like X's words, these name an action, not a quality, so a praise word in the evidence can't simply match them. */
+/* Y: the case — one entry, the stance of viewing recommendation — described by what it does to the viewing.
+   Like X's words, these name an action, not a quality, so a praise word in the case can't simply match them. */
 const Y_REG = { 5: 'redefining', 4: 'obligating', 3: 'influencing', 2: 'encouraging', 1: 'inviting', 0: 'incentivizing' };
 // card verbs: Y0–Y4 are calls to action toward a prospective viewer, rising in push; Y5 is the affect
 const Y_VERB = { 5: 'redefines', 4: 'obligates', 3: 'influences', 2: 'encourages', 1: 'invites', 0: 'incentivizes' };
@@ -3124,7 +3120,7 @@ function briefOpen(id, mode) {
     <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel — the argument card reads every film against its own.' : 'The argument card reads every film against its own sub-genre.'}</p>
     <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
       <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">Its X${x} ${X_NAMES[x]} case — evidence line and rationale together — is described as <b style="font-style:normal">${X_CASE[x]}</b>; its Y${y} ${Y_NAMES[y]} ${yNoun(y)} as <b style="font-style:normal">${Y_REG[y]}</b>.</p></div>
+    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">Its X${x} ${X_NAMES[x]} claim is described as <b style="font-style:normal">${X_CASE[x]}</b>; its Y${y} ${Y_NAMES[y]} case as <b style="font-style:normal">${Y_REG[y]}</b>.</p></div>
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
       <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
@@ -3146,47 +3142,31 @@ $('#brief').addEventListener('click', async e => {
 });
 
 /* the argument card, built both ways; X and Y mirror each other
-   X: the evidence line is a case (something against), described against the film's condition
-      "I think [A]'s "[evidence]" case is less [case word] to viewing its [sub-genre]
-       than [B]'s case in "[evidence]" is as [case word] to its [sub-genre]."
-   Y: the evidence line names an effect (Y0–Y4) or affect (Y5); the verb is the level's call to action
-      "I think [A]'s "[evidence]" effect [verb]s viewing its [sub-genre]
-       more than [B]'s effect in "[evidence]" [verb]s viewing its [sub-genre]." */
+   One entry per axis: X is the claim (the film's condition), Y is the case (the stance of viewing recommendation).
+   X: "I think [A]'s claim is less [case word] to viewing its [sub-genre] than [B]'s claim is to its [sub-genre]."
+   Y: "I think [A]'s case [verb]s viewing its [sub-genre] more than [B]'s case [verb]s viewing its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
-const unq = t => String(t || '').trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '').trim();
-function argueCase(A, B, ax, swap) {
+function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
-  // the swap test trades the evidence lines (the names of the packages); each rationale stays with its film
-  const line = f => unq(ax === 'X' ? f.xEv : f.yEv);
-  const evA = swap ? line(B) : line(A), evB = swap ? line(A) : line(B);
-  const ev = e => e ? `<q>${esc(e)}</q>` : miss('no evidence line');
   const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
   if (ax === 'X') {
     const word = `<b>${X_CASE[A.X]}</b>`;
-    return `I think ${esc(poss(A.title))} ${ev(evA)} case is less ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} case in ${ev(evB)} is as ${word} to its ${gn(B)}.`;
+    return `I think ${esc(poss(A.title))} claim is less ${word} to viewing its ${gn(A)} than ${esc(poss(B.title))} claim is to its ${gn(B)}.`;
   }
-  const verb = `<b>${Y_VERB[A.Y]}</b>`, n = yNoun(A.Y);
-  return `I think ${esc(poss(A.title))} ${ev(evA)} ${n} ${verb} viewing its ${gn(A)} more than ${esc(poss(B.title))} ${n} in ${ev(evB)} ${verb} viewing its ${gn(B)}.`;
+  const verb = `<b>${Y_VERB[A.Y]}</b>`;
+  return `I think ${esc(poss(A.title))} case ${verb} viewing its ${gn(A)} more than ${esc(poss(B.title))} case ${verb} viewing its ${gn(B)}.`;
 }
-function argueHTML(A, B, ax, id, swap) {
-  const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'case' : yNoun(lvl);
-  const story = f => { const t = ax === 'X' ? f.xNote : f.yNote; return t ? esc(t) : '<i>No rationale written.</i>'; };
-  const box = (P, Q) => `<div class="case"><div class="lab">The ${pkg} for ${esc(P.title)}</div><p>${argueCase(P, Q, ax, swap)}</p>
-      <div class="story"><span>${esc(P.title)} · the full ${pkg}</span>${story(P)}</div></div>`;
-  return `<div class="argue ${swap ? 'swapped' : ''}" ${id ? `id="${id}"` : ''} data-a="${esc(A.id)}" data-b="${esc(B.id)}" data-ax="${ax}"><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative case goes higher' : 'the stronger positive case goes higher'}</div>
+function argueHTML(A, B, ax, id) {
+  const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'claim' : 'case';
+  const story = f => { const t = ax === 'X' ? f.xNote : f.yNote; return t ? esc(t) : `<i>No ${pkg} written.</i>`; };
+  const box = (P, Q) => `<div class="case"><div class="lab">The ${pkg} for ${esc(P.title)}</div><p>${argueCase(P, Q, ax)}</p>
+      <div class="story"><span>In full</span>${story(P)}</div></div>`;
+  return `<div class="argue" ${id ? `id="${id}"` : ''} data-a="${esc(A.id)}" data-b="${esc(B.id)}" data-ax="${ax}"><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative claim goes higher' : 'the stronger positive case goes higher'}</div>
     <h4>${esc(A.title)} <span style="font-family:var(--serif);font-size:14px;letter-spacing:.2em">VS</span> ${esc(B.title)}</h4>
     <p class="aq">“${esc(SHOW_Q[ax][lvl])}”</p>
-    ${swap ? `<div class="swapnote">Swap test · the evidence lines have traded places; each rationale stays with its own film. Would you answer differently now? If so, the words are leading, not the ${pkg}.</div>` : ''}
     <div class="two">${box(A, B)}${box(B, A)}</div>
-    <div class="foot"><button class="swapbtn" data-swap>${swap ? 'Undo the swap' : 'Swap test'}</button><span>${ax === 'Y' ? 'Each ' + pkg + ' is the evidence line and its rationale together; the comparison is for a prospective viewer.' : 'Each case is the evidence line and its rationale together — you decide which one holds.'}</span></div></div>`;
+    <div class="foot"><span>${ax === 'Y' ? 'Each case is read against its own sub-genre; the comparison is for a prospective viewer.' : 'Each claim is read against its own sub-genre — you decide which one holds.'}</span></div></div>`;
 }
-document.addEventListener('click', e => {
-  const b = e.target.closest('[data-swap]'); if (!b) return;
-  const card = b.closest('.argue'), A = byId(card.dataset.a), B = byId(card.dataset.b); if (!A || !B) return;
-  const tmp = document.createElement('div');
-  tmp.innerHTML = argueHTML(A, B, card.dataset.ax, card.id || '', !card.classList.contains('swapped'));
-  card.replaceWith(tmp.firstElementChild);
-});
 
 /* =====================================================================
    THE MEMORY FILTER · three doors before the booth
@@ -3387,21 +3367,21 @@ document.addEventListener('visibilitychange', () => document.body.classList.togg
    THE PLAYBILL · the framework on a card, one tap away in every room
    ===================================================================== */
 const PB = {
-  X: { 5: 'It may be applicable, but it’s immaterial to what the film is actually trying to accomplish.',
-       4: 'Impacts (hinders, obstructs, delays, impedes) what the film is trying to accomplish in that it changes the final outcome away from the intended plan of the film.',
-       3: 'Fails to achieve the core aim/goal altogether, but it showed that it could.',
-       2: 'Fundamentally incapable to fulfill its aim.',
-       1: 'Film’s proposal is not worthy of being credited.' },
-  Y: { 5: 'The defining quality of the film’s realization is so extraordinary that it profoundly affects my broader conception of what an experience can be.',
+  X: { 5: 'Whether or not applicable, the presumed state of weakening is immaterial to what the film is trying to accomplish.',
+       4: 'The presumed state of weakening materially changes the outcome away from the intended plan.',
+       3: 'The film fails to achieve the core aim/goal altogether.',
+       2: 'The film is fundamentally incapable to fulfill its aim.',
+       1: 'The film’s proposal is not worthy of being credited.' },
+  Y: { 5: 'The defining quality of the film’s realization is so extraordinary that it profoundly alters my broader conception of what an experience can be.<br><i style="color:#7a1a22">“An” experience means an experience of the kind the film strives for, not experience in general.</i>',
        4: 'The film’s realization delivers those highly rewarding effects with an exceptional caliber that becomes the defining quality of the experience.',
        3: 'The film’s realization delivers highly rewarding effects.',
-       2: 'A dependable choice that creates a strong enough impression, but doesn’t generate enough of a standout reason that it ought to be seen.',
-       1: 'Worth considering, but its value lacks the dependable effectiveness that’s necessary to be recommendable.',
-       0: 'Doesn’t provide the sufficient appeal necessary given what it’s trying to do to justify checking it out.' },
+       2: 'The film’s effectiveness is dependable enough to justify actively recommending it.',
+       1: 'The film’s sufficient appeal justifies it as worth considering.',
+       0: 'The film’s insufficient appeal doesn’t justify checking it out.' },
   compass: [
     [3, 'The rewards of the delivered effects.', 'You appreciate HOW the film delivers something because of the stellar and impactful rewards it gives you. You appreciate the realized effects primarily for what they deliver to your experience: excitement, suspense, humor, emotion, engagement, etc. A natural cap at Y3 is a successful classification, not a failed attempt at Y4.'],
     [4, 'The exceptional realization of those effects.', 'Y4 keeps Y3’s highly rewarding effects and adds an exceptional caliber of realization that becomes the defining quality of the experience. You appreciate the realized effects primarily for how exceptionally their delivery makes the experience come alive. Experiential dominance is not runtime dominance.'],
-    [5, 'The extraordinary profoundness of their affect.', 'The defining quality is so extraordinary that it profoundly affects my broader conception of what an experience can be. As an illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? It must be affirmatively supported by what I genuinely experienced.'],
+    [5, 'The extraordinary profoundness of their affect.', 'The defining quality is so extraordinary that it profoundly affects my broader conception of what an experience can be. As an illustration, not an extra test: did this film merely fill my current viewing framework through caliber of realization, or did its kinetic force break the cup by forcing me to build a new mental scale to process what I just experienced? It must be affirmatively supported by what I genuinely experienced. “An” experience means an experience of the kind the film strives for, not experience in general.'],
   ],
   compassNote: 'HOW is present at both Y3 and Y4. What changes is whether HOW serves the rewards (Y3) or becomes the defining quality of the experience (Y4). The difference is hierarchical, not merely descriptive: once Y3 is established, Y4 is immediately in contention, and once Y4 describes the experience, Y3 is superseded.',
 };
@@ -3423,20 +3403,21 @@ function renderPlaybill() {
     ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
       <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
     <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
-  if (pbTab === 'X') body = `<div class="pb-sec">Act I · The X Axis<small>Condition of Achievement · starts at 5, each yes drops a level</small></div>
+  if (pbTab === 'X') body = `<div class="pb-sec">Act I · X = The Film’s Condition<small>Measured based off a presumed state of weakening · starts at 5, each yes drops a level</small></div>
     ${[5, 4, 3, 2, 1].map(l => lv('X', l, X_NAMES[l], '', PB.X[l])).join('')}`;
-  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · The Y Axis<small>Viewing Recommendation · starts at 0, each yes climbs a level</small></div>
+  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · Y = Stance of Viewing Recommendation<small>Measured based off a personally experiential shaped view · starts at 0, each yes climbs a level</small></div>
     ${[5, 4, 3, 2, 1, 0].map(l => lv('Y', l, Y_NAMES[l], '', PB.Y[l])).join('')}`;
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Recommendation Compass<small>For the top of the Y axis</small></div>
     ${PB.compass.map(([l, head, txt]) => lv('Y', l, head, Y_NAMES[l], txt)).join('')}
     <p class="pb-note">${PB.compassNote}</p>`;
   if (pbTab === 'Q') {
-    const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]}</i></div></div>`;
+    const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]} · preset: <b>${ax === 'X' ? X_CASE[l] : Y_VERB[l]}</b></i></div></div>`;
     body = `<div class="pb-sec">Act III · The Ordinal Questions<small>Asked on the reel, at the level the films share</small></div>
-      <div class="pb-axis"><span>X · Condition of Achievement</span></div>
+      <p class="pb-note" style="margin:0 0 10px">The stance classifies the film; the preset only orders films within it.</p>
+      <div class="pb-axis"><span>X · The Film’s Condition</span></div>
       <p class="pb-note" style="margin:0 0 4px">The film with the more consequential weakening goes lower.</p>
       ${[5, 4, 3, 2, 1].map(l => q('X', l)).join('')}
-      <div class="pb-axis" style="margin-top:16px"><span>Y · Viewing Recommendation</span></div>
+      <div class="pb-axis" style="margin-top:16px"><span>Y · Stance of Viewing Recommendation</span></div>
       <p class="pb-note" style="margin:0 0 4px">The film with the more compelling grounds goes higher.</p>
       ${[5, 4, 3, 2, 1, 0].map(l => q('Y', l)).join('')}`;
   }
