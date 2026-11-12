@@ -714,6 +714,10 @@ button.li2:hover{border-color:var(--gold)}
 .ev-left .note .evh,.ev-right .note .evh{font-size:1.02em;margin-bottom:4px}
 .ev-left .empty,.ev-right .empty{margin-top:8px}
 /* booth word counter */
+.nomem{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0 2px}
+.nomem a{font:600 12px var(--serif);letter-spacing:.08em;color:#7a1a22}
+.nomem span{flex-basis:100%;font:italic 500 13px/1.35 var(--body);color:#8a6a3a}
+.argue .lab .plot{font-style:italic;letter-spacing:.08em;text-transform:none;color:#7a5418}
 .tplhint{font:italic 500 13px/1.4 var(--body);color:#8a6a3a;margin:6px 0 0}
 .wc{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
 .wc.full{color:#8a1414}
@@ -2228,7 +2232,8 @@ function renderPane() {
     const x = bt.axis === 'X';
     p.innerHTML = `<div class="log">
         <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
-        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && templateFor(bt.axis, bt.level, active && active.film) ? templateFor(bt.axis, bt.level, active && active.film) : (x ? bt.xNote : bt.yNote))}</textarea>
+        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && !(x && bt.level === 5 && fromPlot(bt.xNote)) && templateFor(bt.axis, bt.level, active && active.film) ? templateFor(bt.axis, bt.level, active && active.film) : (x ? bt.xNote : bt.yNote))}</textarea>
+        ${x && bt.level === 5 ? `<div class="nomem"><button class="btn-line" type="button" data-nomem>${fromPlot(bt.xNote) ? 'Use the standard X5 template' : 'Nothing comes to mind'}</button><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent((active.film.title || '') + ' ' + (active.film.year || '') + ' film')}" target="_blank" rel="noopener">Open its Wikipedia page ↗</a><span>For a film where no weakening registered: the claim comes from the plot, says so, and ranks above remembered X5 claims.</span></div>` : ''}
         ${templateFor(bt.axis, bt.level, active && active.film) ? '<div class="tplhint">The ' + bt.axis + bt.level + ' template is filled in · replace each [bracketed part] · click a bracket to select it, Tab jumps to the next</div>' : ''}
         <div class="wc" id="wc"></div>
       </div>
@@ -2280,7 +2285,11 @@ function templateFor(ax, lvl, film) {
   return t.replace('{genre}', g || '[sub-genre]');
 }
 // an untouched template (of any level) counts as empty, so moving between levels swaps the frame
-const isSeed = (ax, txt, film) => { const v = String(txt || '').trim(); return !v || Object.keys(TEMPLATES[ax]).some(l => templateFor(ax, +l, film) === v); };
+// X5 "nothing from memory" variant: the weakening is found in the plot, said so on the record; it ranks above remembered X5 claims
+const NOMEM_LEAD = 'Since nothing from memory sticks out as presumed weakening I have to consult the Wikipedia page.';
+const NOMEM = NOMEM_LEAD + ' Looking at the plot what sticks out to me is that it could be seen as [failure word] in [its angle, or where] because [why, or how specifically].';
+const fromPlot = t => String(t || '').trim().startsWith(NOMEM_LEAD.slice(0, 40));
+const isSeed = (ax, txt, film) => { const v = String(txt || '').trim(); return !v || (ax === 'X' && v === NOMEM) || Object.keys(TEMPLATES[ax]).some(l => templateFor(ax, +l, film) === v); };
 const SLOT = /\[[^\]\n]{1,120}\]/;
 const WORD_LIMIT = 150;
 const wordCount = t => (String(t || '').trim().match(/\S+/g) || []).length;
@@ -2334,6 +2343,13 @@ $('#pane').addEventListener('click', e => {
     if (bt.phase === 'write') saveWriting();
     const h = bt.history.pop(); if (!h) return;
     bt.axis = h.axis; bt.level = h.level; bt.qi = h.qi; bt.phase = 'ask';
+  } else if (b.dataset.nomem !== undefined) {
+    const ra = $('#raIn'); if (!ra) return;
+    const v = ra.value.trim(), seed = isSeed('X', v, active.film);
+    if (!seed && !confirm('Replace what you have written with the other X5 template?')) return;
+    ra.value = fromPlot(v) ? templateFor('X', 5, active.film) : NOMEM;
+    b.textContent = fromPlot(ra.value) ? 'Use the standard X5 template' : 'Nothing comes to mind';
+    ra.dispatchEvent(new Event('input', { bubbles: true })); ra.focus(); selectSlot(ra, 0, true);
   } else if (b.dataset.seal !== undefined) {
     const ra = $('#raIn');
     if (ra && SLOT.test(ra.value)) {
@@ -3256,7 +3272,7 @@ function argueCase(A, B, ax) {
 function argueHTML(A, B, ax, id) {
   const lvl = ax === 'X' ? A.X : A.Y, pkg = ax === 'X' ? 'claim' : 'case';
   const story = f => { const t = ax === 'X' ? f.xNote : f.yNote; return t ? esc(t) : `<i>No ${pkg} written.</i>`; };
-  const box = (P, Q) => `<div class="case"><div class="lab">The ${pkg} for ${esc(P.title)}</div><p>${argueCase(P, Q, ax)}</p>
+  const box = (P, Q) => `<div class="case"><div class="lab">The ${pkg} for ${esc(P.title)}${ax === 'X' && fromPlot(P.xNote) ? ' <em class="plot">· from the plot, not memory</em>' : ''}</div><p>${argueCase(P, Q, ax)}</p>
       <div class="story"><span>In full</span>${story(P)}</div></div>`;
   return `<div class="argue" ${id ? `id="${id}"` : ''} data-a="${esc(A.id)}" data-b="${esc(B.id)}" data-ax="${ax}"><div class="k">The argument card · ${ax}${lvl} · ${ax === 'X' ? 'the weaker negative claim goes higher' : 'the stronger positive case goes higher'}</div>
     <h4>${esc(A.title)} <span style="font-family:var(--serif);font-size:14px;letter-spacing:.2em">VS</span> ${esc(B.title)}</h4>
