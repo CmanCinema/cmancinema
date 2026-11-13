@@ -2232,8 +2232,9 @@ function renderPane() {
     const x = bt.axis === 'X';
     p.innerHTML = `<div class="log">
         <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
-        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(x ? bt.xNote : bt.yNote)}</textarea>
-        ${x && bt.level === 5 ? `<div class="nomem"><button class="btn-ink" type="button" data-nomem>${fromPlot(bt.xNote) ? 'Clear · write from memory' : 'Nothing comes to mind'}</button><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent((active.film.title || '') + ' ' + (active.film.year || '') + ' film')}" target="_blank" rel="noopener">Open its Wikipedia page ↗</a><span>For a film where no weakening registered: the claim comes from the plot, says so, and ranks above remembered X5 claims.</span></div>` : ''}
+        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && !(x && bt.level === 5 && fromPlot(bt.xNote)) && templateFor(bt.axis, bt.level, active && active.film) ? templateFor(bt.axis, bt.level, active && active.film) : (x ? bt.xNote : bt.yNote))}</textarea>
+        ${templateFor(bt.axis, bt.level, active && active.film) && isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && !(x && fromPlot(bt.xNote)) ? '<div class="tplhint">The ' + bt.axis + bt.level + ' blueprint is filled in · replace each [bracketed part] · click a bracket to select it, Tab jumps to the next</div>' : ''}
+        ${x && bt.level === 5 ? `<div class="nomem"><button class="btn-ink" type="button" data-nomem>${fromPlot(bt.xNote) ? 'Use the X5 blueprint' : 'Nothing comes to mind'}</button><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent((active.film.title || '') + ' ' + (active.film.year || '') + ' film')}" target="_blank" rel="noopener">Open its Wikipedia page ↗</a><span>For a film where no weakening registered: the claim comes from the plot, says so, and ranks above remembered X5 claims.</span></div>` : ''}
         <div class="wc" id="wc"></div>
       </div>
       <button class="seal" data-seal>Seal the ${bt.axis} evaluation</button>
@@ -2266,17 +2267,18 @@ function saveWriting() {
 }
 // ---------- Booth templates: each level's Claim / Case frame (claude/booth-templates.md) ----------
 // Bracketed parts are slots to fill; everything else is the level's preset. X2 / X1 have none yet.
-const WEAK = '[The presumed state of weakening: what it is and where it is] because [why, or how specifically].';
+// first half of every X claim: dictation — the experience as it was (claude/coordinate-blueprints.md)
+const DICT = '[My reaction] [the weakening], especially [where / when], because [why + how], [what that produced].';
 const TEMPLATES = {
-  X: { 5: WEAK + ' This claim is immaterial to [the outcome] because [the intended plan] itself is not [failure word] in its effect.',
-       4: WEAK + ' This claim is material to [the outcome] because [the intended plan] itself is [failure word] in its effect. It doesn’t fail the core aim altogether because [what still achieves it] is not invalidated.',
-       3: WEAK + ' Despite failing the core aim altogether, the film is not fundamentally incapable in fulfilling its aim as evident in [where it showed it could].' },
-  Y: { 5: 'The film’s [defining quality] is so extraordinary that it profoundly alters my broader conception of what [the kind of experience it strives for] can be.',
-       4: 'I appreciate how the film delivers [the highly rewarding effects] because the realization through [how it is realized] itself makes the experience exceptionally high-caliber. It’s this caliber of realization that dominates my appreciation. This defining quality is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
-       3: 'I appreciate how the film [delivers its highly rewarding effects] because [what those stellar and impactful rewards give you]. In addition to [further rewards along the way — optional, delete this sentence if unused]. It’s these rewards of realization that dominate my appreciation.',
-       2: '[The appeal] is dependable enough because it’s driven by [what makes it dependable]. This justifies actively recommending it. It doesn’t justify “ought to be seen” status because its forms of positive engagement aren’t superlatively sufficient on experiential grounds.',
-       1: '[The appeal]. This justifies considering it; however, its effectiveness is not dependable enough to justify active recommendation because [why its effectiveness isn’t dependable].',
-       0: 'While [the residual appeal], it’s insufficient for checking out the film because it doesn’t override [what outweighs it].' },
+  X: { 5: DICT + ' Measured against the core aim, this claim is immaterial to its being [failure word], because while [concession], [the intended plan] [isn’t affected the same way].',
+       4: DICT + ' Measured against the core aim, this claim is material to why [the outcome] feels [failure word], because [the intended plan] [is affected]. It doesn’t fail the core aim altogether, though, because [what still achieves it] [still holds], so [it] isn’t invalidated.',
+       3: '[My reaction] [the weakening], [where / when], because [why + how], [what that produced]. Despite failing the core aim altogether, the film is not fundamentally incapable of fulfilling its aim, as [where it showed it could] shows.' },
+  Y: { 5: 'The film’s [defining quality] is so extraordinary that it profoundly alters my broader conception of what a [kind of experience it strives for] experience can be.',
+       4: 'I appreciate how the film delivers [the rewarding effects], because the way it [realizes / builds] them through [how it’s executed] makes the experience exceptionally high-caliber. It’s this caliber of execution that dominates my appreciation. Still, this defining quality is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
+       3: 'I appreciate how the film [delivers what], because [what those rewards give you]. The film also offers [further rewards — optional, delete this sentence if unused]. It’s these rewards that dominate my appreciation.',
+       2: '[The appeal] is dependable enough, because it’s driven by [what makes it dependable]. This justifies actively recommending it. It doesn’t justify “ought to be seen” status, though, because that level requires its realization to deliver superlatively rewarding experiential effects, and its forms of positive engagement don’t reach that degree.',
+       1: '[The appeal]. This justifies considering it; however, its effectiveness isn’t dependable enough to justify active recommendation, because [while concession — optional,] [what breaks the dependability].',
+       0: '[The residual appeal]; however, because [what outweighs it], that appeal falls short, and the film isn’t recommendable.' },
 };
 function templateFor(ax, lvl, film) {
   const t = TEMPLATES[ax][lvl]; if (!t) return '';
@@ -2285,9 +2287,9 @@ function templateFor(ax, lvl, film) {
 }
 // an untouched template (of any level) counts as empty, so moving between levels swaps the frame
 // X5 "nothing from memory" variant: the weakening is found in the plot, said so on the record; it ranks above remembered X5 claims
-const NOMEM_LEAD = 'Since nothing from memory sticks out as presumed weakening I have to consult the Wikipedia page.';
-const NOMEM = NOMEM_LEAD + ' Looking at the plot what sticks out to me is that it could be seen as [failure word] in [its angle, or where] because [why, or how specifically].';
-const fromPlot = t => String(t || '').trim().startsWith(NOMEM_LEAD.slice(0, 40));
+const NOMEM_LEAD = 'Since nothing stands out in my memory as a weakness, I consulted the Wikipedia page.';
+const NOMEM = NOMEM_LEAD + ' Looking at the plot, what strikes me is that [its angle, or where] could seem [failure word], because [why, or how specifically].';
+const fromPlot = t => /^since nothing (stands out in my memory|from memory sticks out)/i.test(String(t || '').trim());
 const isSeed = (ax, txt, film) => { const v = String(txt || '').trim(); return !v || (ax === 'X' && v === NOMEM) || Object.keys(TEMPLATES[ax]).some(l => templateFor(ax, +l, film) === v); };
 const SLOT = /\[[^\]\n]{1,120}\]/;
 const WORD_LIMIT = 150;
@@ -2345,9 +2347,9 @@ $('#pane').addEventListener('click', e => {
   } else if (b.dataset.nomem !== undefined) {
     const ra = $('#raIn'); if (!ra) return;
     const v = ra.value.trim(), seed = isSeed('X', v, active.film);
-    if (!seed && !confirm(fromPlot(v) ? 'Clear the plot-based claim?' : 'Replace what you have written with the plot template?')) return;
-    ra.value = fromPlot(v) ? '' : NOMEM;
-    b.textContent = fromPlot(ra.value) ? 'Clear · write from memory' : 'Nothing comes to mind';
+    if (!seed && !confirm(fromPlot(v) ? 'Replace the plot-based claim with the X5 blueprint?' : 'Replace what you have written with the plot template?')) return;
+    ra.value = fromPlot(v) ? templateFor('X', 5, active.film) : NOMEM;
+    b.textContent = fromPlot(ra.value) ? 'Use the X5 blueprint' : 'Nothing comes to mind';
     ra.dispatchEvent(new Event('input', { bubbles: true })); ra.focus(); selectSlot(ra, 0, true);
   } else if (b.dataset.seal !== undefined) {
     const ra = $('#raIn');
