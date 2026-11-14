@@ -1453,6 +1453,44 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .cal-note{margin:14px 0 0;text-align:center;font:italic 500 16px/1.45 var(--body);color:rgba(243,230,200,.78)}
 .hs-empty{padding:18px 8px;text-align:center;font:italic 500 16px var(--body);color:rgba(255,220,160,.7)}
 @media (max-width:640px){ .board.cc{gap:4px} .board.cc .rh{font-size:9px;letter-spacing:0} .board.cc .hd{font-size:8px;letter-spacing:0} }
+
+/* ===================== FLIP CARDS (Screening Room) ===================== */
+.rv.fcard{background:none;padding:0;box-shadow:none;perspective:1600px}
+.rv.fcard::before{display:none}
+.rv.fcard.fav{box-shadow:none}
+.fc-in{display:grid;height:100%;transition:transform .7s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.rv.flipped .fc-in{transform:rotateY(180deg)}
+.face{grid-area:1/1;display:flex;flex-direction:column;position:relative;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:linear-gradient(#f4e8cc,#e7d5aa);color:var(--ink);border-radius:3px;padding:16px 16px 18px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
+.face::before{content:"";position:absolute;inset:6px;border:1px solid rgba(106,26,30,.35);pointer-events:none}
+.face.back{transform:rotateY(180deg)}
+.rv.fav .face{box-shadow:0 0 0 3px var(--gold-hi),0 0 30px rgba(255,200,100,.35),0 14px 30px rgba(0,0,0,.55)}
+.fc-pct{margin:8px 0 4px;text-align:center}
+.fc-pct b{display:block;font:400 clamp(48px,5.4vw,64px)/1 var(--deco);color:#7a4a2a}
+.fc-pct.hi b{color:#5a0f22}
+.fc-pct span{font:800 10px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:#8a5a10}
+.fc-top{display:grid;grid-template-columns:112px 1fr;gap:14px;align-items:center;margin:10px 0 12px}
+.fc-top .ti{font:800 22px/1.12 var(--serif)}
+.fc-top .me{font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a;margin-top:4px}
+.fc-top .lvl{margin:10px 0 0;font:700 11px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:#7a4a2a}
+.fc-top .lvl .cbadge{display:inline-block;margin:0 6px 4px 0}
+.fc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(90,15,34,.18);border:1px solid rgba(90,15,34,.18)}
+.fc-stats div{padding:8px 6px;text-align:center;background:#f1e2bf}
+.fc-stats b{display:block;font:800 19px var(--serif);color:#2a160e}
+.fc-stats span{font:800 9px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a4a2a}
+.fc-stake{margin:12px 0 0;font:500 15px/1.45 var(--body);color:#3a2418}
+.fc-stake b{color:#5a0f22}
+.fc-flip{align-self:center;margin-top:auto;padding:12px 6px 0;border:0;background:none;color:#7a1a22;font:800 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+.fc-flip:hover{color:#c4202f}
+.face.back .rvtext{flex:1;margin:10px 0 0;padding-top:10px;border-top:1px dashed #b48a4e;font:16px/1.55 var(--body);color:#2a1a10}
+.face .pick{margin-top:10px}
+#screenCard .dq span{display:block;font:800 10px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:var(--gold-hi);margin:8px 0 4px}
+#screenCard .dq p{max-width:800px;margin:0 auto;font:italic 600 clamp(18px,2.4vw,23px)/1.32 var(--serif);color:var(--cream)}
+#screenCard .dq small{display:block;margin-top:6px;font:500 clamp(14px,1.8vw,16px)/1.4 var(--body);font-style:normal;color:rgba(243,230,200,.72)}
+#screenCard .dq-notes{max-width:800px;margin:12px auto 0;padding-top:10px;border-top:1px solid rgba(243,230,200,.2);font:500 14px/1.45 var(--body);color:rgba(243,230,200,.7);text-align:left}
+#screenCard .dq-notes p,#screenCard .dq-notes div{margin:0 0 4px;font:500 14px/1.45 var(--body);font-style:normal;color:rgba(243,230,200,.72)}
+#screenCard .dq-notes b{color:var(--gold-hi);font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){ .fc-in{transition:none} }
+@media (max-width:640px){ .fc-top{grid-template-columns:90px 1fr} .fc-top .poster{width:90px!important} }
 </style>
 </head>
 <body>
@@ -1831,12 +1869,11 @@ const leanOf = (a, b) => 1 / (1 + Math.pow(10, -(rating(a) - rating(b)) / 20));
 const r1 = v => Math.round(v * 10) / 10;
 const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
 
-/* ---------- the critic's review: the case leads, the claim follows as the "however" ---------- */
-const LEAD_LOWER = /^(My|The|This|Since|While|Looking|Despite|Although|When|During|It|Its|Over|Throughout|Measured)\b/;
+/* ---------- the critic's review: the claim, then the case, as one paragraph ---------- */
 function reviewOf(f) {
-  const cs = String(f.yNote || '').trim(), cl = String(f.xNote || '').trim();
+  const cl = String(f.xNote || '').replace(/\s+/g, ' ').trim(), cs = String(f.yNote || '').replace(/\s+/g, ' ').trim();
   if (!cl) return cs; if (!cs) return cl;
-  return cs + '\n\nThat said, ' + (LEAD_LOWER.test(cl) ? cl[0].toLowerCase() + cl.slice(1) : cl);
+  return cl + (/[.!?»”"')]$/.test(cl) ? ' ' : '. ') + cs;
 }
 
 /* =====================================================================
@@ -2106,7 +2143,7 @@ function renderLobby() {
     </div>
     <div id="bill"></div>
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the wheel</h3><p>Reviewed and ready. Send one to the auditorium and the wheel spins it into place.</p>
-      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-queue="${esc(f.id)}">Send to the wheel</button>` : ''}</span></div>`).join('')}</div>` : ''}
+      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the wheel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
   renderBill();
@@ -2723,12 +2760,29 @@ function trackRecord(A, B) {
   }
   return `<p>In ${past.length} matchups ${SIT_NAME[sit]}, you went with the lean ${k} time${k === 1 ? '' : 's'}.${extra}</p>`;
 }
-function reviewCard(f, label, pick, fav) {
-  return `<div class="lab">${label}</div>
-    <div class="head">${posterHTML(f, 64)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div></div>
-    <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}</div>
-    <p class="rvtext">${esc(reviewOf(f))}</p>
-    ${pick ? `<button class="pick" data-pick="${pick}">This review wins</button>` : ''}${fav ? '<span class="favtag">The lean’s pick</span>' : ''}`;
+function flipCard(f, o) {
+  const st = standing(f), fm = +db.form[f.id] || 0, fmt = v => (v > 0 ? '+' : '') + v.toFixed(1);
+  const pos = o.mine ? (active.from != null ? '#' + (active.from + 1) : 'New') : '#' + o.rank;
+  const mv = o.mine && active.from == null ? '—' : moveText(moveOf(st, st.overall));
+  const pick = o.pick ? `<button class="pick" data-pick="${o.pick}">This review wins</button>` : '';
+  return `<div class="fc-in">
+    <div class="face front">
+      <div class="lab">${o.label}</div>
+      ${o.pct != null ? `<div class="fc-pct ${o.fav ? 'hi' : ''}"><b>${o.pct}%</b><span>${o.fav ? 'The lean’s pick' : o.pct === 50 ? 'Dead even' : 'Chance to win'}</span></div>` : ''}
+      <div class="fc-top">${posterHTML(f, 112)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div>
+        <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}</div></div></div>
+      <div class="fc-stats"><div><b>${pos}</b><span>On the wheel</span></div><div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div>
+        <div><b>${mv}</b><span>Since entry</span></div><div><b>${fm ? fmt(fm) : '0.0'}</b><span>Form</span></div></div>
+      ${o.stake ? `<p class="fc-stake"><b>If it wins,</b> ${o.stake}.</p>` : ''}
+      <button class="fc-flip" data-flip>Read the review ↻</button>
+      ${pick}
+    </div>
+    <div class="face back">
+      <div class="lab">The critic’s review · ${esc(f.title)}</div>
+      <p class="rvtext">${esc(reviewOf(f))}</p>
+      <button class="fc-flip" data-flip>↺ Back to the stats</button>
+      ${pick}
+    </div></div>`;
 }
 
 /* ---------- drawing the spin ---------- */
@@ -2739,27 +2793,31 @@ function renderSpin() {
   const s = db.workflow.spin, order = spinOrder(), A = active.film, done = s.phase === 'done';
   $('#checkIn').hidden = true;
   const est = estMatchups(order.length);
-  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA[active.mode] || 'The wheel'}</div>
-    <h2>${done ? 'The wheel has spoken' : `Matchup ${s.log.length + 1}${s.phase === 'confirm' ? ' · the check' : ''}`}</h2>
-    <p>${esc(A.title)} · ${levelLine(A)} · about ${est} matchup${est === 1 ? '' : 's'} against a wheel of ${order.length}</p>
+  const B0 = done ? null : byId(s.opp);
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA[active.mode] || 'The wheel'} · ${done ? 'the wheel has spoken' : `matchup ${s.log.length + 1} of about ${est}${s.phase === 'confirm' ? ' · the check' : ''}`}</div>
+    ${done ? `<h2>${esc(A.title)} lands at #${s.pos + 1}</h2>` : `<div class="dq"><span>The question that decides it</span><p>${decidingQ(A, B0)}</p></div>
+    <div class="dq-notes"><p><b>Watch out ·</b> ${watchOut(A, B0)}</p><div><b>Your track record ·</b> ${trackRecord(A, B0).replace(/<\/?p>/g, '')}</div></div>`}
     <div class="steps">${s.log.map(e => `<i class="${e.newWins ? 'w' : 'l'}" title="${e.newWins ? 'Won' : 'Lost'} against ${esc(byId(e.opp)?.title || '')}"></i>`).join('')}${done ? '' : '<i class="on"></i>'}</div>
     <div class="under" style="margin-top:6px">${s.log.length ? '<button class="linkish" data-undo>↶ Undo the last verdict</button>' : ''}<button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
+  ['#rvMine', '#rvOpp'].forEach(x => { $(x).classList.remove('flipped'); $(x).classList.add('fcard'); });
   const list = done ? [...order.slice(0, s.pos), A.id, ...order.slice(s.pos)] : order;
   drum.innerHTML = list.map(id => slotHTML(id === A.id ? A : byId(id), id === A.id)).join('');
   if (done) {
     const above = byId(order[s.pos - 1]), below = byId(order[s.pos]);
-    $('#rvMine').innerHTML = reviewCard(A, `Your review · lands at #${s.pos + 1}`, '', false);
-    $('#rvOpp').innerHTML = above || below ? reviewCard(above || below, above ? `Just above it · #${s.pos}` : `Just below it · #${s.pos + 2}`, '', false) : '';
+    const nb = above || below;
+    $('#rvMine').innerHTML = flipCard(A, { mine: true, label: `Your review · lands at #${s.pos + 1}` });
+    $('#rvOpp').innerHTML = nb ? flipCard(nb, { rank: order.indexOf(nb.id) + 1, label: above ? `Just above it · #${s.pos}` : `Just below it · #${s.pos + 2}` }) : '';
     $('#rvOpp').hidden = !(above || below);
     renderDone(s, order);
     setTarget(s.pos);
   } else {
     const B = byId(s.opp), p = leanOf(A, B);
     $('#rvOpp').hidden = false;
-    $('#rvMine').innerHTML = reviewCard(A, active.from != null ? `Your review · was #${active.from + 1}` : 'Your review · new to the wheel', 'new', p > 0.53);
-    $('#rvOpp').innerHTML = reviewCard(B, `On the wheel · #${order.indexOf(B.id) + 1}`, 'opp', p < 0.47);
+    const pa = pct(p), even = Math.abs(p - 0.5) < 0.03;
+    $('#rvMine').innerHTML = flipCard(A, { mine: true, label: active.from != null ? `Your review · was #${active.from + 1}` : 'Your review · new to the wheel', pick: 'new', pct: even ? 50 : pa, fav: p > 0.53, stake: 'it ' + outcome(s, order, true) });
+    $('#rvOpp').innerHTML = flipCard(B, { rank: order.indexOf(B.id) + 1, label: `On the wheel · #${order.indexOf(B.id) + 1}`, pick: 'opp', pct: even ? 50 : 100 - pa, fav: p < 0.47, stake: `${esc(A.title)} ${outcome(s, order, false)}` });
     $('#rvMine').classList.toggle('fav', p > 0.53); $('#rvOpp').classList.toggle('fav', p < 0.47);
-    renderConsole(s, order, A, B, p);
+    $('#mu').hidden = true; $('#desk').hidden = true;
     setTarget(order.indexOf(B.id));
   }
   if (done) { $('#rvMine').classList.remove('fav'); $('#rvOpp').classList.remove('fav'); }
@@ -2768,33 +2826,10 @@ function renderSpin() {
   $('#endBot').innerHTML = `Bottom of the wheel<span>#${list.length}</span>`;
   layoutDrum();
 }
-function renderConsole(s, order, A, B, p) {
-  const even = Math.abs(p - 0.5) < 0.03, fav = p >= 0.5 ? A : B, pf = pct(Math.max(p, 1 - p));
-  const row = (label, a, b) => `<tr><td>${label}</td><td>${a}</td><td>${b}</td></tr>`;
-  const sa = standing(A), sb = standing(B), fa = +db.form[A.id] || 0, fb = +db.form[B.id] || 0;
-  const fmt = v => (v > 0 ? '+' : '') + v.toFixed(1);
-  $('#desk').hidden = true;
-  $('#mu').innerHTML = `
-    <div class="mu-lean"><span class="k">The lean</span><b>${even ? '50%' : pf + '%'}</b><em>${even ? 'Dead even' : 'Leans ' + esc(fav.title)}</em>
-      <div class="mu-bar" role="img" aria-label="${esc(A.title)} ${pct(p)} percent, ${esc(B.title)} ${100 - pct(p)} percent"><i style="width:${(p * 100).toFixed(1)}%"></i></div>
-      <div class="mu-ends"><span>${esc(A.title)} · ${pct(p)}%</span><span>${100 - pct(p)}% · ${esc(B.title)}</span></div></div>
-    <div class="mu-q"><span class="k">The question that decides it</span><p>${decidingQ(A, B)}</p></div>
-    <div class="mu-two">
-      <div><span class="k">What’s at stake</span><p><b>If ${esc(A.title)} wins,</b> it ${outcome(s, order, true)}.</p><p><b>If ${esc(B.title)} wins,</b> ${esc(A.title)} ${outcome(s, order, false)}.</p></div>
-      <div><span class="k">Watch out</span><p class="mu-warn">${watchOut(A, B)}</p></div>
-    </div>
-    <div class="mu-rec"><span class="k">Your track record</span>${trackRecord(A, B)}</div>
-    <table class="mu-stats"><thead><tr><th></th><th>${esc(A.title)}</th><th>${esc(B.title)}</th></tr></thead><tbody>
-      ${row('On the wheel', active.from != null ? '#' + (active.from + 1) + ' now' : 'New', '#' + (order.indexOf(B.id) + 1))}
-      ${row('Record', sa.n ? `${sa.w}–${sa.l}` : '—', sb.n ? `${sb.w}–${sb.l}` : '—')}
-      ${row('Since entry', sa.entry ? moveText(moveOf(sa, sa.overall)) : '—', moveText(moveOf(sb, sb.overall)))}
-      ${row('Form', fa ? fmt(fa) : '0.0', fb ? fmt(fb) : '0.0')}
-    </tbody></table>
-    <div class="mu-picks"><button class="pick" data-pick="new">${esc(A.title)} wins</button><button class="pick" data-pick="opp">${esc(B.title)} wins</button></div>`;
-}
 function renderDone(s, order) {
   const w = s.log.filter(e => e.newWins).length, l = s.log.length - w;
   const ups = s.log.filter(e => (e.newWins ? e.lean : 1 - e.lean) < 0.5).length;
+  $('#mu').hidden = false;
   $('#mu').innerHTML = `<div class="mu-lean"><span class="k">Where it lands</span><b>#${s.pos + 1}</b><em>of ${order.length + 1} on the wheel</em></div>
     <div class="mu-log">${s.log.map(e => `<div><b class="${e.newWins ? 'w' : 'l'}">${e.newWins ? 'Beat' : 'Lost to'}</b> ${esc(byId(e.opp)?.title || '')}<span>the lean gave it ${pct(e.lean)}%${(e.newWins ? e.lean : 1 - e.lean) < 0.5 ? ' · upset' : ''}</span></div>`).join('')}</div>`;
   $('#desk').hidden = false;
@@ -2841,6 +2876,8 @@ $('#auditorium').addEventListener('click', async e => {
     $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
+  const fl = e.target.closest('[data-flip]');
+  if (fl) { fl.closest('.rv').classList.toggle('flipped'); return; }
   if (e.target.closest('[data-undo]') && db.workflow?.spin) { undoVerdict(db.workflow.spin); renderSpin(); persist(); return; }
   if (e.target.closest('[data-cancelspin]')) return cancelWorkflow();
 });
