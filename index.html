@@ -1825,7 +1825,17 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .th-e{margin:4px 0 0;font:italic 500 14px var(--body);color:#7a5a3a}
 .intn{margin-left:auto;display:flex;gap:4px}
 .intn button{padding:3px 9px;border-radius:20px;border:1.5px solid #b48a4e;background:transparent;font:800 9.5px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:#5a3a26;cursor:pointer}
-.intn button.on{color:#fff;border-color:transparent} .intn button.on.r0{background:#9a1622} .intn button.on.r1{background:#9c7334} .intn button.on.r2{background:#8a7d6c}
+.intn button.on{color:#fff;border-color:transparent} .intn button.on.c0{background:#1f6b3a} .intn button.on.c1{background:#9c7334} .intn button.on.c2{background:#8a7d6c} .intn button.on.r0{background:#9a1622} .intn button.on.r1{background:#9c7334} .intn button.on.r2{background:#8a7d6c}
+.sgfix{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:10px 12px;border:1px solid rgba(122,74,42,.3);border-radius:6px;background:rgba(255,255,255,.35);font:500 16px var(--body);color:#2a160e}
+.sgfix small{font:italic 500 13.5px var(--body);color:#7a5a3a}
+.sgfix .linkish,.ck-q .linkish{color:#5a0f22;text-decoration:underline} .sgfix .linkish{margin-left:auto}
+#sgRefile{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+#sgRefile[hidden]{display:none}
+.profs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:8px 0}
+.sgprof{padding:8px 10px;border:1px dashed rgba(122,74,42,.45);border-radius:3px;background:rgba(255,255,255,.35)}
+.sgprof b{display:block;font:800 14px var(--serif);color:#2a160e} .sgprof small{display:block;margin-bottom:6px;font:600 11px var(--serif);color:#7a4a2a}
+.sgprof label{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:3px 0;font:600 12.5px var(--body);color:#3a2418}
+.sgprof select{max-width:150px;font:600 12px var(--serif)}
 </style>
 </head>
 <body>
@@ -2281,6 +2291,15 @@ const SG_GUESS = { screwball: ['dialogue', 'pacing'], comedy: ['dialogue', 'setp
   romantic: ['tone', 'performance'], soap: ['tone', 'story'], musical: ['music', 'performance'], crime: ['story', 'pacing'], gangster: ['performance', 'setpieces'],
   noir: ['texture', 'tone'], period: ['texture', 'story'] };
 const RANKS = ['Core', 'Supporting', 'Edge'], INTENSITY = ['Major', 'Moderate', 'Minor'];
+const sgKey = f => String(f.genre || '').toLowerCase().replace(/\s+/g, ' ').trim();
+const sgProfileOf = f => { const p = (db.sgProfiles || {})[sgKey(f)]; return p && p.core ? p : null; };
+const sgGuess = f => { const fam = familiesOf(f).find(x => SG_GUESS[x]); return SG_GUESS[fam] || ['story', 'tone']; };
+const sgShare = f => COLL.filter(x => sgKey(x) === sgKey(f) && x.X != null).length;
+function setProfile(key, val) { db.sgProfiles ||= {}; db.sgProfiles[key] = { core: val }; }
+// a profile that changes re-sorts the wheel: every film under it moves together
+function resortAfterProfile() { rebuild(); if (db.wheel.length) { sortWheel(true); rebuild(); } }
+// fix the guesses for any sub-genre placed without a profile, so the yardstick never shifts underneath a film
+function lockGuesses(ids) { db.sgProfiles ||= {}; ids.forEach(id => { const f = byId(id); if (f && !sgProfileOf(f) && sgKey(f)) { db.sgProfiles[sgKey(f)] = { core: sgGuess(f)[0] }; } }); }
 function claimFlaws(f) {
   if (fromPlot(f.xNote)) return [];
   // the conceded flaw and its cause are one flaw; separate flaws are only those the claim lists apart (with a semicolon)
@@ -2289,10 +2308,10 @@ function claimFlaws(f) {
 function anchorOf(f) {
   if (ANCHOR.has(f.id)) return ANCHOR.get(f.id);
   const c = f.comp || {}, ov = c.anchor || {};
-  // what the film rests on, as its sub-genre (your answer; a guess until you give one)
-  const fam = familiesOf(f).find(x => SG_GUESS[x]), g0 = SG_GUESS[fam] || ['story', 'tone'];
-  const sg = { core: (c.sg && c.sg.core) || g0[0], sup: (c.sg && c.sg.sup) || g0[1], guessed: !(c.sg && c.sg.core) };
-  if (sg.sup === sg.core) sg.sup = g0.find(x => x !== sg.core) || 'story';
+  // what the film rests on comes from its sub-genre's profile, defined once and shared by every film filed under it,
+  // so it can't be tuned film by film; a guess only until the profile is defined
+  const pr = sgProfileOf(f), g0 = sgGuess(f);
+  const sg = { core: (pr && pr.core) || g0[0], guessed: !pr, key: sgKey(f) };
   // the case: every attribute, grouped into categories, ranked core / supporting / edge (relative, one of each)
   const els = caseElements(f).map(t => ({ t, theme: (ov.fam && ov.fam[t]) || themeOf(t), autoTheme: themeOf(t) }));
   const order = [], byKey = new Map();
@@ -2301,7 +2320,8 @@ function anchorOf(f) {
   const dflt = cats.slice().sort((x, y) => (y.members.includes(0) - x.members.includes(0)) || (y.members.length - x.members.length) || (x.first - y.first));
   const want = (ov.rank || []).map(k => dflt.find(x => x.key === k)).filter(Boolean);
   const ranked = [...want, ...dflt.filter(x => !want.includes(x))];
-  ranked.forEach((x, i) => { x.slot = i < 3 ? i : -1; });
+  // the three that count; each carries your dictation of how rewarding it was: core, supporting or edge (by position until you set it)
+  ranked.forEach((x, i) => { x.slot = i < 3 ? i : -1; const t = ov.ctag && ov.ctag[x.key]; x.tag = x.slot < 0 ? -1 : t !== undefined ? t : i; x.set = t !== undefined; });
   // the claim: its flaws, grouped into categories, ranked major / moderate / minor (relative)
   const fl = claimFlaws(f).map((t, i) => ({ t, theme: (ov.ffam && ov.ffam[t]) || themeOf(t), autoTheme: themeOf(t), i }));
   const fwant = (ov.frank || []).map(t => fl.find(x => x.t === t)).filter(Boolean);
@@ -2313,8 +2333,8 @@ function anchorOf(f) {
   return a;
 }
 const topFlaw = a => a.flaws.slice().sort((x, y) => x.slot - y.slot)[0];
-const sgVal = (a, key, w) => key === a.sg.core ? w.sgVal.core : key === a.sg.sup ? w.sgVal.sup : w.sgVal.other;
-const sgMark = (a, key) => key === a.sg.core ? 'core' : key === a.sg.sup ? 'supporting' : 'extra';
+const sgVal = (a, key, w) => key === a.sg.core ? w.sgVal.core : w.sgVal.other;
+const sgMark = (a, key) => key === a.sg.core ? 'core' : 'extra';
 
 /* ---------- the score: everything the review says, weighed ---------- */
 // the rules any set of weights must keep, or it is refused (and ignored if it ever got saved)
@@ -2324,7 +2344,7 @@ function weightsProblem(w) {
   if (nums.some(v => typeof v !== 'number' || !isFinite(v))) return 'Every weight has to be a number.';
   for (let i = 1; i < 6; i++) if (!(w.case[i] > w.case[i - 1])) return 'Each recommendation level has to be worth more than the one below it.';
   for (let x = 1; x < 5; x++) if (!(w.claim[x + 1] > w.claim[x])) return 'Each claim level has to cost less than the one below it.';
-  if (!(w.sgVal.core >= w.sgVal.sup && w.sgVal.sup >= w.sgVal.other && w.sgVal.other >= 0 && w.sgVal.core > 0)) return 'What the film rests on has to count at least as much as its supporting category, and that at least as much as anything else (never below zero).';
+  if (!(w.sgVal.core >= w.sgVal.other && w.sgVal.other >= 0 && w.sgVal.core > 0)) return 'What the sub-genre should rest on has to count at least as much as anything else (never below zero).';
   if (!(w.rankW[0] >= w.rankW[1] && w.rankW[1] >= w.rankW[2] && w.rankW[2] >= 0 && w.rankW[0] > 0)) return 'Core has to count at least as much as supporting, and supporting at least as much as edge (the same for major, moderate and minor).';
   if (w.anchorMax < 0 || w.flawMax < 0) return 'The case reading and the claim flaws can’t be negative.';
   const step = Math.min(...[1, 2, 3, 4, 5].map(i => w.case[i] - w.case[i - 1]), ...[1, 2, 3, 4].map(x => w.claim[x + 1] - w.claim[x]));
@@ -2336,7 +2356,7 @@ function weightsProblem(w) {
 // (case reading up to 7, claim flaws up to -6, plot +2, ingredients or opening line +3 / -1) spans at most 19,
 // so no modifier can ever outweigh a full level: a higher combined level always wins, equal levels are settled by the rest.
 const W0 = { v: 3, case: [0, 20, 40, 60, 80, 100], claim: { 5: 0, 4: -20, 3: -40, 2: -60, 1: -80 },
-  anchorMax: 7, flawMax: 6, sgVal: { core: 1, sup: 0.6, other: 0.3 }, rankW: [1, 0.5, 0.25],
+  anchorMax: 7, flawMax: 6, sgVal: { core: 1, other: 0.4 }, rankW: [1, 0.5, 0.25],
   plot: 2, consistent: 3, jnsq: 3, identity: 2, hedge: -1 };
 const W = () => { const s1 = db.settings && db.settings.weights, ok = s1 && s1.v === W0.v && !weightsProblem(mergeW(s1)); return ok ? mergeW(s1) : { ...W0, case: W0.case.slice(), claim: { ...W0.claim }, sgVal: { ...W0.sgVal }, rankW: W0.rankW.slice() }; };
 const firstSentence = t => (String(t || '').trim().match(/^.*?[.!?](?=\s|$)/) || [String(t || '').trim()])[0];
@@ -2347,9 +2367,9 @@ function parts(f) {
   p.case = w.case[f.Y];
   // both sides weighed against one answer, what the film rests on as its sub-genre:
   // the case's core / supporting / edge categories earn, the claim's major / moderate / minor flaws cost
-  // full marks = the best possible line-up: core on what it rests on, supporting on its support, edge elsewhere
-  const norm = (w.sgVal.core * w.rankW[0] + w.sgVal.sup * w.rankW[1] + w.sgVal.other * w.rankW[2]) || 1;
-  p.anchor = r1(w.anchorMax * Math.min(1, a.cats.filter(x => x.slot >= 0).reduce((t, x) => t + sgVal(a, x.key, w) * w.rankW[x.slot], 0) / norm));
+  // full marks = the best possible line-up: the core reward on what the sub-genre should rest on
+  const norm = (w.sgVal.core * w.rankW[0] + w.sgVal.other * (w.rankW[1] + w.rankW[2])) || 1;
+  p.anchor = r1(w.anchorMax * Math.min(1, a.cats.filter(x => x.slot >= 0).reduce((t, x) => t + sgVal(a, x.key, w) * w.rankW[x.tag], 0) / norm));
   p.claim = w.claim[f.X];
   // flaws can share a category, so the cost is capped at its most: never more than flawMax
   p.flaw = -r1(w.flawMax * Math.min(1, a.flaws.filter(x => x.slot >= 0).reduce((t, x) => t + sgVal(a, x.theme, w) * w.rankW[x.slot], 0) / norm)) || 0;
@@ -2366,8 +2386,8 @@ const chanceOf = (a, b) => 1 / (1 + Math.pow(10, -(score(a) - score(b)) / 20));
 function beats(a, b) {
   const d = score(a) - score(b); if (Math.abs(d) > 1e-9) return d > 0;
   const pa = parts(a), pb = parts(b);
-  const A = anchorOf(a), B = anchorOf(b), ma = A.cats[0] && A.cats[0].key === A.sg.core, mb = B.cats[0] && B.cats[0].key === B.sg.core;
-  if (ma !== mb) return ma;   // ties: a case whose core is what the film rests on, then the case reading, then the lighter flaws, then who arrived first
+  const A = anchorOf(a), B = anchorOf(b), ma = A.cats.some(x => x.tag === 0 && x.key === A.sg.core), mb = B.cats.some(x => x.tag === 0 && x.key === B.sg.core);
+  if (ma !== mb) return ma;   // ties: a core reward in what the sub-genre rests on, then the case reading, then the lighter flaws, then who arrived first
   if (pa.anchor !== pb.anchor) return pa.anchor > pb.anchor;
   if ((pa.flaw || 0) !== (pb.flaw || 0)) return (pa.flaw || 0) > (pb.flaw || 0);
   if (a.added !== b.added) return a.added < b.added;
@@ -2387,13 +2407,13 @@ function reasonOf(Wn, L, key) {
   const aw = anchorOf(Wn), al = anchorOf(L);
   const list = a => a.slice(0, 2).join(' and ');
   if (key === 'level') return `${Y_NAMES[Wn.Y]} over ${Y_NAMES[L.Y]}: ${Wn.Y - L.Y > 1 ? 'recommendations' : 'a full recommendation'} apart${Wn.X < L.X ? `, more than its weaker condition costs` : ''}.`;
-  if (key === 'anchor') { const c0 = aw.cats[0], d0 = al.cats[0];
+  if (key === 'anchor') { const c0 = aw.cats.find(x => x.tag === 0) || aw.cats[0], d0 = al.cats.find(x => x.tag === 0) || al.cats[0];
     return c0 && c0.key === aw.sg.core
-      ? `${esc(Wn.title)}’s case rests on its ${esc(c0.label.toLowerCase())}, what it rests on as ${an(esc(genreWord(Wn)))}${d0 && d0.key !== al.sg.core ? `; ${esc(L.title)}’s case leans on its ${esc(d0.label.toLowerCase())} instead of its ${esc(themeLabel(al.sg.core).toLowerCase())}` : ''}.`
+      ? `${esc(Wn.title)}’s case rests on its ${esc(c0.label.toLowerCase())}, what ${an(esc(genreWord(Wn)))} should rest on${d0 && d0.key !== al.sg.core ? `; ${esc(L.title)}’s case leans on its ${esc(d0.label.toLowerCase())} instead of its ${esc(themeLabel(al.sg.core).toLowerCase())}` : ''}.`
       : `${esc(Wn.title)}’s case lands closer to what the film rests on than ${esc(L.title)}’s does.`; }
   if (key === 'claim' && Wn.X > L.X) return `${esc(Wn.title)} holds its condition: ${X_NAMES[Wn.X]} over ${X_NAMES[L.X]}, a full level apart.`;
   if (key === 'claim') { const m = topFlaw(al);
-    return m && m.theme === al.sg.core ? `${esc(L.title)}’s ${INTENSITY[m.slot].toLowerCase()} flaw (${esc(trimTo(m.t, 70))}) lands on its ${esc(m.label.toLowerCase())}, what the film rests on.`
+    return m && m.theme === al.sg.core ? `${esc(L.title)}’s ${INTENSITY[m.slot].toLowerCase()} flaw (${esc(trimTo(m.t, 70))}) lands on its ${esc(m.label.toLowerCase())}, what ${an(esc(genreWord(L)))} should rest on.`
       : `${esc(L.title)}’s flaws cost it more against what it rests on than ${esc(Wn.title)}’s do.`; }
   if (key === 'ingredients') return `${esc(Wn.title)} has ${(Wn.comp || {}).jnsq ? 'the je ne sais quoi' : 'consistency'}, the ingredient ${esc(L.title)} lacks.`;
   if (key === 'opener') return `${esc(Wn.title)}’s case opens on a clear identity.`;
@@ -3197,27 +3217,32 @@ function moveSel(attr, i) {
 function readingHTML(f) {
   const a = anchorOf(f), w = W(), slots = [0, 1, 2].map(i => a.cats[i]), extra = a.cats.slice(3);
   const pick = (which, cur) => `<div class="sgp">${THEMES.map(([k, l]) => `<button class="${cur === k ? 'on' : ''}" data-sg${which}="${k}">${l}</button>`).join('')}</div>`;
-  const val = key => `<span class="sgv ${sgMark(a, key)}">${key === a.sg.core ? 'what it rests on' : key === a.sg.sup ? 'its supporting' : 'elsewhere'}</span>`;
-  return `<div class="ck-q"><b>What does this film rest on, as ${an(esc(genreWord(f)))}?</b>
-      <p>${a.sg.guessed ? 'A guess from the sub-genre label. Make it yours: ' : ''}pick the category this film’s register rests on, and the one that supports it.</p>
-      <span class="ck-sub">It rests on</span>${pick('c', a.sg.core)}
-      <span class="ck-sub">Supported by</span>${pick('s', a.sg.sup)}</div>
-    <div class="ck-q"><b>The case · three categories</b>
-      <p>Every attribute the case names, combined into three categories and ranked within this film: one core, one supporting, one edge. Use the arrows to re-rank, or move an attribute.</p>
+  const val = key => `<span class="sgv ${sgMark(a, key)}">${key === a.sg.core ? 'what it should rest on' : 'elsewhere'}</span>`;
+  const n = sgShare(f), others = n - 1;
+  return `<div class="ck-q"><b>What should ${an(esc(genreWord(f)))} rest on?</b>
+      <p>Is this film really ${an(esc(genreWord(f)))}? If not, file it under what it actually is: <button class="linkish" data-sgrefile>change its sub-genre</button>.</p>
+      <div class="genre2" id="sgRefile" hidden><input id="ckG1" placeholder="Melodrama" maxlength="24" value="${esc((raw(f.id).genre || [])[0] || '')}"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24" value="${esc((raw(f.id).genre || [])[1] || '')}"><button class="btn-line" data-ckgenre>File it here</button></div>
+      ${a.sg.guessed || ck0.editSG
+        ? `<p>${a.sg.guessed ? `<b>New sub-genre.</b> Define it once: it will hold for every film filed as ${an(esc(genreWord(f)))}${others ? ` (${others} other${others === 1 ? '' : 's'} already)` : ''}. A guess is filled in.` : `<b>Changing this changes it for all ${n} film${n === 1 ? '' : 's'} filed as ${an(esc(genreWord(f)))}</b>, and the wheel re-sorts.`}</p>
+          <span class="ck-sub">It should rest on</span>${pick('c', a.sg.core)}`
+        : `<div class="sgfix"><span>Should rest on <b>${esc(themeLabel(a.sg.core))}</b></span><small>the same for all ${n} film${n === 1 ? '' : 's'} filed as ${an(esc(genreWord(f)))}</small><button class="linkish" data-sgedit>Change it for all ${n}</button></div>`}</div>
+    <div class="ck-q"><b>The case · three categories, by reward</b>
+      <p>Every attribute the case names, combined into three categories. Dictate how rewarding each was in your memory: <b>core</b>, the reward itself; <b>supporting</b>, it rewarded but less; <b>edge</b>, it registered but barely rewarded.${slots.some(x => x && !x.set) ? ' Not set yet: tap one.' : ''} The arrows choose which three count; move… regroups an attribute.</p>
       <div class="themes">${slots.map((x, i) => x ? `<div class="theme">
-        <div class="th-h"><span class="rkb r${i}">${RANKS[i]}</span><b>${esc(x.label)}</b>${val(x.key)}
-          <span class="arw">${i > 0 ? `<button data-rk="-1" data-key="${esc(x.key)}" aria-label="Rank higher">▲</button>` : ''}${i < a.cats.length - 1 ? `<button data-rk="1" data-key="${esc(x.key)}" aria-label="Rank lower">▼</button>` : ''}</span></div>
+        <div class="th-h"><b>${esc(x.label)}</b>${val(x.key)}
+          <span class="intn">${RANKS.map((n, k) => `<button class="${x.tag === k ? 'on c' + k : ''}" data-ctag="${k}" data-key="${esc(x.key)}">${n}</button>`).join('')}</span>
+          <span class="arw" style="margin-left:6px">${i > 0 ? `<button data-rk="-1" data-key="${esc(x.key)}" aria-label="Rank higher">▲</button>` : ''}${i < a.cats.length - 1 ? `<button data-rk="1" data-key="${esc(x.key)}" aria-label="Rank lower">▼</button>` : ''}</span></div>
         <div class="th-m">${x.members.map(m => `<span>${esc(a.els[m].t)}${moveSel('mv', m)}</span>`).join('')}</div></div>`
         : `<div class="theme empty"><div class="th-h"><span class="rkb r${i}">${RANKS[i]}</span><b>Empty</b></div><p class="th-e">The case reaches only ${a.cats.length} categor${a.cats.length === 1 ? 'y' : 'ies'}. This slot counts zero until the review names a third (only what you actually experienced).</p></div>`).join('')}
       ${extra.length ? `<div class="theme off"><div class="th-h"><b>Folded in · not counted</b></div><div class="th-m">${extra.map(x => `<span>${esc(x.label)}: ${x.members.map(m => `${esc(a.els[m].t)}${moveSel('mv', m)}`).join(', ')}<button class="arw1" data-rk="-1" data-key="${esc(x.key)}">▲</button></span>`).join('')}</div></div>` : ''}</div></div>
-    <div class="ck-q"><b>The claim · its flaws by intensity</b>
-      ${a.flaws.length ? `<p>How intensely you felt each flaw: major, moderate or minor. It says nothing about whether it’s material; the claim’s level already did.${a.flaws.some(x => !x.set) ? ' Not set yet: tap one.' : ''}</p>
+    <div class="ck-q"><b>The claim · its flaws, against the praise</b>
+      ${a.flaws.length ? `<p>How much each flaw weighed against what rewarded you: major, moderate or minor. It says nothing about whether it’s material; the claim’s level already did.${a.flaws.some(x => !x.set) ? ' Not set yet: tap one.' : ''}</p>
       <div class="themes">${a.flaws.map(x => `<div class="theme">
         <div class="th-h"><b>${esc(x.label)}</b>${val(x.theme)}
           <span class="intn">${INTENSITY.map((n, k) => `<button class="${x.slot === k ? 'on r' + k : ''}" data-fint="${k}" data-t="${esc(x.t)}">${n}</button>`).join('')}</span></div>
         <div class="th-m"><span>${esc(trimTo(x.t, 120))}${moveSel('fmv', x.i)}</span></div></div>`).join('')}</div>`
       : '<p>From the plot: the claim names no flaw from memory, so nothing to rank.</p>'}
-      <small>Both sides are weighed against your answer above. A category is worth ${w.sgVal.core} if it’s what the film rests on, ${w.sgVal.sup} if it’s its supporting category, ${w.sgVal.other} otherwise; core and major count fully, supporting and moderate half, edge and minor a quarter. The case earns up to ${w.anchorMax}; the flaws cost up to ${w.flawMax}.</small></div>`;
+      <small>Both sides are weighed against the sub-genre’s answer above. A category is worth ${w.sgVal.core} if it’s what the sub-genre should rest on, ${w.sgVal.other} otherwise; a core reward or a major flaw counts fully, supporting or moderate half, edge or minor a quarter. The case earns up to ${w.anchorMax}; the flaws cost up to ${w.flawMax}.</small></div>`;
 }function chipHTML(t, tag, kind, i, off) {
   return `<button class="ach ${tag} ${off ? 'off' : ''}" data-ach="${kind}" data-i="${i}" title="Tap to change">${esc(t)}<i>${TAG_WORD[tag]}</i></button>`;
 }
@@ -3254,15 +3279,11 @@ function editReading(f, fn) {
   const r = raw(f.id); if (!r) return;
   const old = (r.comp && r.comp.anchor) || {};
   r.comp = { ...(r.comp || {}) };
-  const ov = r.comp.anchor = { fam: { ...(old.fam || {}) }, rank: (old.rank || []).slice(), ffam: { ...(old.ffam || {}) }, frank: (old.frank || []).slice(), fint: { ...(old.fint || {}) } };
+  const ov = r.comp.anchor = { fam: { ...(old.fam || {}) }, rank: (old.rank || []).slice(), ffam: { ...(old.ffam || {}) }, frank: (old.frank || []).slice(), fint: { ...(old.fint || {}) }, ctag: { ...(old.ctag || {}) } };
   fn(ov, r, anchorOf(f));
 }
-const setSG = (f, which, key) => editReading(f, (ov, r, a) => {
-  const sg = { core: a.sg.core, sup: a.sg.sup };
-  if (which === 'core') { if (key === sg.sup) sg.sup = sg.core; sg.core = key; } else { if (key === sg.core) sg.core = sg.sup; sg.sup = key; }
-  r.comp.sg = sg;
-});
 const moveRank = (f, key, d) => editReading(f, (ov, r, a) => { const ks = a.cats.map(x => x.key), i = ks.indexOf(key), j = i + d; if (i < 0 || j < 0 || j >= ks.length) return; [ks[i], ks[j]] = [ks[j], ks[i]]; ov.rank = ks; });
+const setReward = (f, key, k) => editReading(f, ov => { ov.ctag = { ...(ov.ctag || {}), [key]: k }; });
 const setIntensity = (f, t, k) => editReading(f, ov => { ov.fint = { ...(ov.fint || {}), [t]: k }; });
 const moveFlawRank = (f, t, d) => editReading(f, (ov, r, a) => { const ts = a.flaws.map(x => x.t), i = ts.indexOf(t), j = i + d; if (i < 0 || j < 0 || j >= ts.length) return; [ts[i], ts[j]] = [ts[j], ts[i]]; ov.frank = ts; });
 function moveAttribute(f, i, theme, flaw) {
@@ -3279,14 +3300,17 @@ $('#checkIn').addEventListener('change', e => {
 $('#checkIn').addEventListener('click', async e => {
   if (!ck0 || !active || !canEdit()) return;
   const f = active.film, r = raw(f.id); if (!r) return;
-  const sgc = e.target.closest('[data-sgc],[data-sgs]'), rk = e.target.closest('[data-rk]'), frk = e.target.closest('[data-frk]'), fi = e.target.closest('[data-fint]');
-  if (sgc || rk || frk || fi) {
+  const sgc = e.target.closest('[data-sgc],[data-sgs]'), rk = e.target.closest('[data-rk]'), frk = e.target.closest('[data-frk]'), fi = e.target.closest('[data-fint]'), ct = e.target.closest('[data-ctag]');
+  if (sgc || rk || frk || fi || ct) {
+    if (ct) setReward(f, ct.dataset.key, +ct.dataset.ctag);
     if (fi) setIntensity(f, fi.dataset.t, +fi.dataset.fint);
-    if (sgc) setSG(f, sgc.dataset.sgc ? 'core' : 'sup', sgc.dataset.sgc || sgc.dataset.sgs);
+    if (sgc && sgc.dataset.sgc) { setProfile(anchorOf(f).sg.key, sgc.dataset.sgc); resortAfterProfile(); }
     if (rk) moveRank(f, rk.dataset.key, +rk.dataset.rk);
     if (frk) moveFlawRank(f, frk.dataset.t, +frk.dataset.frk);
     rebuild(); syncActive(); persist(); return renderCheck();
   }
+  if (e.target.closest('[data-sgrefile]')) { $('#sgRefile').hidden = !$('#sgRefile').hidden; return; }
+  if (e.target.closest('[data-sgedit]')) { ck0.editSG = true; return renderCheck(); }
   if (e.target.closest('[data-ckgenre]')) {
     const g1 = capWord($('#ckG1').value), g2 = capWord($('#ckG2').value);
     if (!g1 || !g2) return $('#ckErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
@@ -3298,7 +3322,7 @@ $('#checkIn').addEventListener('click', async e => {
   if (b.dataset.ckgo === undefined) { rebuild(); syncActive(); return renderCheck(); }
   if (f.Y === 1 && !ck0.ing) return $('#ckErr').textContent = 'Pick which ingredient it has.';
   if (f.Y === 0 || f.Y === 2) r.comp = { ...(r.comp || {}), opener: ck0.opener };
-  { const a = anchorOf(f); if (a.sg.guessed) r.comp = { ...(r.comp || {}), sg: { core: a.sg.core, sup: a.sg.sup } }; }   // seeing the show confirms the answer on screen
+  lockGuesses([f.id]);   // seeing the show confirms the sub-genre's answer on screen, for every film filed under it
   ck0 = null;
   rebuild(); syncActive();
   const info = placeFilm(active.film.id, active.mode);
@@ -3321,6 +3345,7 @@ const needsCheck = f => f.Y === 1 && (f.comp || {}).consistent === undefined && 
 function spinAll() {
   if (!canEdit() || active || !QUEUE.length) return;
   const ids = QUEUE.filter(f => !needsCheck(f)).map(f => f.id), wait = QUEUE.length - ids.length; let k = 0;
+  lockGuesses(ids); rebuild();
   ids.forEach(id => { if (byId(id) && byId(id).pos == null) { placeFilm(id, 'queue'); k++; } });
   persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed${wait ? ` · ${wait} still need${wait === 1 ? 's' : ''} the ingredients check: send ${wait === 1 ? 'it' : 'them'} one at a time` : ' · every battle is in the Film Vault'}`); });
   renderScene(current);
@@ -3339,7 +3364,7 @@ function slotHTML(f, me) {
 }
 function anchorChips(f) {
   const a = anchorOf(f), m = topFlaw(a);
-  return `<div class="fc-anchor">${a.cats.filter(x => x.slot >= 0).map(x => `<span class="ach ${sgMark(a, x.key)} sm" title="${RANKS[x.slot]} · ${esc(x.members.map(i => a.els[i].t).join(' · '))}">${RANKS[x.slot][0]} · ${esc(trimTo(x.label, 26))}</span>`).join('')}
+  return `<div class="fc-anchor">${a.cats.filter(x => x.slot >= 0).map(x => `<span class="ach ${sgMark(a, x.key)} sm" title="${RANKS[x.tag]} reward · ${esc(x.members.map(i => a.els[i].t).join(' · '))}">${RANKS[x.tag][0]} · ${esc(trimTo(x.label, 26))}</span>`).join('')}
     ${m ? `<span class="ach ${sgMark(a, m.theme)} sm flaw">${INTENSITY[m.slot]} flaw · ${esc(trimTo(m.label, 20))}</span>` : ''}</div>`;
 }function showCard(f, o) {
   const st = standing(f), p = parts(f);
@@ -3739,10 +3764,10 @@ function renderGame() {
     <p class="cal-note">${FACTOR_NAME[topK.k]} settled ${topK.n} of ${ms.length} battle${ms.length === 1 ? '' : 's'}. ${ms.filter(m => (m.margin || 0) < 5).length} were decided by less than 5 points.</p>`
     : '<p class="cal-note">Fills in as reviews meet on the wheel. Each battle is credited to the component that tipped it.</p>';
   // how the anchor reads your reviews: praise on the core, flaws by where they land
-  const onW = ranked.length ? ranked : all, cores = onW.map(f => { const a = anchorOf(f); return a.cats[0] ? sgMark(a, a.cats[0].key) : 'none'; }), majors = onW.map(f => { const a = anchorOf(f), m = topFlaw(a); return m ? sgMark(a, m.theme) : 'none'; });
+  const onW = ranked.length ? ranked : all, cores = onW.map(f => { const a = anchorOf(f), c = a.cats.find(x => x.tag === 0) || a.cats[0]; return c ? sgMark(a, c.key) : 'none'; }), majors = onW.map(f => { const a = anchorOf(f), m = topFlaw(a); return m ? sgMark(a, m.theme) : 'none'; });
   const tagBars = (rows) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="bars2">${rows.map(([l, k, nm]) => `<div class="bar2"><b style="font-size:12px">${l}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm}</span></div><i>${k}</i></div>`).join('')}</div>`; };
-  const praise = tagBars([['Rests', cores.filter(t => t === 'core').length, 'Case core = what the film rests on'], ['Supp.', cores.filter(t => t === 'supporting').length, 'Case core = its supporting'], ['Else', cores.filter(t => t === 'extra').length, 'Case core is elsewhere']]);
-  const flaws = tagBars([['Rests', majors.filter(t => t === 'core').length, 'Worst flaw hits what it rests on'], ['Supp.', majors.filter(t => t === 'supporting').length, 'Worst flaw hits its support'], ['Else', majors.filter(t => t === 'extra').length, 'Worst flaw lands elsewhere'], ['None', majors.filter(t => t === 'none').length, 'No flaw (from the plot)']]);
+  const praise = tagBars([['Rests', cores.filter(t => t === 'core').length, 'Core reward on what it should rest on'], ['Else', cores.filter(t => t === 'extra').length, 'Core reward elsewhere']]);
+  const flaws = tagBars([['Rests', majors.filter(t => t === 'core').length, 'Worst flaw hits what it should rest on'], ['Else', majors.filter(t => t === 'extra').length, 'Worst flaw lands elsewhere'], ['None', majors.filter(t => t === 'none').length, 'No flaw (from the plot)']]);
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
@@ -3769,8 +3794,8 @@ function renderGame() {
     </div>
     ${cabinet('What Decides Your Wheel', 'Every battle, credited to the component that tipped it.', decides)}
     <div class="tri">
-      ${cabinet('The Case · Its Core', `Where each case’s core category lands against what the film rests on${ranked.length ? '' : ' (from the queue)'}.`, praise)}
-      ${cabinet('The Claim · Its Worst Flaw', 'Where each claim’s most intense flaw lands against what the film rests on.', flaws)}
+      ${cabinet('The Case · Its Core Reward', `Where each case’s core reward lands against what its sub-genre should rest on${ranked.length ? '' : ' (from the queue)'}.`, praise)}
+      ${cabinet('The Claim · Its Worst Flaw', 'Where each claim’s heaviest flaw lands against what its sub-genre should rest on.', flaws)}
     </div>
     <div class="tri">
       ${cabinet('Stars', N ? `How ${N} film${N === 1 ? '' : 's'} spread across the stars.` : 'Stars come from the wheel.', starHist)}
@@ -4112,7 +4137,7 @@ function renderPlaybill() {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a review once it’s on the wheel</small></div>
       <p class="pb-note" style="margin:0 0 10px">The math settles each film. Afterward, you can edit any review, and the film reruns.</p>
-      ${it('↻', 'Rewrites', 'edit freely', 'Buy another ticket and change anything: the claim, the case, what the film rests on, its categories, its flaws. Any change takes the film off the wheel and reruns it in the auditorium, so you always see where it lands and why.')}
+      ${it('↻', 'Rewrites', 'edit freely', 'Buy another ticket and change anything: the claim, the case, its sub-genre, its categories, its flaws. Any change takes the film off the wheel and reruns it in the auditorium, so you always see where it lands and why.')}
       ${it('✕', 'Dump the wheel', 'the Office', 'Clears all the math. Only the claim, case, sub-genre and year stay; every review goes back to the queue.')}`;
   }
   if (pbTab === 'Q') {
@@ -4122,14 +4147,14 @@ function renderPlaybill() {
       <p class="pb-note" style="margin:0 0 10px">You write the claim and the case. The math reads them into a placement score and places the film. You never pick a winner.</p>
       <div class="pb-axis"><span>The placement score</span></div>
       ${it('1', 'The recommendation', 'one half', `Not Recommendable ${w.case[0]} · Recommendable ${w.case[1]} · Recommended ${w.case[2]} · Highly Recommended ${w.case[3]} · Must-See ${w.case[4]} · Essential ${w.case[5]}. Each level is worth the same ${w.case[1] - w.case[0]} points.`)}
-      ${it('2', 'The case reading', `up to ${w.anchorMax}`, `You answer what the film rests on, as its sub-genre: the category its register rests on, and the one that supports it. The case’s attributes combine into three categories, ranked core, supporting and edge within the film. Each earns its value against your answer (rests on ${w.sgVal.core}, supported by ${w.sgVal.sup}, elsewhere ${w.sgVal.other}) times its rank (${w.rankW.join(' / ')}).`)}
-      ${it('3', 'The claim', 'the other half', `The claim and the case are equals: each level down costs what a level of recommendation is worth. Unscathed ${w.claim[5]} · Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}. Then its flaws, each set major, moderate or minor by how intensely you felt it, cost up to ${w.flawMax}, by where they land against what the film rests on.`)}
+      ${it('2', 'The case reading', `up to ${w.anchorMax}`, `Each sub-genre has one answer, defined once and shared by every film filed under it: the category a film like this should rest on. You decide which sub-genre a film really is (Casablanca, a melodrama). The case’s attributes combine into three categories, each dictated by how rewarding it was: core, supporting or edge. Each earns its value against the sub-genre’s answer (should rest on ${w.sgVal.core}, elsewhere ${w.sgVal.other}) times its rank (${w.rankW.join(' / ')}).`)}
+      ${it('3', 'The claim', 'the other half', `The claim and the case are equals: each level down costs what a level of recommendation is worth. Unscathed ${w.claim[5]} · Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}. Then its flaws, each set major, moderate or minor by how much it weighed against what rewarded you, cost up to ${w.flawMax}, by where they land against what the sub-genre should rest on.`)}
       ${it('4', 'The extras', 'small', `From the plot +${w.plot}. For Recommendable: consistency +${w.consistent} or the je ne sais quoi +${w.jnsq}. For Not Recommendable and Recommended, the opening line: a one-phrase identity +${w.identity}, an inventory or hedge ${w.hedge}. Everything besides the two levels spans less than one level, so it settles films that meet on level and never overturns one.`)}
-      <div class="pb-axis"><span>Relative, not absolute</span></div>
-      <p class="pb-note" style="margin:0 0 4px">Core, supporting and edge rank a case’s three categories within the film; major, moderate and minor are how intensely you felt each of the claim’s flaws. They aren’t the claim’s “material”: whether a flaw is material is settled by the claim’s level.</p>
-      ${it('C', 'Core · major', '×' + w.rankW[0], 'The case’s first category, the one it leans on most. The claim’s most intense flaw.')}
-      ${it('S', 'Supporting · moderate', '×' + w.rankW[1], 'Second in the case. A flaw you felt moderately.')}
-      ${it('E', 'Edge · minor', '×' + w.rankW[2], 'Third in the case: Casablanca’s backlot aesthetic, simply because it ranks third. A flaw you barely felt. A case that reaches only two categories leaves its edge slot empty (zero); a claim with fewer flaws simply costs less.')}
+      <div class="pb-axis"><span>Dictation, not argument</span></div>
+      <p class="pb-note" style="margin:0 0 4px">Core, supporting and edge record how rewarding each of the case’s categories was in your memory; major, moderate and minor record how much each of the claim’s flaws weighed against those rewards. Neither is the claim’s “material”: that’s settled by the claim’s level. Both are weighed against the sub-genre’s shared answer.</p>
+      ${it('C', 'Core · major', '×' + w.rankW[0], 'The reward itself. A flaw that weighed heavily against what rewarded you.')}
+      ${it('S', 'Supporting · moderate', '×' + w.rankW[1], 'It rewarded, but less. A flaw that weighed somewhat.')}
+      ${it('E', 'Edge · minor', '×' + w.rankW[2], 'It registered but barely rewarded. A flaw that barely weighed. A case that reaches only two categories leaves a slot empty (zero); a claim with fewer flaws simply costs less.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. Each comparison is a battle won by the higher score (ties: stronger anchor, then higher condition, then first admitted), credited to the component that tipped it and filed in the Film Vault.')}
       <div class="pb-axis"><span>The questions behind each recommendation</span></div>
@@ -4169,7 +4194,7 @@ function removeFilm(id) {
   if (db.workflow && db.workflow.film === id) endWorkflow();
   rebuild(); syncActive();
 }
-let officeMsg = { signin: '', backup: '', import: '', weights: '' }, officeQuery = '', askRemove = null, askImport = null, busySign = false;
+let officeMsg = { signin: '', backup: '', import: '', weights: '', profiles: '' }, officeQuery = '', askRemove = null, askImport = null, busySign = false;
 function renderOffice() {
   const nV = VAULT.length, editor = canEdit();
   const lamp = editor ? 'on' : '';
@@ -4206,6 +4231,12 @@ function renderOffice() {
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
 
+      <div class="ledger wide"><span class="tabk">The yardsticks</span><h3>What each sub-genre should rest on</h3>
+        <p>Defined once per sub-genre and shared by every film filed under it. A change re-sorts the wheel; every film under that sub-genre moves together.</p>
+        ${profilesHTML()}
+        <div class="btnrow2"><button class="btn-ink solid" data-o="profiles">Apply and re-sort the wheel</button></div>
+        ${officeMsg.profiles ? `<div class="okline">${esc(officeMsg.profiles)}</div>` : ''}</div>
+
       <div class="ledger wide"><span class="tabk">The rule book</span><h3>The weights</h3>
         <p>The only lever on the math. A change applies to every review alike, and the wheel re-sorts under the new rules. Past shows stay filed as they played.</p>
         ${weightsHTML()}
@@ -4239,10 +4270,20 @@ function renderOffice() {
   $('#oClearW').addEventListener('input', e => { $('#oClearWBtn').disabled = e.target.value.trim().toUpperCase() !== 'DUMP THE WHEEL'; });
   $('#oFile').addEventListener('change', e => readImport(e.target.files[0]));
 }
+function profilesHTML() {
+  const keys = [...new Set([...COLL.filter(f => f.X != null && sgKey(f)).map(sgKey), ...Object.keys(db.sgProfiles || {})])].sort();
+  if (!keys.length) return '<p class="tiny">No sub-genres yet.</p>';
+  const sel = (key, which, cur) => `<select data-prof="${esc(key)}" data-which="${which}">${THEMES.map(([k, l]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  return `<div class="profs">${keys.map(key => {
+    const f = COLL.find(x => sgKey(x) === key), p = (db.sgProfiles || {})[key], g = f ? sgGuess(f) : ['story', 'tone'], n = COLL.filter(x => sgKey(x) === key && x.X != null).length;
+    return `<div class="sgprof"><b>${esc(f ? f.genre : key)}</b><small>${n} film${n === 1 ? '' : 's'}${p ? '' : ' · not defined yet (guess shown)'}</small>
+      <label>Should rest on ${sel(key, 'core', p ? p.core : g[0])}</label></div>`;
+  }).join('')}</div>`;
+}
 const W_FIELDS = [
   ['The recommendation', [0, 1, 2, 3, 4, 5].map(l => [`case.${l}`, Y_NAMES[l]])],
   ['The claim', [4, 3, 2, 1].map(l => [`claim.${l}`, X_NAMES[l]])],
-  ['What it rests on', [['sgVal.core', 'Rests on'], ['sgVal.sup', 'Supported by'], ['sgVal.other', 'Elsewhere']]],
+  ['The sub-genre', [['sgVal.core', 'Should rest on'], ['sgVal.other', 'Elsewhere']]],
   ['Rank & intensity', [['rankW.0', 'Core · major'], ['rankW.1', 'Supporting · moderate'], ['rankW.2', 'Edge · minor']]],
   ['Most points', [['anchorMax', 'Case earns'], ['flawMax', 'Flaws cost']]],
   ['Components', [['plot', 'From the plot'], ['consistent', 'Consistency'], ['jnsq', 'Je ne sais quoi'], ['identity', 'Identity opener'], ['hedge', 'Hedge opener']]],
@@ -4289,6 +4330,15 @@ $('#office').addEventListener('click', async e => {
   if (o === 'remove') { askRemove = b.dataset.id; return renderHits(); }
   if (o === 'removeno') { askRemove = null; return renderHits(); }
   if (o === 'removeyes') { const t = raw(b.dataset.id)?.title; removeFilm(b.dataset.id); askRemove = null; if (await persist()) toast(t + ' removed'); return renderOffice(); }
+  if (o === 'profiles') {
+    db.sgProfiles ||= {}; const before = db.wheel.slice(); let bad = '';
+    const vals = {}; document.querySelectorAll('#officeIn [data-prof]').forEach(x => { (vals[x.dataset.prof] ||= {})[x.dataset.which] = x.value; });
+    Object.entries(vals).forEach(([k, v]) => { db.sgProfiles[k] = { core: v.core }; });
+    resortAfterProfile();
+    const moved = db.wheel.filter((id, i) => before[i] !== id).length;
+    officeMsg.profiles = bad ? '✗ ' + bad : `✓ Sub-genres saved · ${moved ? `${moved} place${moved === 1 ? '' : 's'} on the wheel changed hands` : 'the wheel order holds'}.`;
+    await persist(); return renderOffice();
+  }
   if (o === 'weights' || o === 'weightsreset') {
     const moved = applyWeights(o === 'weights' ? readWeights() : null);
     if (moved && moved.refused) { officeMsg.weights = '✗ Not applied: ' + moved.refused; return renderOffice(); }
