@@ -1613,8 +1613,8 @@ const SHOW_Q = {
        1: 'Which film offers the more compelling grounds for taking a chance on its appeal despite uncertain effectiveness?',
        0: 'Which film offers the stronger remaining incentive to check it out, despite insufficient grounds for recommendation?' },
 };
-// your explicit hierarchy (higher total first, then higher Y)
-const LISTED = ['5/5', '4/5', '5/4', '3/5', '4/4', '5/3', '3/4', '4/3', '5/2', '3/3', '4/2', '5/1', '3/2', '4/1', '5/0', '2/2', '3/1', '4/0', '2/1', '3/0', '1/1', '2/0', '1/0'];
+// the hierarchy: Y level first (the recommendation), then X level (the condition). Every coordinate has a place.
+const LISTED = [5, 4, 3, 2, 1, 0].flatMap(y => [5, 4, 3, 2, 1].map(x => x + '/' + y));
 const ck = f => f.X + '/' + f.Y;
 const STAR = (rank, n) => n <= 1 ? 5 : (Math.round(9 * (n - rank) / (n - 1)) + 1) / 2;
 const starText = v => '★'.repeat(Math.floor(v)) + (v % 1 ? '½' : '');
@@ -1695,8 +1695,8 @@ function rebuild() {
 }
 const byId = id => COLL.find(f => f.id === id);
 const groupOf = (c, except) => COLL.filter(f => ck(f) === c && f.id !== except);
-// combined ordinal inside a group: X standing + Y standing, lower wins, Y breaks ties
-function groupRows(c) { return groupOf(c).sort((a, b) => (a.xr + a.yr) - (b.xr + b.yr) || a.yr - b.yr || a.xr - b.xr || a.added - b.added || a.title.localeCompare(b.title)); }
+// order inside a group: Y standing first, X standing breaks ties
+function groupRows(c) { return groupOf(c).sort((a, b) => a.yr - b.yr || a.xr - b.xr || a.added - b.added || a.title.localeCompare(b.title)); }
 function board() {
   const ranked = LISTED.flatMap(c => groupRows(c));
   const coords = [...new Set(COLL.map(ck))].filter(c => !LISTED.includes(c));
@@ -2033,7 +2033,7 @@ function openProfile(id) {
       <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge">${ck(f)}</span>${names(ck(f))}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
       <div class="pstats">
         <div><b>#${f.xr}</b><span>X standing</span></div><div><b>#${f.yr}</b><span>Y standing</span></div>
-        <div><b>${f.xr + f.yr}</b><span>Combined</span></div><div><b>#${st.inGroup}</b><span>of ${st.groupSize} in ${ck(f)}</span></div>
+        <div><b>#${st.overall || '—'}</b><span>Overall</span></div><div><b>#${st.inGroup}</b><span>of ${st.groupSize} in ${ck(f)}</span></div>
       </div>
       <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
       <div class="pev"><p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>
@@ -2680,7 +2680,7 @@ function verdictHTML(f, extra) {
       <div class="grid">
         <div class="cell"><b>#${f.xr}</b><span>X standing</span></div>
         <div class="cell"><b>#${f.yr}</b><span>Y standing</span></div>
-        <div class="cell"><b>${f.xr + f.yr}</b><span>Combined</span></div>
+        <div class="cell"><b>#${st.overall || '—'}</b><span>Overall</span></div>
         <div class="cell"><b>#${st.inGroup}</b><span>In ${c}</span></div>
       </div>
       ${listed ? `<div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>` : ''}
@@ -2837,7 +2837,7 @@ function renderGame() {
       ${cabinet('Total Score', 'X + Y, out of 10.', hist)}
       ${cabinet('By Decade', bestDec ? `The ’${String(bestDec).slice(2)}s lead with an average of ${avg(dec[bestDec].map(total)).toFixed(1)}.` : '', decades)}
     </div>
-    ${cabinet('Most Crowded Coordinates', 'Where the screening room is busiest.', `<div class="list2">${groups.slice(0, 5).map(([c, k]) => `<button class="li2" data-coord="${c}"><b>${c}</b><span>${names(c)}<small>${LISTED.includes(c) ? 'Hierarchy step ' + (LISTED.indexOf(c) + 1) + ' of 23' : 'Awaiting placement'}</small></span><i>${k} film${k === 1 ? '' : 's'}</i></button>`).join('')}</div>`)}
+    ${cabinet('Most Crowded Coordinates', 'Where the screening room is busiest.', `<div class="list2">${groups.slice(0, 5).map(([c, k]) => `<button class="li2" data-coord="${c}"><b>${c}</b><span>${names(c)}<small>${LISTED.includes(c) ? 'Hierarchy step ' + (LISTED.indexOf(c) + 1) + ' of ' + LISTED.length : 'Awaiting placement'}</small></span><i>${k} film${k === 1 ? '' : 's'}</i></button>`).join('')}</div>`)}
   `;
   if (!hsCoord || !groupOf(hsCoord).length) hsCoord = groups[0][0];
   renderHS(true);
@@ -3148,13 +3148,13 @@ function renderHS(roll) {
   if (sel) {
     const gap = Math.abs(sel.xr - sel.yr), inG = g.findIndex(f => f.id === sel.id) + 1;
     ticket = `<div class="hs-ticket">${posterHTML(sel, 34)}<span class="tt">${esc(sel.title)}</span>
-      <span class="st2"><span>#${sel.xr} on X</span><span>#${sel.yr} on Y</span><span>Combined ${sel.xr + sel.yr}</span><span>#${inG} of ${g.length} in ${hsCoord}</span></span>
+      <span class="st2"><span>#${sel.xr} on X</span><span>#${sel.yr} on Y</span><span>#${inG} of ${g.length} in ${hsCoord}</span></span>
       <span class="gapline">${g.length < 2 ? 'Alone in its coordinate.' : gap === 0 ? 'Level on both axes.' : `Split by ${gap} place${gap === 1 ? '' : 's'} — ${sel.xr < sel.yr ? 'its condition outranks its recommendation' : 'its recommendation outranks its condition'}.`}</span></div>`;
   }
   el.innerHTML = `
     <div class="hs-coins">${coords.map(c => `<button class="hs-coin ${c === hsCoord ? 'on' : ''} ${LISTED.includes(c) ? '' : 'off'}" data-hc="${c}" title="${c} · ${names(c)} · ${counts[c]} film${counts[c] === 1 ? '' : 's'}">${c}<small>${counts[c]}</small></button>`).join('')}</div>
     <div class="hs-top"><div class="c">${hsCoord}</div><div class="n">${names(hsCoord)}</div>
-      <div class="m">${g.length} film${g.length === 1 ? '' : 's'}${LISTED.includes(hsCoord) ? ' · hierarchy step ' + (LISTED.indexOf(hsCoord) + 1) + ' of 23' : ' · awaiting placement'}${prov ? ' · * provisional' : ''}</div></div>
+      <div class="m">${g.length} film${g.length === 1 ? '' : 's'}${LISTED.includes(hsCoord) ? ' · hierarchy step ' + (LISTED.indexOf(hsCoord) + 1) + ' of ' + LISTED.length : ' · awaiting placement'}${prov ? ' · * provisional' : ''}</div></div>
     <div class="hs-lever"><div class="sw ${hsAxis === 'Y' ? 'y' : ''}"><span class="knob"></span><button class="${hsAxis === 'X' ? 'on' : ''}" data-hsax="X">X · Condition</button><button class="${hsAxis === 'Y' ? 'on' : ''}" data-hsax="Y">Y · Recommend</button></div></div>
     <div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${hsCoord} ${names(hsCoord)}</small></div>
       <div class="arc-bezel"><div class="hs-screens" data-ax="${hsAxis}">${hsScreen(hsCoord, 'X', roll)}${hsScreen(hsCoord, 'Y', roll)}</div></div>
