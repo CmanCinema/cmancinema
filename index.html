@@ -1541,6 +1541,13 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .face.back .rvtext{border-top:0;padding-top:4px}
 @media (max-width:640px){ .fc-art{min-height:300px} .fc-medal{width:76px;height:76px} .fc-medal b{font-size:26px} .face.front .fc-stats b{font-size:17px} }
 @media (prefers-reduced-motion:reduce){ .rv.fav .fc-art::after{animation:none;display:none} }
+
+#screenCard h2 .of{font:italic 500 .5em var(--serif);letter-spacing:.04em;opacity:.75}
+#screenCard .dq-res{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin:6px 0 2px;font:600 15px var(--serif)}
+#screenCard .dq-res span{color:rgba(243,230,200,.8)}
+#screenCard .dq-res .w{color:#9fdc9a}
+#screenCard .dq-res .l{color:#ff9e94}
+.consider-hint{margin:6px 0 0;font:italic 500 14px var(--body);color:rgba(243,230,200,.6)}
 </style>
 </head>
 <body>
@@ -1705,8 +1712,9 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
         <div class="verdict" id="verdict"></div>
         <div class="tally" id="tally"></div>
         <div class="consider">
-          <label for="consider">Decisive consideration <i>— optional · filed in the Film Vault</i></label>
-          <textarea id="consider" maxlength="600" placeholder="Why does it belong exactly here?"></textarea>
+          <label for="consider">Decisive consideration <i>— optional</i></label>
+          <textarea id="consider" maxlength="600" placeholder="What decided it for you?"></textarea>
+          <p class="consider-hint" id="considerHint"></p>
         </div>
         <button class="lock" id="lockBtn">Lock it in</button>
       </div>
@@ -2849,7 +2857,7 @@ function renderSpin() {
   const est = estMatchups(order.length);
   const B0 = done ? null : byId(s.opp);
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA[active.mode] || 'The wheel'} · ${done ? 'the wheel has spoken' : `matchup ${s.log.length + 1} of about ${est}${s.phase === 'confirm' ? ' · the check' : ''}`}</div>
-    ${done ? `<h2>${esc(A.title)} lands at #${s.pos + 1}</h2>` : `<div class="dq"><span>The question that decides it</span><p>${decidingQ(A, B0)}</p></div>
+    ${done ? `<h2>${esc(A.title)} lands at #${s.pos + 1} <small class="of">of ${order.length + 1}</small></h2><p class="dq-res">${s.log.length ? s.log.map(e => `<span class="${e.newWins ? 'w' : 'l'}">${e.newWins ? 'Beat' : 'Lost to'} ${esc(byId(e.opp)?.title || '')}${(e.newWins ? e.lean : 1 - e.lean) < 0.5 ? ' · upset' : ''}</span>`).join('') : '<span>The first review on the wheel</span>'}</p>` : `<div class="dq"><span>The question that decides it</span><p>${decidingQ(A, B0)}</p></div>
     <div class="dq-notes"><p><b>Watch out ·</b> ${watchOut(A, B0)}</p><div><b>Your track record ·</b> ${trackRecord(A, B0).replace(/<\/?p>/g, '')}</div></div>`}
     <div class="steps">${s.log.map(e => `<i class="${e.newWins ? 'w' : 'l'}" title="${e.newWins ? 'Won' : 'Lost'} against ${esc(byId(e.opp)?.title || '')}"></i>`).join('')}${done ? '' : '<i class="on"></i>'}</div>
     <div class="under" style="margin-top:6px">${s.log.length ? '<button class="linkish" data-undo>↶ Undo the last verdict</button>' : ''}<button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
@@ -2871,7 +2879,7 @@ function renderSpin() {
     $('#rvMine').innerHTML = flipCard(A, { mine: true, label: active.from != null ? `Your review · was #${active.from + 1}` : 'Your review · new to the wheel', pick: 'new', pct: even ? 50 : pa, fav: p > 0.53, stake: 'it ' + outcome(s, order, true) });
     $('#rvOpp').innerHTML = flipCard(B, { rank: order.indexOf(B.id) + 1, label: `On the wheel · #${order.indexOf(B.id) + 1}`, pick: 'opp', pct: even ? 50 : 100 - pa, fav: p < 0.47, stake: `${esc(A.title)} ${outcome(s, order, false)}` });
     $('#rvMine').classList.toggle('fav', p > 0.53); $('#rvOpp').classList.toggle('fav', p < 0.47);
-    $('#mu').hidden = true; $('#desk').hidden = true;
+    $('#mu').hidden = true; showDesk(false);
     setTarget(order.indexOf(B.id));
   }
   if (done) { $('#rvMine').classList.remove('fav'); $('#rvOpp').classList.remove('fav'); }
@@ -2880,17 +2888,18 @@ function renderSpin() {
   $('#endBot').innerHTML = `Bottom of the wheel<span>#${list.length}</span>`;
   layoutDrum();
 }
-function renderDone(s, order) {
-  const w = s.log.filter(e => e.newWins).length, l = s.log.length - w;
-  const ups = s.log.filter(e => (e.newWins ? e.lean : 1 - e.lean) < 0.5).length;
-  $('#mu').hidden = false;
-  $('#mu').innerHTML = `<div class="mu-lean"><span class="k">Where it lands</span><b>#${s.pos + 1}</b><em>of ${order.length + 1} on the wheel</em></div>
-    <div class="mu-log">${s.log.map(e => `<div><b class="${e.newWins ? 'w' : 'l'}">${e.newWins ? 'Beat' : 'Lost to'}</b> ${esc(byId(e.opp)?.title || '')}<span>the lean gave it ${pct(e.lean)}%${(e.newWins ? e.lean : 1 - e.lean) < 0.5 ? ' · upset' : ''}</span></div>`).join('')}</div>`;
-  $('#desk').hidden = false;
-  $('#placing').style.display = '';
-  $('#verdict').innerHTML = `${esc(active.film.title)} lands at <b>#${s.pos + 1}</b> of ${order.length + 1}`;
-  $('#tally').innerHTML = `<span class="w">${w} win${w === 1 ? '' : 's'}</span><span class="l">${l} loss${l === 1 ? '' : 'es'}</span>${ups ? `<span style="color:var(--gold-hi)">${ups} upset${ups === 1 ? '' : 's'}</span>` : ''}`;
+function showDesk(done) {
+  $('#desk').hidden = false; $('#placing').style.display = '';
+  $('#verdict').innerHTML = ''; $('#tally').innerHTML = '';
+  const c = $('#consider');
+  if (document.activeElement !== c) c.value = db.workflow?.note || '';
+  $('#lockBtn').style.display = done ? '' : 'none';
   $('#lockBtn').textContent = 'Lock it in'; $('#lockBtn').disabled = false;
+  $('#considerHint').textContent = done ? 'Filed with this placement in the Film Vault.' : 'Jot it down as you go. It’s filed with the placement when you lock it in.';
+}
+function renderDone(s, order) {
+  $('#mu').hidden = true;
+  showDesk(true);
 }
 
 /* ---------- the wheel itself: spins to each matchup ---------- */
@@ -2935,6 +2944,7 @@ $('#auditorium').addEventListener('click', async e => {
   if (e.target.closest('[data-undo]') && db.workflow?.spin) { undoVerdict(db.workflow.spin); renderSpin(); persist(); return; }
   if (e.target.closest('[data-cancelspin]')) return cancelWorkflow();
 });
+$('#consider').addEventListener('input', e => { if (db.workflow) { db.workflow.note = e.target.value; clearTimeout(window._noteT); window._noteT = setTimeout(persist, 800); } });
 $('#lockBtn').addEventListener('click', async () => {
   if (!active || !canEdit() || !db.workflow?.spin || db.workflow.spin.phase !== 'done') return;
   $('#lockBtn').disabled = true; $('#lockBtn').textContent = 'Recording…';
