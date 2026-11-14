@@ -1548,6 +1548,13 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 #screenCard .dq-res .w{color:#9fdc9a}
 #screenCard .dq-res .l{color:#ff9e94}
 .consider-hint{margin:6px 0 0;font:italic 500 14px var(--body);color:rgba(243,230,200,.6)}
+
+.can .vfile{grid-column:1/-1;border-top:1px dashed #b48a4e}
+.ventry{padding:10px 0;border-bottom:1px dotted rgba(122,74,42,.35)}
+.ventry:last-child{border-bottom:0;padding-bottom:0}
+.ventry b{font:800 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#7a1a22}
+.ventry span{float:right;font:600 11px var(--serif);letter-spacing:.08em;color:#7a4a2a}
+.ventry p{clear:both;margin:4px 0 0;font:15.5px/1.5 var(--type);color:#2a1a10}
 </style>
 </head>
 <body>
@@ -1712,8 +1719,8 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
         <div class="verdict" id="verdict"></div>
         <div class="tally" id="tally"></div>
         <div class="consider">
-          <label for="consider">Decisive consideration <i>— optional</i></label>
-          <textarea id="consider" maxlength="600" placeholder="What decided it for you?"></textarea>
+          <label for="consider">Decisive consideration <i>— this matchup · optional</i></label>
+          <textarea id="consider" maxlength="600" placeholder="What decides this matchup?"></textarea>
           <p class="consider-hint" id="considerHint"></p>
         </div>
         <button class="lock" id="lockBtn">Lock it in</button>
@@ -1895,7 +1902,10 @@ function rebuild() {
   QUEUE = COLL.filter(f => f.pos == null && !(db.workflow && db.workflow.film === f.id)).sort((a, b) => a.added - b.added);
   WSTAT = wheelStats();
   // the Film Vault: the decisive considerations written as each review was locked into place
-  VAULT = db.wheelLog.filter(e => e.note && ids.has(e.film)).map(e => ({ ...e }));
+  VAULT = [
+    ...db.matches.filter(m => m.note && ids.has(m.winner)).map(m => ({ kind: 'match', id: m.id, film: m.winner, opp: m.winner === m.a ? m.b : m.a, note: m.note, at: m.at, upset: winnerChance(m) < 0.5 })),
+    ...db.wheelLog.filter(e => e.note && ids.has(e.film)).map(e => ({ kind: 'place', id: e.id, film: e.film, note: e.note, at: e.at, pos: e.pos, of: e.of })),
+  ];
 }
 const byId = id => COLL.find(f => f.id === id);
 function board() { return { ranked: db.wheel.map(byId).filter(Boolean), waiting: QUEUE }; }
@@ -2283,7 +2293,7 @@ function openProfile(id, show) {
         const won = m.winner === id, opp = byId(m.a === id ? m.b : m.a) || raw(m.a === id ? m.b : m.a), pc = Math.min(99, Math.max(1, Math.round((m.a === id ? m.lean : 1 - m.lean) * 100)));
         return `<div class="vmini"><b>${won ? 'Beat' : 'Lost to'} ${esc(opp?.title || 'a removed film')} · the lean gave it ${pc}%${(won ? pc < 50 : pc > 50) ? ' · upset' : ''}</b>${new Date(m.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>`;
       }).join('')}</div>` : ''}
-      ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>Placed #${v.pos + 1} of ${v.of} · ${VIA[v.via] || 'Placed'}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
+      ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${vHead(v)}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button>'}
         <button class="linkish" data-remove style="margin-left:auto">Remove from collection</button>`}</div>` : ''}
@@ -2894,8 +2904,9 @@ function showDesk(done) {
   const c = $('#consider');
   if (document.activeElement !== c) c.value = db.workflow?.note || '';
   $('#lockBtn').style.display = done ? '' : 'none';
+  document.querySelector('#placing .consider').style.display = done ? 'none' : '';
   $('#lockBtn').textContent = 'Lock it in'; $('#lockBtn').disabled = false;
-  $('#considerHint').textContent = done ? 'Filed with this placement in the Film Vault.' : 'Jot it down as you go. It’s filed with the placement when you lock it in.';
+  $('#considerHint').textContent = done ? '' : 'For this matchup only. It resets after your verdict, and is filed in the Film Vault under the winner when you lock the spin in.';
 }
 function renderDone(s, order) {
   $('#mu').hidden = true;
@@ -2935,13 +2946,15 @@ $('#auditorium').addEventListener('click', async e => {
   if (pk && db.workflow?.spin && db.workflow.spin.phase !== 'done') {
     const s = db.workflow.spin, A = active.film, B = byId(s.opp);
     applyVerdict(s, spinOrder(), pk.dataset.pick === 'new', leanOf(A, B), sitKey(A, B));
+    s.log[s.log.length - 1].note = $('#consider').value.trim();
+    $('#consider').value = ''; db.workflow.note = '';
     renderSpin(); persist();
     $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
   const fl = e.target.closest('[data-flip]');
   if (fl) { fl.closest('.rv').classList.toggle('flipped'); return; }
-  if (e.target.closest('[data-undo]') && db.workflow?.spin) { undoVerdict(db.workflow.spin); renderSpin(); persist(); return; }
+  if (e.target.closest('[data-undo]') && db.workflow?.spin) { const last = db.workflow.spin.log.at(-1); undoVerdict(db.workflow.spin); db.workflow.note = last?.note || ''; $('#consider').value = db.workflow.note; renderSpin(); persist(); return; }
   if (e.target.closest('[data-cancelspin]')) return cancelWorkflow();
 });
 $('#consider').addEventListener('input', e => { if (db.workflow) { db.workflow.note = e.target.value; clearTimeout(window._noteT); window._noteT = setTimeout(persist, 800); } });
@@ -2951,10 +2964,10 @@ $('#lockBtn').addEventListener('click', async () => {
   const s = db.workflow.spin, f = active.film, t = Date.now();
   s.log.forEach((e, i) => {
     const winner = e.newWins ? f.id : e.opp, loser = e.newWins ? e.opp : f.id, pw = e.newWins ? e.lean : 1 - e.lean, d = FORM_K * (1 - pw);
-    db.matches.push({ id: 'match:' + uid(), a: f.id, b: e.opp, winner, lean: r1(e.lean * 1000) / 1000, fav: e.lean >= 0.5 ? f.id : e.opp, sit: e.sit, via: active.mode, at: t + i });
+    db.matches.push({ id: 'match:' + uid(), a: f.id, b: e.opp, winner, lean: r1(e.lean * 1000) / 1000, fav: e.lean >= 0.5 ? f.id : e.opp, sit: e.sit, via: active.mode, note: e.note || '', at: t + i });
     db.form[winner] = r1((+db.form[winner] || 0) + d); db.form[loser] = r1((+db.form[loser] || 0) - d);
   });
-  placeAt(s.pos, $('#consider').value.trim(), s.log);
+  placeAt(s.pos, '', s.log);
 });
 async function placeAt(pos, note, log) {
   const f = active.film, order = spinOrder(), from = active.from, mode = active.mode;
@@ -2962,7 +2975,7 @@ async function placeAt(pos, note, log) {
   db.wheelLog.push({ id: 'wl:' + uid(), type: 'place', film: f.id, pos, of: db.wheel.length, via: mode, from, note, at: Date.now() + 50 });
   endWorkflow(); justPlaced = f.id; $('#consider').value = '';
   const ok = await persist();
-  if (ok) showResults(f.id, { log, from, note });
+  if (ok) showResults(f.id, { log, from, notes: log.filter(e => e.note).length });
 }
 function verdictHTML(f, info) {
   const st = standing(f), w = info.log.filter(e => e.newWins).length, l = info.log.length - w;
@@ -2979,7 +2992,7 @@ function verdictHTML(f, info) {
         <div class="cell"><b>${st.stars.toFixed(1)}</b><span>Stars</span></div>
       </div>
       <div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>
-      <p class="filed">${moved}${info.note ? ' · consideration filed in the Film Vault' : ''}</p>
+      <p class="filed">${moved}${info.notes ? ` · ${info.notes} consideration${info.notes === 1 ? '' : 's'} filed in the Film Vault` : ''}</p>
       <p class="filed" style="font-size:15px;opacity:.7">The auditorium closes for this film. Buy another ticket from the lobby to spin it again.</p>
       <div><button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open the Film Vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
       <span class="orn"></span></div>`;
@@ -3002,10 +3015,12 @@ document.querySelectorAll('#stub [data-go]').forEach(b => b.addEventListener('cl
    THE FILM VAULT
    ===================================================================== */
 let vaultAxis = '', vaultQuery = '', vaultPage = 1;
+const vDate = t => t ? new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+const vHead = v => v.kind === 'match' ? `Beat ${esc((byId(v.opp) || raw(v.opp))?.title || 'a removed film')}${v.upset ? ' · upset' : ''}` : `On placement · #${v.pos + 1} of ${v.of}`;
 function renderVault() {
   $('#vaultIn').innerHTML = `
     <div class="ns"><div class="k">The Film Vault · CmanCinema</div><h2>The Archives</h2><div class="dots"></div>
-      <p>Every decisive consideration, filed with the placement it decided on the wheel.</p></div>
+      <p>Every decisive consideration from the wheel, filed under the film that won the showdown.</p></div>
     <div class="controls">
       <input class="placard" id="vSearch" placeholder="Search films or words…" value="${esc(vaultQuery)}" autocomplete="off">
     </div>
@@ -3015,18 +3030,21 @@ function renderVault() {
 }
 function renderVaultGrid() {
   const q = vaultQuery.trim().toLowerCase();
-  const list = VAULT.filter(v => byId(v.film) && (!q || byId(v.film).title.toLowerCase().includes(q) || v.note.toLowerCase().includes(q))).sort((a, b) => b.at - a.at);
+  const hit = v => { const f = byId(v.film); return f && (!q || f.title.toLowerCase().includes(q) || v.note.toLowerCase().includes(q) || vHead(v).toLowerCase().includes(q)); };
+  const groups = new Map();
+  VAULT.filter(hit).forEach(v => { if (!groups.has(v.film)) groups.set(v.film, []); groups.get(v.film).push(v); });
+  const list = [...groups.entries()].map(([id, es]) => ({ f: byId(id), es: es.sort((a, b) => b.at - a.at) })).sort((a, b) => b.es[0].at - a.es[0].at);
+  const total = list.reduce((n, g) => n + g.es.length, 0);
   const pages = Math.max(1, Math.ceil(list.length / VAULT_PAGE));
   vaultPage = Math.min(Math.max(1, vaultPage), pages);
-  $('#vpager').innerHTML = pagerHTML(vaultPage, pages, 'vp') + (list.length ? `<p class="pager-note">${list.length} consideration${list.length === 1 ? '' : 's'} on file</p>` : '');
-  $('#vgrid').innerHTML = list.length ? list.slice((vaultPage - 1) * VAULT_PAGE, vaultPage * VAULT_PAGE).map(v => {
-    const f = byId(v.film), now = f.pos != null ? f.pos + 1 : null;
-    return `<div class="can"><span class="stamp">#${v.pos + 1}</span>${posterHTML(f, 70)}
+  $('#vpager').innerHTML = pagerHTML(vaultPage, pages, 'vp') + (list.length ? `<p class="pager-note">${total} consideration${total === 1 ? '' : 's'} filed under ${list.length} film${list.length === 1 ? '' : 's'}</p>` : '');
+  $('#vgrid').innerHTML = list.length ? list.slice((vaultPage - 1) * VAULT_PAGE, vaultPage * VAULT_PAGE).map(({ f, es }) => {
+    const now = f.pos != null ? f.pos + 1 : null;
+    return `<div class="can">${now ? `<span class="stamp">#${now}</span>` : ''}${posterHTML(f, 70)}
       <div><button class="ti" data-film="${esc(f.id)}">${esc(f.title)}</button>
-        <div class="me">${VIA[v.via] || 'Placed'} · #${v.pos + 1} of ${v.of}${v.at ? ' · ' + new Date(v.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
-        ${now && now !== v.pos + 1 ? `<span class="tag">Now #${now}</span>` : ''}</div>
-      <p class="cons">${esc(v.note)}</p></div>`;
-  }).join('') : `<p class="ns" style="grid-column:1/-1;font:italic 500 19px var(--body)">No considerations filed yet. Write one as you lock a review into place.</p>`;
+        <div class="me">${Y_NAMES[f.Y]} · ${es.length} consideration${es.length === 1 ? '' : 's'}</div></div>
+      <div class="vfile">${es.map(v => `<div class="ventry"><b>${vHead(v)}</b><span>${vDate(v.at)}</span><p>${esc(v.note)}</p></div>`).join('')}</div></div>`;
+  }).join('') : `<p class="ns" style="grid-column:1/-1;font:italic 500 19px var(--body)">No considerations filed yet. Write one for a matchup on the wheel, and it’s filed here under the winner.</p>`;
 }
 $('#vault').addEventListener('click', e => {
   const c = e.target.closest('[data-ax]'); if (c) { vaultAxis = c.dataset.ax; vaultPage = 1; return renderVault(); }
@@ -3654,7 +3672,7 @@ function parseBackup(d) {
     doc = normalize(JSON.parse(JSON.stringify(src)));
     doc.workflow = null;
   }
-  const notes = doc.wheelLog.filter(e => e.note).length;
+  const notes = doc.wheelLog.filter(e => e.note).length + doc.matches.filter(m => m.note).length;
   return { doc, films: doc.films.length, showdowns: doc.matches.length, notes, source: d.format === 'cmancinema-theater' ? 'a preview export' : 'a CmanCinema backup' };
 }
 async function applyImport() {
