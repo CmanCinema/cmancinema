@@ -1491,6 +1491,56 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 #screenCard .dq-notes b{color:var(--gold-hi);font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase}
 @media (prefers-reduced-motion:reduce){ .fc-in{transition:none} }
 @media (max-width:640px){ .fc-top{grid-template-columns:90px 1fr} .fc-top .poster{width:90px!important} }
+
+/* ===================== FLIP CARDS · collector style ===================== */
+.face.front{padding:0;overflow:hidden;background:linear-gradient(170deg,#3a0c18,#1a0509 60%,#0e0306);color:var(--cream);border-radius:10px;box-shadow:0 0 0 1px #5a3a14,0 0 0 4px #0e0306,0 0 0 5px var(--gold-lo),0 18px 34px rgba(0,0,0,.65)}
+.face.front::before{inset:7px;border:1px solid rgba(232,190,106,.55);border-radius:6px;z-index:4}
+.face.back{border-radius:10px;box-shadow:0 0 0 1px #5a3a14,0 0 0 4px #0e0306,0 0 0 5px var(--gold-lo),0 18px 34px rgba(0,0,0,.65)}
+.face.back::before{border-radius:6px;border-color:rgba(156,115,52,.6)}
+.rv.fav .face{box-shadow:0 0 0 1px #5a3a14,0 0 0 4px #0e0306,0 0 0 6px var(--gold-hi),0 0 36px rgba(255,210,120,.45),0 18px 34px rgba(0,0,0,.65)}
+.rv.fcard{transition:transform .25s}
+@media (hover:hover){ .rv.fcard:hover{transform:translateY(-4px)} }
+.fc-art{position:relative;flex:1 1 auto;min-height:clamp(250px,28vw,330px);overflow:hidden;border-bottom:2px solid var(--gold-lo)}
+.fc-body{flex:0 0 auto!important}
+.fc-art > .poster{position:absolute;inset:0;width:100%!important;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none}
+.fc-art > .poster img{object-position:50% 18%}
+.fc-art > .poster .one strong,.fc-art > .poster .one span{display:none}
+.fc-art > .poster .one em{font-size:13px;top:auto;bottom:46%;opacity:.5}
+.fc-shade{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(10,2,5,.55) 0,rgba(10,2,5,0) 22%,rgba(10,2,5,0) 45%,rgba(10,2,5,.82) 78%,#14040a 100%)}
+.rv.fav .fc-art::after{content:"";position:absolute;inset:-40%;z-index:3;background:linear-gradient(115deg,transparent 40%,rgba(255,236,190,.28) 48%,rgba(255,255,255,.08) 52%,transparent 60%);animation:fcSheen 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes fcSheen{0%{transform:translateX(-60%)}60%,100%{transform:translateX(60%)}}
+.fc-ribbon{position:absolute;top:16px;left:16px;z-index:5;padding:5px 10px;background:rgba(14,3,6,.78);border:1px solid rgba(232,190,106,.6);border-radius:3px;font:800 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi)}
+.fc-medal{position:absolute;top:14px;right:14px;z-index:5;width:88px;height:88px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 35% 30%,#4a1a24,#1a0509 70%);border:2px solid var(--gold-lo);box-shadow:0 0 0 3px rgba(14,3,6,.8),0 6px 16px rgba(0,0,0,.6)}
+.fc-medal b{font:400 30px/1 var(--deco);color:var(--cream)}
+.fc-medal b i{font-style:normal;font-size:16px;margin-left:1px;opacity:.8}
+.fc-medal span{margin-top:3px;max-width:70px;font:800 8px/1.2 var(--serif);letter-spacing:.14em;text-transform:uppercase;color:rgba(243,230,200,.75)}
+.fc-medal.hi{background:radial-gradient(circle at 35% 30%,#fff1c4,#e8be6a 55%,#9c7334);border-color:#fff0c0;box-shadow:0 0 0 3px rgba(14,3,6,.8),0 0 22px rgba(255,214,120,.65)}
+.fc-medal.hi b{color:#3a0c18}
+.fc-medal.hi span{color:#5a0f22}
+.fc-title{position:absolute;left:18px;right:18px;bottom:14px;z-index:5}
+.fc-title .ti{font:800 clamp(22px,2.3vw,27px)/1.08 var(--serif);color:#fff6e0;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.fc-title .me{margin-top:4px;font:700 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:rgba(255,228,163,.85)}
+.fc-title .lvl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.fc-title .lvl .cbadge{margin:0;background:linear-gradient(var(--gold-hi),var(--gold));color:#3a0c18;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.fc-title .lvl em{font:800 10px var(--serif);font-style:normal;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);padding:3px 8px;border:1px solid rgba(243,230,200,.45);border-radius:3px}
+.fc-body{display:flex;flex-direction:column;flex:1;padding:14px 18px 20px}
+.face.front .fc-stats{grid-template-columns:repeat(4,1fr);gap:0;background:none;border:0;border-top:1px solid rgba(232,190,106,.3);border-bottom:1px solid rgba(232,190,106,.3)}
+.face.front .fc-stats div{background:none;padding:10px 2px;border-left:1px solid rgba(232,190,106,.18)}
+.face.front .fc-stats div:first-child{border-left:0}
+.face.front .fc-stats b{font:400 20px var(--deco);color:var(--gold-hi)}
+.face.front .fc-stats span{font:800 8px var(--serif);letter-spacing:.16em;color:rgba(243,230,200,.6)}
+.face.front .fc-stake{color:rgba(243,230,200,.82);font-size:15px;text-align:center}
+.face.front .fc-stake b{color:var(--gold-hi)}
+.face.front .fc-flip{color:var(--gold)}
+.face.front .fc-flip:hover{color:var(--gold-hi)}
+.face.front .pick{background:linear-gradient(var(--gold-hi),var(--gold));color:#3a0c18;box-shadow:0 4px 0 var(--gold-lo)}
+.face.front .pick:hover{background:linear-gradient(#fff3cc,var(--gold-hi))}
+.face.front .pick:active{box-shadow:0 1px 0 var(--gold-lo)}
+.fc-backhead{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:center;padding-bottom:10px;border-bottom:1px dashed #b48a4e}
+.fc-backhead .ti{font:800 19px/1.1 var(--serif);color:var(--ink);margin-top:2px}
+.face.back .rvtext{border-top:0;padding-top:4px}
+@media (max-width:640px){ .fc-art{min-height:300px} .fc-medal{width:76px;height:76px} .fc-medal b{font-size:26px} .face.front .fc-stats b{font-size:17px} }
+@media (prefers-reduced-motion:reduce){ .rv.fav .fc-art::after{animation:none;display:none} }
 </style>
 </head>
 <body>
@@ -2767,20 +2817,24 @@ function flipCard(f, o) {
   const pick = o.pick ? `<button class="pick" data-pick="${o.pick}">This review wins</button>` : '';
   return `<div class="fc-in">
     <div class="face front">
-      <div class="lab">${o.label}</div>
-      ${o.pct != null ? `<div class="fc-pct ${o.fav ? 'hi' : ''}"><b>${o.pct}%</b><span>${o.fav ? 'The lean’s pick' : o.pct === 50 ? 'Dead even' : 'Chance to win'}</span></div>` : ''}
-      <div class="fc-top">${posterHTML(f, 112)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div>
-        <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}</div></div></div>
-      <div class="fc-stats"><div><b>${pos}</b><span>On the wheel</span></div><div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div>
-        <div><b>${mv}</b><span>Since entry</span></div><div><b>${fm ? fmt(fm) : '0.0'}</b><span>Form</span></div></div>
-      ${o.stake ? `<p class="fc-stake"><b>If it wins,</b> ${o.stake}.</p>` : ''}
-      <button class="fc-flip" data-flip>Read the review ↻</button>
-      ${pick}
+      <div class="fc-art">${posterHTML(f)}<div class="fc-shade"></div>
+        <div class="fc-ribbon">${o.label}</div>
+        ${o.pct != null ? `<div class="fc-medal ${o.fav ? 'hi' : ''}"><b>${o.pct}<i>%</i></b><span>${o.fav ? 'The lean’s pick' : o.pct === 50 ? 'Dead even' : 'To win'}</span></div>` : ''}
+        <div class="fc-title"><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div>
+          <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span><em>${X_NAMES[f.X]}</em></div></div>
+      </div>
+      <div class="fc-body">
+        <div class="fc-stats"><div><b>${pos}</b><span>Wheel</span></div><div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div>
+          <div><b>${mv}</b><span>Since entry</span></div><div><b>${fm ? fmt(fm) : '0.0'}</b><span>Form</span></div></div>
+        ${o.stake ? `<p class="fc-stake"><b>If it wins,</b> ${o.stake}.</p>` : ''}
+        <button class="fc-flip" data-flip>Read the review ↻</button>
+        ${pick}
+      </div>
     </div>
     <div class="face back">
-      <div class="lab">The critic’s review · ${esc(f.title)}</div>
+      <div class="fc-backhead">${posterHTML(f, 46)}<div><div class="lab">The critic’s review</div><div class="ti">${esc(f.title)}</div></div></div>
       <p class="rvtext">${esc(reviewOf(f))}</p>
-      <button class="fc-flip" data-flip>↺ Back to the stats</button>
+      <button class="fc-flip" data-flip>↺ Back to the card</button>
       ${pick}
     </div></div>`;
 }
