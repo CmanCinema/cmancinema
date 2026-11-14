@@ -2597,7 +2597,7 @@ function renderLobby() {
     </div>
     <div id="bill"></div>
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the wheel</h3><p>${!N && (db.archives || []).length ? 'The wheel now places itself. Your old wheel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
-      ${canTicket() && QUEUE.length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.length} reviews</button></div>` : ''}
+      ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} reviews</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
       ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the wheel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
@@ -3239,11 +3239,12 @@ function placeFilm(id, mode) {
   rebuild();
   return { film: id, pos, of: db.wheel.length, battles, order, via: mode };
 }
+const needsCheck = f => f.Y === 1 && (f.comp || {}).consistent === undefined && (f.comp || {}).jnsq === undefined;
 function spinAll() {
   if (!canEdit() || active || !QUEUE.length) return;
-  const ids = QUEUE.map(f => f.id); let k = 0;
+  const ids = QUEUE.filter(f => !needsCheck(f)).map(f => f.id), wait = QUEUE.length - ids.length; let k = 0;
   ids.forEach(id => { if (byId(id) && byId(id).pos == null) { placeFilm(id, 'queue'); k++; } });
-  persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed · every battle is in the Film Vault`); });
+  persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed${wait ? ` · ${wait} still need${wait === 1 ? 's' : ''} the ingredients check: send ${wait === 1 ? 'it' : 'them'} one at a time` : ' · every battle is in the Film Vault'}`); });
   renderScene(current);
 }
 
@@ -4116,7 +4117,7 @@ function renderOffice() {
         ${officeMsg.weights ? `<div class="okline">${esc(officeMsg.weights)}</div>` : ''}</div>
 
       <div class="ledger danger"><span class="tabk">The house lights</span><h3>Dump the wheel</h3>
-        <p>Wipes everything but the reviews themselves: every show and battle, records, peaks and reigns, strikes and locks, and the archives (including the old wheel’s considerations). Claims, cases, levels and sub-genres stay, and the math places every review again in the order it decides now. This can’t be undone without a backup.</p>
+        <p>Clears all the math. Only each film’s claim, case, sub-genre and year stay. Everything else goes: the wheel, every show and battle, records, peaks and reigns, strikes and locks, the check answers (ingredients, opening line, anchor corrections) and the archives, including the old wheel’s considerations. Every review goes back to the queue. This can’t be undone without a backup.</p>
         <label class="tiny" for="oClearW">Type <b>DUMP THE WHEEL</b> to unlock</label>
         <input class="inkin" id="oClearW" placeholder="DUMP THE WHEEL" autocomplete="off">
         <div class="btnrow2"><button class="btn-ink red" data-o="clearwheel" id="oClearWBtn" disabled>Dump it</button></div></div>
@@ -4198,12 +4199,10 @@ $('#office').addEventListener('click', async e => {
   }
   if (o === 'clearwheel') {
     if (active && active.stage === 'check') endWorkflow();
-    const ids = db.wheel.slice();
     db.wheel = []; db.matches = []; db.wheelLog = []; db.archives = []; delete db.archive;
-    db.films.forEach(f => { delete f.strikes; delete f.strikeCount; delete f.locked; });
-    rebuild();
-    ids.forEach(id => { if (byId(id)) placeFilm(id, 'queue'); });
-    if (await persist()) toast(`Wheel dumped · ${db.wheel.length} review${db.wheel.length === 1 ? '' : 's'} placed fresh by the math`);
+    db.films.forEach(f => { ['strikes', 'strikeCount', 'locked', 'comp'].forEach(k => delete f[k]); });
+    rebuild(); vaultOpen.clear();
+    if (await persist()) toast(`Wheel dumped · all ${QUEUE.length} review${QUEUE.length === 1 ? '' : 's'} wait in the queue with only the claim, case, sub-genre and year`);
     return renderOffice();
   }
   if (o === 'clear') {
