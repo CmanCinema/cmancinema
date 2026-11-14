@@ -1355,6 +1355,104 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
 .lc-rope::before,.lc-rope::after{content:"";position:absolute;bottom:0;width:10px;height:30px;border-radius:5px 5px 2px 2px;background:linear-gradient(90deg,#7a5418,#f6dd8a 45%,#9a6a22)}
 .lc-rope::before{left:0}.lc-rope::after{right:0}
 .lc-rope i{position:absolute;left:8px;right:8px;top:4px;height:16px;border:5px solid #8a1622;border-top:0;border-radius:0 0 50% 50%/0 0 100% 100%;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+
+/* ===================== THE SMART WHEEL (Screening Room) ===================== */
+#auditorium{overflow-x:hidden}
+#auditorium .stage.sw{grid-template-columns:1fr minmax(300px,400px) 1fr;align-items:stretch}
+@media (max-width:1100px){
+  #auditorium .stage.sw{grid-template-columns:1fr 1fr!important}
+  #auditorium .stage.sw .reel-col{grid-column:1/-1;order:-1;width:100%;max-width:430px;justify-self:center}
+}
+@media (max-width:640px){ #auditorium .stage.sw{grid-template-columns:minmax(0,1fr)!important} }
+.rv{display:flex;flex-direction:column;transition:box-shadow .3s}
+.rv[hidden]{display:none}
+.rv .lvl{margin:-2px 0 8px;font:700 11px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:#7a4a2a}
+.rv .lvl .cbadge{margin-right:6px}
+.rv .rvtext{flex:1;margin:0;padding-top:9px;border-top:1px dashed #b48a4e;white-space:pre-line;font:16px/1.55 var(--body);color:#2a1a10}
+.rv.fav{box-shadow:0 0 0 3px var(--gold-hi),0 0 30px rgba(255,200,100,.35),0 14px 30px rgba(0,0,0,.55)}
+.favtag{display:block;margin-top:8px;text-align:center;font:800 10px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:#8a5a10}
+.pick{display:block;width:100%;margin-top:12px;padding:13px 16px;border:0;border-radius:30px;background:#5a0f22;color:var(--gold-hi);font:800 12px var(--serif);letter-spacing:.2em;text-transform:uppercase;box-shadow:0 4px 0 #2a0610;cursor:pointer}
+.pick:hover{background:#7a1430}
+.pick:active{transform:translateY(3px);box-shadow:0 1px 0 #2a0610}
+.mu{position:relative;z-index:2;width:min(1100px,94vw);margin:22px auto 0;padding:20px 22px 18px;border-radius:8px;background:linear-gradient(#f6ead0,#e8d4a8);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 14px 30px rgba(0,0,0,.5)}
+.mu[hidden]{display:none}
+.mu .k{display:block;font:800 10px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22;margin-bottom:4px}
+.mu-lean{text-align:center}
+.mu-lean b{display:block;font:400 clamp(56px,9vw,88px)/1 var(--deco);color:#5a0f22;letter-spacing:.02em}
+.mu-lean em{display:block;margin-top:4px;font:italic 600 clamp(18px,2.4vw,21px) var(--serif);color:#3a2418}
+.mu-bar{position:relative;height:12px;max-width:540px;margin:14px auto 5px;border-radius:6px;background:#c9a874;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
+.mu-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#5a0f22,#9a1c3c);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.mu-bar::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#f6ead0}
+.mu-ends{display:flex;justify-content:space-between;gap:10px;max-width:540px;margin:0 auto;font:700 11px var(--serif);letter-spacing:.08em;text-transform:uppercase;color:#7a4a2a}
+.mu-q{margin-top:16px;padding-top:14px;border-top:1px dashed #b48a4e;text-align:center}
+.mu-q p{max-width:820px;margin:0 auto;font:italic 600 clamp(17px,2.2vw,20px)/1.4 var(--serif);color:#3a2418}
+.mu-q small{display:block;margin-top:8px;font:500 16px/1.45 var(--body);color:#5a3a26}
+.mu-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px;padding-top:14px;border-top:1px dashed #b48a4e}
+.mu-two p,.mu-rec p{margin:4px 0;font:500 16px/1.45 var(--body);color:#3a2418}
+.mu-two p b{color:#5a0f22}
+.mu-warn{padding:10px 12px;border-left:4px solid #c4202f;border-radius:0;background:rgba(196,32,47,.07)}
+.mu-rec{margin-top:14px;padding-top:14px;border-top:1px dashed #b48a4e}
+.mu-stats{width:100%;margin-top:14px;border-collapse:collapse;table-layout:fixed;font:700 14px var(--serif);color:#2a160e}
+.mu-stats th,.mu-stats td{padding:7px 8px;border-top:1px solid rgba(90,15,34,.15);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu-stats th{font:800 11px var(--serif);letter-spacing:.06em;color:#5a0f22}
+.mu-stats td:first-child{text-align:left;font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a4a2a}
+.mu-picks{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.mu-picks .pick{width:auto;min-width:200px}
+.mu-log{display:grid;gap:6px;max-width:620px;margin:14px auto 0}
+.mu-log div{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;padding:8px 12px;border-radius:4px;background:rgba(255,255,255,.45);font:600 15px var(--serif)}
+.mu-log b{font:800 11px var(--serif);letter-spacing:.18em;text-transform:uppercase}
+.mu-log b.w{color:#2f6a2a}.mu-log b.l{color:#9a1c2a}
+.mu-log span{margin-left:auto;font:italic 500 14px var(--body);color:#6b5236}
+.steps{display:flex;gap:7px;justify-content:center;margin-top:10px}
+.steps i{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--gold)}
+.steps i.on{background:var(--gold-hi);box-shadow:0 0 10px rgba(255,214,120,.8)}
+.steps i.w{background:#9fdc9a;border-color:#9fdc9a}
+.steps i.l{background:#ff9e94;border-color:#ff9e94}
+#screenCard .under{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.check{position:relative;z-index:2;width:min(860px,92vw);margin:18px auto 0}
+.check[hidden]{display:none}
+.ck-card{padding:20px 22px 18px;border-radius:8px;background:linear-gradient(#f6ead0,#e8d4a8);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 14px 30px rgba(0,0,0,.5)}
+.ck-review{padding-bottom:14px;border-bottom:1px dashed #b48a4e;white-space:pre-line;font:500 16px/1.55 var(--body)}
+.ck-review span,.ck-q > b{display:block;margin-bottom:6px;font:800 10px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22}
+.ck-q{padding:14px 0;border-bottom:1px dashed #b48a4e}
+.ck-q p{margin:0 0 10px;font:italic 600 18px/1.4 var(--serif);color:#3a2418}
+.ck-q blockquote{margin:0 0 12px;padding:8px 12px;border-left:3px solid #b8873c;border-radius:0;font:500 15px/1.5 var(--body);color:#5a3a26}
+.ck-q small{display:block;margin-top:8px;font:italic 500 14px var(--body);color:#7a5a3a}
+.ck-q .genre2 input{width:100%;border:0;border-bottom:2px solid #a8834a;background:rgba(255,255,255,.4);font:500 18px var(--body);padding:8px 10px}
+.ck-opts{display:flex;gap:8px;flex-wrap:wrap}
+.ck-opts button{padding:10px 16px;border-radius:30px;border:1.5px solid #5a0f22;background:transparent;color:#5a0f22;font:700 12px var(--serif);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.ck-opts button.on{background:#5a0f22;color:var(--gold-hi)}
+.ck-err{min-height:22px;margin-top:10px;text-align:center;font:italic 600 16px var(--body);color:#c4202f}
+.ck-foot{text-align:center}
+.ck-foot .lock{margin-top:4px}
+.ck-foot p{margin:10px 0 0;font:italic 500 15px var(--body);color:#6b5236}
+@media (max-width:640px){ .mu{padding:14px 12px} .mu-two{grid-template-columns:1fr} .ck-card{padding:16px 14px} .mu-picks .pick{min-width:0;flex:1} }
+
+/* ===================== LOBBY · tickets ===================== */
+div.row{cursor:pointer}
+div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
+.tk-btn{display:inline-block;margin-top:7px;padding:5px 12px 5px 14px;border:1.5px dashed #7a1a22;border-radius:3px;background:#f6e3b4;color:#7a1a22;font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;position:relative}
+.tk-btn::before{content:"";position:absolute;left:-5px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:#2a0a10}
+.tk-btn:hover{background:#ffe9a8}
+.tk-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 10px}
+.tk-opt{text-align:left;padding:12px 14px;border-radius:4px;border:1.5px solid var(--gold-lo);background:rgba(255,236,190,.07);color:var(--cream);cursor:pointer}
+.tk-opt b{display:block;font:800 13px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi)}
+.tk-opt span{display:block;margin-top:4px;font:500 15px/1.4 var(--body)}
+.tk-opt:hover{background:rgba(255,236,190,.16);border-color:var(--gold)}
+@media (max-width:640px){ .tk-opts{grid-template-columns:1fr} }
+
+/* ===================== GAME ROOM · the stats-only room ===================== */
+.scoreboard.s8{grid-template-columns:repeat(4,1fr);row-gap:20px}
+@media (max-width:640px){ .scoreboard.s8{grid-template-columns:repeat(2,1fr)} }
+.hs-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 0}
+.hs-tabs button{padding:8px 14px;border-radius:20px;border:1.5px solid #7a5420;background:#14040a;color:#ffd27a;font:800 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.hs-tabs button.on{background:linear-gradient(var(--gold-hi),var(--gold));color:#2a0a10;box-shadow:0 0 14px rgba(255,200,100,.5)}
+.arc-bezel .hs-screens.one{grid-template-columns:1fr}
+.board.cc .rh{font:700 12px var(--serif);letter-spacing:.06em;text-transform:uppercase}
+.board.cc .hd{font:700 11px/1.15 var(--serif);letter-spacing:.04em;text-transform:uppercase}
+.cal-note{margin:14px 0 0;text-align:center;font:italic 500 16px/1.45 var(--body);color:rgba(243,230,200,.78)}
+.hs-empty{padding:18px 8px;text-align:center;font:italic 500 16px var(--body);color:rgba(255,220,160,.7)}
+@media (max-width:640px){ .board.cc{gap:4px} .board.cc .rh{font-size:9px;letter-spacing:0} .board.cc .hd{font-size:8px;letter-spacing:0} }
 </style>
 </head>
 <body>
@@ -1495,26 +1593,25 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
 
     <div class="intertitle" id="screenCard"></div>
     <div class="dark" id="audDark" hidden></div>
-    <div class="refbar" id="refBand"></div>
+    <div class="check" id="checkIn" hidden></div>
 
-    <div class="stage" id="stage">
-      <div class="card ev-left" id="evMine"></div>
+    <div class="stage sw" id="stage">
+      <div class="card rv" id="rvMine"></div>
       <div class="reel-col">
         <div class="machine">
           <div class="lights" id="machineLights"></div>
           <div class="end top" id="endTop"></div>
-          <div class="reel" id="reel" tabindex="0" role="slider" aria-label="Scroll the reel to place your film" aria-valuemin="1">
+          <div class="reel" id="reel" role="img" aria-label="The wheel, spinning to each matchup">
             <div class="drum" id="drum"></div>
           </div>
           <div class="pointer"></div>
           <div class="end bot" id="endBot"></div>
-          <div class="reel-ctl"><button id="upBtn" aria-label="Move your film up">▲</button><span>Scroll · Drag · Swipe</span><button id="downBtn" aria-label="Move your film down">▼</button></div>
         </div>
       </div>
-      <div class="card ev-right" id="evPeek"></div>
+      <div class="card rv" id="rvOpp"></div>
     </div>
 
-    <div class="argue idle" id="argue"></div>
+    <div class="mu" id="mu"></div>
     <div class="desk" id="desk">
       <div id="placing">
         <div class="verdict" id="verdict"></div>
@@ -1523,7 +1620,7 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
           <label for="consider">Decisive consideration <i>— optional · filed in the Film Vault</i></label>
           <textarea id="consider" maxlength="600" placeholder="Why does it belong exactly here?"></textarea>
         </div>
-        <button class="lock" id="lockBtn"></button>
+        <button class="lock" id="lockBtn">Lock it in</button>
       </div>
       <div class="results" id="results"></div>
     </div>
@@ -1545,8 +1642,13 @@ body.arcade-on #stub,body.arcade-on #pbBtn{display:none}
      lists[], settings{}
    This site adds, without changing anything above:
      films[].xEv / .yEv   legacy header fields (no longer entered; X claim = xNote, Y case = yNote)
-     placements[]         { id, film, axis, coord, rank, of, note, at }  (the Film Vault)
-     workflow             the one film currently in the booth or on the reel
+     wheel[]              film ids, top to bottom: the one hierarchy
+     matches[]            { id, a (the spinning film), b, winner, lean, fav, sit, via, at }
+     wheelLog[]           { id, type: place | remove, film, pos, of, via, from, note, at }  (history + Film Vault)
+     form{}               film id → form, learned from verdicts
+     films[].comp         { subHit, consistent, jnsq, opener }  the components behind the lean
+     archive              the retired X/Y showdowns and placements, kept for the record
+     workflow             the one film currently in the booth or at the wheel
    ===================================================================== */
 'use strict';
 const $ = s => document.querySelector(s);
@@ -1625,88 +1727,116 @@ const names = c => { const [x, y] = c.split('/'); return `${X_NAMES[x]} · ${Y_N
    db is the stored document. COLL / VAULT / UNEVALUATED are views
    rebuilt from it after every change.
    ===================================================================== */
-function fresh() { return { films: [], lists: [{ id: 'watchlist', name: 'Watchlist', ids: [] }, { id: 'favorites', name: 'Favorites', ids: [] }], showdowns: [], settings: { tmdb: '' } }; }
+function fresh() { return { films: [], lists: [{ id: 'watchlist', name: 'Watchlist', ids: [] }, { id: 'favorites', name: 'Favorites', ids: [] }], showdowns: [], settings: { tmdb: '' }, wheel: [], matches: [], wheelLog: [], form: {}, v: 2 }; }
+// components already settled in conversation (2026-11-14) for the Recommendable films: which of the two Y2 ingredients each has
+const SEED_COMP = {
+  'the 39 steps': { consistent: false, jnsq: true }, 'blonde crazy': { consistent: false, jnsq: true },
+  'm': { consistent: false, jnsq: true }, 'the magnificent ambersons': { consistent: false, jnsq: true },
+  'journey into fear': { consistent: true, jnsq: false }, 'the big shot': { consistent: true, jnsq: false }, 'tornado': { consistent: true, jnsq: false },
+};
 function normalize(d) {
   d = d && Array.isArray(d.films) ? d : fresh();
   d.lists ||= []; d.showdowns ||= []; d.settings ||= { tmdb: '' };
   d.placements ||= [];
   d.lostfound ||= [];
   if (d.workflow === undefined) d.workflow = null;
+  if (!Array.isArray(d.wheel)) {
+    // One wheel of critic's reviews replaces the per-coordinate X and Y showdowns.
+    // The old record is archived in the document (and in your backups), never used for ranking.
+    if (d.showdowns.length || d.placements.length) d.archive = { showdowns: d.showdowns, placements: d.placements, at: Date.now() };
+    d.showdowns = []; d.placements = []; d.wheel = [];
+    if (d.workflow && (d.workflow.stage === 'reel' || d.workflow.mode === 'reconsider')) d.workflow = null;
+    if (d.workflow && d.workflow.mode === 'reeval') d.workflow.mode = 'rewrite';
+    d.films.forEach(f => { const s = SEED_COMP[String(f.title || '').trim().toLowerCase()]; if (s && f.y === 1 && !f.comp) f.comp = { ...s }; });
+  }
+  d.matches ||= []; d.wheelLog ||= []; d.form ||= {};
+  d.v = 2;
   return d;
 }
 let db = normalize(null);
-let COLL = [], VAULT = [], UNEVALUATED = [];
+let COLL = [], VAULT = [], UNEVALUATED = [], QUEUE = [], WSTAT = new Map();
 const raw = id => db.films.find(f => f.id === id);
 const evaluated = f => Number.isInteger(f.x) && Number.isInteger(f.y) && f.x >= 1 && f.x <= 5 && f.y >= 0 && f.y <= 5;
 function styleFor(id) { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6; }
-
-// Win/loss on one axis, counting only showdowns against films that share its coordinate now.
-function records(id, axis, ids) {
-  let w = 0, l = 0;
-  for (const s of db.showdowns) {
-    if (s.axis !== axis) continue;
-    const opp = s.a === id ? s.b : s.b === id ? s.a : null;
-    if (opp == null || !ids.has(opp)) continue;
-    if (s.winner === id) w++; else l++;
-  }
-  return { w, l, n: w + l };
-}
-// Standing on an axis inside a group: net wins, then win rate, then wins. Equal records share a standing.
-function axisStandings(list, axis, ids) {
-  const stats = list.map(f => { const r = records(f.id, axis, ids); return { f, ...r, net: r.w - r.l, rate: r.n ? r.w / r.n : 0 }; });
-  stats.sort((a, b) => b.net - a.net || b.rate - a.rate || b.w - a.w || (a.f.added || 0) - (b.f.added || 0) || String(a.f.title).localeCompare(b.f.title));
-  const rank = new Map();
-  stats.forEach((v, i) => { const p = stats[i - 1]; const tied = i > 0 && v.net === p.net && v.rate === p.rate && v.w === p.w; rank.set(v.f.id, { rank: tied ? rank.get(p.f.id).rank : i + 1, order: i, w: v.w, l: v.l, n: v.n }); });
-  return rank;
-}
 const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
-const briefOf = f => f.brief && f.brief.y && f.brief.coord === f.x + '/' + f.y ? f.brief : null;
+const briefOf = () => null;
+const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
+  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, pos: null });
+const levelLine = f => `${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}`;
+
+/* ---------- the wheel's memory: records, upsets, entry, peak, reign — replayed from the log ---------- */
+function blankStat() { return { w: 0, l: 0, n: 0, upsets: 0, entry: null, peak: null, low: null, reign: 0 }; }
+const winnerChance = m => m.winner === m.a ? m.lean : 1 - m.lean;   // the chance the lean gave the eventual winner
+function wheelStats() {
+  const st = new Map(), get = id => { if (!st.has(id)) st.set(id, blankStat()); return st.get(id); };
+  db.matches.forEach(m => {
+    const a = get(m.a), b = get(m.b);
+    a.n++; b.n++;
+    if (m.winner === m.a) { a.w++; b.l++; } else { b.w++; a.l++; }
+    if (winnerChance(m) < 0.5) get(m.winner).upsets++;
+  });
+  let arr = [], topId = null, topAt = null;
+  db.wheelLog.slice().sort((x, y) => x.at - y.at).forEach(e => {
+    arr = arr.filter(id => id !== e.film);
+    if (e.type !== 'remove') {
+      arr.splice(Math.max(0, Math.min(arr.length, e.pos)), 0, e.film);
+      const s = get(e.film); if (s.entry == null) s.entry = e.pos + 1;
+    }
+    arr.forEach((id, i) => { const s = get(id), p = i + 1; if (s.peak == null || p < s.peak) s.peak = p; if (s.low == null || p > s.low) s.low = p; });
+    if ((arr[0] || null) !== topId) { if (topId) get(topId).reign += e.at - topAt; topId = arr[0] || null; topAt = e.at; }
+  });
+  if (topId) get(topId).reign += Date.now() - topAt;
+  return st;
+}
 function rebuild() {
   const ev = db.films.filter(evaluated);
   UNEVALUATED = db.films.filter(f => !evaluated(f));
-  const groups = {};
-  ev.forEach(f => (groups[f.x + '/' + f.y] ||= []).push(f));
-  COLL = [];
-  for (const list of Object.values(groups)) {
-    const ids = new Set(list.map(f => f.id));
-    const xs = axisStandings(list, 'X', ids), ys = axisStandings(list, 'Y', ids);
-    list.forEach(f => {
-      const x = xs.get(f.id), y = ys.get(f.id);
-      COLL.push({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
-        X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0,
-        genre: genreOf(f), brief: briefOf(f),
-        xr: x.rank, yr: y.rank, xo: x.order, yo: y.order, xw: x.w, xl: x.l, yw: y.w, yl: y.l,
-        provisional: list.length > 1 && (x.n < list.length - 1 || y.n < list.length - 1) });
-    });
-  }
-  // the Film Vault: considerations written on the reel, plus commentary carried over from the old showdowns
-  const now = new Map(COLL.map(f => [f.id, f]));
-  const newest = {};
-  db.placements.forEach(p => { const k = p.film + p.axis + p.coord; if (!newest[k] || p.at > newest[k]) newest[k] = p.at; });
-  VAULT = db.placements.filter(p => p.note && now.has(p.film)).map(p => {
-    const f = now.get(p.film);
-    return { ...p, prev: ck(f) !== p.coord ? p.coord : null, old: ck(f) === p.coord && newest[p.film + p.axis + p.coord] > p.at };
-  });
-  db.showdowns.filter(s => s.note && s.via !== 'reel' && now.has(s.a)).forEach(s => {
-    const f = now.get(s.a);
-    VAULT.push({ id: s.id, film: s.a, axis: s.axis, coord: s.coord || ck(f), rank: null, of: null, vs: raw(s.b)?.title || '', note: s.note, at: +(s.editedAt || s.at) || 0,
-      prev: s.coord && s.coord !== ck(f) ? s.coord : null, old: false });
-  });
+  const ids = new Set(ev.map(f => f.id));
+  db.wheel = db.wheel.filter((id, i, a) => ids.has(id) && a.indexOf(id) === i);
+  COLL = ev.map(viewOf);
+  const pos = new Map(db.wheel.map((id, i) => [id, i]));
+  COLL.forEach(f => { f.pos = pos.has(f.id) ? pos.get(f.id) : null; });
+  QUEUE = COLL.filter(f => f.pos == null && !(db.workflow && db.workflow.film === f.id)).sort((a, b) => a.added - b.added);
+  WSTAT = wheelStats();
+  // the Film Vault: the decisive considerations written as each review was locked into place
+  VAULT = db.wheelLog.filter(e => e.note && ids.has(e.film)).map(e => ({ ...e }));
 }
 const byId = id => COLL.find(f => f.id === id);
-const groupOf = (c, except) => COLL.filter(f => ck(f) === c && f.id !== except);
-// order inside a group: Y standing first, X standing breaks ties
-function groupRows(c) { return groupOf(c).sort((a, b) => a.yr - b.yr || a.xr - b.xr || a.added - b.added || a.title.localeCompare(b.title)); }
-function board() {
-  const ranked = LISTED.flatMap(c => groupRows(c));
-  const coords = [...new Set(COLL.map(ck))].filter(c => !LISTED.includes(c));
-  return { ranked, waiting: coords.flatMap(c => groupRows(c)) };
-}
+function board() { return { ranked: db.wheel.map(byId).filter(Boolean), waiting: QUEUE }; }
 function standing(f) {
   const { ranked } = board(), i = ranked.findIndex(v => v.id === f.id);
-  const grp = groupRows(ck(f)), gi = grp.findIndex(v => v.id === f.id);
-  return { overall: i >= 0 ? i + 1 : null, of: ranked.length, stars: i >= 0 ? STAR(i + 1, ranked.length) : null, inGroup: gi + 1, groupSize: grp.length,
-           xw: f.xw, xl: f.xl, yw: f.yw, yl: f.yl };
+  return { overall: i >= 0 ? i + 1 : null, of: ranked.length, stars: i >= 0 ? STAR(i + 1, ranked.length) : null, ...(WSTAT.get(f.id) || blankStat()) };
+}
+const moveOf = (s, cur) => s.entry == null || cur == null ? 0 : s.entry - cur;
+const moveText = d => d > 0 ? '↑' + d : d < 0 ? '↓' + -d : '—';
+
+/* ---------- the points behind the lean (see claude/wheel-points.md) ---------- */
+const CASE_PTS = { 0: 0, 1: 20, 2: 40, 3: 60, 4: 75, 5: 90 };
+const CLAIM_PTS = { 5: 0, 4: -6, 3: -12, 2: -18, 1: -24 };
+const FORM_K = 4;
+const firstSentence = t => (String(t || '').trim().match(/^.*?[.!?](?=\s|$)/) || [String(t || '').trim()])[0];
+const HEDGE = /\b(niche|underrated|has appealing qualities|appealing qualities)\b/i;
+const guessOpener = t => { const s = firstSentence(t); return HEDGE.test(s) || /:/.test(s) ? 'hedge' : 'identity'; };
+function parts(f) {
+  const c = f.comp || {}, p = { case: CASE_PTS[f.Y], claim: CLAIM_PTS[f.X] };
+  if (fromPlot(f.xNote)) p.plot = 2;
+  if (c.subHit) p.subHit = -3;
+  if (f.Y === 1) { if (c.consistent) p.consistent = 3; if (c.jnsq) p.jnsq = 4; }
+  if (f.Y <= 2) p.opener = (c.opener || guessOpener(f.yNote)) === 'hedge' ? -1 : 2;
+  const fm = +db.form[f.id] || 0; if (fm) p.form = fm;
+  return p;
+}
+const rating = f => Object.values(parts(f)).reduce((s, v) => s + v, 0);
+const leanOf = (a, b) => 1 / (1 + Math.pow(10, -(rating(a) - rating(b)) / 20));
+const r1 = v => Math.round(v * 10) / 10;
+const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
+
+/* ---------- the critic's review: the case leads, the claim follows as the "however" ---------- */
+const LEAD_LOWER = /^(My|The|This|Since|While|Looking|Despite|Although|When|During|It|Its|Over|Throughout|Measured)\b/;
+function reviewOf(f) {
+  const cs = String(f.yNote || '').trim(), cl = String(f.xNote || '').trim();
+  if (!cl) return cs; if (!cs) return cl;
+  return cs + '\n\nThat said, ' + (LEAD_LOWER.test(cl) ? cl[0].toLowerCase() + cl.slice(1) : cl);
 }
 
 /* =====================================================================
@@ -1923,27 +2053,28 @@ $('#enterBtn').addEventListener('click', () => {
    Only one film is ever in the booth or on the reel. The lock is stored
    with the collection, so it holds across devices and reloads.
    ===================================================================== */
-let active = null;   // { film (view), mode: 'new' | 'reeval' | 'reconsider', from, stage }
+let active = null;   // { film (view), mode: 'new' | 'rewrite' | 'again' | 'queue', from (wheel index or null), stage: 'booth' | 'check' | 'spin' }
 function syncActive() {
   const w = db.workflow;
   if (!w || !raw(w.film)) { active = null; return; }
   const r = raw(w.film);
-  const film = byId(w.film) || { id: r.id, title: r.title, year: String(r.year || ''), poster: r.poster || '', style: styleFor(r.id), X: r.x, Y: r.y, xEv: r.xEv || '', xNote: r.xNote || '', yEv: r.yEv || '', yNote: r.yNote || '', added: r.added, genre: genreOf(r), brief: briefOf(r) };
+  const film = byId(w.film) || viewOf(r);
   if (active && active.film.id === w.film && active.mode === w.mode && active.stage === w.stage) { active.film = film; return; }
-  active = { film, mode: w.mode, from: w.from || null, stage: w.stage };
+  active = { film, mode: w.mode, from: w.from ?? null, stage: w.stage };
   if (w.stage === 'booth' && (!bt || bt.film !== w.film)) startBooth();
 }
 function beginWorkflow(filmId, mode) {
   const f = byId(filmId);
-  db.workflow = { film: filmId, mode, stage: mode === 'reconsider' ? 'reel' : 'booth', from: f ? ck(f) : null, at: Date.now() };
+  db.workflow = { film: filmId, mode, stage: mode === 'new' || mode === 'rewrite' ? 'booth' : 'check', from: f && f.pos != null ? f.pos : null, at: Date.now() };
   syncActive();
   return persist();
 }
 function endWorkflow() { db.workflow = null; active = null; bt = null; clearDraft(); }
-const workflowLabel = () => active ? `${active.film.title} is ${active.stage === 'booth' ? 'in the projection booth' : 'waiting on the reel'}` : '';
+const workflowLabel = () => active ? `${active.film.title} is ${active.stage === 'booth' ? 'in the projection booth' : 'waiting at the wheel'}` : '';
+
 
 /* =====================================================================
-   LOBBY
+   LOBBY · the wheel, top to bottom
    ===================================================================== */
 const LOBBY_PAGE = 12, VAULT_PAGE = 6;
 function pagerHTML(page, pages, key) {
@@ -1955,101 +2086,118 @@ function pagerHTML(page, pages, key) {
   h += `<button class="arrow" data-${key}="${page + 1}" ${page === pages ? 'disabled' : ''}>Next →</button>`;
   return `<nav class="pager" aria-label="Pages">${h}</nav>`;
 }
-let lobbyQuery = '', lobbyCoord = '', lobbyPage = 1, justPlaced = null;
+let lobbyQuery = '', lobbyLevel = '', lobbyPage = 1, justPlaced = null;
+const canTicket = () => canEdit() && !active;
 function renderLobby() {
-  const { ranked, waiting } = board(), N = ranked.length;
+  const { ranked } = board(), N = ranked.length;
   const top = ranked.slice(0, 3);
-  const coords = LISTED.filter(c => groupOf(c).length);
-  const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its evaluation before admitting another film.' : 'Place it on the reel to finish.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
+  const levels = [5, 4, 3, 2, 1, 0].filter(l => ranked.some(f => f.Y === l));
+  const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its review before starting another film.' : 'Finish its spin to free the auditorium.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
   $('#lobbyIn').innerHTML = `
     <div class="ns"><div class="k">The Lobby · CmanCinema</div><h2>Now Showing</h2><div class="dots"></div>
-      <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'}, ranked by coordinate, then by their standing within it.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
+      <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'} on the wheel, ranked review against review${QUEUE.length ? ` · ${QUEUE.length} waiting in the queue` : ''}.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
     ${banner}
     ${top.length ? `<div class="topbill">${top.map((f, i) => `<button class="frame" data-film="${f.id}"><div class="fr">${posterHTML(f)}</div>
-      <div class="plaque"><b>${i + 1}</b><span>${esc(f.title)}</span><i>${ck(f)} · ★ ${STAR(i + 1, N).toFixed(1)}</i></div></button>`).join('')}</div>` : ''}
+      <div class="plaque"><b>${i + 1}</b><span>${esc(f.title)}</span><i>${Y_NAMES[f.Y]} · ★ ${STAR(i + 1, N).toFixed(1)}</i></div></button>`).join('')}</div>` : ''}
     <div class="controls">
       <input class="placard" id="lSearch" placeholder="Search the collection…" value="${esc(lobbyQuery)}" autocomplete="off">
-      <select class="placard" id="lCoord"><option value="">Every coordinate</option>${coords.map(c => `<option value="${c}" ${c === lobbyCoord ? 'selected' : ''}>${c} · ${groupOf(c).length}</option>`).join('')}</select>
+      <select class="placard" id="lLevel"><option value="">Every recommendation</option>${levels.map(l => `<option value="${l}" ${String(l) === String(lobbyLevel) ? 'selected' : ''}>${Y_NAMES[l]} · ${ranked.filter(f => f.Y === l).length}</option>`).join('')}</select>
       ${canEdit() ? '<button class="btn-gold" data-goto="boxoffice">＋ Admit a film</button>' : ''}
     </div>
     <div id="bill"></div>
-    ${waiting.length ? `<div class="waiting"><h3>Awaiting placement</h3><p>Valid coordinates outside your hierarchy. They stay off the leaderboard until you decide where they belong.</p>
-      ${waiting.map(f => rowHTML(f, '—', null)).join('')}</div>` : ''}
+    ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the wheel</h3><p>Reviewed and ready. Send one to the auditorium and the wheel spins it into place.</p>
+      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-queue="${esc(f.id)}">Send to the wheel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
-      ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canEdit() && !active ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
+      ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
   renderBill();
   $('#lSearch').addEventListener('input', e => { lobbyQuery = e.target.value; lobbyPage = 1; renderBill(); });
-  $('#lCoord').addEventListener('change', e => { lobbyCoord = e.target.value; lobbyPage = 1; renderBill(); });
+  $('#lLevel').addEventListener('change', e => { lobbyLevel = e.target.value; lobbyPage = 1; renderBill(); });
 }
 function rowHTML(f, rank, stars) {
-  const st = standing(f);
-  return `<button class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}"><span class="rk">${rank}</span>${posterHTML(f)}
-    <span class="t">${esc(f.title)}<small><span class="cbadge">${ck(f)}</span>${esc(f.year || '')}${stars != null ? ` · ★ ${stars.toFixed(1)}` : ''}${f.provisional ? ' · provisional' : ''}</small></span>
-    <span class="gp">#${st.inGroup} of ${st.groupSize} in ${ck(f)}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></button>`;
+  const st = standing(f), mv = moveOf(st, rank);
+  return `<div class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}" role="button" tabindex="0"><span class="rk">${rank}</span>${posterHTML(f)}
+    <span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
+    <span class="gp">${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
 }
 function renderBill() {
   const { ranked } = board(), N = ranked.length, q = lobbyQuery.trim().toLowerCase();
-  const rows = ranked.map((f, i) => ({ f, rank: i + 1 })).filter(({ f }) => (!lobbyCoord || ck(f) === lobbyCoord) && (!q || f.title.toLowerCase().includes(q) || f.year.includes(q)));
+  const rows = ranked.map((f, i) => ({ f, rank: i + 1 })).filter(({ f }) => (lobbyLevel === '' || String(f.Y) === String(lobbyLevel)) && (!q || f.title.toLowerCase().includes(q) || f.year.includes(q)));
   const pages = Math.max(1, Math.ceil(rows.length / LOBBY_PAGE));
   lobbyPage = Math.min(Math.max(1, lobbyPage), pages);
   const slice = rows.slice((lobbyPage - 1) * LOBBY_PAGE, lobbyPage * LOBBY_PAGE);
-  let h = '', last = '';
-  slice.forEach(({ f, rank }) => {
-    const c = ck(f);
-    if (c !== last) { h += `<div class="divider"><span><b>${c}</b>${names(c)} · ${groupOf(c).length} film${groupOf(c).length === 1 ? '' : 's'}</span></div>`; last = c; }
-    h += rowHTML(f, rank, STAR(rank, N));
-  });
-  if (!rows.length) h = cloud.ready ? `<p class="ns" style="font:italic 500 19px var(--body)">${N ? 'No films match.' : 'The house is empty. Admit your first film at the box office.'}</p>` : '';
+  let h = slice.map(({ f, rank }) => rowHTML(f, rank, STAR(rank, N))).join('');
+  if (!rows.length) h = cloud.ready ? `<p class="ns" style="font:italic 500 19px var(--body)">${N ? 'No films match.' : QUEUE.length ? 'The wheel is empty. Send a review from the queue below to start it.' : 'The house is empty. Admit your first film at the box office.'}</p>` : '';
   else h += pagerHTML(lobbyPage, pages, 'lp') + `<p class="pager-note">${slice[0].rank === slice.at(-1).rank ? '#' + slice[0].rank : `#${slice[0].rank}–${slice.at(-1).rank}`} of ${rows.length}${rows.length !== N ? ' matching' : ''}</p>`;
   $('#bill').innerHTML = h;
+}
+function sendToWheel(id) {
+  if (!canEdit() || active) return;
+  lastVerdict = null; beginWorkflow(id, 'queue'); goTo('auditorium');
 }
 $('#lobby').addEventListener('click', e => {
   const p = e.target.closest('[data-lp]');
   if (p) { if (p.disabled) return; lobbyPage = +p.dataset.lp; renderBill(); return $('#bill').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   const ev = e.target.closest('[data-evaluate]');
   if (ev) { if (!canEdit() || active) return; beginWorkflow(ev.dataset.evaluate, 'new'); startBooth(); return goTo('booth'); }
+  const qd = e.target.closest('[data-queue]'); if (qd) return sendToWheel(qd.dataset.queue);
+  const tk = e.target.closest('[data-ticket]'); if (tk) return openProfile(tk.dataset.ticket, 'ticket');
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
 });
+$('#lobby').addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.row[data-film]')) { e.preventDefault(); openProfile(e.target.dataset.film); }
+});
 function lobbyShowFilm(id) {
-  lobbyQuery = ''; lobbyCoord = '';
+  lobbyQuery = ''; lobbyLevel = '';
   const i = board().ranked.findIndex(f => f.id === id);
   lobbyPage = i >= 0 ? Math.floor(i / LOBBY_PAGE) + 1 : 1;
 }
 
 /* =====================================================================
-   FILM PROFILE (Re-evaluate / Reconsider / Remove)
+   FILM PROFILE (Buy another ticket / Remove)
    ===================================================================== */
 let confirming = null;
-function openProfile(id) {
+const VIA = { new: 'New review', queue: 'From the queue', again: 'Saw it again', rewrite: 'Rewrote the review' };
+function ticketChoice(f) {
+  return `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Buy another ticket · ${esc(f.title)}</b>
+    <div class="tk-opts">
+      <button class="tk-opt" data-tk="again"><b>See it again</b><span>The same review goes straight back to the wheel for fresh matchups.</span></button>
+      <button class="tk-opt" data-tk="rewrite"><b>Rewrite the review</b><span>Back to the booth to revise the claim or the case, then to the wheel.</span></button>
+    </div>
+    <div class="btns"><button class="btn-line" data-no>Not now</button></div>
+    <p style="margin:8px 0 0;font:italic 500 14px var(--body);color:rgba(243,230,200,.65)">Its current place, record and history stay on file either way.</p></div>`;
+}
+function openProfile(id, show) {
   const f = byId(id); if (!f) return;
   const st = standing(f), entries = VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at);
-  const busy = active && active.film.id !== id;
-  const ev = t => t ? `<span class="evh">${esc(t)}</span>` : '';
-  const editor = canEdit();
+  const ms = db.matches.filter(m => m.a === id || m.b === id).sort((a, b) => b.at - a.at);
+  const busy = active && active.film.id !== id, editor = canEdit(), mv = moveOf(st, st.overall);
+  const fm = +db.form[id] || 0;
   $('#prof').innerHTML = `<button class="x" aria-label="Close">✕</button>
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
-      <div class="k">Film profile · ${st.overall ? 'Overall #' + st.overall + ' of ' + st.of : 'Awaiting placement'}</div>
+      <div class="k">Film profile · ${st.overall ? `#${st.overall} of ${st.of} on the wheel` : 'Waiting in the queue'}</div>
       <h3>${esc(f.title)}</h3>
-      <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge">${ck(f)}</span>${names(ck(f))}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
+      <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
       <div class="pstats">
-        <div><b>#${f.xr}</b><span>X standing</span></div><div><b>#${f.yr}</b><span>Y standing</span></div>
-        <div><b>#${st.overall || '—'}</b><span>Overall</span></div><div><b>#${st.inGroup}</b><span>of ${st.groupSize} in ${ck(f)}</span></div>
+        <div><b>${st.overall ? '#' + st.overall : '—'}</b><span>On the wheel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
+        <div><b>${st.w}–${st.l}</b><span>Record</span></div><div><b>${moveText(mv)}</b><span>Since entry</span></div>
       </div>
-      <div class="sub" style="font-size:16px">Record · X ${st.xw}–${st.xl} · Y ${st.yw}–${st.yl}${f.provisional ? ' · provisional — not yet placed against every film in its group' : ''}</div>
-      <div class="pev"><p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>
-        <p class="note"><b>Y · Case · ${f.Y} ${Y_NAMES[f.Y]}</b>${esc(f.yNote || '—')}</p>
-        <p class="note"><b>On the reel · ${ck(f)}</b>${f.genre ? `${esc(f.genre)} · X${f.X} ${X_NAMES[f.X]} · claim: <i>${X_CASE[f.X]}</i> · Y${f.Y} ${Y_NAMES[f.Y]} · case: <i>${Y_REG[f.Y]}</i>` : `<i>No sub-genre yet — add one so the argument card can read this film.</i>`}</p></div>
+      <div class="sub" style="font-size:16px">${st.n ? `${st.n} matchup${st.n === 1 ? '' : 's'} · ${st.upsets} upset win${st.upsets === 1 ? '' : 's'} · form ${fm > 0 ? '+' : ''}${fm.toFixed(1)}` : 'No matchups yet'}${st.entry ? ` · entered at #${st.entry}` : ''}</div>
+      <div class="pev"><p class="note" style="white-space:pre-line"><b>The critic’s review</b>${esc(reviewOf(f) || '—')}</p></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
-      ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${v.axis} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.prev ? ' · earlier group' : v.old ? ' · earlier placement' : ''}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
-      ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before reopening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
-        <button class="btn-line" data-reopen="reeval">Re-evaluate in the booth</button>
-        ${st.groupSize > 1 && LISTED.includes(ck(f)) ? '<button class="btn-line" data-reopen="reconsider">Reconsider its placement</button>' : `<span class="why">${LISTED.includes(ck(f)) ? 'Alone in its coordinate — nothing to reconsider against yet.' : ''}</span>`}
+      ${ms.length ? `<div class="vlist"><span class="k">On the wheel · latest matchups</span>${ms.slice(0, 8).map(m => {
+        const won = m.winner === id, opp = byId(m.a === id ? m.b : m.a) || raw(m.a === id ? m.b : m.a), pc = Math.min(99, Math.max(1, Math.round((m.a === id ? m.lean : 1 - m.lean) * 100)));
+        return `<div class="vmini"><b>${won ? 'Beat' : 'Lost to'} ${esc(opp?.title || 'a removed film')} · the lean gave it ${pc}%${(won ? pc < 50 : pc > 50) ? ' · upset' : ''}</b>${new Date(m.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>`;
+      }).join('')}</div>` : ''}
+      ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>Placed #${v.pos + 1} of ${v.of} · ${VIA[v.via] || 'Placed'}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
+      ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
+        ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button>'}
         <button class="linkish" data-remove style="margin-left:auto">Remove from collection</button>`}</div>` : ''}
-      <div id="confirmBox"></div>
+      <div id="confirmBox">${show === 'ticket' && editor && !active && st.overall ? ticketChoice(f) : ''}</div>
     </div></div>`;
   confirming = null;
   $('#sheet').classList.add('show');
   $('#sheet').dataset.id = id;
+  if (show === 'ticket') setTimeout(() => { const c = $('#confirmBox'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
 }
 function closeSheet() { $('#sheet').classList.remove('show'); }
 $('#sheet').addEventListener('click', e => {
@@ -2057,31 +2205,24 @@ $('#sheet').addEventListener('click', e => {
   const id = $('#sheet').dataset.id, f = byId(id);
   if (!f) return closeSheet();
   if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
-  const r = e.target.closest('[data-reopen]');
-  if (r) {
-    confirming = r.dataset.reopen;
-    $('#confirmBox').innerHTML = `<div class="confirm">${confirming === 'reeval'
-      ? `Reopen the projection booth for <b>${esc(f.title)}</b>? You'll answer the X and Y questions again. If its coordinate changes, it moves to its new group, and its old placements stay in its record.`
-      : `Reopen the screening room for <b>${esc(f.title)}</b>? You'll place it again on the X and Y reels of ${ck(f)}. Its earlier considerations stay in the Film Vault.`}
-      <div class="btns"><button class="btn-gold" data-yes>Reopen</button><button class="btn-line" data-no>Leave it sealed</button></div></div>`;
+  if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
+  if (e.target.closest('[data-queuego]')) { closeSheet(); return sendToWheel(id); }
+  const tk = e.target.closest('[data-tk]');
+  if (tk) {
+    if (!canEdit() || active) return;
+    const mode = tk.dataset.tk;
+    lastVerdict = null; beginWorkflow(id, mode); closeSheet();
+    if (mode === 'rewrite') { startBooth(); goTo('booth'); } else goTo('auditorium');
     return;
   }
   if (e.target.closest('[data-remove]')) {
     const n = VAULT.filter(v => v.film === id).length;
-    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its evaluation, its showdown record and ${n} consideration${n === 1 ? '' : 's'} go with it. The standings in ${ck(f)} recalculate without it.
+    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its review, its matchups and ${n} consideration${n === 1 ? '' : 's'} go with it, and every film below it moves up a place.
       <div class="btns"><button class="btn-gold" data-removeyes>Remove it</button><button class="btn-line" data-no>Keep it</button></div></div>`;
     return;
   }
   if (e.target.closest('[data-removeyes]')) { const t = f.title; removeFilm(id); closeSheet(); renderScene(current); persist().then(ok => { if (ok) toast(t + ' removed from the collection'); }); return; }
   if (e.target.closest('[data-no]')) { $('#confirmBox').innerHTML = ''; return; }
-  if (e.target.closest('[data-yes]')) {
-    if (!canEdit() || active) return;
-    const mode = confirming;
-    beginWorkflow(id, mode);
-    closeSheet();
-    if (mode === 'reeval') { startBooth(); goTo('booth'); }
-    else { resetReel(); goTo('auditorium'); }
-  }
 });
 addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#compass').classList.remove('show'); $('#alert').classList.remove('show'); } });
 
@@ -2179,7 +2320,7 @@ function startBooth(fromScratch = false) {
   if (!fromScratch) {
     try { const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); if (d && d.film === f.id && d.mode === active?.mode) { bt = d; return; } } catch (e) {}
   }
-  const keep = active?.mode === 'reeval';
+  const keep = active?.mode === 'rewrite';
   bt = { film: f.id, mode: active?.mode, axis: 'X', level: 5, qi: 0, history: [], phase: 'ask', x: null, y: null,
          xEv: keep ? f.xEv : '', xNote: keep ? f.xNote : '', yEv: keep ? f.yEv : '', yNote: keep ? f.yNote : '' };
   saveDraft();
@@ -2192,7 +2333,7 @@ function lockedNotice(where) {
   return `<div class="intertitle" style="margin:0 auto">
     <img class="projected" src="${LOGO_B}" alt=""><div class="k">${where}</div><h2>The house is dark</h2>
     <p>${visitor ? 'Only the editor works the projector. Visitors are welcome in the lobby, the Film Vault and the Game Room.'
-      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one you deliberately re-evaluate from its profile.' : 'The screening room only opens for a film being placed, or one you deliberately reconsider from its profile.'}</p>
+      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one whose review you rewrite with another ticket from the lobby.' : 'The screening room only opens for a review headed to the wheel: a new one, one sent from the queue, or one with another ticket from the lobby.'}</p>
     <span class="orn"></span>
     <div class="yn" style="margin-top:6px">${visitor ? '' : '<button class="btn-gold" data-goto="boxoffice">Admit a film</button>'}<button class="btn-line" data-goto="lobby">Back to the lobby</button></div></div>`;
 }
@@ -2201,7 +2342,7 @@ function renderBooth() {
   $('#boothDark').hidden = !!open; $('#bHead').hidden = !open; $('#bGrid').hidden = !open;
   if (!open) { $('#boothDark').innerHTML = lockedNotice('The Projection Booth'); return; }
   const f = active.film;
-  $('#bHead').innerHTML = `${posterHTML(f, 58)}<div><div class="k">The Projection Booth · ${active.mode === 'reeval' ? 'Re-evaluation' : 'Evaluation'}</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${bt.phase === 'done' ? '' : ` · ${bt.axis === 'X' ? 'First the X, then the Y' : 'X sealed · now the Y'}`}${active.mode === 'reeval' ? ` · currently ${active.from}` : ''}</div></div>`;
+  $('#bHead').innerHTML = `${posterHTML(f, 58)}<div><div class="k">The Projection Booth · ${active.mode === 'rewrite' ? 'Rewriting the review' : 'Evaluation'}</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${bt.phase === 'done' ? '' : ` · ${bt.axis === 'X' ? 'First the X, then the Y' : 'X sealed · now the Y'}`}${active.mode === 'rewrite' && active.from != null ? ` · currently #${active.from + 1} on the wheel` : ''}</div></div>`;
   renderLadder(); renderPane();
 }
 function renderLadder() {
@@ -2214,7 +2355,7 @@ function renderLadder() {
     ${levels.map(l => `<div class="rung ${l === cur ? 'cur' : past(l) ? 'past' : ''}"><b>${l}</b><div><strong>${(x ? X_NAMES : Y_NAMES)[l]}</strong><small>${(x ? X_TAG : Y_TAG)[l]}</small></div></div>`).join('')}
     ${bt.x != null && ax === 'Y' ? `<div class="sealed">X sealed · ${bt.x} ${X_NAMES[bt.x]}</div>` : ''}`;
 }
-function cancelLabel() { return active.mode === 'new' ? 'Withdraw this ticket' : 'Cancel the re-evaluation'; }
+function cancelLabel() { return active.mode === 'new' ? 'Withdraw this ticket' : 'Cancel the rewrite'; }
 function renderPane() {
   const p = $('#pane');
   const cancel = `<button class="linkish" data-cancelwf>${cancelLabel()}</button>`;
@@ -2241,21 +2382,16 @@ function renderPane() {
       <div class="under"><button class="linkish" data-back>← Back to the questions</button>${cancel}</div>`;
     updateWordCount();
   } else {
-    const c = `${bt.x}/${bt.y}`, others = groupOf(c, active.film.id).length;
-    const same = active.mode === 'reeval' && c === active.from;
-    const unlisted = !LISTED.includes(c);
-    const next = same ? ['Return to the lobby', 'coordinate unchanged · its placement stands']
-      : unlisted ? ['Shelve it for placement', `${c} sits outside your hierarchy`]
-      : others ? ['Down to the auditorium', `place it among the other ${others} ${c} film${others === 1 ? '' : 's'}`]
-      : ['Take its place', `the first film at ${c} — no showdown needed`];
-    p.innerHTML = `<div class="qk">${active.mode === 'reeval' ? 'The re-evaluation is in' : 'The booth has spoken'}</div>
-      <div class="coord">${bt.x} / ${bt.y}</div>
-      <div class="coordn">${X_NAMES[bt.x]} · ${Y_NAMES[bt.y]}</div>
-      ${active.mode === 'reeval' && !same ? `<div class="gain" style="margin-top:8px">Moving from ${active.from}. Its placements there stay in its record.</div>` : ''}
+    const n = db.wheel.filter(id => id !== active.film.id).length, rewrite = active.mode === 'rewrite';
+    p.innerHTML = `<div class="qk">${rewrite ? 'The rewrite is in' : 'The booth has spoken'}</div>
+      <div class="coord" style="font-size:clamp(30px,5vw,48px)">${Y_NAMES[bt.y]}</div>
+      <div class="coordn">${X_NAMES[bt.x]}</div>
+      <div class="gain" style="margin-top:8px">Your claim and case now combine into one critic’s review for the wheel.</div>
       <span class="orn"></span>
-      <div class="yn"><button class="yes" data-leave>${next[0]}<small>${next[1]}</small></button></div>
+      <div class="yn"><button class="yes" data-leave="spin">${n ? 'Down to the auditorium' : 'Take its place'}<small>${n ? `spin it against the ${n} review${n === 1 ? '' : 's'} on the wheel` : 'the first review on the wheel · no matchup needed'}</small></button>
+        <button class="no" data-leave="${rewrite ? 'keep' : 'queue'}">${rewrite ? 'Keep its place' : 'Leave it in the queue'}<small>${rewrite ? `stays at #${(active.from ?? 0) + 1}, with the new review` : 'spin it later from the lobby'}</small></button></div>
       <div class="under"><button class="linkish" data-restart>Start the evaluation over</button>${cancel}</div>
-      <div class="sealnote">Once you leave, the booth seals for this film. Only a deliberate re-evaluation reopens it.</div>`;
+      <div class="sealnote">Once you leave, the booth seals for this film. Another ticket from the lobby reopens it.</div>`;
   }
 }
 function saveWriting() {
@@ -2362,7 +2498,7 @@ $('#pane').addEventListener('click', e => {
     else { bt.y = bt.level; bt.phase = 'done'; }
   } else if (b.dataset.compass) { return openCompass(+b.dataset.compass); }
   else if (b.dataset.restart !== undefined) { startBooth(true); }
-  else if (b.dataset.leave !== undefined) { return leaveBooth(); }
+  else if (b.dataset.leave !== undefined) { return leaveBooth(b.dataset.leave); }
   else if (b.dataset.cancelwf !== undefined) { return cancelWorkflow(); }
   saveDraft();
   renderBooth();
@@ -2370,32 +2506,29 @@ $('#pane').addEventListener('click', e => {
 });
 function cancelWorkflow() {
   if (!active) return;
-  const f = active.film, mode = active.mode;
+  const f = active.film, mode = active.mode, stage = active.stage;
   if (mode === 'new' && !evaluated(raw(f.id) || {})) {
     if (!confirm(`Withdraw the ticket for “${f.title}”? It leaves the collection.`)) return;
     removeFilm(f.id);
   }
+  ck0 = null;
   endWorkflow(); persist();
-  toast(mode === 'new' ? 'Ticket withdrawn' : mode === 'reconsider' ? 'Reconsideration cancelled · placement unchanged' : 'Re-evaluation cancelled · nothing changed');
+  toast(mode === 'new' && stage === 'booth' ? 'Ticket withdrawn'
+    : stage === 'booth' ? 'Rewrite cancelled · nothing changed'
+    : active === null && f && db.wheel.includes(f.id) ? 'Spin cancelled · its place on the wheel is unchanged' : `${f.title} waits in the queue`);
   goTo('lobby');
 }
-function leaveBooth() {
+function leaveBooth(choice) {
   const r = raw(active.film.id); if (!r) return;
-  const c = `${bt.x}/${bt.y}`, mode = active.mode, from = active.from;
-  Object.assign(r, { xEv: bt.xEv, xNote: bt.xNote, yEv: bt.yEv, yNote: bt.yNote, watched: true });
-  if (mode === 'reeval' && c === from) {                      // same coordinate: only the writing changes
-    endWorkflow(); persist(); toast('Evaluation revised · placement unchanged'); return goTo('lobby');
+  Object.assign(r, { xEv: bt.xEv, xNote: bt.xNote, yEv: bt.yEv, yNote: bt.yNote, watched: true, x: bt.x, y: bt.y });
+  if (choice === 'keep' || choice === 'queue') {
+    endWorkflow(); persist();
+    toast(choice === 'keep' ? 'Review rewritten · its place on the wheel stands' : `${r.title} waits in the queue`);
+    return goTo('lobby');
   }
-  r.x = bt.x; r.y = bt.y;
-  rebuild();
-  const others = groupOf(c, r.id);
-  if (!LISTED.includes(c) || !others.length) {               // nothing to place against
-    const id = r.id; endWorkflow(); persist();
-    return showVerdictOnly(id);
-  }
-  db.workflow.stage = 'reel'; clearDraft(); bt = null;
-  syncActive(); persist();
-  resetReel(); goTo('auditorium');
+  db.workflow.stage = 'check'; db.workflow.spin = null; clearDraft(); bt = null;
+  rebuild(); syncActive(); persist();
+  goTo('auditorium');
 }
 function openCompass(l) {
   const c = COMPASS[l];
@@ -2415,293 +2548,346 @@ function openCompass(l) {
 $('#compass').addEventListener('click', e => { if (e.target.id === 'compass' || e.target.closest('.x')) $('#compass').classList.remove('show'); });
 
 /* =====================================================================
-   RECORDING A PLACEMENT
-   The film beats every film below it on the reel and loses to every film
-   above. Existing showdowns for a pair are revised (the old verdict is kept
-   in verdictHistory, as before); missing ones are added.
+   THE AUDITORIUM · THE SMART WHEEL
+   One wheel of critic's reviews. A review meets the middle of the range
+   still open, then the middle of the half it earned, and so on (a binary
+   search), then one confirmation against its new neighbor. Each matchup
+   shows the lean: the all-in estimate from the claim and case components
+   and the wheel's history. The verdict is always yours, and nothing is
+   saved to the wheel until you lock the placement in.
    ===================================================================== */
-function recordAxis(id, order, p, ax, c) {
-  const t = Date.now();
-  order.forEach((o, i) => {
-    const winner = i >= p ? id : o.id;
-    const games = db.showdowns.filter(s => s.axis === ax && ((s.a === id && s.b === o.id) || (s.a === o.id && s.b === id)));
-    if (!games.length) db.showdowns.push({ id: 'show:' + uid(), a: id, b: o.id, winner, axis: ax, coord: c, note: '', at: t, via: 'reel' });
-    else games.forEach(s => {
-      if (s.winner !== winner) { s.verdictHistory = Array.isArray(s.verdictHistory) ? s.verdictHistory : []; s.verdictHistory.push({ winner: s.winner, note: s.note || '', at: s.at || null, revisedAt: t }); s.winner = winner; s.editedAt = t; }
-      s.coord = c;
-    });
-  });
-}
-function commitPlacement() {
-  const id = active.film.id, c = ck(active.film);
-  ['X', 'Y'].forEach(ax => {
-    const P = placed[ax];
-    recordAxis(id, P.order, P.pos, ax, c);
-    db.placements.push({ id: 'place:' + uid(), film: id, axis: ax, coord: c, rank: P.pos + 1, of: P.order.length + 1, note: P.note, at: Date.now() });
-  });
-  endWorkflow();
-  justPlaced = id;
-  return persist();
-}
-
-/* =====================================================================
-   THE AUDITORIUM · THE REEL
-   The group's films sit in their current order for the axis. Your film
-   is fixed at the red pointer; scrolling moves the reel past it.
-   ===================================================================== */
-let axis = 'X', films = [], N = 0, g = 0, target = 0, peekId = null, placed = {}, lastVerdict = null;
 const drum = $('#drum'), reel = $('#reel');
 const SLOT_DEG = 21;
+let lastVerdict = null, g = 0, target = 0, raf = null, ck0 = null;
+const SIT_NAME = { level: 'a full recommendation apart', claim: 'decided by the claim', ingredients: 'decided by the two ingredients', opener: 'decided by the opening line', form: 'decided by form', even: 'with nothing in the components between them' };
 
-function resetReel() { axis = 'X'; placed = {}; lastVerdict = null; $('#consider').value = ''; }
 function setAudOpen(open) {
-  $('#audDark').hidden = open; $('#screenCard').hidden = !open; $('#stage').hidden = !open; $('#desk').hidden = !open; $('#refBand').hidden = !open; $('#argue').hidden = !open;
+  ['#screenCard', '#stage', '#mu', '#desk'].forEach(s => { $(s).hidden = !open; });
+  $('#checkIn').hidden = true; $('#audDark').hidden = open;
 }
+const spinOrder = () => { const id = active.film.id; return db.wheel.filter(x => x !== id && byId(x)); };
 function enterAuditorium() {
-  if (lastVerdict) { setAudOpen(true); $('#stage').hidden = true; $('#argue').hidden = true; $('#screenCard').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return; }
-  const open = canEdit() && active && active.stage === 'reel';
+  if (lastVerdict) {
+    setAudOpen(true); ['#stage', '#mu', '#screenCard'].forEach(s => { $(s).hidden = true; });
+    $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return;
+  }
+  $('#results').classList.remove('show');
+  const open = canEdit() && active && (active.stage === 'check' || active.stage === 'spin');
   setAudOpen(!!open);
   if (!open) { $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   const f = byId(active.film.id);
   if (!f) { setAudOpen(false); $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   active.film = f;
-  if (!f.genre) { $('#stage').hidden = true; $('#refBand').hidden = true; $('#placing').style.display = 'none'; $('#argue').hidden = true; return briefOpen(f.id, 'reel'); }
-  $('#argue').hidden = false;
-  loadAxis(placed.X ? 'Y' : 'X');
+  if (active.stage === 'check') return renderCheck();
+  const s = db.workflow.spin;
+  if (!s || s.n !== spinOrder().length) startSpin();      // the wheel changed underneath: start this spin over
+  renderSpin();
 }
-// the others in the group, in their current order on this axis, judged among themselves
-function reelOrder(f, ax) {
-  const list = db.films.filter(r => evaluated(r) && r.x + '/' + r.y === ck(f) && r.id !== f.id);
-  const ids = new Set(list.map(r => r.id));
-  const st = axisStandings(list, ax, ids);
-  return list.map(r => byId(r.id)).sort((a, b) => st.get(a.id).order - st.get(b.id).order);
-}
-function loadAxis(ax) {
-  axis = ax;
-  const f = active.film;
-  films = reelOrder(f, ax); N = films.length;
-  let start = Math.floor(N / 2);
-  if (active.mode === 'reconsider') {           // begin where it stands now
-    const all = groupOf(ck(f)).sort((a, b) => (ax === 'X' ? a.xo - b.xo : a.yo - b.yo));
-    start = Math.max(0, all.findIndex(v => v.id === f.id));
-  }
-  g = target = Math.max(0, Math.min(N, start));
-  peekId = null;
-  $('#consider').value = '';
-  $('#placing').style.display = '';
-  $('#results').classList.remove('show');
-  $('#stage').hidden = false; $('#refBand').hidden = false; $('#argue').hidden = false;
-  $('#lockBtn').textContent = ax === 'X' ? 'Lock the X placement' : 'Lock the Y placement';
-  $('#lockBtn').disabled = false;
-  reel.setAttribute('aria-valuemax', N + 1);
-  drum.innerHTML = films.map(v => slotHTML(v)).join('') + slotHTML(f, true);
-  renderScreen(); renderMine(); renderPeek(); renderTally(); layoutDrum();
-}
-function slotHTML(f, me) {
-  return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${esc(f.year || '')}</div></div></div>`;
-}
-function refPanel(ax, level, live, next) {
-  const isX = ax === 'X', levels = isX ? [5, 4, 3, 2, 1] : [5, 4, 3, 2, 1, 0];
-  const nm = isX ? X_NAMES : Y_NAMES, tg = isX ? X_TAG : Y_TAG;
-  return `<div class="lead"><div class="big">${ax}</div><div><b>${isX ? 'Condition of Achievement' : 'Viewing Recommendation'}</b><small>${isX ? 'The negative case' : 'The positive case'} · this group</small></div></div>
-    <div class="chips2">${levels.map(l => `<div class="ch ${l === level ? 'here' : ''}"><i>${l}</i><div>${nm[l]}${l === level ? `<em>${tg[l]}</em>` : ''}</div></div>`).join('')}</div>
-    <div class="rule2"><span>Every film here is <b>${nm[level]}</b>. Higher on the reel = the <b>${isX ? 'weaker negative case' : 'stronger positive case'}</b> — the ${isX ? 'less consequential' : 'more compelling'} answer to the ${ax}${level} question.</span><span>${next}</span></div>`;
-}
-function renderScreen() {
-  const x = axis === 'X', c = ck(active.film), f = active.film;
-  $('#refBand').innerHTML = refPanel(axis, x ? f.X : f.Y, true, x ? `Next · Y${f.Y} ${Y_NAMES[f.Y]}` : `X placement locked · X${f.X} ${X_NAMES[f.X]}`);
-  $('#endTop').innerHTML = x ? 'Top · weaker negative case<span>least consequential grounds</span>' : 'Top · stronger positive case<span>most compelling grounds</span>';
-  $('#endBot').innerHTML = x ? 'Bottom · stronger negative case<span>most consequential grounds</span>' : 'Bottom · weaker positive case<span>least compelling grounds</span>';
-  $('#consider').placeholder = 'In answer to the ' + axis + (x ? f.X : f.Y) + ' question — why does it belong exactly here?';
-  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${c} · ${names(c)}${active.mode === 'reconsider' ? ' · Reconsideration' : ''}</div>
-    <h2>${x ? 'Spin for X · ' + f.X + ' ' + X_NAMES[f.X] : 'Spin for Y · ' + f.Y + ' ' + Y_NAMES[f.Y]}</h2>
-    <div class="frame-q">${x ? 'Which film has the <b>weaker negative case</b>' : 'Which film has the <b>stronger positive case</b>'} — in answer to:</div>
-    <div class="show-q">“${esc(SHOW_Q[axis][x ? f.X : f.Y])}”</div>
+const estMatchups = n => n < 2 ? n : Math.ceil(Math.log2(n + 1)) + 1;
+const cancelSpinLabel = () => active.from != null ? 'Cancel · keep its current place' : 'Leave it in the queue for now';
+const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
 
-    <div class="axis-tabs"><span class="${x ? 'on' : 'done'}">X · Condition</span><span class="${x ? '' : 'on'}">Y · Recommendation</span></div>
-    <div class="under" style="margin-top:6px"><button class="linkish" data-cancelreel>${active.mode === 'reconsider' ? 'Cancel the reconsideration' : 'Leave for now — it waits on the reel'}</button></div>
-    <span class="orn"></span>`;
+/* ---------- before the wheel: the quick check that settles the components ---------- */
+function renderCheck() {
+  ['#stage', '#mu', '#desk'].forEach(s => { $(s).hidden = true; });
+  const f = active.film, c = f.comp || {}, n = spinOrder().length;
+  if (!ck0 || ck0.film !== f.id) ck0 = { film: f.id, subHit: c.subHit ?? null, ing: f.Y === 1 ? (c.jnsq ? 'jnsq' : c.consistent ? 'consistent' : c.consistent === false && c.jnsq === false ? 'neither' : '') : '', opener: c.opener || guessOpener(f.yNote) };
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · Before the wheel</div><h2>${esc(f.title)}</h2>
+    <p>${levelLine(f)}${f.genre ? ' · ' + esc(f.genre) : ''}</p>
+    <div class="under" style="margin-top:8px"><button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
+  const opt = (attr, val, cur, label) => `<button class="${cur === val ? 'on' : ''}" data-${attr}="${val}">${label}</button>`;
+  const gname = f.genre ? f.genre.toLowerCase() : '';
+  $('#checkIn').innerHTML = `<div class="ck-card">
+      <div class="ck-review"><span>The critic’s review</span>${esc(reviewOf(f))}</div>
+      ${f.genre ? '' : `<div class="ck-q"><b>Sub-genre</b><p>This film needs a two-part sub-genre first.</p><div class="genre2"><input id="ckG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24"></div></div>`}
+      <div class="ck-q"><b>Sub-genre hit</b><p>Does this weakness hit what ${gname ? an(esc(gname)) : 'its sub-genre'} runs on?</p>
+        <blockquote>${esc(f.xNote || '—')}</blockquote>
+        <div class="ck-opts">${opt('cks', '1', ck0.subHit === true ? '1' : ck0.subHit === false ? '0' : '', 'Yes, it hits the core')}${opt('cks', '0', ck0.subHit === true ? '1' : ck0.subHit === false ? '0' : '', 'No, it spares it')}</div></div>
+      ${f.Y === 1 ? `<div class="ck-q"><b>The two ingredients</b><p>Recommended takes consistency and the je ne sais quoi. Which does this one have?</p>
+        <div class="ck-opts">${opt('cki', 'consistent', ck0.ing, 'Consistency only')}${opt('cki', 'jnsq', ck0.ing, 'The je ne sais quoi only')}${opt('cki', 'neither', ck0.ing, 'Neither')}</div></div>` : ''}
+      ${f.Y <= 2 ? `<div class="ck-q"><b>The opening line</b><p>“${esc(firstSentence(f.yNote))}”</p>
+        <div class="ck-opts">${opt('cko', 'identity', ck0.opener, 'A one-phrase identity')}${opt('cko', 'hedge', ck0.opener, 'An inventory or hedge')}</div>
+        <small>Suggested from the wording: ${guessOpener(f.yNote) === 'hedge' ? 'an inventory or hedge' : 'a one-phrase identity'}. Your call.</small></div>` : ''}
+      <div class="ck-err" id="ckErr"></div>
+      <div class="ck-foot"><button class="lock" data-ckgo>${n ? 'Spin the wheel' : 'Take its place'}</button>
+        <p>${n ? `About ${estMatchups(n)} matchup${estMatchups(n) === 1 ? '' : 's'} against a wheel of ${n}.` : 'The first review on the wheel. No matchup needed.'}</p></div>
+    </div>`;
+  $('#checkIn').hidden = false;
 }
-$('#screenCard').addEventListener('click', e => {
-  if (!e.target.closest('[data-cancelreel]') || !active) return;
-  if (active.mode === 'reconsider') return cancelWorkflow();
-  goTo('lobby');
+$('#checkIn').addEventListener('click', async e => {
+  if (!ck0 || !active) return;
+  const b = e.target.closest('[data-cks],[data-cki],[data-cko],[data-ckgo]'); if (!b) return;
+  if (b.dataset.cks) ck0.subHit = b.dataset.cks === '1';
+  if (b.dataset.cki) ck0.ing = b.dataset.cki;
+  if (b.dataset.cko) ck0.opener = b.dataset.cko;
+  if (b.dataset.ckgo === undefined) {
+    b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    $('#ckErr').textContent = ''; return;
+  }
+  const f = active.film, r = raw(f.id); if (!r || !canEdit()) return;
+  if (!f.genre) {
+    const g1 = capWord($('#ckG1').value), g2 = capWord($('#ckG2').value);
+    if (!g1 || !g2) return $('#ckErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
+    r.genre = [g1, g2];
+  }
+  if (ck0.subHit == null) return $('#ckErr').textContent = 'Answer the sub-genre question first.';
+  if (f.Y === 1 && !ck0.ing) return $('#ckErr').textContent = 'Pick which ingredient it has.';
+  r.comp = { ...(r.comp || {}), subHit: ck0.subHit };
+  if (f.Y === 1) { r.comp.consistent = ck0.ing === 'consistent'; r.comp.jnsq = ck0.ing === 'jnsq'; }
+  if (f.Y <= 2) r.comp.opener = ck0.opener;
+  ck0 = null;
+  rebuild(); syncActive();
+  if (!spinOrder().length) return placeAt(0, '', []);
+  db.workflow.stage = 'spin'; db.workflow.spin = null;
+  syncActive(); startSpin();
+  await persist();
+  enterAuditorium();
+  $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
 });
-function evidenceCard(f, label, current, me) {
-  const coordLine = me ? `${ck(f)} · placing now` : `${ck(f)} · X #${f.xr} · Y #${f.yr}`;
-  const ev = t => t ? `<span class="evh">${esc(t)}</span>` : '';
+
+/* ---------- the search ---------- */
+function startSpin() { const n = spinOrder().length; db.workflow.spin = { lo: 0, hi: n, phase: 'search', log: [], pos: null, opp: null, n }; nextOpp(db.workflow.spin, spinOrder()); }
+function nextOpp(s, order) {
+  if (s.phase === 'search') {
+    if (s.lo < s.hi) { s.opp = order[(s.lo + s.hi) >> 1]; return; }
+    s.pos = s.lo; s.phase = 'confirm';
+    const faced = new Set(s.log.map(e => e.opp));
+    const pick = [order[s.pos - 1], order[s.pos]].find(id => id && !faced.has(id));
+    if (pick) { s.opp = pick; return; }
+  }
+  s.phase = 'done'; s.opp = null;
+}
+function applyVerdict(s, order, newWins, lean, sit) {
+  s.log.push({ opp: s.opp, newWins, lean, sit, phase: s.phase, lo: s.lo, hi: s.hi, pos: s.pos });
+  if (s.phase === 'search') { const mid = (s.lo + s.hi) >> 1; if (newWins) s.hi = mid; else s.lo = mid + 1; nextOpp(s, order); return; }
+  if (s.phase === 'confirm') { const i = order.indexOf(s.opp); if (i === s.pos - 1 && newWins) s.pos--; else if (i === s.pos && !newWins) s.pos++; }
+  s.phase = 'done'; s.opp = null;
+}
+function undoVerdict(s) { const e = s.log.pop(); if (!e) return; Object.assign(s, { phase: e.phase, lo: e.lo, hi: e.hi, pos: e.pos, opp: e.opp }); }
+
+/* ---------- reading a matchup: what separates the two reviews ---------- */
+function diffs(A, B) {
+  const a = parts(A), b = parts(B), d = {};
+  new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => { const v = (a[k] || 0) - (b[k] || 0); if (v) d[k] = v; });
+  return d;
+}
+function sitKey(A, B) {
+  if (A.Y !== B.Y) return 'level';
+  const d = diffs(A, B), grp = { claim: 'claim', subHit: 'claim', plot: 'claim', consistent: 'ingredients', jnsq: 'ingredients', opener: 'opener', form: 'form' }, sum = {};
+  Object.entries(d).forEach(([k, v]) => { const g2 = grp[k]; if (g2) sum[g2] = (sum[g2] || 0) + v; });
+  const top = Object.entries(sum).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]))[0];
+  return top && Math.abs(top[1]) >= 1 ? top[0] : 'even';
+}
+function strengths(f, o) {
+  const a = parts(f), b = parts(o), s = [];
+  if (f.X > o.X) s.push(`cleaner condition (${X_NAMES[f.X]})`);
+  if (f.Y === 1 && o.Y === 1) { if (a.jnsq && !b.jnsq) s.push('je ne sais quoi'); if (a.consistent && !b.consistent) s.push('consistency'); }
+  if (f.Y <= 2 && o.Y <= 2 && (a.opener || 0) > (b.opener || 0)) s.push('one-phrase identity');
+  if (a.plot && !b.plot) s.push('claim drawn from the plot, not memory');
+  if (!a.subHit && b.subHit) s.push('weakness that spares its sub-genre');
+  if ((a.form || 0) - (b.form || 0) >= 2) s.push('form on the wheel');
+  return s;
+}
+function decidingQ(A, B) {
+  if (A.Y !== B.Y) {
+    const hi = A.Y > B.Y ? A : B, lo = hi === A ? B : A;
+    return `Does ${esc(poss(lo.title))} review give a viewer more reason to watch than ${esc(poss(hi.title))}, even though one is ${Y_NAMES[hi.Y]} and the other ${Y_NAMES[lo.Y]}?<small>A recommendation apart. Beating the level should come from the experience itself.</small>`;
+  }
+  const sa = strengths(A, B), sb = strengths(B, A);
+  const side = (f, s) => s.length ? `${esc(poss(f.title))} ${s[0]}` : `${esc(poss(f.title))} case as written`;
+  return `${esc(SHOW_Q.Y[A.Y])}<small>${sa.length || sb.length ? `It comes down to ${side(A, sa)} against ${side(B, sb)}.` : 'Same level, same condition, same ingredients. This one is all in the reading.'}</small>`;
+}
+function outcome(s, order, newWins) {
+  const c = JSON.parse(JSON.stringify(s)); applyVerdict(c, order, newWins, 0.5, '');
+  return c.phase === 'done' ? `lands at <b>#${c.pos + 1}</b> of ${order.length + 1}` : `next meets ${esc(byId(c.opp).title)} <b>(#${order.indexOf(c.opp) + 1})</b>`;
+}
+function watchOut(A, B) {
+  if (A.Y !== B.Y) return 'The level gap is doing most of the work. An upset here should rest on what you experienced, not on how either review is written (Art. 16).';
+  const sit = sitKey(A, B);
+  return {
+    claim: 'Most of this lean comes from the claim. That flaw is already part of the experience the case describes (Art. 9). Let it decide this only if it mattered beyond that.',
+    ingredients: 'This turns on the two ingredients. Ask which a viewer would rather take a chance on: steady realization, or the spark you can’t name.',
+    opener: 'The opening line is tipping this. A sharper sentence isn’t a better experience (Art. 23).',
+    form: 'Form is driving this: your past verdicts, not these two reviews. Judge what’s in front of you.',
+    even: 'Nothing in the components separates them. Read both reviews and trust the experience.',
+  }[sit];
+}
+function trackRecord(A, B) {
+  const sit = sitKey(A, B), past = db.matches.filter(m => m.sit === sit);
+  if (past.length < 3) return `<p>Not enough history for a pattern yet${past.length ? ` · ${past.length} matchup${past.length === 1 ? '' : 's'} ${SIT_NAME[sit]} so far` : ''}.</p>`;
+  const k = past.filter(m => m.winner === m.fav).length;
+  let extra = '';
+  if (sit === 'ingredients') {
+    const j = past.filter(m => { const w = raw(m.winner); return w && w.comp && w.comp.jnsq; }).length;
+    extra = ` The je ne sais quoi won ${j} of them.`;
+  }
+  return `<p>In ${past.length} matchups ${SIT_NAME[sit]}, you went with the lean ${k} time${k === 1 ? '' : 's'}.${extra}</p>`;
+}
+function reviewCard(f, label, pick, fav) {
   return `<div class="lab">${label}</div>
-    <div class="head">${posterHTML(f, 64)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')} · ${coordLine}</div></div></div>
-    ${current === 'X'
-      ? `<p class="note"><b>X · Claim · ${f.X} ${X_NAMES[f.X]}</b>${esc(f.xNote || '—')}</p>`
-      : `<p class="note"><b>Y · Case · ${f.Y} ${Y_NAMES[f.Y]}</b>${esc(f.yNote || '—')}</p>`}`;
+    <div class="head">${posterHTML(f, 64)}<div><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div></div>
+    <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}</div>
+    <p class="rvtext">${esc(reviewOf(f))}</p>
+    ${pick ? `<button class="pick" data-pick="${pick}">This review wins</button>` : ''}${fav ? '<span class="favtag">The lean’s pick</span>' : ''}`;
 }
-// a lobby display case: poster, nameplate, sub-genre plaque and standings (tale of the tape)
-function lobbyCase(f, me) {
-  if (!f) return `<div class="lc"><div class="lc-top">On the reel</div><div class="lc-glass"><div class="lc-empty">Tap a film on the reel to bring its one-sheet to the case.</div></div><div class="lc-rope"><i></i></div></div>`;
-  const stats = me
-    ? `<span><b>${ck(f)}</b>Coordinate</span><span><b id="lcLive">—</b>Now on ${axis}</span><span><b>${(axis === 'X' ? f.X : f.Y)}</b>${axis} level</span>`
-    : `<span><b>${ck(f)}</b>Coordinate</span><span><b>#${f.xr}</b>X rank</span><span><b>#${f.yr}</b>Y rank</span>`;
-  return `<div class="lc"><div class="lc-top">${me ? 'Now placing' : 'On the reel'}</div>
-    <div class="lc-glass">${posterHTML(f)}</div>
-    <div class="lc-plate"><div class="t">${esc(f.title)}</div><div class="y">${esc(f.year || '')}</div></div>
-    <div class="lc-genre">${f.genre ? esc(f.genre) : 'no sub-genre'}</div>
-    <div class="lc-stats">${stats}</div><div class="lc-rope"><i></i></div></div>`;
+
+/* ---------- drawing the spin ---------- */
+function slotHTML(f, me) {
+  return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${Y_NAMES[f.Y]}</div></div></div>`;
 }
-function renderMine() { $('#evMine').innerHTML = lobbyCase(active.film, true); }
-// Panels match the wheel's height; a rationale too long for the panel is set in smaller type rather than cut or scrolled.
-function fitPanels() {
-  const m = document.querySelector('.machine'), wide = innerWidth > 900;
-  ['#evMine', '#evPeek'].forEach(sel => {
-    const card = $(sel); if (!card) return;
-    card.style.setProperty('--mh', wide && m ? m.offsetHeight + 'px' : 'auto');
-    let fs = 17; card.style.setProperty('--nfs', fs + 'px');
-    if (!wide) return;
-    const note = card.querySelector('.note'); if (!note) return;
-    while (fs > 11 && note.scrollHeight > note.clientHeight + 1) { fs -= 0.5; card.style.setProperty('--nfs', fs + 'px'); }
-  });
+function renderSpin() {
+  const s = db.workflow.spin, order = spinOrder(), A = active.film, done = s.phase === 'done';
+  $('#checkIn').hidden = true;
+  const est = estMatchups(order.length);
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA[active.mode] || 'The wheel'}</div>
+    <h2>${done ? 'The wheel has spoken' : `Matchup ${s.log.length + 1}${s.phase === 'confirm' ? ' · the check' : ''}`}</h2>
+    <p>${esc(A.title)} · ${levelLine(A)} · about ${est} matchup${est === 1 ? '' : 's'} against a wheel of ${order.length}</p>
+    <div class="steps">${s.log.map(e => `<i class="${e.newWins ? 'w' : 'l'}" title="${e.newWins ? 'Won' : 'Lost'} against ${esc(byId(e.opp)?.title || '')}"></i>`).join('')}${done ? '' : '<i class="on"></i>'}</div>
+    <div class="under" style="margin-top:6px">${s.log.length ? '<button class="linkish" data-undo>↶ Undo the last verdict</button>' : ''}<button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
+  const list = done ? [...order.slice(0, s.pos), A.id, ...order.slice(s.pos)] : order;
+  drum.innerHTML = list.map(id => slotHTML(id === A.id ? A : byId(id), id === A.id)).join('');
+  if (done) {
+    const above = byId(order[s.pos - 1]), below = byId(order[s.pos]);
+    $('#rvMine').innerHTML = reviewCard(A, `Your review · lands at #${s.pos + 1}`, '', false);
+    $('#rvOpp').innerHTML = above || below ? reviewCard(above || below, above ? `Just above it · #${s.pos}` : `Just below it · #${s.pos + 2}`, '', false) : '';
+    $('#rvOpp').hidden = !(above || below);
+    renderDone(s, order);
+    setTarget(s.pos);
+  } else {
+    const B = byId(s.opp), p = leanOf(A, B);
+    $('#rvOpp').hidden = false;
+    $('#rvMine').innerHTML = reviewCard(A, active.from != null ? `Your review · was #${active.from + 1}` : 'Your review · new to the wheel', 'new', p > 0.53);
+    $('#rvOpp').innerHTML = reviewCard(B, `On the wheel · #${order.indexOf(B.id) + 1}`, 'opp', p < 0.47);
+    $('#rvMine').classList.toggle('fav', p > 0.53); $('#rvOpp').classList.toggle('fav', p < 0.47);
+    renderConsole(s, order, A, B, p);
+    setTarget(order.indexOf(B.id));
+  }
+  if (done) { $('#rvMine').classList.remove('fav'); $('#rvOpp').classList.remove('fav'); }
+  drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', !done && el.dataset.id === s.opp));
+  $('#endTop').innerHTML = 'Top of the wheel<span>#1</span>';
+  $('#endBot').innerHTML = `Bottom of the wheel<span>#${list.length}</span>`;
+  layoutDrum();
 }
-addEventListener('resize', () => { if (current === 'auditorium' && active) fitPanels(); });
-function renderPeek() {
-  const f = films.find(v => v.id === peekId);
-  $('#evPeek').innerHTML = lobbyCase(f, false);
-  drum.querySelectorAll('.slot').forEach(s => s.classList.toggle('peek', s.dataset.id === peekId));
-  $('#argue').outerHTML = f ? argueHTML(active.film, f, axis, 'argue') : `<div class="argue idle" id="argue">Tap a film on the reel to see each film’s ${axis === 'X' ? 'claim' : 'case'}, side by side.</div>`;
-  fitPanels();
+function renderConsole(s, order, A, B, p) {
+  const even = Math.abs(p - 0.5) < 0.03, fav = p >= 0.5 ? A : B, pf = pct(Math.max(p, 1 - p));
+  const row = (label, a, b) => `<tr><td>${label}</td><td>${a}</td><td>${b}</td></tr>`;
+  const sa = standing(A), sb = standing(B), fa = +db.form[A.id] || 0, fb = +db.form[B.id] || 0;
+  const fmt = v => (v > 0 ? '+' : '') + v.toFixed(1);
+  $('#desk').hidden = true;
+  $('#mu').innerHTML = `
+    <div class="mu-lean"><span class="k">The lean</span><b>${even ? '50%' : pf + '%'}</b><em>${even ? 'Dead even' : 'Leans ' + esc(fav.title)}</em>
+      <div class="mu-bar" role="img" aria-label="${esc(A.title)} ${pct(p)} percent, ${esc(B.title)} ${100 - pct(p)} percent"><i style="width:${(p * 100).toFixed(1)}%"></i></div>
+      <div class="mu-ends"><span>${esc(A.title)} · ${pct(p)}%</span><span>${100 - pct(p)}% · ${esc(B.title)}</span></div></div>
+    <div class="mu-q"><span class="k">The question that decides it</span><p>${decidingQ(A, B)}</p></div>
+    <div class="mu-two">
+      <div><span class="k">What’s at stake</span><p><b>If ${esc(A.title)} wins,</b> it ${outcome(s, order, true)}.</p><p><b>If ${esc(B.title)} wins,</b> ${esc(A.title)} ${outcome(s, order, false)}.</p></div>
+      <div><span class="k">Watch out</span><p class="mu-warn">${watchOut(A, B)}</p></div>
+    </div>
+    <div class="mu-rec"><span class="k">Your track record</span>${trackRecord(A, B)}</div>
+    <table class="mu-stats"><thead><tr><th></th><th>${esc(A.title)}</th><th>${esc(B.title)}</th></tr></thead><tbody>
+      ${row('On the wheel', active.from != null ? '#' + (active.from + 1) + ' now' : 'New', '#' + (order.indexOf(B.id) + 1))}
+      ${row('Record', sa.n ? `${sa.w}–${sa.l}` : '—', sb.n ? `${sb.w}–${sb.l}` : '—')}
+      ${row('Since entry', sa.entry ? moveText(moveOf(sa, sa.overall)) : '—', moveText(moveOf(sb, sb.overall)))}
+      ${row('Form', fa ? fmt(fa) : '0.0', fb ? fmt(fb) : '0.0')}
+    </tbody></table>
+    <div class="mu-picks"><button class="pick" data-pick="new">${esc(A.title)} wins</button><button class="pick" data-pick="opp">${esc(B.title)} wins</button></div>`;
 }
-function pos() { return Math.round(target); }      // your film sits above films[pos]
-function renderTally() {
-  const p = pos(), rank = p + 1, wins = N - p, losses = p;
-  $('#verdict').innerHTML = `Your film stands <b>#${rank}</b> of ${N + 1} on ${axis}`;
-  const lv = $('#lcLive'); if (lv) lv.textContent = `#${rank}`;
-  $('#tally').innerHTML = `<span class="w">${wins} win${wins === 1 ? '' : 's'}</span><span class="l">${losses} loss${losses === 1 ? '' : 'es'}</span>`;
-  reel.setAttribute('aria-valuenow', rank);
-  reel.setAttribute('aria-valuetext', `#${rank} of ${N + 1}`);
+function renderDone(s, order) {
+  const w = s.log.filter(e => e.newWins).length, l = s.log.length - w;
+  const ups = s.log.filter(e => (e.newWins ? e.lean : 1 - e.lean) < 0.5).length;
+  $('#mu').innerHTML = `<div class="mu-lean"><span class="k">Where it lands</span><b>#${s.pos + 1}</b><em>of ${order.length + 1} on the wheel</em></div>
+    <div class="mu-log">${s.log.map(e => `<div><b class="${e.newWins ? 'w' : 'l'}">${e.newWins ? 'Beat' : 'Lost to'}</b> ${esc(byId(e.opp)?.title || '')}<span>the lean gave it ${pct(e.lean)}%${(e.newWins ? e.lean : 1 - e.lean) < 0.5 ? ' · upset' : ''}</span></div>`).join('')}</div>`;
+  $('#desk').hidden = false;
+  $('#placing').style.display = '';
+  $('#verdict').innerHTML = `${esc(active.film.title)} lands at <b>#${s.pos + 1}</b> of ${order.length + 1}`;
+  $('#tally').innerHTML = `<span class="w">${w} win${w === 1 ? '' : 's'}</span><span class="l">${l} loss${l === 1 ? '' : 'es'}</span>${ups ? `<span style="color:var(--gold-hi)">${ups} upset${ups === 1 ? '' : 's'}</span>` : ''}`;
+  $('#lockBtn').textContent = 'Lock it in'; $('#lockBtn').disabled = false;
 }
+
+/* ---------- the wheel itself: spins to each matchup ---------- */
 function layoutDrum() {
-  const slots = drum.children;
-  if (slots.length !== N + 1) return;
+  const slots = drum.children, n = slots.length; if (!n) return;
   const sh = innerWidth <= 640 ? 80 : 92;
   const radius = (sh / 2 + 3) / Math.tan(SLOT_DEG / 2 * Math.PI / 180);
-  for (let i = 0; i < N; i++) {
-    const u = i + 0.5 - g;
-    const d = Math.abs(u) >= 0.5 ? u + 0.5 * Math.sign(u) : 2 * u;
-    place(slots[i], d, radius, i + (i >= pos() ? 2 : 1));
-  }
-  place(slots[N], 0, radius, pos() + 1);
+  for (let i = 0; i < n; i++) place(slots[i], i - g, radius, i + 1);
 }
 function place(el, d, radius, rank) {
   const ang = d * SLOT_DEG, vis = Math.abs(d) < 4.6;
-  el.style.visibility = vis ? '' : 'hidden';   // '' inherits, so a hidden room's reel can't catch clicks
+  el.style.visibility = vis ? '' : 'hidden';
   if (!vis) return;
   el.style.transform = `translateZ(${-radius}px) rotateX(${-ang}deg) translateZ(${radius}px)`;
   el.style.opacity = Math.max(0, 1 - Math.abs(d) * 0.2).toFixed(3);
-  el.style.zIndex = el.classList.contains('me') ? 10 : Math.round(10 - Math.abs(d) * 2);
+  el.style.zIndex = el.classList.contains('me') || el.classList.contains('peek') ? 10 : Math.round(10 - Math.abs(d) * 2);
   el.querySelector('.rk').textContent = '#' + rank;
 }
-let raf = null;
 function animate() {
   const diff = target - g;
   if (Math.abs(diff) < 0.002) { g = target; layoutDrum(); raf = null; return; }
-  g += diff * (reduceMotion ? 1 : 0.22);
+  g += diff * (reduceMotion ? 1 : 0.12);
   layoutDrum();
   raf = requestAnimationFrame(animate);
 }
-function setTarget(t, snap = true) {
-  target = Math.max(0, Math.min(N, t));
-  if (snap) target = Math.round(target);
-  renderTally();
-  if (!raf) raf = requestAnimationFrame(animate);
-}
-let wheelAcc = 0;
-reel.addEventListener('wheel', e => {
-  e.preventDefault();
-  wheelAcc += e.deltaY;
-  const steps = Math.trunc(wheelAcc / 60);
-  if (steps) { wheelAcc -= steps * 60; setTarget(pos() + steps); }
-}, { passive: false });
-let drag = null;
-reel.addEventListener('pointerdown', e => { drag = { y: e.clientY, start: target, moved: false, id: e.pointerId, slot: e.target.closest('.slot') }; });
-addEventListener('pointermove', e => {
-  if (!drag || e.pointerId !== drag.id) return;
-  const dy = e.clientY - drag.y;
-  if (Math.abs(dy) > 6 && !drag.moved) { drag.moved = true; try { reel.setPointerCapture(drag.id); } catch (_) {} }
-  if (drag.moved) {
-    const sh = innerWidth <= 640 ? 80 : 92;
-    target = Math.max(0, Math.min(N, drag.start - dy / (sh * 0.85)));
-    renderTally();
-    if (!raf) raf = requestAnimationFrame(animate);
-  }
-});
-addEventListener('pointerup', e => {
-  if (!drag || e.pointerId !== drag.id) return;
-  if (drag.moved) setTarget(target);
-  else if (drag.slot && drag.slot.dataset.id !== active?.film.id) { peekId = drag.slot.dataset.id; renderPeek(); }
-  drag = null;
-});
-addEventListener('pointercancel', () => { if (drag) { setTarget(target); drag = null; } });
-reel.addEventListener('pointerover', e => {
-  if (e.pointerType !== 'mouse' || drag) return;
-  const s = e.target.closest('.slot');
-  if (s && s.dataset.id !== active?.film.id && s.dataset.id !== peekId) { peekId = s.dataset.id; renderPeek(); }
-});
-reel.addEventListener('keydown', e => {
-  if (e.key === 'ArrowDown') { e.preventDefault(); setTarget(pos() + 1); }
-  if (e.key === 'ArrowUp') { e.preventDefault(); setTarget(pos() - 1); }
-  if (e.key === 'Home') { e.preventDefault(); setTarget(0); }
-  if (e.key === 'End') { e.preventDefault(); setTarget(N); }
-});
-$('#upBtn').addEventListener('click', () => setTarget(pos() - 1));
-$('#downBtn').addEventListener('click', () => setTarget(pos() + 1));
+function setTarget(t) { target = Math.max(0, t); if (!raf) raf = requestAnimationFrame(animate); }
 addEventListener('resize', () => layoutDrum());
 
-$('#lockBtn').addEventListener('click', async () => {
+/* ---------- verdicts, undo, cancel, lock ---------- */
+$('#auditorium').addEventListener('click', async e => {
   if (!active || !canEdit()) return;
-  const p = pos();
-  placed[axis] = { pos: p, order: films.slice(), note: $('#consider').value.trim() };
-  if (axis === 'X') {
-    $('#lockBtn').textContent = 'X locked ✓';
-    setTimeout(() => { loadAxis('Y'); $('#stage').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, reduceMotion ? 0 : 500);
-  } else {
-    $('#lockBtn').disabled = true; $('#lockBtn').textContent = 'Recording…';
-    const id = active.film.id, tallies = { X: placed.X, Y: placed.Y };
-    const ok = await commitPlacement();
-    if (ok) showResults(id, tallies);
+  const pk = e.target.closest('[data-pick]');
+  if (pk && db.workflow?.spin && db.workflow.spin.phase !== 'done') {
+    const s = db.workflow.spin, A = active.film, B = byId(s.opp);
+    applyVerdict(s, spinOrder(), pk.dataset.pick === 'new', leanOf(A, B), sitKey(A, B));
+    renderSpin(); persist();
+    $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
+    return;
   }
+  if (e.target.closest('[data-undo]') && db.workflow?.spin) { undoVerdict(db.workflow.spin); renderSpin(); persist(); return; }
+  if (e.target.closest('[data-cancelspin]')) return cancelWorkflow();
 });
-
-function verdictHTML(f, extra) {
-  const st = standing(f), c = ck(f);
-  const listed = LISTED.includes(c);
+$('#lockBtn').addEventListener('click', async () => {
+  if (!active || !canEdit() || !db.workflow?.spin || db.workflow.spin.phase !== 'done') return;
+  $('#lockBtn').disabled = true; $('#lockBtn').textContent = 'Recording…';
+  const s = db.workflow.spin, f = active.film, t = Date.now();
+  s.log.forEach((e, i) => {
+    const winner = e.newWins ? f.id : e.opp, loser = e.newWins ? e.opp : f.id, pw = e.newWins ? e.lean : 1 - e.lean, d = FORM_K * (1 - pw);
+    db.matches.push({ id: 'match:' + uid(), a: f.id, b: e.opp, winner, lean: r1(e.lean * 1000) / 1000, fav: e.lean >= 0.5 ? f.id : e.opp, sit: e.sit, via: active.mode, at: t + i });
+    db.form[winner] = r1((+db.form[winner] || 0) + d); db.form[loser] = r1((+db.form[loser] || 0) - d);
+  });
+  placeAt(s.pos, $('#consider').value.trim(), s.log);
+});
+async function placeAt(pos, note, log) {
+  const f = active.film, order = spinOrder(), from = active.from, mode = active.mode;
+  db.wheel = order.slice(); db.wheel.splice(pos, 0, f.id);
+  db.wheelLog.push({ id: 'wl:' + uid(), type: 'place', film: f.id, pos, of: db.wheel.length, via: mode, from, note, at: Date.now() + 50 });
+  endWorkflow(); justPlaced = f.id; $('#consider').value = '';
+  const ok = await persist();
+  if (ok) showResults(f.id, { log, from, note });
+}
+function verdictHTML(f, info) {
+  const st = standing(f), w = info.log.filter(e => e.newWins).length, l = info.log.length - w;
+  const ups = info.log.filter(e => (e.newWins ? e.lean : 1 - e.lean) < 0.5).length;
+  const moved = info.from == null ? (info.log.length ? 'New to the wheel' : 'The first review on the wheel') : info.from + 1 === st.overall ? `Held its place at #${st.overall}` : `Moved from #${info.from + 1} to #${st.overall}`;
   return `<div class="intertitle" style="margin:0 auto">
-      <div class="k">The verdict · ${c}</div>
+      <div class="k">The verdict · ${levelLine(f)}</div>
       <h2>${esc(f.title)}</h2>
-      <p>${listed ? 'takes its place in the collection.' : 'is shelved, awaiting placement — its coordinate sits outside your hierarchy.'}</p>
+      <p>takes its place on the wheel.</p>
       <div class="grid">
-        <div class="cell"><b>#${f.xr}</b><span>X standing</span></div>
-        <div class="cell"><b>#${f.yr}</b><span>Y standing</span></div>
-        <div class="cell"><b>#${st.overall || '—'}</b><span>Overall</span></div>
-        <div class="cell"><b>#${st.inGroup}</b><span>In ${c}</span></div>
+        <div class="cell"><b>#${st.overall}</b><span>Of ${st.of}</span></div>
+        <div class="cell"><b>${w}–${l}</b><span>This spin</span></div>
+        <div class="cell"><b>${ups}</b><span>Upset${ups === 1 ? '' : 's'}</span></div>
+        <div class="cell"><b>${st.stars.toFixed(1)}</b><span>Stars</span></div>
       </div>
-      ${listed ? `<div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>` : ''}
-      <p class="filed">${listed ? `Overall #${st.overall} of ${st.of}` : 'Awaiting placement'}${extra || ''}</p>
-      <p class="filed" style="font-size:15px;opacity:.7">The booth and the screening room are sealed for this film again. Only a deliberate re-evaluation or reconsideration reopens them.</p>
+      <div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>
+      <p class="filed">${moved}${info.note ? ' · consideration filed in the Film Vault' : ''}</p>
+      <p class="filed" style="font-size:15px;opacity:.7">The auditorium closes for this film. Buy another ticket from the lobby to spin it again.</p>
       <div><button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open the Film Vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
       <span class="orn"></span></div>`;
 }
-function showResults(id, t) {
+function showResults(id, info) {
   const f = byId(id); if (!f) return goTo('lobby');
-  const w = a => `${t[a].order.length - t[a].pos}–${t[a].pos}`;
-  const notes = ['X', 'Y'].filter(a => t[a].note).length;
-  lastVerdict = verdictHTML(f, ` · X ${w('X')} · Y ${w('Y')}${notes ? ` · ${notes} consideration${notes > 1 ? 's' : ''} filed in the Film Vault` : ''}`);
-  enterAuditorium();
-  $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
-}
-function showVerdictOnly(id) {
-  const f = byId(id); if (!f) return goTo('lobby');
-  justPlaced = id;
-  lastVerdict = verdictHTML(f, ' · first in its group');
-  goTo('auditorium');
+  lastVerdict = verdictHTML(f, info);
+  if (current === 'auditorium') { enterAuditorium(); $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' }); }
+  else goTo('auditorium');
 }
 // leaving the verdict clears it, so the auditorium goes dark again
 document.addEventListener('click', e => {
@@ -2718,9 +2904,8 @@ let vaultAxis = '', vaultQuery = '', vaultPage = 1;
 function renderVault() {
   $('#vaultIn').innerHTML = `
     <div class="ns"><div class="k">The Film Vault · CmanCinema</div><h2>The Archives</h2><div class="dots"></div>
-      <p>Every decisive consideration, filed with the placement it decided.</p></div>
+      <p>Every decisive consideration, filed with the placement it decided on the wheel.</p></div>
     <div class="controls">
-      <div class="chips">${[['', 'All'], ['X', 'X · Condition'], ['Y', 'Y · Recommendation']].map(([v, l]) => `<button data-ax="${v}" class="${vaultAxis === v ? 'on' : ''}">${l}</button>`).join('')}</div>
       <input class="placard" id="vSearch" placeholder="Search films or words…" value="${esc(vaultQuery)}" autocomplete="off">
     </div>
     <div class="vgrid" id="vgrid"></div><div id="vpager"></div>`;
@@ -2729,19 +2914,18 @@ function renderVault() {
 }
 function renderVaultGrid() {
   const q = vaultQuery.trim().toLowerCase();
-  const list = VAULT.filter(v => byId(v.film) && (!vaultAxis || v.axis === vaultAxis) && (!q || byId(v.film).title.toLowerCase().includes(q) || v.note.toLowerCase().includes(q) || (v.vs || '').toLowerCase().includes(q)))
-    .sort((a, b) => b.at - a.at);
+  const list = VAULT.filter(v => byId(v.film) && (!q || byId(v.film).title.toLowerCase().includes(q) || v.note.toLowerCase().includes(q))).sort((a, b) => b.at - a.at);
   const pages = Math.max(1, Math.ceil(list.length / VAULT_PAGE));
   vaultPage = Math.min(Math.max(1, vaultPage), pages);
   $('#vpager').innerHTML = pagerHTML(vaultPage, pages, 'vp') + (list.length ? `<p class="pager-note">${list.length} consideration${list.length === 1 ? '' : 's'} on file</p>` : '');
   $('#vgrid').innerHTML = list.length ? list.slice((vaultPage - 1) * VAULT_PAGE, vaultPage * VAULT_PAGE).map(v => {
-    const f = byId(v.film);
-    return `<div class="can"><span class="stamp">${v.axis}</span>${posterHTML(f, 70)}
+    const f = byId(v.film), now = f.pos != null ? f.pos + 1 : null;
+    return `<div class="can"><span class="stamp">#${v.pos + 1}</span>${posterHTML(f, 70)}
       <div><button class="ti" data-film="${esc(f.id)}">${esc(f.title)}</button>
-        <div class="me">${v.axis === 'X' ? 'Condition' : 'Recommendation'} · ${v.rank ? `#${v.rank} of ${v.of} in ${v.coord}` : `${v.coord}${v.vs ? ' · vs ' + esc(v.vs) : ''}`}${v.at ? ' · ' + new Date(v.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
-        ${v.prev ? `<span class="tag">From its earlier group · now ${ck(f)}</span>` : v.old ? '<span class="tag">Earlier placement</span>' : ''}</div>
+        <div class="me">${VIA[v.via] || 'Placed'} · #${v.pos + 1} of ${v.of}${v.at ? ' · ' + new Date(v.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
+        ${now && now !== v.pos + 1 ? `<span class="tag">Now #${now}</span>` : ''}</div>
       <p class="cons">${esc(v.note)}</p></div>`;
-  }).join('') : `<p class="ns" style="grid-column:1/-1;font:italic 500 19px var(--body)">No considerations filed${vaultAxis ? ' on ' + vaultAxis : ''} yet.</p>`;
+  }).join('') : `<p class="ns" style="grid-column:1/-1;font:italic 500 19px var(--body)">No considerations filed yet. Write one as you lock a review into place.</p>`;
 }
 $('#vault').addEventListener('click', e => {
   const c = e.target.closest('[data-ax]'); if (c) { vaultAxis = c.dataset.ax; vaultPage = 1; return renderVault(); }
@@ -2751,459 +2935,140 @@ $('#vault').addEventListener('click', e => {
 });
 
 /* =====================================================================
-   THE GAME ROOM · statistics
+   THE GAME ROOM · statistics only
+   Every number here comes from the wheel: positions, matchups, the lean
+   and the levels you gave each review. Nothing in this room edits anything.
    ===================================================================== */
 function flip(text) {
   return `<span class="flip">${[...String(text)].map((ch, i) => `<i class="${/[0-9A-Z]/i.test(ch) ? 'go' : 'p'}" style="animation-delay:${i * 70}ms">${esc(ch)}</i>`).join('')}</span>`;
 }
-function cabinet(title, sub, body, n = 54) {
+function cabinet(title, sub, body, n = 54, id2) {
   const id = 'cab' + Math.random().toString(36).slice(2, 7);
   setTimeout(() => { const el = document.getElementById(id); if (el) bulbs(el, n); });
-  return `<div class="cab"><div class="lights" id="${id}"></div><h3>${title}</h3>${sub ? `<div class="sub">${sub}</div>` : ''}${body}</div>`;
+  return `<div class="cab" ${id2 ? `id="${id2}"` : ''}><div class="lights" id="${id}"></div><h3>${title}</h3>${sub ? `<div class="sub">${sub}</div>` : ''}${body}</div>`;
+}
+const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', 'ND', 'RD'][n % 10] || 'TH');
+const span = ms => { const h = Math.floor(ms / 3600000), d = Math.floor(h / 24); return d ? `${d}d ${h % 24}h` : h ? `${h}h` : `${Math.max(1, Math.round(ms / 60000))}m`; };
+const Y_SHORT = { 0: 'Not Rec.', 1: 'Rec-able', 2: 'Rec’d', 3: 'Highly', 4: 'Must-See', 5: 'Essential' };
+let hsBoard = 'top';
+const HS_BOARDS = [['top', 'Top of the wheel'], ['climb', 'Biggest climbers'], ['upset', 'Upset kings'], ['reign', 'Longest reign']];
+function hsRows() {
+  const { ranked } = board(), N = ranked.length;
+  const withSt = ranked.map((f, i) => ({ f, i, st: standing(f) }));
+  let list;
+  if (hsBoard === 'top') list = withSt.slice(0, 10).map(v => [v.i + 1, v.f, `★ ${STAR(v.i + 1, N).toFixed(1)}`]);
+  if (hsBoard === 'climb') list = withSt.map(v => ({ ...v, m: moveOf(v.st, v.i + 1) })).filter(v => v.m > 0).sort((a, b) => b.m - a.m).slice(0, 10).map((v, k) => [k + 1, v.f, `↑${v.m}`]);
+  if (hsBoard === 'upset') list = withSt.filter(v => v.st.upsets).sort((a, b) => b.st.upsets - a.st.upsets || a.i - b.i).slice(0, 10).map((v, k) => [k + 1, v.f, `${v.st.upsets} upset${v.st.upsets === 1 ? '' : 's'}`]);
+  if (hsBoard === 'reign') list = withSt.filter(v => v.st.reign).sort((a, b) => b.st.reign - a.st.reign).slice(0, 10).map((v, k) => [k + 1, v.f, span(v.st.reign)]);
+  return list.map(([r, f, right], i) => `<button class="hs-row ${r <= 3 ? 'm' + r : ''}" data-film="${esc(f.id)}" style="--d:${i * 55}ms"><b>${ordinal(r)}</b>${posterHTML(f)}<span>${esc(f.title)}</span><em>${right}</em></button>`).join('')
+    || `<div class="hs-empty">${{ top: 'The wheel is empty.', climb: 'No film has climbed yet.', upset: 'No upsets yet. Every verdict has gone with the lean.', reign: 'Nobody has held #1 yet.' }[hsBoard]}</div>`;
+}
+function hsMachine() {
+  const name = HS_BOARDS.find(b => b[0] === hsBoard)[1];
+  return `<div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${name}</small></div>
+    <div class="hs-tabs">${HS_BOARDS.map(([k, l]) => `<button class="${k === hsBoard ? 'on' : ''}" data-hsb="${k}">${l}</button>`).join('')}</div>
+    <div class="arc-bezel"><div class="hs-screens one"><div class="crt x roll"><div class="crt-in">
+      <div class="crt-h"><b>★</b><span>${name}<small>${{ top: 'Highest on the wheel right now', climb: 'Most places gained since entry', upset: 'Most wins against the lean', reign: 'Most time spent at #1' }[hsBoard]}</small></span><em class="hi">HI-SCORE</em></div>
+      <div class="hs-rows">${hsRows()}</div></div></div></div></div>
+    <div class="arc-panel" aria-hidden="true"><span class="arc-joy"></span><span class="arc-btns"><i></i><i></i></span></div></div>`;
 }
 function renderGame() {
-  const { ranked } = board(), all = COLL, n = all.length;
+  const { ranked } = board(), all = COLL, n = all.length, N = ranked.length;
   const avg = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : 0;
-  const total = f => f.X + f.Y;
   if (!n) {
     $('#gameIn').innerHTML = `<div class="ns"><div class="k">The Game Room · CmanCinema</div><h2>By the Numbers</h2><div class="dots"></div>
       <p>${cloud.ready ? 'The machines are switched off until the first film is admitted.' : 'The machines are warming up…'}</p></div>`;
     return;
   }
+  const ms = db.matches, ups = ms.filter(m => winnerChance(m) < 0.5).length, withLean = ms.filter(m => m.winner === m.fav).length;
+  const starOf = new Map(ranked.map((f, i) => [f.id, STAR(i + 1, N)]));
   const nLF = db.lostfound.length, seen = n + UNEVALUATED.length + nLF;
-  const sb = [
-    [seen, 'Films seen'],
-    [n, 'Ranked'],
-    [nLF, 'Lost & Found'],
-    [avg(all.map(total)).toFixed(1), 'Avg total / 10'],
-    [avg(all.map(f => f.X)).toFixed(1), 'Avg X'],
-    [avg(all.map(f => f.Y)).toFixed(1), 'Avg Y'],
-    [new Set(all.map(ck)).size, 'Coordinates in use'],
-    [VAULT.filter(v => byId(v.film)).length, 'Considerations'],
-  ];
+  const sb = [[seen, 'Films seen'], [N, 'On the wheel'], [QUEUE.length, 'In the queue'], [nLF, 'Lost & Found'],
+    [ms.length, 'Matchups'], [ups, 'Upsets'], [ms.length ? Math.round(withLean / ms.length * 100) + '%' : '—', 'With the lean'], [N ? avg([...starOf.values()]).toFixed(1) : '—', 'Avg stars']];
+  // the Case × Claim board
+  const count = {}; all.forEach(f => { const k = f.X + '/' + f.Y; count[k] = (count[k] || 0) + 1; });
+  const maxC = Math.max(1, ...Object.values(count));
+  let boardH = `<div></div>${[0, 1, 2, 3, 4, 5].map(y => `<div class="hd">${Y_SHORT[y]}</div>`).join('')}`;
+  for (const x of [5, 4, 3, 2, 1]) {
+    boardH += `<div class="rh">${X_NAMES[x]}</div>`;
+    for (const y of [0, 1, 2, 3, 4, 5]) {
+      const k = count[x + '/' + y] || 0, h = k ? (0.25 + 0.75 * k / maxC) : 0;
+      boardH += `<button class="bcell ${k ? '' : 'zero'} ${h < .5 && k ? 'light' : ''}" style="--h:${h.toFixed(2)}" ${k ? `data-lvl="${y}"` : 'disabled'} title="${Y_NAMES[y]} · ${X_NAMES[x]} · ${k} film${k === 1 ? '' : 's'}">${k || ''}</button>`;
+    }
+  }
+  const dist = (key, levels, nm) => {
+    const m = Math.max(1, ...levels.map(l => all.filter(f => f[key] === l).length));
+    return `<div class="bars2">${levels.map(l => { const k = all.filter(f => f[key] === l).length;
+      return `<div class="bar2"><b>${key === 'Y' ? l : '·'}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm[l]}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
+  };
+  // stars: how they spread, and by decade
+  const bins = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5], sc = bins.map(b => [...starOf.values()].filter(v => v === b).length), sm = Math.max(1, ...sc);
+  const starHist = `<div class="hist">${sc.map(k => `<div><b>${k || ''}</b><em style="height:0" data-h="${(k / sm * 100).toFixed(1)}%"></em></div>`).join('')}</div>
+    <div class="hlab">${bins.map(b => `<span>${b % 1 ? b : b + '.0'}</span>`).join('')}</div>`;
+  const dec = {}; ranked.forEach(f => { const y = parseInt(f.year); if (!isNaN(y)) { const d = Math.floor(y / 10) * 10; (dec[d] ||= []).push(starOf.get(f.id)); } });
+  const dk = Object.keys(dec).sort(), dm = Math.max(1, ...dk.map(d => dec[d].length));
+  const decades = dk.length ? `<div class="hist">${dk.map(d => `<div><b>${dec[d].length}</b><em style="height:0" data-h="${(dec[d].length / dm * 100).toFixed(1)}%"></em></div>`).join('')}</div>
+    <div class="hlab">${dk.map(d => `<span>’${String(d).slice(2)}s<small>★ ${avg(dec[d]).toFixed(1)}</small></span>`).join('')}</div>` : '<div class="sub">No release years on the wheel yet.</div>';
+  const bestDec = dk.slice().sort((a, b) => avg(dec[b]) - avg(dec[a]))[0];
+  // prizes
+  const prize = (k, f, line) => f ? `<button class="prize" data-film="${esc(f.id)}"><div class="k">${k}</div>${posterHTML(f)}<div><strong>${esc(f.title)}</strong><small>${line}</small></div></button>` : '';
+  const big = ms.slice().sort((a, b) => winnerChance(a) - winnerChance(b))[0];
+  const bigUp = big && winnerChance(big) < 0.5 ? big : null;
+  const tested = all.map(f => ({ f, st: standing(f) })).filter(v => v.st.n).sort((a, b) => b.st.n - a.st.n)[0];
+  const climber = ranked.map((f, i) => ({ f, m: moveOf(standing(f), i + 1) })).filter(v => v.m > 0).sort((a, b) => b.m - a.m)[0];
+  const newest = all.slice().sort((a, b) => b.added - a.added)[0];
+  // the calibration meter
+  const buckets = [[50, 60], [60, 70], [70, 80], [80, 90], [90, 101]].map(([lo, hi]) => {
+    const inB = ms.filter(m => { const p = Math.max(m.lean, 1 - m.lean) * 100; return p >= lo && p < hi; });
+    return { lo, hi, n: inB.length, won: inB.filter(m => m.winner === m.fav).length };
+  });
+  const overrides = ms.filter(m => m.winner !== m.fav), oc = {}; overrides.forEach(m => { oc[m.sit] = (oc[m.sit] || 0) + 1; });
+  const topO = Object.entries(oc).sort((a, b) => b[1] - a[1])[0];
+  const calib = ms.length ? `<div class="bars2">${buckets.map(b => `<div class="bar2"><b style="font-size:13px">${b.lo}${b.hi > 100 ? '+' : '–' + b.hi}</b><div class="tr"><em style="width:0" data-w="${b.n ? (b.won / b.n * 100).toFixed(1) : 0}%"></em><span>${b.n ? `Favorite won ${b.won} of ${b.n}` : 'No matchups at this lean'}</span></div><i>${b.n ? Math.round(b.won / b.n * 100) + '%' : '—'}</i></div>`).join('')}</div>
+    <p class="cal-note">${overrides.length ? `You’ve overruled the lean ${overrides.length} time${overrides.length === 1 ? '' : 's'} in ${ms.length}${topO ? `, most often when it was ${SIT_NAME[topO[0]] || 'close'}` : ''}.` : `You’ve gone with the lean in all ${ms.length} matchup${ms.length === 1 ? '' : 's'}.`} ${ms.length >= 30 ? 'There’s enough history to retune the weights.' : `Around 30 matchups, there’s enough history to retune the weights (${ms.length} so far).`}</p>`
+    : '<p class="cal-note">The meter calibrates as you decide matchups. A good lean’s favorites win about as often as their percentage says.</p>';
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
-  const count = {}; all.forEach(f => count[ck(f)] = (count[ck(f)] || 0) + 1);
-  const maxC = Math.max(1, ...Object.values(count));
-  let boardH = `<div></div>${[0, 1, 2, 3, 4, 5].map(y => `<div class="hd">Y${y}<small>${Y_NAMES[y]}</small></div>`).join('')}`;
-  for (const x of [5, 4, 3, 2, 1]) {
-    boardH += `<div class="rh">X${x}</div>`;
-    for (const y of [0, 1, 2, 3, 4, 5]) {
-      const c = `${x}/${y}`, k = count[c] || 0, h = k ? (0.25 + 0.75 * k / maxC) : 0;
-      boardH += `<button class="bcell ${k ? '' : 'zero'} ${LISTED.includes(c) ? '' : 'off'} ${h < .5 && k ? 'light' : ''}" style="--h:${h.toFixed(2)}" ${k ? `data-coord="${c}"` : 'disabled'} title="${c} · ${names(c)} · ${k} film${k === 1 ? '' : 's'}">${k || ''}</button>`;
-    }
-  }
-  const dist = (ax, levels, nm) => {
-    const m = Math.max(1, ...levels.map(l => all.filter(f => f[ax] === l).length));
-    return `<div class="bars2">${levels.map(l => { const k = all.filter(f => f[ax] === l).length;
-      return `<div class="bar2"><b>${l}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm[l]}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
-  };
-  const tot = [...Array(11).keys()].slice(1), tm = Math.max(1, ...tot.map(t => all.filter(f => total(f) === t).length));
-  const hist = `<div class="hist">${tot.map(t => { const k = all.filter(f => total(f) === t).length; return `<div><b>${k || ''}</b><em style="height:0" data-h="${(k / tm * 100).toFixed(1)}%"></em></div>`; }).join('')}</div>
-    <div class="hlab">${tot.map(t => `<span>${t}</span>`).join('')}</div>`;
-  const dec = {}; all.forEach(f => { const y = parseInt(f.year); if (!isNaN(y)) { const d = Math.floor(y / 10) * 10; (dec[d] ||= []).push(f); } });
-  const dk = Object.keys(dec).sort(), dm = Math.max(1, ...dk.map(d => dec[d].length));
-  const decades = dk.length ? `<div class="hist">${dk.map(d => `<div><b>${dec[d].length}</b><em style="height:0" data-h="${(dec[d].length / dm * 100).toFixed(1)}%"></em></div>`).join('')}</div>
-    <div class="hlab">${dk.map(d => `<span>’${String(d).slice(2)}s<small>avg ${avg(dec[d].map(total)).toFixed(1)}</small></span>`).join('')}</div>` : '<div class="sub">No release years recorded yet.</div>';
-  const bestDec = dk.slice().sort((a, b) => avg(dec[b].map(total)) - avg(dec[a].map(total)))[0];
-  const groups = Object.entries(count).sort((a, b) => b[1] - a[1]);
-  const split = all.filter(f => groupOf(ck(f)).length > 2).map(f => ({ f, d: Math.abs(f.xr - f.yr) })).sort((a, b) => b.d - a.d)[0];
-  const newest = all.slice().sort((a, b) => b.added - a.added)[0];
-  const prize = (k, f, line) => f ? `<button class="prize" data-film="${esc(f.id)}"><div class="k">${k}</div>${posterHTML(f)}<div><strong>${esc(f.title)}</strong><small>${line}</small></div></button>` : '';
-  const tally = {}; VAULT.forEach(v => { if (byId(v.film)) tally[v.film] = (tally[v.film] || 0) + 1; });
-  const mostV = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
   $('#gameIn').innerHTML = `
     <div class="ns"><div class="k">The Game Room · CmanCinema</div><h2>By the Numbers</h2><div class="dots"></div>
-      <p>The collection, tallied on the arcade machines.</p></div>
-    ${cabinet('The Scoreboard', '', `<div class="scoreboard">${sb.map(([v, l]) => `<div class="score">${flip(v)}<span>${l}</span></div>`).join('')}</div>`, 70)}
-    <div id="hsCab">${cabinet('The High Score Machine', 'The current X and Y standings at every coordinate, straight from the reel. View only — insert a coordinate.', '<div id="hsIn"></div>', 80)}</div>
+      <p>The wheel, tallied on the arcade machines.</p></div>
+    ${cabinet('The Scoreboard', '', `<div class="scoreboard s8">${sb.map(([v, l]) => `<div class="score">${flip(v)}<span>${l}</span></div>`).join('')}</div>`, 70)}
+    ${cabinet('The High Score Machine', 'The wheel’s record holders. View only.', `<div id="hsIn">${hsMachine()}</div>`, 80, 'hsCab')}
     <div class="duo">
-      ${cabinet('The Coordinate Board', 'Every X/Y pairing in the house — tap a lit bulb to load it into the High Score Machine.', `<div class="board">${boardH}</div>
-        <div class="board-key"><span>Brighter = more films</span><span>Dashed = outside your hierarchy</span></div>`)}
+      ${cabinet('The Case × Claim Board', 'Where your reviews sit by recommendation and condition. Tap a lit bulb to see that recommendation in the lobby.', `<div class="board cc">${boardH}</div>
+        <div class="board-key"><span>Across · the case</span><span>Down · the claim</span><span>Brighter = more films</span></div>`)}
       ${cabinet('Prize Shelf', '', `<div class="prizes" style="grid-template-columns:1fr">
-        ${ranked[0] ? prize('Top of the bill', ranked[0], `${ck(ranked[0])} · ★ 5.0`) : ''}
-        ${prize('Split decision', split?.f, split ? `#${split.f.xr} on X but #${split.f.yr} on Y in ${ck(split.f)}` : '')}
-        ${mostV ? prize('Most deliberated', byId(mostV[0]), `${mostV[1]} consideration${mostV[1] > 1 ? 's' : ''} in the Film Vault`) : ''}
-        ${prize('Latest admission', newest, `${ck(newest)}${newest.added ? ' · admitted ' + new Date(newest.added).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''}`)}
+        ${ranked[0] ? prize('Top of the bill', ranked[0], `${Y_NAMES[ranked[0].Y]} · ★ 5.0`) : ''}
+        ${bigUp ? prize('Biggest upset', byId(bigUp.winner), `Won at a ${Math.max(1, Math.round(winnerChance(bigUp) * 100))}% lean against ${esc(byId(bigUp.a === bigUp.winner ? bigUp.b : bigUp.a)?.title || 'a removed film')}`) : ''}
+        ${tested ? prize('Most battle-tested', tested.f, `${tested.st.n} matchup${tested.st.n === 1 ? '' : 's'} · ${tested.st.w}–${tested.st.l}`) : ''}
+        ${climber ? prize('Biggest climber', climber.f, `Up ${climber.m} place${climber.m === 1 ? '' : 's'} since entry`) : ''}
+        ${prize('Latest admission', newest, `${Y_NAMES[newest.Y]}${newest.added ? ' · admitted ' + new Date(newest.added).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''}`)}
       </div>`, 40)}
     </div>
     <div class="tri">
-      ${cabinet('X · Condition of Achievement', 'How often films hold their aim.', dist('X', [5, 4, 3, 2, 1], X_NAMES))}
-      ${cabinet('Y · Viewing Recommendation', 'The bottleneck — how far films climb.', dist('Y', [5, 4, 3, 2, 1, 0], Y_NAMES))}
+      ${cabinet('The Case', 'How far reviews climb.', dist('Y', [5, 4, 3, 2, 1, 0], Y_NAMES))}
+      ${cabinet('The Claim', 'How often films hold their aim.', dist('X', [5, 4, 3, 2, 1], X_NAMES))}
+    </div>
+    ${cabinet('The Calibration Meter', 'Is the lean learning you? When it says 70%, its pick should win about 70% of the time.', calib)}
+    <div class="tri">
+      ${cabinet('Stars', N ? `How ${N} film${N === 1 ? '' : 's'} spread across the stars.` : 'Stars come from the wheel.', starHist)}
+      ${cabinet('By Decade', bestDec ? `The ’${String(bestDec).slice(2)}s lead with ${avg(dec[bestDec]).toFixed(1)} stars on average.` : '', decades)}
     </div>
     ${cabinet('The Memory Filter', `${nLF ? `${nLF} film${nLF === 1 ? '' : 's'} seen but not rated, by the door that stopped ${nLF === 1 ? 'it' : 'them'}.` : 'Every film so far has made it through all three doors.'} <button class="btn-line" data-goto="lostfound" style="margin-left:6px;padding:6px 12px">Lost &amp; Found</button>`, lfBars)}
-    <div class="tri">
-      ${cabinet('Total Score', 'X + Y, out of 10.', hist)}
-      ${cabinet('By Decade', bestDec ? `The ’${String(bestDec).slice(2)}s lead with an average of ${avg(dec[bestDec].map(total)).toFixed(1)}.` : '', decades)}
-    </div>
-    ${cabinet('Most Crowded Coordinates', 'Where the screening room is busiest.', `<div class="list2">${groups.slice(0, 5).map(([c, k]) => `<button class="li2" data-coord="${c}"><b>${c}</b><span>${names(c)}<small>${LISTED.includes(c) ? 'Hierarchy step ' + (LISTED.indexOf(c) + 1) + ' of ' + LISTED.length : 'Awaiting placement'}</small></span><i>${k} film${k === 1 ? '' : 's'}</i></button>`).join('')}</div>`)}
   `;
-  if (!hsCoord || !groupOf(hsCoord).length) hsCoord = groups[0][0];
-  renderHS(true);
   requestAnimationFrame(() => requestAnimationFrame(() => {
     document.querySelectorAll('#gameIn [data-w]').forEach(e => e.style.width = e.dataset.w);
     document.querySelectorAll('#gameIn [data-h]').forEach(e => e.style.height = e.dataset.h);
   }));
 }
-/* ---------- the High Score Machine: X and Y standings per coordinate, view only ---------- */
-let hsCoord = null, hsSel = null, hsPage = { X: 1, Y: 1 }, hsAxis = 'X', hsEdit = null;
-const HS_PAGE = 10;
-const hsList = (c, ax) => groupOf(c).sort((a, b) => ax === 'X' ? a.xo - b.xo : a.yo - b.yo);
-const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', 'ND', 'RD'][n % 10] || 'TH');
-function hsScreen(c, ax, roll) {
-  const list = hsList(c, ax), pages = Math.max(1, Math.ceil(list.length / HS_PAGE));
-  const p = hsPage[ax] = Math.min(Math.max(1, hsPage[ax]), pages);
-  const lvl = +c.split('/')[ax === 'X' ? 0 : 1], nm = (ax === 'X' ? X_NAMES : Y_NAMES)[lvl];
-  const rk = f => ax === 'X' ? f.xr : f.yr;
-  const tied = r => list.filter(f => rk(f) === r).length > 1;
-  const rows = list.slice((p - 1) * HS_PAGE, p * HS_PAGE).map((f, i) => {
-    const r = rk(f), w = ax === 'X' ? f.xw : f.yw, l = ax === 'X' ? f.xl : f.yl;
-    return `<button class="hs-row ${r <= 3 ? 'm' + r : ''} ${f.id === hsSel ? 'sel' : ''}" data-hs="${esc(f.id)}" style="--d:${i * 55}ms" title="${esc(f.title)} · ${ax} record ${w}–${l}">
-      <b>${tied(r) ? '=' : ''}${ordinal(r)}</b>${posterHTML(f)}<span>${esc(f.title)}${f.provisional ? '<i>*</i>' : ''}</span><em>${w}–${l}</em></button>`;
-  }).join('');
-  return `<div class="crt ${ax.toLowerCase()} ${roll ? 'roll' : ''}"><div class="crt-in">
-      <div class="crt-h"><b>${ax}</b><span>${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${lvl} ${nm}<small>${ax === 'X' ? 'Weaker negative case on top' : 'Stronger positive case on top'}</small></span><em class="hi">HI-SCORE</em></div>
-      <div class="hs-rows">${rows || '<div class="hs-empty">No films here yet.</div>'}</div>
-      <div class="crt-f"><button data-hp="${ax}:${p - 1}" ${p === 1 ? 'disabled' : ''} aria-label="Previous page">◀</button><span>PAGE ${p}/${pages}</span><button data-hp="${ax}:${p + 1}" ${p === pages ? 'disabled' : ''} aria-label="Next page">▶</button></div>
-    </div></div>`;
-}
-/* the matchups a new order would change: missing pairs are new, pairs with a different winner flip */
-function ccDiff(ax) {
-  let flip = 0, add = 0;
-  if (!hsEdit || !hsEdit.dirty[ax]) return { flip, add };
-  const ids = hsEdit[ax];
-  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
-    const games = db.showdowns.filter(s => s.axis === ax && ((s.a === ids[i] && s.b === ids[j]) || (s.a === ids[j] && s.b === ids[i])));
-    if (!games.length) add++; else if (games.some(s => s.winner !== ids[i])) flip++;
-  }
-  return { flip, add };
-}
-function ccTally() {
-  const x = ccDiff('X'), y = ccDiff('Y'), flip = x.flip + y.flip, add = x.add + y.add;
-  const el = $('#arTally'); if (el) el.innerHTML = `FLIPS <i>${flip}</i>${add ? ` · NEW <i>${add}</i>` : ''}`;
-  const sv = $('#arSave'); if (sv) sv.disabled = !flip && !add;
-  return { flip, add };
-}
-function ccStart() {
-  if (ar) return;
-  if (!canEdit()) return toast('Sign in as the editor at the Office to play the Command Center');
-  if (db.workflow) return alertBox('The Command Center is closed', `“${raw(db.workflow.film)?.title || 'A film'}” is still in the middle of its ${db.workflow.stage === 'reel' ? 'screening room placement' : 'evaluation'}. Finish or withdraw it first.`);
-  const door = $('.coin-door'); if (door) door.classList.add('paid');
-  setTimeout(() => {
-    hsEdit = { coord: hsCoord, X: hsList(hsCoord, 'X').map(f => f.id), Y: hsList(hsCoord, 'Y').map(f => f.id), dirty: { X: false, Y: false } };
-    hsSel = null; arOpen();
-  }, reduceMotion ? 0 : 650);
-}
-function ccSave() {
-  const { flip, add } = ccTally(); if (!flip && !add) return;
-  const c = hsEdit.coord, t = Date.now();
-  ['X', 'Y'].forEach(ax => {
-    if (!hsEdit.dirty[ax]) return;
-    const ids = hsEdit[ax];
-    for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
-      const winner = ids[i], games = db.showdowns.filter(s => s.axis === ax && ((s.a === ids[i] && s.b === ids[j]) || (s.a === ids[j] && s.b === ids[i])));
-      if (!games.length) db.showdowns.push({ id: 'show:' + uid(), a: ids[j], b: ids[i], winner, axis: ax, coord: c, note: '', at: t, via: 'command' });
-      else games.forEach(s => {
-        if (s.winner !== winner) { s.verdictHistory = Array.isArray(s.verdictHistory) ? s.verdictHistory : []; s.verdictHistory.push({ winner: s.winner, note: s.note || '', at: s.at || null, revisedAt: t, via: 'command' }); s.winner = winner; s.editedAt = t; s.editedVia = 'command'; }
-        s.coord = c;
-      });
-    }
-  });
-  hsEdit = null;
-  arClose(() => persist().then(ok => {
-    if (ok) toast(`Board saved · ${flip} matchup${flip === 1 ? '' : 's'} flipped${add ? ' · ' + add + ' new' : ''}`);
-    renderGame();
-  }));
-}
-/* =====================================================================
-   THE GAME · insert a coin, zoom into the screen, spin the reel
-   A: grab / drop the film on the center line · B: switch X ⇄ Y
-   joystick, scroll wheel, arrow keys or a swipe spin the reel
-   ===================================================================== */
-const AR_DEG = 20;
-let ar = null;
-const arSH = () => innerWidth <= 640 ? 62 : 74;
-function arRect() {
-  const el = $('.arc-bezel') || $('#hsCab');
-  const r = el ? el.getBoundingClientRect() : { top: innerHeight / 2, left: innerWidth / 2, right: innerWidth / 2, bottom: innerHeight / 2 };
-  const vis = r.bottom > 0 && r.top < innerHeight;
-  return vis ? r : { top: innerHeight * .4, bottom: innerHeight * .6, left: innerWidth * .3, right: innerWidth * .7 };
-}
-function arClip(r) {
-  const el = $('#arcade');
-  if (!r) { ['--ct', '--cr', '--cb', '--cl'].forEach(k => el.style.setProperty(k, '0px')); el.style.setProperty('--cround', '0px'); return; }
-  el.style.setProperty('--ct', Math.max(0, r.top) + 'px'); el.style.setProperty('--cl', Math.max(0, r.left) + 'px');
-  el.style.setProperty('--cr', Math.max(0, innerWidth - r.right) + 'px'); el.style.setProperty('--cb', Math.max(0, innerHeight - r.bottom) + 'px');
-  el.style.setProperty('--cround', '16px');
-}
-function arOpen() {
-  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-  ar = { ax: hsAxis, cur: { X: 0, Y: 0 }, held: null, g: 0, p: {}, quitArm: false, raf: null, msg: '' };
-  const el = $('#arcade');
-  arClip(arRect()); el.classList.add('show', 'zooming'); document.body.classList.add('arcade-on');
-  arBuild();
-  $('#arFlash').classList.remove('go'); void $('#arFlash').offsetWidth; $('#arFlash').classList.add('go');
-  requestAnimationFrame(() => requestAnimationFrame(() => { arClip(null); el.classList.remove('zooming'); }));
-  setTimeout(() => { const r = $('#arReel'); if (r) r.focus({ preventScroll: true }); }, 650);
-}
-function arClose(after) {
-  const el = $('#arcade');
-  if (!el.classList.contains('show')) { if (after) after(); return; }
-  el.classList.add('zooming'); arClip(arRect());
-  setTimeout(() => {
-    el.classList.remove('show', 'zooming'); el.innerHTML = ''; document.body.classList.remove('arcade-on');
-    if (ar && ar.raf) cancelAnimationFrame(ar.raf); ar = null; arJoyStop();
-    if (after) after(); else renderHS(true);
-  }, reduceMotion ? 0 : 620);
-}
-function arIds() { return hsEdit ? hsEdit[ar.ax] : []; }
-function arBuild() {
-  if (!ar || !hsEdit) return;
-  const c = hsEdit.coord, ax = ar.ax, lvl = +c.split('/')[ax === 'X' ? 0 : 1], nm = (ax === 'X' ? X_NAMES : Y_NAMES)[lvl];
-  const ids = arIds();
-  ids.forEach((id, i) => { if (ar.p[id] == null) ar.p[id] = i; });
-  ar.g = ar.cur[ax];
-  $('#arcade').innerHTML = `<div class="ar-in">
-    <div class="ar-hud"><span class="cr">CREDIT 01</span>
-      <span class="mid"><b>${ax} · ${c}</b><small>${ax === 'X' ? 'Condition · ' + ax + lvl + ' ' + nm + ' · weaker negative case on top' : 'Recommendation · ' + ax + lvl + ' ' + nm + ' · stronger positive case on top'}</small></span>
-      <span class="ta" id="arTally"></span></div>
-    <div class="ar-axes"><span class="${ax === 'X' ? 'on' : ''}">X reel</span><span class="${ax === 'Y' ? 'on' : ''}">Y reel</span></div>
-    <div class="ar-stage"><div class="ar-reel" id="arReel" tabindex="0" style="--sh:${arSH()}px" aria-label="${ax} reel for ${c}"><div class="ar-band"></div><div class="ar-drum" id="arDrum">
-      ${ids.map(id => { const f = byId(id); return `<div class="ar-slot" data-ar="${esc(id)}"><b></b>${posterHTML(f)}<span>${esc(f.title)}</span><em></em></div>`; }).join('')}
-    </div></div></div>
-    <div class="ar-msg" id="arMsg"></div>
-    <div class="ar-deck">
-      <div class="joy" id="arJoy"><button class="u" data-arj="-1" aria-label="Spin up">▲</button><button class="d" data-arj="1" aria-label="Spin down">▼</button><span class="stick"></span></div>
-      <div class="ar-mid"><button class="save" id="arSave" data-arsave>Save</button><button data-arargue>Argue</button><button data-arquit>Quit</button><small>↑↓ spin · space grab · B switch · C argue</small></div>
-      <div class="ar-ab"><button class="ab b" data-arb aria-label="Switch reel"><i>B</i>${ax === 'X' ? 'To Y' : 'To X'}</button><button class="ab a" data-ara aria-label="Grab or drop"><i>A</i><span id="arALabel">Grab</span></button></div>
-    </div></div>`;
-  arLayout(); arStatus(); ccTally();
-}
-function arLayout() {
-  if (!ar || !hsEdit) return;
-  const drum = $('#arDrum'); if (!drum) return;
-  const ids = arIds(), sh = arSH(), radius = (sh / 2 + 4) / Math.tan(AR_DEG / 2 * Math.PI / 180);
-  const orig = hsList(hsEdit.coord, ar.ax).map(f => f.id);
-  [...drum.children].forEach(el => {
-    const id = el.dataset.ar, idx = ids.indexOf(id), d = ar.p[id] - ar.g, vis = Math.abs(d) < 4.6;
-    el.style.visibility = vis ? '' : 'hidden';
-    if (!vis) return;
-    el.style.transform = `translateZ(${-radius}px) rotateX(${-d * AR_DEG}deg) translateZ(${radius}px)`;
-    el.style.opacity = Math.max(0, 1 - Math.abs(d) * 0.2).toFixed(3);
-    el.style.zIndex = id === ar.held ? 15 : Math.round(10 - Math.abs(d) * 2);
-    el.classList.toggle('cur', idx === ar.cur[ar.ax]);
-    el.classList.toggle('held', id === ar.held);
-    el.querySelector(':scope > b').textContent = ordinal(idx + 1);
-    const was = orig.indexOf(id), dl = was - idx, em = el.querySelector(':scope > em');
-    em.className = dl > 0 ? 'up' : dl < 0 ? 'dn' : 'eq'; em.textContent = dl > 0 ? '▲' + dl : dl < 0 ? '▼' + -dl : '—';
-  });
-}
-function arAnimate() {
-  if (!ar || !hsEdit) { if (ar) ar.raf = null; return; }
-  const ids = arIds(), target = ar.cur[ar.ax];
-  let busy = false;
-  const k = reduceMotion ? 1 : 0.25;
-  if (Math.abs(target - ar.g) > 0.002) { ar.g += (target - ar.g) * k; busy = true; } else ar.g = target;
-  ids.forEach((id, i) => { const v = ar.p[id]; if (Math.abs(i - v) > 0.002) { ar.p[id] = v + (i - v) * k; busy = true; } else ar.p[id] = i; });
-  arLayout();
-  ar.raf = busy ? requestAnimationFrame(arAnimate) : null;
-}
-function arKick() { if (ar && !ar.raf) ar.raf = requestAnimationFrame(arAnimate); }
-function arStatus(text, warn) {
-  if (!ar) return;
-  const ids = arIds(), cur = ids[ar.cur[ar.ax]], f = cur && byId(cur);
-  const m = $('#arMsg'); if (!m) return;
-  m.classList.toggle('warn', !!warn);
-  m.textContent = text || (ar.held ? `Holding ${byId(ar.held).title} · spin to move · A to drop` : f ? `On the line: ${f.title} · A to grab · spin to browse` : '');
-  const al = $('#arALabel'); if (al) al.textContent = ar.held ? 'Drop' : 'Grab';
-}
-function arDirty() {
-  if (!hsEdit) return;
-  const orig = hsList(hsEdit.coord, ar.ax).map(f => f.id);
-  hsEdit.dirty[ar.ax] = arIds().some((id, i) => id !== orig[i]);
-}
-function arStep(dir) {
-  if (!ar || !hsEdit) return;
-  { const p = $('.ar-argue'); if (p) p.remove(); }
-  const ids = arIds(), n = ids.length, ax = ar.ax;
-  ar.quitArm = false;
-  if (ar.held) {
-    const i = ids.indexOf(ar.held), j = i + dir;
-    if (j < 0 || j >= n) return arStatus(j < 0 ? 'Already at the top' : 'Already at the bottom', true);
-    [ids[i], ids[j]] = [ids[j], ids[i]]; ar.cur[ax] = j; arDirty(); ccTally();
-  } else {
-    const c = Math.max(0, Math.min(n - 1, ar.cur[ax] + dir));
-    if (c === ar.cur[ax]) return arStatus(dir < 0 ? 'Top of the reel' : 'End of the reel', true);
-    ar.cur[ax] = c;
-  }
-  arStatus(); arKick();
-}
-function arGrab() {
-  if (!ar) return;
-  const ids = arIds();
-  ar.held = ar.held ? null : ids[ar.cur[ar.ax]];
-  ar.quitArm = false;
-  const a = $('.ab.a'); if (a) { a.classList.add('press'); setTimeout(() => a.classList.remove('press'), 120); }
-  arLayout(); arStatus();
-}
-function arSwitch() {
-  if (!ar) return;
-  ar.held = null; ar.ax = ar.ax === 'X' ? 'Y' : 'X'; hsAxis = ar.ax; arBuild();
-}
-function arJump(idx) {
-  if (!ar) return;
-  const ids = arIds(), ax = ar.ax;
-  if (idx === ar.cur[ax]) return arGrab();
-  if (ar.held) { const i = ids.indexOf(ar.held); ids.splice(i, 1); ids.splice(idx, 0, ar.held); arDirty(); ccTally(); }
-  ar.cur[ax] = idx; arStatus(); arKick();
-}
-function arQuit() {
-  if (!ar) return;
-  const dirty = hsEdit && (hsEdit.dirty.X || hsEdit.dirty.Y);
-  if (dirty && !ar.quitArm) { ar.quitArm = true; return arStatus('Press Quit again to throw away your moves', true); }
-  hsEdit = null; arClose();
-}
-function arSaveBtn() {
-  const { flip, add } = ccTally();
-  if (!flip && !add) return arStatus('Nothing to save yet · move a film first', true);
-  ccSave();
-}
-let arJoyT = null;
-function arJoyStop() { clearTimeout(arJoyT); clearInterval(arJoyT); arJoyT = null; const j = $('#arJoy'); if (j) j.classList.remove('up', 'down'); }
-$('#arcade').addEventListener('pointerdown', e => {
-  const jb = e.target.closest('[data-arj]');
-  if (jb) {
-    e.preventDefault(); const dir = +jb.dataset.arj;
-    $('#arJoy').classList.add(dir < 0 ? 'up' : 'down'); arStep(dir);
-    arJoyT = setTimeout(() => { arJoyT = setInterval(() => arStep(dir), 150); }, 380);
-    return;
-  }
-  const reel = e.target.closest('#arReel');
-  if (reel) ar && (ar.drag = { y: e.clientY, acc: 0, moved: false, id: e.pointerId, slot: e.target.closest('[data-ar]') });
-});
-addEventListener('pointerup', () => arJoyStop());
-addEventListener('pointercancel', () => arJoyStop());
-$('#arcade').addEventListener('pointermove', e => {
-  if (!ar || !ar.drag || e.pointerId !== ar.drag.id) return;
-  const dy = e.clientY - ar.drag.y; ar.drag.y = e.clientY;
-  ar.drag.acc += dy;
-  if (Math.abs(ar.drag.acc) > 6) ar.drag.moved = true;
-  const step = arSH() * 0.8;
-  while (Math.abs(ar.drag.acc) >= step) { const dir = ar.drag.acc > 0 ? -1 : 1; arStep(dir); ar.drag.acc += dir * step; }
-});
-$('#arcade').addEventListener('pointerup', e => {
-  if (!ar || !ar.drag) return;
-  const d = ar.drag; ar.drag = null;
-  if (!d.moved && d.slot) arJump(arIds().indexOf(d.slot.dataset.ar));
-});
-$('#arcade').addEventListener('click', e => {
-  if (e.target.closest('[data-ara]')) return arGrab();
-  if (e.target.closest('[data-arb]')) return arSwitch();
-  if (e.target.closest('[data-arsave]')) return arSaveBtn();
-  if (e.target.closest('[data-arquit]')) return arQuit();
-  if (e.target.closest('[data-arargue]')) return arArgue();
-  if (e.target.closest('[data-arargx]')) { const p = $('.ar-argue'); if (p) p.remove(); return; }
-});
-function arArgue() {
-  if (!ar) return;
-  const old = $('.ar-argue'); if (old) return old.remove();
-  const ids = arIds(), i = ar.cur[ar.ax], other = i > 0 ? i - 1 : i + 1;
-  if (other >= ids.length) return arStatus('Only one film here', true);
-  const A = byId(ids[i]), B = byId(ids[other]);
-  const p = document.createElement('div'); p.className = 'ar-argue';
-  p.innerHTML = `<button class="x" data-arargx aria-label="Close">✕</button>${argueHTML(A, B, ar.ax)}`;
-  $('.ar-stage').appendChild(p);
-}
-let arWheel = 0;
-$('#arcade').addEventListener('wheel', e => {
-  if (!ar) return; e.preventDefault();
-  arWheel += e.deltaY; const steps = Math.trunc(arWheel / 60);
-  if (steps) { arWheel -= steps * 60; for (let i = 0; i < Math.abs(steps); i++) arStep(Math.sign(steps)); }
-}, { passive: false });
-document.addEventListener('keydown', e => {
-  if (!ar) return;
-  const k = e.key;
-  if (k === 'ArrowUp' || k === 'w' || k === 'W') { e.preventDefault(); arStep(-1); }
-  else if (k === 'ArrowDown' || k === 's' || k === 'S') { e.preventDefault(); arStep(1); }
-  else if (k === ' ' || k === 'Enter' || k === 'a' || k === 'A') { e.preventDefault(); arGrab(); }
-  else if (k === 'b' || k === 'B' || k === 'Tab') { e.preventDefault(); arSwitch(); }
-  else if (k === 'c' || k === 'C') { e.preventDefault(); arArgue(); }
-  else if (k === 'Escape') { e.preventDefault(); const p = $('.ar-argue'); if (p) p.remove(); else arQuit(); }
-});
-addEventListener('resize', () => { if (ar) { const r = $('#arReel'); if (r) r.style.setProperty('--sh', arSH() + 'px'); arLayout(); } });
-function renderHS(roll) {
-  const el = $('#hsIn'); if (!el || !hsCoord) return;
-  if (hsEdit) {
-    // if the collection changed underneath (a reload), the board in hand is no longer valid
-    const now = groupOf(hsEdit.coord).map(f => f.id).sort().join();
-    if (now !== [...hsEdit.X].sort().join() || !canEdit()) { hsEdit = null; toast('The game ended because the collection changed'); arClose(); return; }
-    if (ar) return;
-  }
-  const counts = {}; COLL.forEach(f => counts[ck(f)] = (counts[ck(f)] || 0) + 1);
-  const coords = [...LISTED.filter(c => counts[c]), ...Object.keys(counts).filter(c => !LISTED.includes(c))];
-  const g = groupRows(hsCoord), sel = hsSel && g.find(f => f.id === hsSel);
-  const prov = g.some(f => f.provisional);
-  let ticket = `<div class="hs-ticket idle">Tap a film on either screen to light it up on both.</div>`;
-  if (sel) {
-    const gap = Math.abs(sel.xr - sel.yr), inG = g.findIndex(f => f.id === sel.id) + 1;
-    ticket = `<div class="hs-ticket">${posterHTML(sel, 34)}<span class="tt">${esc(sel.title)}</span>
-      <span class="st2"><span>#${sel.xr} on X</span><span>#${sel.yr} on Y</span><span>#${inG} of ${g.length} in ${hsCoord}</span></span>
-      <span class="gapline">${g.length < 2 ? 'Alone in its coordinate.' : gap === 0 ? 'Level on both axes.' : `Split by ${gap} place${gap === 1 ? '' : 's'} — ${sel.xr < sel.yr ? 'its condition outranks its recommendation' : 'its recommendation outranks its condition'}.`}</span></div>`;
-  }
-  el.innerHTML = `
-    <div class="hs-coins">${coords.map(c => `<button class="hs-coin ${c === hsCoord ? 'on' : ''} ${LISTED.includes(c) ? '' : 'off'}" data-hc="${c}" title="${c} · ${names(c)} · ${counts[c]} film${counts[c] === 1 ? '' : 's'}">${c}<small>${counts[c]}</small></button>`).join('')}</div>
-    <div class="hs-top"><div class="c">${hsCoord}</div><div class="n">${names(hsCoord)}</div>
-      <div class="m">${g.length} film${g.length === 1 ? '' : 's'}${LISTED.includes(hsCoord) ? ' · hierarchy step ' + (LISTED.indexOf(hsCoord) + 1) + ' of ' + LISTED.length : ' · awaiting placement'}${prov ? ' · * provisional' : ''}</div></div>
-    <div class="hs-lever"><div class="sw ${hsAxis === 'Y' ? 'y' : ''}"><span class="knob"></span><button class="${hsAxis === 'X' ? 'on' : ''}" data-hsax="X">X · Condition</button><button class="${hsAxis === 'Y' ? 'on' : ''}" data-hsax="Y">Y · Recommend</button></div></div>
-    <div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${hsCoord} ${names(hsCoord)}</small></div>
-      <div class="arc-bezel"><div class="hs-screens" data-ax="${hsAxis}">${hsScreen(hsCoord, 'X', roll)}${hsScreen(hsCoord, 'Y', roll)}</div></div>
-      <div class="arc-panel" aria-hidden="true"><span class="arc-joy"></span><span class="arc-btns"><i></i><i></i></span></div>
-      <div class="arc-door">${canEdit() && g.length > 1
-        ? `<button class="coin-door" data-cc-coin><span class="mouth"><span class="drop"></span></span><span class="txt"><b>INSERT COIN</b><small>Play ${hsCoord} · move the films</small></span></button>`
-        : `<div class="coin-door free"><span class="mouth"></span><span class="txt"><b>FREE PLAY</b><small>${canEdit() ? 'One film here · nothing to move' : 'View only · editor plays at the Office'}</small></span></div>`}</div>
-    </div>
-    ${ticket}
-    <div class="hs-foot">${sel ? `<button class="btn-line" data-film="${esc(sel.id)}">Open its profile</button>` : ''}<button class="btn-line" data-hslobby>See ${hsCoord} in the lobby</button></div>
-`;
-}
-function pageOf(id, ax) { const i = hsList(hsCoord, ax).findIndex(f => f.id === id); return i < 0 ? 1 : Math.floor(i / HS_PAGE) + 1; }
 $('#gameroom').addEventListener('click', e => {
-  if (e.target.closest('[data-cc-coin]')) return ccStart();
-  const coin = e.target.closest('[data-hc],[data-coord]');
-  if (coin && hsEdit) { toast('Finish the game first'); $('#hsCab').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-  if (coin) {
-    hsCoord = coin.dataset.hc || coin.dataset.coord; hsSel = null; hsPage = { X: 1, Y: 1 };
-    renderHS(true);
-    if (coin.dataset.coord) $('#hsCab').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-  const row = e.target.closest('[data-hs]');
-  if (row && !hsEdit) {
-    const id = row.dataset.hs;
-    if (hsSel === id) { hsSel = null; return renderHS(false); }
-    hsSel = id;
-    const other = row.closest('.crt').classList.contains('x') ? 'Y' : 'X';
-    const before = hsPage[other]; hsPage[other] = pageOf(id, other);
-    renderHS(false);
-    if (before !== hsPage[other]) $(`.crt.${other.toLowerCase()}`).classList.add('roll');
-    return;
-  }
-  const hp = e.target.closest('[data-hp]');
-  if (hp) { if (hp.disabled) return; const [ax, p] = hp.dataset.hp.split(':'); hsPage[ax] = +p; renderHS(false); $(`.crt.${ax.toLowerCase()}`).classList.add('roll'); return; }
-  const lever = e.target.closest('[data-hsax]');
-  if (lever) {
-    if (hsAxis === lever.dataset.hsax) return;
-    hsAxis = lever.dataset.hsax;
-    if (hsSel) hsPage[hsAxis] = pageOf(hsSel, hsAxis);
-    renderHS(false); $(`.crt.${hsAxis.toLowerCase()}`).classList.add('roll'); return;
-  }
-  if (e.target.closest('[data-hslobby]')) { lobbyQuery = ''; lobbyCoord = LISTED.includes(hsCoord) ? hsCoord : ''; lobbyPage = 1; return goTo('lobby'); }
+  const t = e.target.closest('[data-hsb]');
+  if (t) { hsBoard = t.dataset.hsb; $('#hsIn').innerHTML = hsMachine(); return; }
+  const l = e.target.closest('[data-lvl]');
+  if (l) { lobbyQuery = ''; lobbyLevel = l.dataset.lvl; lobbyPage = 1; return goTo('lobby'); }
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
 });
-
-
-
 
 /* =====================================================================
    THE ORDINAL BRIEF · after the evaluation, before the reel
@@ -3228,13 +3093,12 @@ function briefOpen(id, mode) {
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
   const t = encodeURIComponent((r.title || '') + ' ' + (r.year || '') + ' film sub-genre');
   $('#bfIn').innerHTML = `
-    <div class="k">${mode === 'reel' ? 'Before the Screening Room' : 'Film profile'} · ${c} ${names(c)}</div>
+    <div class="k">${mode === 'reel' ? 'Before the wheel' : 'Film profile'} · ${Y_NAMES[y]} · ${X_NAMES[x]}</div>
     <h2>Sub-genre</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
-    <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel — the argument card reads every film against its own.' : 'The argument card reads every film against its own sub-genre.'}</p>
+    <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the wheel.' : 'The wheel reads every claim against its own sub-genre.'}</p>
     <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
       <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
-    <div class="bf-sec"><h4>On the reel</h4><p class="q" style="margin-top:8px">Its X${x} ${X_NAMES[x]} claim is described as <b style="font-style:normal">${X_CASE[x]}</b>; its Y${y} ${Y_NAMES[y]} case as <b style="font-style:normal">${Y_REG[y]}</b>.</p></div>
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
       <button class="bf-go" data-bfgo>${mode === 'reel' ? 'Continue to the Screening Room' : 'Save'}</button></div>`;
@@ -3502,9 +3366,8 @@ const PB = {
 let pbTab = 'F';
 /* where you are decides what lights up: the film on the reel, or the one in the booth */
 function pbHere() {
-  if (current === 'auditorium' && active && active.film && active.stage === 'reel') return { ax: axis, X: active.film.X, Y: active.film.Y };
+  if (current === 'auditorium' && active && active.film && active.stage === 'spin') return { ax: 'Y', X: active.film.X, Y: active.film.Y };
   if (current === 'booth' && bt) return { ax: bt.x != null ? 'Y' : 'X', X: bt.x, Y: bt.y };
-  if (current === 'gameroom' && hsCoord) { const [x, y] = hsCoord.split('/').map(Number); return { ax: hsAxis, X: x, Y: y }; }
   return null;
 }
 function renderPlaybill() {
@@ -3525,14 +3388,11 @@ function renderPlaybill() {
     ${PB.compass.map(([l, head, txt]) => lv('Y', l, head, Y_NAMES[l], txt)).join('')}
     <p class="pb-note">${PB.compassNote}</p>`;
   if (pbTab === 'Q') {
-    const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]} · preset: <b>${ax === 'X' ? X_CASE[l] : Y_VERB[l]}</b></i></div></div>`;
-    body = `<div class="pb-sec">Act III · The Ordinal Questions<small>Asked on the reel, at the level the films share</small></div>
-      <p class="pb-note" style="margin:0 0 10px">The stance classifies the film; the preset only orders films within it.</p>
-      <div class="pb-axis"><span>X · The Film’s Condition</span></div>
-      <p class="pb-note" style="margin:0 0 4px">The film with the more consequential weakening goes lower.</p>
-      ${[5, 4, 3, 2, 1].map(l => q('X', l)).join('')}
-      <div class="pb-axis" style="margin-top:16px"><span>Y · Stance of Viewing Recommendation</span></div>
-      <p class="pb-note" style="margin:0 0 4px">The film with the more compelling grounds goes higher.</p>
+    const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]}</i></div></div>`;
+    body = `<div class="pb-sec">Act III · The Wheel<small>One wheel of critic’s reviews · the case and claim combine, then reviews go head to head</small></div>
+      <p class="pb-note" style="margin:0 0 10px">The wheel spins each new review to the middle of the range still open, then the middle of the half it earns, then checks it against its new neighbor. Each matchup shows the lean: the all-in estimate from the case level, the claim level, the components, and form from past verdicts. The verdict is always yours.</p>
+      <div class="pb-axis"><span>The deciding questions</span></div>
+      <p class="pb-note" style="margin:0 0 4px">When two reviews share a recommendation, its question frames the matchup.</p>
       ${[5, 4, 3, 2, 1, 0].map(l => q('Y', l)).join('')}`;
   }
   $('#pbCard').innerHTML = `<button class="pb-x" data-pbx aria-label="Close">✕</button>
@@ -3560,9 +3420,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlayb
    THE MANAGER'S OFFICE · sign-in, backup, import, removal, clearing
    ===================================================================== */
 function removeFilm(id) {
+  const onWheel = db.wheel.includes(id);
   db.films = db.films.filter(f => f.id !== id);
-  db.showdowns = db.showdowns.filter(s => s.a !== id && s.b !== id);
-  db.placements = db.placements.filter(p => p.film !== id);
+  db.wheel = db.wheel.filter(x => x !== id);
+  db.matches = db.matches.filter(m => m.a !== id && m.b !== id);
+  if (onWheel) db.wheelLog.push({ id: 'wl:' + uid(), type: 'remove', film: id, at: Date.now() });
+  delete db.form[id];
   db.lists.forEach(l => { if (Array.isArray(l.ids)) l.ids = l.ids.filter(x => x !== id); });
   if (db.workflow && db.workflow.film === id) endWorkflow();
   rebuild(); syncActive();
@@ -3587,25 +3450,25 @@ function renderOffice() {
 
       ${editor ? `
       <div class="ledger"><span class="tabk">The safe</span><h3>Back up the collection</h3>
-        <p>Download everything — films, evaluations, showdowns, lists and the Film Vault — as one file. It’s the same format your previous site used.</p>
-        <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.showdowns.length}</b><span>Showdowns</span></div><div><b>${nV}</b><span>Considerations</span></div></div>
+        <p>Download everything — films, reviews, the wheel and its matchups, lists and the Film Vault — as one file.</p>
+        <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.matches.length}</b><span>Matchups</span></div><div><b>${nV}</b><span>Considerations</span></div></div>
         <div class="btnrow2"><button class="btn-ink solid" data-o="export">Download backup</button></div>
         ${officeMsg.backup ? `<div class="okline">${esc(officeMsg.backup)}</div>` : ''}</div>
 
       <div class="ledger"><span class="tabk">The delivery door</span><h3>Import a backup</h3>
         <p>Restore from a backup file — one made here, or one exported from your previous site.</p>
         <div class="btnrow2"><label class="btn-ink" style="cursor:pointer">Choose a file<input type="file" id="oFile" accept=".json,application/json" hidden></label></div>
-        ${askImport ? `<div class="ask">Found <b>${askImport.films}</b> film${askImport.films === 1 ? '' : 's'}, <b>${askImport.showdowns}</b> showdown${askImport.showdowns === 1 ? '' : 's'} and <b>${askImport.notes}</b> consideration${askImport.notes === 1 ? '' : 's'} (${askImport.source}). Importing <b>replaces</b> the whole collection in the cloud. Download a backup of the current one first.
+        ${askImport ? `<div class="ask">Found <b>${askImport.films}</b> film${askImport.films === 1 ? '' : 's'}, <b>${askImport.showdowns}</b> matchup${askImport.showdowns === 1 ? '' : 's'} and <b>${askImport.notes}</b> consideration${askImport.notes === 1 ? '' : 's'} (${askImport.source}). Importing <b>replaces</b> the whole collection in the cloud. Download a backup of the current one first.
           <div class="btnrow2"><button class="btn-ink red solid" data-o="importyes">Replace with this backup</button><button class="btn-ink" data-o="importno">Cancel</button></div></div>` : ''}
         ${officeMsg.import ? `<div class="${officeMsg.import.startsWith('✓') ? 'okline' : 'badline'}">${esc(officeMsg.import)}</div>` : ''}</div>
 
       <div class="ledger"><span class="tabk">The projection log</span><h3>Remove a film</h3>
-        <p>Find a film and take it out of the collection, with its showdowns and considerations. Its group’s standings recalculate.</p>
+        <p>Find a film and take it out of the collection, with its matchups and considerations. Every film below it moves up a place.</p>
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
 
       <div class="ledger danger"><span class="tabk">The fire curtain</span><h3>Clear the whole collection</h3>
-        <p>Removes every film, evaluation, showdown and consideration. Your lists keep their names but are emptied. This cannot be undone without a backup.</p>
+        <p>Removes every film, review, matchup and consideration, and empties the wheel. Your lists keep their names but are emptied. This cannot be undone without a backup.</p>
         <label class="tiny" for="oClear">Type <b>CLEAR THE HOUSE</b> to unlock</label>
         <input class="inkin" id="oClear" placeholder="CLEAR THE HOUSE" autocomplete="off">
         <div class="btnrow2"><button class="btn-ink red" data-o="clear" id="oClearBtn" disabled>Clear everything</button></div></div>` : ''}
@@ -3647,7 +3510,7 @@ $('#office').addEventListener('click', async e => {
   if (o === 'removeyes') { const t = raw(b.dataset.id)?.title; removeFilm(b.dataset.id); askRemove = null; if (await persist()) toast(t + ' removed'); return renderOffice(); }
   if (o === 'clear') {
     endWorkflow();
-    db.films = []; db.showdowns = []; db.placements = []; db.lostfound = []; db.lists.forEach(l => l.ids = []);
+    db.films = []; db.showdowns = []; db.placements = []; db.wheel = []; db.matches = []; db.wheelLog = []; db.form = {}; db.lostfound = []; db.lists.forEach(l => l.ids = []);
     if (await persist()) toast('The house is cleared'); return renderOffice();
   }
 });
@@ -3690,8 +3553,8 @@ function parseBackup(d) {
     doc = normalize(JSON.parse(JSON.stringify(src)));
     doc.workflow = null;
   }
-  const notes = doc.placements.filter(p => p.note).length + doc.showdowns.filter(s => s.note && s.via !== 'reel').length;
-  return { doc, films: doc.films.length, showdowns: doc.showdowns.length, notes, source: d.format === 'cmancinema-theater' ? 'a preview export' : 'a CmanCinema backup' };
+  const notes = doc.wheelLog.filter(e => e.note).length;
+  return { doc, films: doc.films.length, showdowns: doc.matches.length, notes, source: d.format === 'cmancinema-theater' ? 'a preview export' : 'a CmanCinema backup' };
 }
 async function applyImport() {
   if (!askImport) return;
@@ -3699,7 +3562,7 @@ async function applyImport() {
   db = askImport.doc; askImport = null;
   const ok = await persist();
   officeMsg.import = ok ? `✓ Imported ${db.films.length} film${db.films.length === 1 ? '' : 's'}.` : 'The import was not saved.';
-  lobbyPage = 1; vaultPage = 1; lobbyQuery = ''; lobbyCoord = '';
+  lobbyPage = 1; vaultPage = 1; lobbyQuery = ''; lobbyLevel = '';
   syncActive(); renderOffice();
 }
 
