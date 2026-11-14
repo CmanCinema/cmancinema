@@ -1555,6 +1555,169 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .ventry b{font:800 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#7a1a22}
 .ventry span{float:right;font:600 11px var(--serif);letter-spacing:.08em;color:#7a4a2a}
 .ventry p{clear:both;margin:4px 0 0;font:15.5px/1.5 var(--type);color:#2a1a10}
+
+/* ===================== THE AUTOMATIC WHEEL · anchor chips, the show, the highlight reel ===================== */
+.ach{display:inline-flex;align-items:center;gap:7px;margin:0 6px 6px 0;padding:6px 10px;border-radius:30px;border:1.5px solid;font:600 14px/1.2 var(--body);text-align:left;cursor:pointer;background:transparent}
+.ach i{font:800 9px var(--serif);font-style:normal;letter-spacing:.16em;text-transform:uppercase;padding:2px 6px;border-radius:20px}
+.ach.core{border-color:#1f6b3a;color:#123f22;background:rgba(60,160,90,.14)} .ach.core i{background:#1f6b3a;color:#e9ffe9}
+.ach.supporting{border-color:#9c7334;color:#4a3210;background:rgba(232,190,106,.18)} .ach.supporting i{background:#9c7334;color:#fff4d8}
+.ach.extra{border-color:#a89a88;color:#6b5e50;background:transparent} .ach.extra i{background:#c9bba6;color:#3a2e22}
+.ach.edge{border-color:#a89a88;color:#6b5e50;background:transparent} .ach.edge i{background:#c9bba6;color:#3a2e22}
+.ck-card .ach.core:hover,.ck-card .ach.supporting:hover,.ck-card .ach.extra:hover,.ck-card .ach.edge:hover{filter:brightness(.95);transform:translateY(-1px)}
+.achs{margin:2px 0 8px}
+.ck-sub{display:block;margin:8px 0 6px;font:800 9px var(--serif);letter-spacing:.22em;text-transform:uppercase;color:#7a4a2a}
+.ck-none{font:italic 500 15px var(--body);color:#7a5a3a}
+.ck-score{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:14px 0;border-bottom:1px dashed #b48a4e}
+.ck-score > span{font:800 10px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:#7a1a22}
+.ck-score > b{font:400 34px/1 var(--deco);color:#5a0f22}
+.bd{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}
+.bd span{display:inline-flex;align-items:baseline;gap:6px;padding:4px 9px;border-radius:4px;background:rgba(90,15,34,.08);font:700 14px var(--serif);color:#2a160e}
+.bd span i{font:800 9px var(--serif);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
+.bd span.neg{background:rgba(196,32,47,.1);color:#9a1622}
+/* chips on the dark cards */
+.fc-anchor{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 2px}
+.ach.sm{margin:0;padding:3px 8px;font:600 12.5px/1.2 var(--body);cursor:default}
+.face.front .ach.core{border-color:#5fc27e;color:#c9f5d4;background:rgba(60,160,90,.18)}
+.face.front .ach.supporting{border-color:var(--gold-lo);color:var(--gold-hi);background:rgba(232,190,106,.1)}
+.face.front .ach.edge,.face.front .ach.extra{border-color:rgba(243,230,200,.3);color:rgba(243,230,200,.7)}
+.ach.flaw{font:800 9px var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.face.front .ach.flaw.core{border-color:#ff8a80;color:#ffc4be;background:rgba(196,32,47,.2)}
+/* the show: entries, wins and falls */
+.rv.arrive{animation:rvEnter .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes rvEnter{from{opacity:0;transform:translateX(40px) rotateY(-18deg)}to{opacity:1;transform:none}}
+.rv.win{transform:translateY(-6px) scale(1.02);transition:transform .45s,filter .45s}
+.rv.win .face.front{box-shadow:0 0 0 1px #5a3a14,0 0 0 4px #0e0306,0 0 0 6px var(--gold-hi),0 0 40px rgba(255,210,120,.55),0 18px 34px rgba(0,0,0,.65)}
+.rv.lose{filter:grayscale(.75) brightness(.7);transform:scale(.97);transition:transform .45s,filter .45s}
+.stamp-big{position:absolute;left:50%;top:44%;z-index:6;transform:translate(-50%,-50%) rotate(-10deg);padding:8px 18px;border:4px solid;border-radius:6px;font:400 clamp(28px,3.4vw,40px)/1 var(--deco);letter-spacing:.06em;text-align:center;text-transform:uppercase;animation:stampIn .45s cubic-bezier(.3,1.6,.5,1);background:rgba(14,3,6,.55);white-space:nowrap}
+.stamp-big small{display:block;margin-top:5px;font:800 10px var(--serif);letter-spacing:.16em}
+.stamp-big.win{border-color:var(--gold-hi);color:var(--gold-hi);text-shadow:0 0 14px rgba(255,214,140,.8)}
+.stamp-big.lose{border-color:#ff8a80;color:#ff8a80;transform:translate(-50%,-50%) rotate(8deg)}
+.stamp-big.land{border-color:var(--gold-hi);color:var(--gold-hi);transform:translate(-50%,-50%) rotate(-6deg)}
+@keyframes stampIn{from{opacity:0;scale:2.2}to{opacity:1;scale:1}}
+.slot.peek{outline:2px solid var(--gold-hi);box-shadow:0 0 24px rgba(255,214,140,.6)}
+#screenCard .bt-h{font-size:clamp(22px,3.2vw,34px)}
+#screenCard .bt-h i{font:italic 500 .6em var(--serif);color:var(--gold);margin:0 .3em}
+#screenCard #bfactor{min-height:1.2em}
+#screenCard #breason{min-height:2.6em;animation:fadeUp .5s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* the tape: every battle of the show */
+.tape{position:relative;z-index:2;width:min(980px,94vw);margin:14px auto 0}
+.tape[hidden]{display:none}
+.tape-row{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin}
+.tp{flex:1 0 108px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 8px 9px;border-radius:6px;background:rgba(14,3,6,.7);border:1px solid rgba(232,190,106,.25);color:rgba(243,230,200,.55);text-align:center}
+.tp span{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:400 13px var(--deco);border:1.5px solid currentColor}
+.tp em{font:700 11px/1.2 var(--serif);font-style:normal;letter-spacing:.04em}
+.tp.on{border-color:var(--gold-hi);color:var(--gold-hi);box-shadow:0 0 16px rgba(255,214,140,.35)}
+.tp.w{border-color:#5fc27e;color:#c9f5d4} .tp.w span{background:#1f6b3a;border-color:#5fc27e}
+.tp.l{border-color:#c4655c;color:#ffc4be} .tp.l span{background:#6b1a1a;border-color:#ff8a80}
+.tape-ctl{display:flex;justify-content:center;gap:22px;margin-top:4px}
+.tape-ctl .linkish{color:var(--gold);font-size:13px}
+/* the profile's score */
+.pscore{margin-top:10px;padding:12px 14px;border-radius:3px;background:rgba(14,3,6,.45);border:1px solid rgba(232,190,106,.25)}
+.pscore .lab{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;font:800 10px var(--serif);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.pscore .lab b{font:400 26px var(--deco);letter-spacing:0;color:var(--gold-hi)}
+.pscore .bd span{background:rgba(232,190,106,.1);color:var(--cream)} .pscore .bd span i{color:rgba(243,230,200,.6)}
+.pscore .bd span.neg{background:rgba(196,32,47,.2);color:#ffc4be}
+.pscore .fc-anchor .ach.core{border-color:#5fc27e;color:#c9f5d4;background:rgba(60,160,90,.18)}
+.pscore .fc-anchor .ach.supporting{border-color:var(--gold-lo);color:var(--gold-hi);background:rgba(232,190,106,.1)}
+.pscore .fc-anchor .ach.edge,.pscore .fc-anchor .ach.extra{border-color:rgba(243,230,200,.3);color:rgba(243,230,200,.7)}
+.pscore .fc-anchor .ach.flaw.core{border-color:#ff8a80;color:#ffc4be;background:rgba(196,32,47,.2)}
+.tk-warn{margin:10px 0 0;padding:10px 12px;border-left:3px solid #ff8a80;background:rgba(196,32,47,.14);font:500 15px/1.45 var(--body);color:#ffd9d4}
+.sealnote.warn{color:#ff9e94;font-style:normal;font-weight:600}
+/* the highlight reel */
+.reels{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr));gap:20px;margin-top:20px;text-align:left}
+.reelcard{position:relative;padding:16px 18px 14px;background:linear-gradient(#f4e8cc,#e5d1a4);color:var(--ink);border-radius:3px;box-shadow:0 12px 26px rgba(0,0,0,.55)}
+.reelcard::before{content:"";position:absolute;inset:6px;border:1px solid rgba(106,26,30,.3);pointer-events:none}
+.reelcard::after{content:"";position:absolute;left:0;right:0;top:-9px;height:9px;background:repeating-linear-gradient(90deg,#1a0509 0 10px,transparent 10px 16px);opacity:.7}
+.reelcard header{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding-bottom:10px;border-bottom:1px dashed #b48a4e}
+.reelcard .rc-k{font:800 9.5px var(--serif);letter-spacing:.22em;text-transform:uppercase;color:#7a1a22}
+.reelcard .ti{display:block;font:800 19px/1.15 var(--serif);background:none;border:0;padding:2px 0;text-align:left;color:var(--ink);cursor:pointer}
+.reelcard .ti:hover{text-decoration:underline}
+.reelcard .me{font:600 10.5px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
+.rc-land{text-align:center;min-width:64px}
+.rc-land b{display:block;font:400 32px/1 var(--deco);color:var(--red)}
+.rc-land span{font:700 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
+.rc-land em{display:block;margin-top:2px;font:italic 600 13px var(--body);color:#5a3a26}
+.rc-battles{list-style:none;margin:0;padding:0;counter-reset:bt}
+.rc-battles li{position:relative;display:grid;grid-template-columns:62px 1fr auto;gap:2px 10px;align-items:baseline;padding:9px 0 9px 26px;border-bottom:1px dotted rgba(122,74,42,.35);counter-increment:bt}
+.rc-battles li::before{content:counter(bt);position:absolute;left:0;top:10px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:700 10px var(--serif);color:#fff;background:#1f6b3a}
+.rc-battles li.l::before{background:#9a1622}
+.rc-res{font:800 10px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#1f6b3a}
+.rc-battles li.l .rc-res{color:#9a1622}
+.rc-opp{font:700 15px/1.25 var(--serif)} .rc-opp small,.rc-key small{display:block;font:600 11px var(--serif);letter-spacing:.06em;color:#7a4a2a}
+.rc-key{text-align:right;font:800 9.5px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#5a0f22}
+.rc-battles p{grid-column:1/-1;margin:3px 0 0;font:14.5px/1.45 var(--type);color:#2a1a10}
+.reelcard footer{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding-top:10px;font:700 11px var(--serif);letter-spacing:.1em;text-transform:uppercase;color:#7a4a2a}
+.reelcard footer span:first-child{font:400 18px var(--deco);letter-spacing:0;color:var(--ink)}
+.reelcard footer .watch{margin-left:auto;padding:7px 12px;border-radius:30px;border:1.5px solid #5a0f22;background:#5a0f22;color:var(--gold-hi);font:800 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.reelcard footer .watch:hover{background:#7a1a2e}
+.rc-first{margin:10px 0 0;font:italic 500 16px var(--body);color:#5a3a26}
+.vold{margin-top:26px;padding:14px 18px;background:rgba(14,3,6,.5);border:1px solid rgba(232,190,106,.3);border-radius:4px;text-align:left}
+.vold summary{cursor:pointer;font:800 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.vold .ventry b{color:var(--gold-hi)} .vold .ventry span{color:rgba(243,230,200,.6)} .vold .ventry p{color:var(--cream)}
+.vold .ventry{border-bottom-color:rgba(232,190,106,.2)}
+/* the office: weights */
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 14px;margin:8px 0 4px}
+.wgrp{padding:8px 10px;border:1px dashed rgba(122,74,42,.45);border-radius:3px}
+.wgrp b{display:block;margin-bottom:6px;font:800 9.5px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a1a22}
+.wgrp label{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:3px 0;font:600 13px var(--body);color:#3a2418}
+.wgrp input{width:62px;padding:3px 6px;border:0;border-bottom:1.5px solid #a8834a;background:rgba(255,255,255,.45);font:600 14px var(--serif);text-align:right}
+@media (max-width:640px){
+  .reelcard header{grid-template-columns:52px 1fr auto}
+  .rc-battles li{grid-template-columns:54px 1fr}
+  .rc-key{grid-column:2;text-align:left}
+  .tp{flex-basis:92px}
+}
+@media (prefers-reduced-motion:reduce){ .rv.arrive,.stamp-big,#screenCard #breason{animation:none} }
+@media (max-width:640px){
+  #auditorium .stage.sw.showing{grid-template-columns:1fr 1fr!important;gap:10px;padding:0 10px}
+  #auditorium .stage.sw.showing .reel-col{order:2;grid-column:1/-1;padding-right:26px}
+  .showing .fc-art{min-height:210px}
+  .showing .fc-medal{width:54px;height:54px;top:9px;right:9px} .showing .fc-medal b{font-size:18px} .showing .fc-medal span{font-size:6.5px;letter-spacing:.08em}
+  .showing .fc-ribbon{top:70px;left:9px;right:9px;font-size:7.5px;padding:3px 6px;letter-spacing:.1em;text-align:center}
+  .showing .face.front::before{inset:4px}
+  .showing .fc-title{left:10px;right:10px;bottom:8px} .showing .fc-title .ti{font-size:16px} .showing .fc-title .me{font-size:8px;letter-spacing:.08em}
+  .showing .fc-title .lvl em{display:none} .showing .fc-title .lvl .cbadge{font-size:9px;padding:2px 6px}
+  .showing .fc-body{padding:6px 8px 10px}
+  .showing .face.front .fc-stats{grid-template-columns:repeat(2,1fr)} .showing .face.front .fc-stats div{padding:6px 2px} .showing .face.front .fc-stats b{font-size:15px}
+  .showing .face.front .fc-stats div:nth-child(3){border-left:0;border-top:1px solid rgba(232,190,106,.18)} .showing .face.front .fc-stats div:nth-child(4){border-top:1px solid rgba(232,190,106,.18)}
+  .showing .fc-anchor{display:none}
+  .showing .stamp-big{font-size:21px;padding:5px 10px;border-width:3px;top:52%} .showing .stamp-big small{font-size:7px;letter-spacing:.08em}
+  .showing .fc-flip{font-size:9px;letter-spacing:.12em}
+  .showing .face.back .rvtext{font-size:13px}
+  .showing .fc-in{position:relative} .showing .face.back{position:absolute;inset:0;overflow-y:auto;padding:12px 10px}
+  .showing .fc-backhead{grid-template-columns:34px 1fr;gap:8px} .showing .fc-backhead .ti{font-size:14px}
+}
+
+/* ===================== STRIKES · a wording edit that moved a film ===================== */
+#strike{position:fixed;inset:0;z-index:48;display:none;place-items:center;padding:16px;background:rgba(6,1,3,.88);backdrop-filter:blur(3px)}
+#strike.show{display:grid}
+.strike-in{width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;border-radius:6px;background:#0f0306;border:2px solid #c4202f;box-shadow:0 0 0 6px rgba(196,32,47,.18),0 0 60px rgba(196,32,47,.35),0 24px 50px rgba(0,0,0,.7);color:var(--cream);animation:strikeIn .5s cubic-bezier(.3,1.4,.5,1)}
+@keyframes strikeIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+.strike-band{display:flex;align-items:center;gap:14px;padding:14px 20px;background:repeating-linear-gradient(-45deg,#c4202f 0 18px,#8a1420 18px 36px);color:#fff}
+.strike-band b{font:400 30px/1 var(--deco);letter-spacing:.06em;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.strike-band span{margin-left:auto;font:800 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;padding:5px 9px;border:1.5px solid #fff;border-radius:3px;background:rgba(0,0,0,.25)}
+.strike-body{padding:18px 22px 20px}
+.strike-body h3{margin:0 0 6px;font:800 21px/1.25 var(--serif);color:#fff6e0}
+.strike-body p{margin:0 0 12px;font:500 17px/1.5 var(--body);color:rgba(243,230,200,.86)}
+.strike-move{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 14px;font:400 40px/1 var(--deco);color:var(--gold-hi)}
+.strike-move i{font:italic 500 16px var(--serif);color:rgba(243,230,200,.6)}
+.strike-why{margin:0 0 14px;padding:10px 14px;border-left:3px solid #ff8a80;background:rgba(196,32,47,.12);font:500 15.5px/1.5 var(--body);color:#ffe0dc}
+.strike-why b{display:block;margin-bottom:4px;font:800 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#ff9e94}
+.strike-dots{display:flex;gap:8px;justify-content:center;margin:0 0 16px}
+.strike-dots i{width:16px;height:16px;border-radius:50%;border:2px solid #c4655c}
+.strike-dots i.on{background:#c4202f;border-color:#ff8a80;box-shadow:0 0 10px rgba(255,90,80,.6)}
+.strike-dots i.new{animation:dotPop .6s .3s both}
+@keyframes dotPop{from{transform:scale(0)}60%{transform:scale(1.4)}to{transform:scale(1)}}
+.strike-acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.strike-acts button{padding:12px 18px;border-radius:30px;font:800 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.strike-acts .take{background:#c4202f;border:2px solid #ff8a80;color:#fff}
+.strike-acts .undo{background:transparent;border:2px solid var(--gold);color:var(--gold-hi)}
+.strike-note{margin:12px 0 0;text-align:center;font:italic 500 14px var(--body);color:rgba(243,230,200,.6)}
+.strk{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:3px;font:800 10px var(--serif);letter-spacing:.08em;vertical-align:middle;background:#8a1420;color:#ffe0dc}
+.strk.lock{background:#2a160e;color:var(--gold-hi);border:1px solid var(--gold-lo)}
+.lockline{margin:10px 0 0;padding:10px 14px;border:1px solid var(--gold-lo);border-radius:4px;background:rgba(14,3,6,.6);font:500 16px/1.45 var(--body);color:var(--gold-hi);text-align:center}
+@media (prefers-reduced-motion:reduce){ .strike-in,.strike-dots i.new{animation:none} }
 </style>
 </head>
 <body>
@@ -1629,6 +1792,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 <div id="playbill" role="dialog" aria-modal="true" aria-label="The Playbill"><div class="pb" id="pbCard"></div></div>
 <div id="toast" role="status"></div>
 <div id="saving" aria-live="polite"><i></i>Saving to the vault…</div>
+<div id="strike" role="alertdialog" aria-modal="true" aria-labelledby="strikeH"><div class="strike-in" id="strikeIn"></div></div>
 <div id="alert" role="alertdialog" aria-modal="true"><div class="cmp" id="alertIn" style="width:min(520px,100%)"></div></div>
 
 <!-- ===================== BOX OFFICE ===================== -->
@@ -1713,18 +1877,8 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
       <div class="card rv" id="rvOpp"></div>
     </div>
 
-    <div class="mu" id="mu"></div>
+    <div class="tape" id="tape" hidden></div>
     <div class="desk" id="desk">
-      <div id="placing">
-        <div class="verdict" id="verdict"></div>
-        <div class="tally" id="tally"></div>
-        <div class="consider">
-          <label for="consider">Decisive consideration <i>— this matchup · optional</i></label>
-          <textarea id="consider" maxlength="600" placeholder="What decides this matchup?"></textarea>
-          <p class="consider-hint" id="considerHint"></p>
-        </div>
-        <button class="lock" id="lockBtn">Lock it in</button>
-      </div>
       <div class="results" id="results"></div>
     </div>
 
@@ -1749,7 +1903,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
      matches[]            { id, a (the spinning film), b, winner, lean, fav, sit, via, at }
      wheelLog[]           { id, type: place | remove, film, pos, of, via, from, note, at }  (history + Film Vault)
      form{}               film id → form, learned from verdicts
-     films[].comp         { subHit, consistent, jnsq, opener }  the components behind the lean
+     films[].comp         { consistent, jnsq, opener, anchor }  components the score reads (anchor = your tag corrections)
      archive              the retired X/Y showdowns and placements, kept for the record
      workflow             the one film currently in the booth or at the wheel
    ===================================================================== */
@@ -1830,7 +1984,7 @@ const names = c => { const [x, y] = c.split('/'); return `${X_NAMES[x]} · ${Y_N
    db is the stored document. COLL / VAULT / UNEVALUATED are views
    rebuilt from it after every change.
    ===================================================================== */
-function fresh() { return { films: [], lists: [{ id: 'watchlist', name: 'Watchlist', ids: [] }, { id: 'favorites', name: 'Favorites', ids: [] }], showdowns: [], settings: { tmdb: '' }, wheel: [], matches: [], wheelLog: [], form: {}, v: 2 }; }
+function fresh() { return { films: [], lists: [{ id: 'watchlist', name: 'Watchlist', ids: [] }, { id: 'favorites', name: 'Favorites', ids: [] }], showdowns: [], settings: { tmdb: '' }, wheel: [], matches: [], wheelLog: [], archives: [], v: 3 }; }
 // components already settled in conversation (2026-11-14) for the Recommendable films: which of the two Y2 ingredients each has
 const SEED_COMP = {
   'the 39 steps': { consistent: false, jnsq: true }, 'blonde crazy': { consistent: false, jnsq: true },
@@ -1852,8 +2006,17 @@ function normalize(d) {
     if (d.workflow && d.workflow.mode === 'reeval') d.workflow.mode = 'rewrite';
     d.films.forEach(f => { const s = SEED_COMP[String(f.title || '').trim().toLowerCase()]; if (s && f.y === 1 && !f.comp) f.comp = { ...s }; });
   }
-  d.matches ||= []; d.wheelLog ||= []; d.form ||= {};
-  d.v = 2;
+  d.matches ||= []; d.wheelLog ||= []; d.archives ||= [];
+  if ((d.v || 0) < 3) {
+    // The wheel became automatic: the score places every review. The hand-decided wheel, its matchups and
+    // your decisive considerations are archived (shown in the Film Vault), and every review returns to the queue.
+    if (d.wheel.length || d.matches.length || d.wheelLog.length) d.archives.push({ at: Date.now(), why: 'The wheel became automatic', wheel: d.wheel, matches: d.matches, wheelLog: d.wheelLog });
+    d.wheel = []; d.matches = []; d.wheelLog = [];
+    if (d.workflow && d.workflow.mode === 'again') d.workflow = null;
+    if (d.workflow && d.workflow.stage === 'spin') { d.workflow.stage = 'check'; d.workflow.spin = null; }
+  }
+  delete d.form;
+  d.v = 3;
   return d;
 }
 let db = normalize(null);
@@ -1867,23 +2030,24 @@ const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.ye
   X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, pos: null });
 const levelLine = f => `${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}`;
 
-/* ---------- the wheel's memory: records, upsets, entry, peak, reign — replayed from the log ---------- */
-function blankStat() { return { w: 0, l: 0, n: 0, upsets: 0, entry: null, peak: null, low: null, reign: 0 }; }
-const winnerChance = m => m.winner === m.a ? m.lean : 1 - m.lean;   // the chance the lean gave the eventual winner
+/* ---------- the wheel's memory: records, entry, peak, reign — replayed from the log ---------- */
+function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0 }; }
 function wheelStats() {
   const st = new Map(), get = id => { if (!st.has(id)) st.set(id, blankStat()); return st.get(id); };
   db.matches.forEach(m => {
     const a = get(m.a), b = get(m.b);
     a.n++; b.n++;
     if (m.winner === m.a) { a.w++; b.l++; } else { b.w++; a.l++; }
-    if (winnerChance(m) < 0.5) get(m.winner).upsets++;
   });
   let arr = [], topId = null, topAt = null;
   db.wheelLog.slice().sort((x, y) => x.at - y.at).forEach(e => {
-    arr = arr.filter(id => id !== e.film);
-    if (e.type !== 'remove') {
-      arr.splice(Math.max(0, Math.min(arr.length, e.pos)), 0, e.film);
-      const s = get(e.film); if (s.entry == null) s.entry = e.pos + 1;
+    if (e.type === 'order') arr = e.order.slice();
+    else {
+      arr = arr.filter(id => id !== e.film);
+      if (e.type !== 'remove') {
+        arr.splice(Math.max(0, Math.min(arr.length, e.pos)), 0, e.film);
+        const s = get(e.film); if (s.entry == null) s.entry = e.pos + 1;
+      }
     }
     arr.forEach((id, i) => { const s = get(id), p = i + 1; if (s.peak == null || p < s.peak) s.peak = p; if (s.low == null || p > s.low) s.low = p; });
     if ((arr[0] || null) !== topId) { if (topId) get(topId).reign += e.at - topAt; topId = arr[0] || null; topAt = e.at; }
@@ -1897,15 +2061,13 @@ function rebuild() {
   const ids = new Set(ev.map(f => f.id));
   db.wheel = db.wheel.filter((id, i, a) => ids.has(id) && a.indexOf(id) === i);
   COLL = ev.map(viewOf);
+  ANCHOR.clear();
   const pos = new Map(db.wheel.map((id, i) => [id, i]));
   COLL.forEach(f => { f.pos = pos.has(f.id) ? pos.get(f.id) : null; });
   QUEUE = COLL.filter(f => f.pos == null && !(db.workflow && db.workflow.film === f.id)).sort((a, b) => a.added - b.added);
   WSTAT = wheelStats();
-  // the Film Vault: the decisive considerations written as each review was locked into place
-  VAULT = [
-    ...db.matches.filter(m => m.note && ids.has(m.winner)).map(m => ({ kind: 'match', id: m.id, film: m.winner, opp: m.winner === m.a ? m.b : m.a, note: m.note, at: m.at, upset: winnerChance(m) < 0.5 })),
-    ...db.wheelLog.filter(e => e.note && ids.has(e.film)).map(e => ({ kind: 'place', id: e.id, film: e.film, note: e.note, at: e.at, pos: e.pos, of: e.of })),
-  ];
+  // the Film Vault is the highlight reel: every show, with its battles
+  VAULT = db.wheelLog.filter(e => e.type === 'place' && ids.has(e.film)).map(e => ({ ...e, battles: db.matches.filter(m => m.place === e.id).sort((a, b) => a.at - b.at) }));
 }
 const byId = id => COLL.find(f => f.id === id);
 function board() { return { ranked: db.wheel.map(byId).filter(Boolean), waiting: QUEUE }; }
@@ -1915,27 +2077,167 @@ function standing(f) {
 }
 const moveOf = (s, cur) => s.entry == null || cur == null ? 0 : s.entry - cur;
 const moveText = d => d > 0 ? '↑' + d : d < 0 ? '↓' + -d : '—';
+const r1 = v => Math.round(v * 10) / 10;
+const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
 
-/* ---------- the points behind the lean (see claude/wheel-points.md) ---------- */
-const CASE_PTS = { 0: 0, 1: 20, 2: 40, 3: 60, 4: 75, 5: 90 };
-const CLAIM_PTS = { 5: 0, 4: -6, 3: -12, 2: -18, 1: -24 };
-const FORM_K = 4;
+/* =====================================================================
+   THE ANCHOR READER
+   Each review is read against what its own sub-genre runs on. The case's
+   praised elements and the claim's conceded weakness are pulled from the
+   blueprint wording, then matched to the sub-genre's core and supporting
+   vocabulary. You can correct a read; the math never asks for a verdict.
+   ===================================================================== */
+const LEX = {
+  thriller:     { core: ['suspense', 'tension', 'thrill', 'propul', 'pace', 'pacing', 'intensity', 'stakes', 'danger', 'menace', 'chase', 'escalat', 'twist', 'terror', 'excit', 'cat-and-mouse', 'manhunt', 'dread', 'perception', 'disorient', 'eerie'], sup: ['atmosph', 'mood', 'vibe', 'camera', 'look', 'style', 'intro', 'beats', 'ending', 'climax', 'finale', 'cinematograph', 'juxtapos'] },
+  mystery:      { core: ['mystery', 'intrigue', 'whodunit', 'reveal', 'clue', 'deduc', 'puzzle', 'disappear', 'identit', 'secret', 'gaslight', 'disorient', 'vertigo', 'closed-circle', 'suspense', 'perpetrator', 'killer', 'manhunt', 'uncertain', 'ending', 'payoff', 'finale', 'climax'], sup: ['atmosph', 'eerie', 'vibe', 'mood', 'twist', 'look', 'camera'] },
+  psychological:{ core: ['psycholog', 'terror', 'doubt', 'paranoi', 'doubling', 'irony', 'dread', 'suspense', 'menace', 'perception'], sup: ['juxtapos', 'atmosph', 'thematic', 'town', 'performance'] },
+  spy:          { core: ['espionage', 'spy', 'intrigue', 'chase', 'tailing', 'cat-and-mouse', 'double-cross', 'conspira', 'premise', 'suspense', 'mystery'], sup: ['camera', 'look', 'sleek', 'slick', 'intro', 'beats', 'theatrical', 'romance', 'noir'] },
+  horror:       { core: ['horror', 'monster', 'dread', 'menace', 'fear', 'terror', 'atmosph', 'gothic', 'eerie', 'macabre', 'mood', 'storybook'], sup: ['presence', 'beats', 'look', 'makeup', 'lead', 'mob'] },
+  comedy:       { core: ['comed', 'comic', 'humor', 'humour', 'hilari', 'laugh', 'gag', 'slapstick', 'wit', 'banter', 'repartee', 'dialogue', 'farce', 'farcical', 'escalat', 'entertain', 'fun', 'timing', 'fiasco', 'domino', 'chain', 'caper'], sup: ['charm', 'charisma', 'presence', 'heartfelt', 'warm', 'wholesome', 'premise', 'ensemble', 'trio', 'romance', 'relationship', 'dinner', 'trial', 'friendship', 'ending'] },
+  screwball:    { core: ['screwball', 'repartee', 'banter', 'rapid', 'overlapping', 'frenetic', 'relentless', 'tongue-in-cheek', 'cannon', 'zany'], sup: ['romance', 'relationship', 'premise'] },
+  silent:       { core: ['slapstick', 'stunt', 'physical', 'visual', 'presence', 'expression', 'charisma'], sup: ['heartfelt', 'storyline', 'romance'] },
+  drama:        { core: ['drama', 'dramatic', 'emotion', 'character', 'performance', 'heartfelt', 'complication', 'conflict', 'relationship', 'storyline', 'payoff', 'arc', 'presence', 'portrayal'], sup: ['look', 'cinematograph', 'pacing', 'pace', 'setting', 'ending', 'beats'] },
+  romantic:     { core: ['romance', 'romantic', 'love', 'chemistry', 'melodrama', 'couple', 'heart', 'dynamism'], sup: ['aesthetic', 'backlot', 'pacing', 'construction', 'scene'] },
+  soap:         { core: ['soap', 'melodrama', 'melodramatic', 'heartfelt', 'emotion', 'sentiment', 'family', 'sacrifice', 'tear', 'heart'], sup: ['setting', 'ending', 'disaster', 'spectacle', 'unique'] },
+  musical:      { core: ['music', 'musical', 'song', 'number', 'sing', 'dance'], sup: ['drama', 'plot', 'presence'] },
+  crime:        { core: ['crime', 'criminal', 'heist', 'caper', 'scheme', 'scheming', 'double-cross', 'betray', 'gangster', 'mob', 'prison', 'escape', 'police', 'underworld', 'stakes', 'rise-and-fall', 'doctor', 'hoodlum', 'clyde', 'outlaw'], sup: ['performance', 'presence', 'lead', 'pace', 'cinematograph', 'skeleton', 'situation', 'reform'] },
+  gangster:     { core: ['gangster', 'rise-and-fall', 'mob', 'bootleg', 'heavyweight', 'rivalry', 'violence', 'portrayal', 'figure', 'performance', 'complex', 'napoleon', 'showdown'], sup: ['cinematograph', 'pace', 'payoff', 'complication', 'narrative'] },
+  noir:         { core: ['noir', 'fatal', 'shadow', 'doom', 'lead', 'antihero', 'empath', 'moral', 'crime'], sup: ['look', 'atmosph', 'camera', 'underrated'] },
+  period:       { core: ['period', 'scenic', 'evocation', 'setting', 'era', 'family', 'decline', 'vision', 'styliz'], sup: ['performance', 'look', 'camera', 'act'] },
+};
+const FAMILY_OF = { thriller: 'thriller', mystery: 'mystery', psychological: 'psychological', spy: 'spy', espionage: 'spy', horror: 'horror', gothic: 'horror', comedy: 'comedy', screwball: ['comedy', 'screwball'], silent: ['comedy', 'silent'], slapstick: ['comedy', 'silent'],
+  drama: 'drama', romantic: 'romantic', romance: 'romantic', soap: 'soap', opera: 'soap', melodrama: 'soap', musical: 'musical', music: 'musical', crime: 'crime', gangster: 'gangster', noir: 'noir', period: 'period', 'pre-code': [], film: [] };
+function familiesOf(f) {
+  const words = String(f.genre || '').toLowerCase().split(/[\s·]+/).filter(Boolean), fam = new Set();
+  words.forEach(w => { const m = FAMILY_OF[w]; (Array.isArray(m) ? m : m ? [m] : []).forEach(x => fam.add(x)); });
+  if ([...fam].some(x => ['comedy'].includes(x)) && !fam.has('screwball') && !fam.has('silent')) fam.add('comedy');
+  if (!fam.size) ['drama', 'thriller', 'comedy'].forEach(x => fam.add(x));   // no known sub-genre yet: a general reading
+  return [...fam];
+}
+const lexOf = f => { const fams = familiesOf(f); return { core: fams.flatMap(x => LEX[x].core), sup: fams.flatMap(x => LEX[x].sup) }; };
+const hitAny = (t, list) => list.find(k => t.includes(k));
+const STOPFRAG = /^(draw some appeal|the film|this film|film|it|its|that|which|this|a|an|and|the|with|has|have|is|are|offers?|builds?|delivers?|realizes?|engages? you|you|me|my|i)$/i;
+function caseElements(f) {
+  let t = String(f.yNote || '').replace(/\s+/g, ' ').trim();
+  const cut = [/;\s*however/i, /\bThis justifies\b/, /\bIt[’']s (these|this)\b/, /\bso extraordinary\b/i, /\bStill,/];
+  const at = cut.map(c => t.search(c)).filter(m => m > 20);
+  if (at.length) t = t.slice(0, Math.min(...at));
+  t = t.replace(/\b(Mr|Mrs|Ms|Dr|St)\./g, '$1').replace(/\b([A-Z][a-z]+) and ([A-Z][a-z]+)\b/g, '$1 & $2')
+    .replace(/\b(the film|this film|the screwball|the pre-code drama)[’']s\b/gi, '')
+    .replace(/\bis dependable enough,? because it[’']s driven by\b/i, ',')
+    .replace(/\bI appreciate how the film\b/i, '').replace(/\bmakes the experience exceptionally high-caliber\b/i, '')
+    .replace(/\bbecause the way it (realizes|builds|delivers) them through\b/i, ',').replace(/\bbecause\b/gi, ',')
+    .replace(/\b(the film|this film)\b/gi, '').replace(/\b(has|offers|builds interest in|builds traction toward|delivers|uses|engages you with|keeps you engaged through|such as|culminates in)\b/gi, ',');
+  const clean = x => x.replace(/^[\s“”"'’—&-]+|[\s“”"'’—-]+$/g, '')
+    .replace(/^(this is|is|are|was|a|an|the|its|his|her|their|this|it|also)\s+/i, '').replace(/^(a|an|the)\s+/i, '')
+    .replace(/\s+(is|are|was|were|still|also|so|truly)$/i, '').trim();
+  const frags = t.split(/[,;:.]|\band\b|\bwith\b|\bthat\b|\bwhile\b/i).map(clean)
+    .filter(x => x.length > 3 && !STOPFRAG.test(x) && /[a-z]/.test(x) && !/^(when|before|after|once|as|until|then|also)\b/i.test(x) && !/^([A-Z][\w’'-]*\s*)+$/.test(x));
+  return [...new Set(frags)].slice(0, 8);
+}
+function claimWeakness(f) {
+  const t = String(f.xNote || '').replace(/\s+/g, ' ').trim();
+  if (fromPlot(t)) { const m = t.match(/what strikes me is that (.*?)(?:\.|$)/i); return (m ? m[1] : t).trim(); }
+  const conceded = (t.match(/(?:immaterial|material) to (?:why |its |his |her |their |the )?(.*?)(?:,| because| as )/i) || [])[1] || '';
+  const cause = (t.match(/because (.*?)(?:\.|Measured)/i) || [])[1] || '';
+  return [conceded, cause].filter(Boolean).join(' · ') || firstSentence(t);
+}
+const ANCHOR = new Map();
+function anchorOf(f) {
+  if (ANCHOR.has(f.id)) return ANCHOR.get(f.id);
+  const lx = lexOf(f), ov = (f.comp && f.comp.anchor) || {};
+  const els = caseElements(f).map(t => {
+    const lt = t.toLowerCase(), auto = hitAny(lt, lx.core) ? 'core' : hitAny(lt, lx.sup) ? 'supporting' : 'extra';
+    return { t, tag: (ov.els && ov.els[t]) || auto, auto };
+  });
+  const wt = claimWeakness(f), lw = wt.toLowerCase();
+  const wAuto = hitAny(lw, lx.core) ? 'core' : hitAny(lw, lx.sup) ? 'supporting' : 'edge';
+  const a = { els, weak: { t: wt, tag: ov.weak || wAuto, auto: wAuto }, fams: familiesOf(f) };
+  ANCHOR.set(f.id, a);
+  return a;
+}
+
+/* ---------- the score: everything the review says, weighed ---------- */
+const W0 = { case: [0, 20, 40, 60, 75, 90], claim: { 5: 0, 4: -6, 3: -12, 2: -18, 1: -24 }, land: { core: 1.5, supporting: 1, edge: 0.5 }, x5land: { core: -2, supporting: -1, edge: 0 },
+  anchorMax: 12, elw: { core: 1, supporting: 0.5, extra: 0.15 }, plot: 2, consistent: 3, jnsq: 4, identity: 2, hedge: -1 };
+const W = () => { const w = db.settings && db.settings.weights; return w ? { ...W0, ...w, claim: { ...W0.claim, ...(w.claim || {}) }, land: { ...W0.land, ...(w.land || {}) }, x5land: { ...W0.x5land, ...(w.x5land || {}) }, elw: { ...W0.elw, ...(w.elw || {}) } } : W0; };
 const firstSentence = t => (String(t || '').trim().match(/^.*?[.!?](?=\s|$)/) || [String(t || '').trim()])[0];
 const HEDGE = /\b(niche|underrated|has appealing qualities|appealing qualities)\b/i;
 const guessOpener = t => { const s = firstSentence(t); return HEDGE.test(s) || /:/.test(s) ? 'hedge' : 'identity'; };
 function parts(f) {
-  const c = f.comp || {}, p = { case: CASE_PTS[f.Y], claim: CLAIM_PTS[f.X] };
-  if (fromPlot(f.xNote)) p.plot = 2;
-  if (c.subHit) p.subHit = -3;
-  if (f.Y === 1) { if (c.consistent) p.consistent = 3; if (c.jnsq) p.jnsq = 4; }
-  if (f.Y <= 2) p.opener = (c.opener || guessOpener(f.yNote)) === 'hedge' ? -1 : 2;
-  const fm = +db.form[f.id] || 0; if (fm) p.form = fm;
+  const w = W(), c = f.comp || {}, a = anchorOf(f), p = {};
+  p.case = w.case[f.Y];
+  const n = a.els.length;
+  p.anchor = n ? r1(w.anchorMax * a.els.reduce((s, e) => s + w.elw[e.tag], 0) / n) : 0;
+  p.claim = r1(f.X === 5 ? w.x5land[a.weak.tag] : w.claim[f.X] * w.land[a.weak.tag]);
+  if (fromPlot(f.xNote)) p.plot = w.plot;
+  if (f.Y === 1) { if (c.consistent) p.consistent = w.consistent; if (c.jnsq) p.jnsq = w.jnsq; }
+  if (f.Y <= 2) p.opener = (c.opener || guessOpener(f.yNote)) === 'hedge' ? w.hedge : w.identity;
   return p;
 }
-const rating = f => Object.values(parts(f)).reduce((s, v) => s + v, 0);
-const leanOf = (a, b) => 1 / (1 + Math.pow(10, -(rating(a) - rating(b)) / 20));
-const r1 = v => Math.round(v * 10) / 10;
-const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
+const score = f => r1(Object.values(parts(f)).reduce((s, v) => s + v, 0));
+const chanceOf = (a, b) => 1 / (1 + Math.pow(10, -(score(a) - score(b)) / 20));
+// the order of the wheel: score, then the anchor, then the claim, then who arrived first
+function beats(a, b) {
+  const d = score(a) - score(b); if (Math.abs(d) > 1e-9) return d > 0;
+  const pa = parts(a), pb = parts(b);
+  if (pa.anchor !== pb.anchor) return pa.anchor > pb.anchor;
+  if (a.X !== b.X) return a.X > b.X;
+  return a.added <= b.added;
+}
+const GROUP = { case: 'level', anchor: 'anchor', claim: 'claim', plot: 'claim', consistent: 'ingredients', jnsq: 'ingredients', opener: 'opener' };
+const FACTOR_NAME = { level: 'The recommendation', anchor: 'The anchor', claim: 'The claim', ingredients: 'The two ingredients', opener: 'The opening line', tie: 'The tiebreak' };
+function decide(Wn, L) {
+  const a = parts(Wn), b = parts(L), sum = {};
+  new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => { const g = GROUP[k]; sum[g] = (sum[g] || 0) + (a[k] || 0) - (b[k] || 0); });
+  const top = Object.entries(sum).filter(([, v]) => v > 0).sort((x, y) => y[1] - x[1])[0];
+  return top ? top[0] : 'tie';
+}
+const genreWord = f => f.genre ? f.genre.toLowerCase() : 'its sub-genre';
+const coreEls = f => anchorOf(f).els.filter(e => e.tag === 'core').map(e => e.t);
+function reasonOf(Wn, L, key) {
+  const aw = anchorOf(Wn), al = anchorOf(L), cw = coreEls(Wn), cl = coreEls(L);
+  const list = a => a.slice(0, 2).join(' and ');
+  if (key === 'level') return `${Y_NAMES[Wn.Y]} over ${Y_NAMES[L.Y]}: a full recommendation apart.`;
+  if (key === 'anchor') return cw.length
+    ? `${esc(Wn.title)}’s ${esc(list(cw))} ${cw.length > 1 ? 'are' : 'is'} the core of ${an(esc(genreWord(Wn)))}${cl.length ? `; ${esc(L.title)}’s praise lands there less often` : `, while ${esc(L.title)}’s praise sits off its own core`}.`
+    : `${esc(Wn.title)}’s praise sits closer to what ${an(esc(genreWord(Wn)))} runs on than ${esc(L.title)}’s does.`;
+  if (key === 'claim') return al.weak.tag === 'core' && L.X <= 4
+    ? `${esc(L.title)}’s flaw (${esc(trimTo(al.weak.t, 70))}) is material and hits the core of ${an(esc(genreWord(L)))}.`
+    : al.weak.tag !== 'edge' ? `${esc(L.title)}’s flaw lands on the ${al.weak.tag} of ${an(esc(genreWord(L)))}; ${esc(Wn.title)}’s ${aw.weak.tag === 'edge' ? 'sits at the edge' : 'costs it less'}.`
+    : `${esc(Wn.title)}’s condition holds up better against its own sub-genre.`;
+  if (key === 'ingredients') return `${esc(Wn.title)} has ${(Wn.comp || {}).jnsq ? 'the je ne sais quoi' : 'consistency'}, the ingredient ${esc(L.title)} lacks.`;
+  if (key === 'opener') return `${esc(Wn.title)}’s case opens on a clear identity.`;
+  return 'Dead level in every component. The tiebreak goes to the stronger anchor, then the cleaner claim.';
+}
+const trimTo = (t, n) => t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : t;
+const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
+/* place a review: binary search over the wheel, every comparison a battle */
+function runPlacement(f, order) {
+  let lo = 0, hi = order.length; const battles = [];
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1, o = byId(order[mid]), win = beats(f, o);
+    const Wn = win ? f : o, L = win ? o : f, key = decide(Wn, L);
+    battles.push({ opp: o.id, oppRank: mid + 1, newWins: win, margin: r1(Math.abs(score(f) - score(o))), chance: chanceOf(Wn, L), key, reason: reasonOf(Wn, L, key), sa: score(f), sb: score(o) });
+    if (win) hi = mid; else lo = mid + 1;
+  }
+  return { pos: lo, battles };
+}
+// keep the wheel in score order (after weights change, or on load)
+function sortWheel(log) {
+  const before = db.wheel.join('|');
+  db.wheel = db.wheel.map(byId).filter(Boolean).sort((a, b) => beats(a, b) ? -1 : 1).map(f => f.id);
+  if (log && db.wheel.join('|') !== before) db.wheelLog.push({ id: 'wl:' + uid(), type: 'order', order: db.wheel.slice(), at: Date.now() });
+  return db.wheel.join('|') !== before;
+}
+// clearing the wheel archives it whole; every review goes back to the queue
+function clearWheel(why) {
+  if (!db.wheel.length && !db.matches.length && !db.wheelLog.length) return false;
+  (db.archives ||= []).push({ at: Date.now(), why, wheel: db.wheel.slice(), matches: db.matches, wheelLog: db.wheelLog });
+  db.wheel = []; db.matches = []; db.wheelLog = [];
+  rebuild();
+  return true;
+}
 
 /* ---------- the critic's review: the claim, then the case, as one paragraph ---------- */
 function reviewOf(f) {
@@ -2108,9 +2410,10 @@ function renderScene(id) {
 function refreshScene() {
   renderMarquee();
   if (['lobby', 'vault', 'lostfound', 'gameroom', 'office', 'boxoffice'].includes(current)) renderScene(current);
-  if ((current === 'booth' && !active) || (current === 'auditorium' && !active && !lastVerdict)) renderScene(current);
+  if ((current === 'booth' && !active) || (current === 'auditorium' && !active && !SHOW)) renderScene(current);
 }
 function goTo(id, viaCurtain = true) {
+  if (current === 'auditorium' && id !== 'auditorium' && typeof SHOW !== 'undefined' && SHOW) { clearTimeout(SHOW.timer); SHOW = null; }   // leaving ends the show (the placement is already saved)
   const swap = () => {
     document.querySelectorAll('.scene').forEach(s => s.classList.toggle('on', s.id === id));
     current = id;
@@ -2158,7 +2461,7 @@ $('#enterBtn').addEventListener('click', () => {
    Only one film is ever in the booth or on the reel. The lock is stored
    with the collection, so it holds across devices and reloads.
    ===================================================================== */
-let active = null;   // { film (view), mode: 'new' | 'rewrite' | 'again' | 'queue', from (wheel index or null), stage: 'booth' | 'check' | 'spin' }
+let active = null;   // { film (view), mode: 'new' | 'rewrite' | 'queue', from (wheel index or null), stage: 'booth' | 'check' }
 function syncActive() {
   const w = db.workflow;
   if (!w || !raw(w.film)) { active = null; return; }
@@ -2197,7 +2500,7 @@ function renderLobby() {
   const { ranked } = board(), N = ranked.length;
   const top = ranked.slice(0, 3);
   const levels = [5, 4, 3, 2, 1, 0].filter(l => ranked.some(f => f.Y === l));
-  const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its review before starting another film.' : 'Finish its spin to free the auditorium.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
+  const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its review before starting another film.' : 'Start its show, or leave it in the queue, to free the auditorium.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
   $('#lobbyIn').innerHTML = `
     <div class="ns"><div class="k">The Lobby · CmanCinema</div><h2>Now Showing</h2><div class="dots"></div>
       <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'} on the wheel, ranked review against review${QUEUE.length ? ` · ${QUEUE.length} waiting in the queue` : ''}.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
@@ -2210,7 +2513,8 @@ function renderLobby() {
       ${canEdit() ? '<button class="btn-gold" data-goto="boxoffice">＋ Admit a film</button>' : ''}
     </div>
     <div id="bill"></div>
-    ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the wheel</h3><p>Reviewed and ready. Send one to the auditorium and the wheel spins it into place.</p>
+    ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the wheel</h3><p>${!N && (db.archives || []).length ? 'The wheel now places itself. Your old wheel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
+      ${canTicket() && QUEUE.length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.length} reviews</button></div>` : ''}
       ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the wheel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
@@ -2221,7 +2525,7 @@ function renderLobby() {
 function rowHTML(f, rank, stars) {
   const st = standing(f), mv = moveOf(st, rank);
   return `<div class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}" role="button" tabindex="0"><span class="rk">${rank}</span>${posterHTML(f)}
-    <span class="t">${esc(f.title)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
+    <span class="t">${esc(f.title)}${strikeBadge(f)}<small><span class="cbadge">${Y_NAMES[f.Y]}</span>${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
     <span class="gp">${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
 }
 function renderBill() {
@@ -2237,7 +2541,7 @@ function renderBill() {
 }
 function sendToWheel(id) {
   if (!canEdit() || active) return;
-  lastVerdict = null; beginWorkflow(id, 'queue'); goTo('auditorium');
+  beginWorkflow(id, 'queue'); goTo('auditorium');
 }
 $('#lobby').addEventListener('click', e => {
   const p = e.target.closest('[data-lp]');
@@ -2245,6 +2549,7 @@ $('#lobby').addEventListener('click', e => {
   const ev = e.target.closest('[data-evaluate]');
   if (ev) { if (!canEdit() || active) return; beginWorkflow(ev.dataset.evaluate, 'new'); startBooth(); return goTo('booth'); }
   const qd = e.target.closest('[data-queue]'); if (qd) return sendToWheel(qd.dataset.queue);
+  if (e.target.closest('[data-spinall]')) return spinAll();
   const tk = e.target.closest('[data-ticket]'); if (tk) return openProfile(tk.dataset.ticket, 'ticket');
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
 });
@@ -2261,22 +2566,21 @@ function lobbyShowFilm(id) {
    FILM PROFILE (Buy another ticket / Remove)
    ===================================================================== */
 let confirming = null;
-const VIA = { new: 'New review', queue: 'From the queue', again: 'Saw it again', rewrite: 'Rewrote the review' };
+const VIA = { new: 'New review', queue: 'From the queue', rewrite: 'Rewrote the review' };
 function ticketChoice(f) {
+  const r = raw(f.id) || {}, k = r.strikeCount || 0;
   return `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Buy another ticket · ${esc(f.title)}</b>
     <div class="tk-opts">
-      <button class="tk-opt" data-tk="again"><b>See it again</b><span>The same review goes straight back to the wheel for fresh matchups.</span></button>
-      <button class="tk-opt" data-tk="rewrite"><b>Rewrite the review</b><span>Back to the booth to revise the claim or the case, then to the wheel.</span></button>
+      <button class="tk-opt" data-tk="rewrite"><b>Rewrite the review</b><span>${r.locked ? 'Locked after three strikes: only a new recommendation or condition can reopen it.' : 'Back to the booth, as if you rewatched it.'}</span></button>
     </div>
-    <div class="btns"><button class="btn-line" data-no>Not now</button></div>
-    <p style="margin:8px 0 0;font:italic 500 14px var(--body);color:rgba(243,230,200,.65)">Its current place, record and history stay on file either way.</p></div>`;
+    <p class="tk-warn">Change the recommendation or the condition and the film reruns in the auditorium, no strike. Change only the wording and it stays put, unless the new words move it on the wheel: that’s a strike. ${k ? `This film has ${k} of 3.` : 'Three strikes and its wording locks.'}</p>
+    <div class="btns"><button class="btn-line" data-no>Not now</button></div></div>`;
 }
 function openProfile(id, show) {
   const f = byId(id); if (!f) return;
   const st = standing(f), entries = VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at);
   const ms = db.matches.filter(m => m.a === id || m.b === id).sort((a, b) => b.at - a.at);
   const busy = active && active.film.id !== id, editor = canEdit(), mv = moveOf(st, st.overall);
-  const fm = +db.form[id] || 0;
   $('#prof').innerHTML = `<button class="x" aria-label="Close">✕</button>
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
       <div class="k">Film profile · ${st.overall ? `#${st.overall} of ${st.of} on the wheel` : 'Waiting in the queue'}</div>
@@ -2286,16 +2590,19 @@ function openProfile(id, show) {
         <div><b>${st.overall ? '#' + st.overall : '—'}</b><span>On the wheel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
         <div><b>${st.w}–${st.l}</b><span>Record</span></div><div><b>${moveText(mv)}</b><span>Since entry</span></div>
       </div>
-      <div class="sub" style="font-size:16px">${st.n ? `${st.n} matchup${st.n === 1 ? '' : 's'} · ${st.upsets} upset win${st.upsets === 1 ? '' : 's'} · form ${fm > 0 ? '+' : ''}${fm.toFixed(1)}` : 'No matchups yet'}${st.entry ? ` · entered at #${st.entry}` : ''}</div>
+      <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pev"><p class="note" style="white-space:pre-line"><b>The critic’s review</b>${esc(reviewOf(f) || '—')}</p></div>
+      <div class="pscore"><div class="lab">Placement score <b>${score(f)}</b></div>${breakdownHTML(f)}${anchorChips(f)}</div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
-      ${ms.length ? `<div class="vlist"><span class="k">On the wheel · latest matchups</span>${ms.slice(0, 8).map(m => {
-        const won = m.winner === id, opp = byId(m.a === id ? m.b : m.a) || raw(m.a === id ? m.b : m.a), pc = Math.min(99, Math.max(1, Math.round((m.a === id ? m.lean : 1 - m.lean) * 100)));
-        return `<div class="vmini"><b>${won ? 'Beat' : 'Lost to'} ${esc(opp?.title || 'a removed film')} · the lean gave it ${pc}%${(won ? pc < 50 : pc > 50) ? ' · upset' : ''}</b>${new Date(m.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>`;
+      ${ms.length ? `<div class="vlist"><span class="k">On the wheel · latest battles</span>${ms.slice(0, 8).map(m => {
+        const won = m.winner === id, opp = byId(m.a === id ? m.b : m.a) || raw(m.a === id ? m.b : m.a);
+        return `<div class="vmini"><b>${won ? 'Beat' : 'Fell to'} ${esc(opp?.title || 'a removed film')} · ${FACTOR_NAME[m.key] || 'the math'} · by ${m.margin}</b>${vDate(m.at)}</div>`;
       }).join('')}</div>` : ''}
-      ${entries.length ? `<div class="vlist"><span class="k">In the Film Vault</span>${entries.map(v => `<div class="vmini"><b>${vHead(v)}</b>${esc(v.note)}</div>`).join('')}</div>` : ''}
+      ${(raw(id)?.strikes || []).length ? `<div class="vlist"><span class="k">Strikes${raw(id).locked ? ' · wording locked' : ''}</span>${raw(id).strikes.slice().reverse().map(k => `<div class="vmini"><b>Moved #${k.from} → #${k.to}</b>${vDate(k.at)} · ${esc(k.why)}</div>`).join('')}</div>` : ''}
+      ${entries.length ? `<div class="vlist"><span class="k">In the highlight reel</span>${entries.map(v => `<div class="vmini"><b>Landed #${v.pos + 1} of ${v.of} · ${v.battles.filter(m => m.winner === id).length}–${v.battles.filter(m => m.winner !== id).length}</b>${vDate(v.at)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button>'}
+        ${entries.length ? '<button class="btn-line" data-watchlast>▶ Watch its show</button>' : ''}
         <button class="linkish" data-remove style="margin-left:auto">Remove from collection</button>`}</div>` : ''}
       <div id="confirmBox">${show === 'ticket' && editor && !active && st.overall ? ticketChoice(f) : ''}</div>
     </div></div>`;
@@ -2303,6 +2610,10 @@ function openProfile(id, show) {
   $('#sheet').classList.add('show');
   $('#sheet').dataset.id = id;
   if (show === 'ticket') setTimeout(() => { const c = $('#confirmBox'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+}
+function strikeBadge(f) {
+  const r = raw(f.id) || {}, k = r.strikeCount || 0;
+  return (k ? `<span class="strk" title="${k} strike${k === 1 ? '' : 's'}: wording edits that moved it">⚠ ${k}</span>` : '') + (r.locked ? '<span class="strk lock" title="Wording locked after three strikes">🔒 Locked</span>' : '');
 }
 function closeSheet() { $('#sheet').classList.remove('show'); }
 $('#sheet').addEventListener('click', e => {
@@ -2312,17 +2623,16 @@ $('#sheet').addEventListener('click', e => {
   if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
   if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
   if (e.target.closest('[data-queuego]')) { closeSheet(); return sendToWheel(id); }
+  if (e.target.closest('[data-watchlast]')) { closeSheet(); return replayShow(VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at)[0]); }
   const tk = e.target.closest('[data-tk]');
   if (tk) {
     if (!canEdit() || active) return;
-    const mode = tk.dataset.tk;
-    lastVerdict = null; beginWorkflow(id, mode); closeSheet();
-    if (mode === 'rewrite') { startBooth(); goTo('booth'); } else goTo('auditorium');
+    beginWorkflow(id, 'rewrite'); closeSheet(); startBooth(); goTo('booth');
     return;
   }
   if (e.target.closest('[data-remove]')) {
-    const n = VAULT.filter(v => v.film === id).length;
-    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its review, its matchups and ${n} consideration${n === 1 ? '' : 's'} go with it, and every film below it moves up a place.
+    const n = db.matches.filter(m => m.a === id || m.b === id).length;
+    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its review and its ${n} battle${n === 1 ? '' : 's'} go with it, and every film below it moves up a place.
       <div class="btns"><button class="btn-gold" data-removeyes>Remove it</button><button class="btn-line" data-no>Keep it</button></div></div>`;
     return;
   }
@@ -2438,9 +2748,9 @@ function lockedNotice(where) {
   return `<div class="intertitle" style="margin:0 auto">
     <img class="projected" src="${LOGO_B}" alt=""><div class="k">${where}</div><h2>The house is dark</h2>
     <p>${visitor ? 'Only the editor works the projector. Visitors are welcome in the lobby, the Film Vault and the Game Room.'
-      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one whose review you rewrite with another ticket from the lobby.' : 'The screening room only opens for a review headed to the wheel: a new one, one sent from the queue, or one with another ticket from the lobby.'}</p>
+      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one whose review you rewrite with another ticket from the lobby.' : 'The screening room opens for a review headed to the wheel. Send one from the queue in the lobby, or watch any past show from the Film Vault’s highlight reel.'}</p>
     <span class="orn"></span>
-    <div class="yn" style="margin-top:6px">${visitor ? '' : '<button class="btn-gold" data-goto="boxoffice">Admit a film</button>'}<button class="btn-line" data-goto="lobby">Back to the lobby</button></div></div>`;
+    <div class="yn" style="margin-top:6px">${visitor ? '' : '<button class="btn-gold" data-goto="boxoffice">Admit a film</button>'}${where === 'The Screening Room' && VAULT.length ? '<button class="btn-line" data-goto="vault">The highlight reel</button>' : ''}<button class="btn-line" data-goto="lobby">Back to the lobby</button></div></div>`;
 }
 function renderBooth() {
   const open = canEdit() && active && active.stage === 'booth' && bt;
@@ -2487,15 +2797,19 @@ function renderPane() {
       <div class="under"><button class="linkish" data-back>← Back to the questions</button>${cancel}</div>`;
     updateWordCount();
   } else {
-    const n = db.wheel.filter(id => id !== active.film.id).length, rewrite = active.mode === 'rewrite';
+    const r0 = raw(active.film.id) || {}, rewrite = active.mode === 'rewrite', changed = rewrite && reviewChanged(r0), lvl = rewrite && (r0.x !== bt.x || r0.y !== bt.y), words = changed && !lvl, n = db.wheel.filter(id => id !== active.film.id).length;
     p.innerHTML = `<div class="qk">${rewrite ? 'The rewrite is in' : 'The booth has spoken'}</div>
       <div class="coord" style="font-size:clamp(30px,5vw,48px)">${Y_NAMES[bt.y]}</div>
       <div class="coordn">${X_NAMES[bt.x]}</div>
       <div class="gain" style="margin-top:8px">Your claim and case now combine into one critic’s review for the wheel.</div>
       <span class="orn"></span>
-      <div class="yn"><button class="yes" data-leave="spin">${n ? 'Down to the auditorium' : 'Take its place'}<small>${n ? `spin it against the ${n} review${n === 1 ? '' : 's'} on the wheel` : 'the first review on the wheel · no matchup needed'}</small></button>
-        <button class="no" data-leave="${rewrite ? 'keep' : 'queue'}">${rewrite ? 'Keep its place' : 'Leave it in the queue'}<small>${rewrite ? `stays at #${(active.from ?? 0) + 1}, with the new review` : 'spin it later from the lobby'}</small></button></div>
+      ${rewrite && !changed ? `<div class="yn"><button class="yes" data-leave="keep">Keep its place<small>nothing changed, so the wheel stands</small></button></div>`
+      : words && r0.locked ? `<div class="lockline">🔒 This film’s wording is locked after three strikes. Only a new recommendation or condition can reopen it. Start over, or cancel the rewrite.</div>`
+      : words ? `<div class="yn"><button class="yes" data-leave="words">Seal the new wording<small>it keeps its place, unless the new words move it</small></button></div>`
+      : `<div class="yn"><button class="yes" data-leave="spin">${lvl ? 'Rerun it in the auditorium' : n ? 'Down to the auditorium' : 'Take its place'}<small>${lvl ? `a change of opinion · the math places it again against the ${n} review${n === 1 ? '' : 's'} on the wheel, no strike` : n ? `watch the math place it against the ${n} review${n === 1 ? '' : 's'} on the wheel` : 'the first review on the wheel · no battle needed'}</small></button>
+        <button class="no" data-leave="queue">Leave it in the queue<small>${lvl ? 'off the wheel until you send it back' : 'spin it later from the lobby'}</small></button></div>`}
       <div class="under"><button class="linkish" data-restart>Start the evaluation over</button>${cancel}</div>
+      ${words && !r0.locked ? `<div class="sealnote warn">Only the wording changed. If the new words move it on the wheel, that’s strike ${(r0.strikeCount || 0) + 1} of 3.</div>` : ''}
       <div class="sealnote">Once you leave, the booth seals for this film. Another ticket from the lobby reopens it.</div>`;
   }
 }
@@ -2619,22 +2933,100 @@ function cancelWorkflow() {
   ck0 = null;
   endWorkflow(); persist();
   toast(mode === 'new' && stage === 'booth' ? 'Ticket withdrawn'
-    : stage === 'booth' ? 'Rewrite cancelled · nothing changed'
-    : active === null && f && db.wheel.includes(f.id) ? 'Spin cancelled · its place on the wheel is unchanged' : `${f.title} waits in the queue`);
+    : stage === 'booth' ? 'Rewrite cancelled · nothing changed' : `${f.title} waits in the queue`);
   goTo('lobby');
 }
+const reviewChanged = r => !!bt && (['xNote', 'yNote', 'xEv', 'yEv'].some(k => String(r[k] || '').trim() !== String(bt[k] || '').trim()) || r.x !== bt.x || r.y !== bt.y);
+const TEXT_KEYS = ['xEv', 'xNote', 'yEv', 'yNote'];
 function leaveBooth(choice) {
   const r = raw(active.film.id); if (!r) return;
-  Object.assign(r, { xEv: bt.xEv, xNote: bt.xNote, yEv: bt.yEv, yNote: bt.yNote, watched: true, x: bt.x, y: bt.y });
-  if (choice === 'keep' || choice === 'queue') {
-    endWorkflow(); persist();
-    toast(choice === 'keep' ? 'Review rewritten · its place on the wheel stands' : `${r.title} waits in the queue`);
+  const rewrite = active.mode === 'rewrite', changed = reviewChanged(r), lvl = r.x !== bt.x || r.y !== bt.y;
+  if (rewrite && !changed) {
+    endWorkflow(); rebuild(); persist();
+    toast('Nothing changed · its place on the wheel stands');
     return goTo('lobby');
   }
-  db.workflow.stage = 'check'; db.workflow.spin = null; clearDraft(); bt = null;
+  if (rewrite && !lvl) return sealWording(r);
+  const onWheel = db.wheel.includes(r.id);
+  Object.assign(r, { xEv: bt.xEv, xNote: bt.xNote, yEv: bt.yEv, yNote: bt.yNote, watched: true, x: bt.x, y: bt.y });
+  if (rewrite) {
+    // a change of opinion: off the wheel, and the strike count starts over
+    r.strikeCount = 0; r.locked = false;
+    if (onWheel) { db.wheel = db.wheel.filter(x => x !== r.id); db.wheelLog.push({ id: 'wl:' + uid(), type: 'remove', film: r.id, at: Date.now() }); }
+  }
+  if (choice === 'queue' || choice === 'keep') {
+    endWorkflow(); rebuild(); persist();
+    toast(`${r.title} waits in the queue`);
+    return goTo('lobby');
+  }
+  db.workflow.stage = 'check'; db.workflow.spin = null; db.workflow.from = null; clearDraft(); bt = null;
   rebuild(); syncActive(); persist();
   goTo('auditorium');
 }
+/* only the words changed: the film should hold its place. If the new wording moves it, that's a strike. */
+let pendingStrike = null;
+function sealWording(r) {
+  if (r.locked) return toast('Locked after three strikes · only a new recommendation or condition reopens it');
+  const id = r.id, old = Object.fromEntries(TEXT_KEYS.map(k => [k, r[k]]));
+  const f0 = byId(id), p0 = parts(f0), a0 = anchorOf(f0), s0 = score(f0), from = db.wheel.indexOf(id);
+  Object.assign(r, Object.fromEntries(TEXT_KEYS.map(k => [k, bt[k]])));
+  rebuild();
+  const f1 = byId(id);
+  if (from < 0) { endWorkflow(); persist(); toast('Wording sealed'); return goTo('lobby'); }
+  const order = db.wheel.filter(x => x !== id), to = runPlacement(f1, order).pos;
+  if (to === from) {
+    endWorkflow(); rebuild(); persist();
+    toast(`New wording sealed · ${r.title} holds #${from + 1}${score(f1) !== s0 ? ` (score ${s0} → ${score(f1)})` : ''}`);
+    return goTo('lobby');
+  }
+  pendingStrike = { id, old, from, to, why: strikeWhy(f1, p0, a0, s0) };
+  showStrike();
+}
+function strikeWhy(f1, p0, a0, s0) {
+  const p1 = parts(f1), a1 = anchorOf(f1), lines = [];
+  const keys = [...new Set([...Object.keys(p0), ...Object.keys(p1)])].filter(k => (p0[k] || 0) !== (p1[k] || 0));
+  keys.forEach(k => lines.push(`${PART_NAME[k]} ${p0[k] || 0} → ${p1[k] || 0}`));
+  const core0 = new Set(a0.els.filter(e => e.tag === 'core').map(e => e.t)), core1 = a1.els.filter(e => e.tag === 'core').map(e => e.t);
+  const gained = core1.filter(t => !core0.has(t)), lost = [...core0].filter(t => !core1.includes(t));
+  let detail = '';
+  if (gained.length) detail += `“${gained.slice(0, 2).join('”, “')}” now read${gained.length === 1 ? 's' : ''} as core to ${an(genreWord(f1))}. `;
+  if (lost.length) detail += `“${lost.slice(0, 2).join('”, “')}” no longer read${lost.length === 1 ? 's' : ''} as core. `;
+  if (a0.weak.tag !== a1.weak.tag) detail += `The conceded flaw now lands at the ${a1.weak.tag} instead of the ${a0.weak.tag}. `;
+  if ((p0.opener || 0) !== (p1.opener || 0)) detail += `The opening line now reads as ${p1.opener > 0 ? 'a one-phrase identity' : 'an inventory or hedge'}. `;
+  return `${lines.join(' · ') || 'The score shifted'} (score ${s0} → ${score(f1)}). ${detail}`.trim();
+}
+function showStrike() {
+  const S = pendingStrike, f = byId(S.id), r = raw(S.id), k = (r.strikeCount || 0) + 1, up = S.to < S.from;
+  $('#strikeIn').innerHTML = `<div class="strike-band"><b>Strike</b><span>${k} of 3</span></div>
+    <div class="strike-body">
+      <h3 id="strikeH">The wording moved ${esc(f.title)}</h3>
+      <p>Its recommendation and condition didn’t change, but the new words ${up ? 'lift' : 'drop'} it on the wheel. Words alone shouldn’t move a film.</p>
+      <div class="strike-move">#${S.from + 1} <i>${up ? 'up to' : 'down to'}</i> #${S.to + 1}</div>
+      <div class="strike-why"><b>What moved it</b>${esc(S.why)}</div>
+      <div class="strike-dots">${[1, 2, 3].map(i => `<i class="${i <= k ? 'on' : ''} ${i === k ? 'new' : ''}"></i>`).join('')}</div>
+      <div class="strike-acts"><button class="take" data-strike="take">Take the strike · move it</button><button class="undo" data-strike="undo">Restore the old wording</button></div>
+      <p class="strike-note">${k >= 3 ? 'This is the third strike: its wording locks. Only a new recommendation or condition can reopen it.' : 'The strike stays on the film’s record. Three strikes and its wording locks.'}</p>
+    </div>`;
+  $('#strike').classList.add('show');
+}
+$('#strike').addEventListener('click', async e => {
+  const b = e.target.closest('[data-strike]'); if (!b || !pendingStrike) return;
+  const S = pendingStrike, r = raw(S.id); pendingStrike = null;
+  $('#strike').classList.remove('show');
+  if (!r) return;
+  if (b.dataset.strike === 'undo') {
+    Object.assign(r, S.old); endWorkflow(); rebuild(); persist();
+    toast(`Old wording restored · ${r.title} holds #${S.from + 1}`);
+    return goTo('lobby');
+  }
+  r.strikeCount = (r.strikeCount || 0) + 1;
+  (r.strikes ||= []).push({ at: Date.now(), from: S.from + 1, to: S.to + 1, why: S.why });
+  if (r.strikeCount >= 3) r.locked = true;
+  endWorkflow(); rebuild();
+  const info = placeFilm(S.id, 'strike');
+  await persist();
+  startShow({ ...info, strike: { n: r.strikeCount, locked: !!r.locked, from: S.from + 1 } });
+});
 function openCompass(l) {
   const c = COMPASS[l];
   $('#cmp').innerHTML = `<button class="x" aria-label="Close">✕</button>
@@ -2653,267 +3045,278 @@ function openCompass(l) {
 $('#compass').addEventListener('click', e => { if (e.target.id === 'compass' || e.target.closest('.x')) $('#compass').classList.remove('show'); });
 
 /* =====================================================================
-   THE AUDITORIUM · THE SMART WHEEL
-   One wheel of critic's reviews. A review meets the middle of the range
-   still open, then the middle of the half it earned, and so on (a binary
-   search), then one confirmation against its new neighbor. Each matchup
-   shows the lean: the all-in estimate from the claim and case components
-   and the wheel's history. The verdict is always yours, and nothing is
-   saved to the wheel until you lock the placement in.
+   THE AUDITORIUM · THE SHOW
+   The math places every review. A new review meets the middle of the wheel,
+   then the middle of the half it earns, and so on: every comparison is a
+   battle decided by the score (case level, anchor, claim, ingredients,
+   opening line). The placement is saved the moment the show starts; the
+   show plays it back, battle by battle.
    ===================================================================== */
 const drum = $('#drum'), reel = $('#reel');
 const SLOT_DEG = 21;
-let lastVerdict = null, g = 0, target = 0, raf = null, ck0 = null;
-const SIT_NAME = { level: 'a full recommendation apart', claim: 'decided by the claim', ingredients: 'decided by the two ingredients', opener: 'decided by the opening line', form: 'decided by form', even: 'with nothing in the components between them' };
+let lastVerdict = null, g = 0, target = 0, raf = null, ck0 = null, SHOW = null;
+const estMatchups = n => n < 1 ? 0 : Math.ceil(Math.log2(n + 1));
+const TAGS_EL = ['core', 'supporting', 'extra'], TAGS_WK = ['core', 'supporting', 'edge'];
 
 function setAudOpen(open) {
-  ['#screenCard', '#stage', '#mu', '#desk'].forEach(s => { $(s).hidden = !open; });
+  ['#screenCard', '#stage', '#tape', '#desk'].forEach(s => { $(s).hidden = !open; });
   $('#checkIn').hidden = true; $('#audDark').hidden = open;
 }
-const spinOrder = () => { const id = active.film.id; return db.wheel.filter(x => x !== id && byId(x)); };
+const spinOrder = () => { const id = active ? active.film.id : null; return db.wheel.filter(x => x !== id && byId(x)); };
 function enterAuditorium() {
-  if (lastVerdict) {
-    setAudOpen(true); ['#stage', '#mu', '#screenCard'].forEach(s => { $(s).hidden = true; });
-    $('#placing').style.display = 'none'; $('#results').innerHTML = lastVerdict; $('#results').classList.add('show'); return;
-  }
+  if (SHOW) { setAudOpen(true); return renderShowFrame(); }
   $('#results').classList.remove('show');
-  const open = canEdit() && active && (active.stage === 'check' || active.stage === 'spin');
+  const open = canEdit() && active && active.stage === 'check';
   setAudOpen(!!open);
   if (!open) { $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   const f = byId(active.film.id);
   if (!f) { setAudOpen(false); $('#audDark').innerHTML = lockedNotice('The Screening Room'); return; }
   active.film = f;
-  if (active.stage === 'check') return renderCheck();
-  const s = db.workflow.spin;
-  if (!s || s.n !== spinOrder().length) startSpin();      // the wheel changed underneath: start this spin over
-  renderSpin();
+  renderCheck();
 }
-const estMatchups = n => n < 2 ? n : Math.ceil(Math.log2(n + 1)) + 1;
-const cancelSpinLabel = () => active.from != null ? 'Cancel · keep its current place' : 'Leave it in the queue for now';
-const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
 
-/* ---------- before the wheel: the quick check that settles the components ---------- */
+/* ---------- before the show: how the math reads this review ---------- */
+function chipHTML(t, tag, kind, i) {
+  return `<button class="ach ${tag}" data-ach="${kind}" data-i="${i}" title="Tap to change">${esc(t)}<i>${tag}</i></button>`;
+}
 function renderCheck() {
-  ['#stage', '#mu', '#desk'].forEach(s => { $(s).hidden = true; });
-  const f = active.film, c = f.comp || {}, n = spinOrder().length;
-  if (!ck0 || ck0.film !== f.id) ck0 = { film: f.id, subHit: c.subHit ?? null, ing: f.Y === 1 ? (c.jnsq ? 'jnsq' : c.consistent ? 'consistent' : c.consistent === false && c.jnsq === false ? 'neither' : '') : '', opener: c.opener || guessOpener(f.yNote) };
-  $('#screenCard').innerHTML = `<div class="k">The Screening Room · Before the wheel</div><h2>${esc(f.title)}</h2>
+  ['#stage', '#tape', '#desk'].forEach(s => { $(s).hidden = true; }); $('#stage').classList.remove('showing');
+  const f = active.film, c = f.comp || {}, n = spinOrder().length, a = anchorOf(f);
+  if (!ck0 || ck0.film !== f.id) ck0 = { film: f.id, ing: f.Y === 1 ? (c.jnsq ? 'jnsq' : c.consistent ? 'consistent' : c.consistent === false && c.jnsq === false ? 'neither' : '') : '', opener: c.opener || guessOpener(f.yNote) };
+  const fams = a.fams.map(x => x[0].toUpperCase() + x.slice(1)).join(' · ');
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · Before the show</div><h2>${esc(f.title)}</h2>
     <p>${levelLine(f)}${f.genre ? ' · ' + esc(f.genre) : ''}</p>
-    <div class="under" style="margin-top:8px"><button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
+    <div class="under" style="margin-top:8px"><button class="linkish" data-cancelspin>Leave it in the queue for now</button></div>`;
   const opt = (attr, val, cur, label) => `<button class="${cur === val ? 'on' : ''}" data-${attr}="${val}">${label}</button>`;
-  const gname = f.genre ? f.genre.toLowerCase() : '';
+  const p = parts(f);
   $('#checkIn').innerHTML = `<div class="ck-card">
-      <div class="ck-review"><span>The critic’s review</span>${esc(reviewOf(f))}</div>
-      ${f.genre ? '' : `<div class="ck-q"><b>Sub-genre</b><p>This film needs a two-part sub-genre first.</p><div class="genre2"><input id="ckG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24"></div></div>`}
-      <div class="ck-q"><b>Sub-genre hit</b><p>Does this weakness hit what ${gname ? an(esc(gname)) : 'its sub-genre'} runs on?</p>
-        <blockquote>${esc(f.xNote || '—')}</blockquote>
-        <div class="ck-opts">${opt('cks', '1', ck0.subHit === true ? '1' : ck0.subHit === false ? '0' : '', 'Yes, it hits the core')}${opt('cks', '0', ck0.subHit === true ? '1' : ck0.subHit === false ? '0' : '', 'No, it spares it')}</div></div>
+      ${f.genre ? '' : `<div class="ck-q"><b>Sub-genre</b><p>The anchor needs a two-part sub-genre.</p><div class="genre2"><input id="ckG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24"></div><button class="btn-line" data-ckgenre style="margin-top:10px">Read it against this sub-genre</button></div>`}
+      <div class="ck-q"><b>The anchor · ${esc(f.genre || 'general reading')}</b>
+        <p>How the math reads your review against what ${an(esc(genreWord(f)))} runs on${f.genre ? ` (${fams})` : ''}. Tap a tag if it misread.</p>
+        <span class="ck-sub">What the case praised</span>
+        <div class="achs">${a.els.length ? a.els.map((e, i) => chipHTML(e.t, e.tag, 'el', i)).join('') : '<em class="ck-none">Nothing to read in the case yet.</em>'}</div>
+        <span class="ck-sub">What the claim conceded</span>
+        <div class="achs">${chipHTML(trimTo(a.weak.t, 110), a.weak.tag, 'wk', 0)}</div>
+        <small>Core and supporting praise lift the anchor (now ${p.anchor} of ${W().anchorMax}). A flaw at the core costs the most; at the edge, the least.</small></div>
       ${f.Y === 1 ? `<div class="ck-q"><b>The two ingredients</b><p>Recommended takes consistency and the je ne sais quoi. Which does this one have?</p>
         <div class="ck-opts">${opt('cki', 'consistent', ck0.ing, 'Consistency only')}${opt('cki', 'jnsq', ck0.ing, 'The je ne sais quoi only')}${opt('cki', 'neither', ck0.ing, 'Neither')}</div></div>` : ''}
       ${f.Y <= 2 ? `<div class="ck-q"><b>The opening line</b><p>“${esc(firstSentence(f.yNote))}”</p>
-        <div class="ck-opts">${opt('cko', 'identity', ck0.opener, 'A one-phrase identity')}${opt('cko', 'hedge', ck0.opener, 'An inventory or hedge')}</div>
-        <small>Suggested from the wording: ${guessOpener(f.yNote) === 'hedge' ? 'an inventory or hedge' : 'a one-phrase identity'}. Your call.</small></div>` : ''}
+        <div class="ck-opts">${opt('cko', 'identity', ck0.opener, 'A one-phrase identity')}${opt('cko', 'hedge', ck0.opener, 'An inventory or hedge')}</div></div>` : ''}
+      <div class="ck-score"><span>Placement score</span><b>${score(f)}</b>${breakdownHTML(f)}</div>
       <div class="ck-err" id="ckErr"></div>
-      <div class="ck-foot"><button class="lock" data-ckgo>${n ? 'Spin the wheel' : 'Take its place'}</button>
-        <p>${n ? `About ${estMatchups(n)} matchup${estMatchups(n) === 1 ? '' : 's'} against a wheel of ${n}.` : 'The first review on the wheel. No matchup needed.'}</p></div>
+      <div class="ck-foot"><button class="lock" data-ckgo>${n ? 'Start the show' : 'Take its place'}</button>
+        <p>${n ? `${estMatchups(n)} battle${estMatchups(n) === 1 ? '' : 's'} against a wheel of ${n}. The math decides each one.` : 'The first review on the wheel. No battle needed.'}</p></div>
     </div>`;
   $('#checkIn').hidden = false;
 }
+const PART_NAME = { case: 'Recommendation', anchor: 'Anchor', claim: 'Claim', plot: 'From the plot', consistent: 'Consistency', jnsq: 'Je ne sais quoi', opener: 'Opening line' };
+function breakdownHTML(f) {
+  const p = parts(f);
+  return `<div class="bd">${Object.entries(p).map(([k, v]) => `<span class="${v < 0 ? 'neg' : ''}"><i>${PART_NAME[k]}</i>${v > 0 && k !== 'case' ? '+' : ''}${v}</span>`).join('')}</div>`;
+}
+function setAnchorTag(f, kind, i) {
+  const r = raw(f.id); if (!r) return;
+  const a = anchorOf(f); r.comp = { ...(r.comp || {}) };
+  const ov = r.comp.anchor = { els: { ...((r.comp.anchor || {}).els || {}) }, weak: (r.comp.anchor || {}).weak };
+  if (kind === 'el') { const e = a.els[i], nx = TAGS_EL[(TAGS_EL.indexOf(e.tag) + 1) % 3]; if (nx === e.auto) delete ov.els[e.t]; else ov.els[e.t] = nx; }
+  else { const nx = TAGS_WK[(TAGS_WK.indexOf(a.weak.tag) + 1) % 3]; ov.weak = nx === a.weak.auto ? undefined : nx; }
+  if (ov.weak === undefined) delete ov.weak;
+}
 $('#checkIn').addEventListener('click', async e => {
-  if (!ck0 || !active) return;
-  const b = e.target.closest('[data-cks],[data-cki],[data-cko],[data-ckgo]'); if (!b) return;
-  if (b.dataset.cks) ck0.subHit = b.dataset.cks === '1';
-  if (b.dataset.cki) ck0.ing = b.dataset.cki;
-  if (b.dataset.cko) ck0.opener = b.dataset.cko;
-  if (b.dataset.ckgo === undefined) {
-    b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-    $('#ckErr').textContent = ''; return;
-  }
-  const f = active.film, r = raw(f.id); if (!r || !canEdit()) return;
-  if (!f.genre) {
+  if (!ck0 || !active || !canEdit()) return;
+  const f = active.film, r = raw(f.id); if (!r) return;
+  const ch = e.target.closest('[data-ach]');
+  if (ch) { setAnchorTag(f, ch.dataset.ach, +ch.dataset.i); rebuild(); syncActive(); persist(); return renderCheck(); }
+  if (e.target.closest('[data-ckgenre]')) {
     const g1 = capWord($('#ckG1').value), g2 = capWord($('#ckG2').value);
     if (!g1 || !g2) return $('#ckErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
-    r.genre = [g1, g2];
+    r.genre = [g1, g2]; rebuild(); syncActive(); persist(); return renderCheck();
   }
-  if (ck0.subHit == null) return $('#ckErr').textContent = 'Answer the sub-genre question first.';
+  const b = e.target.closest('[data-cki],[data-cko],[data-ckgo]'); if (!b) return;
+  if (b.dataset.cki) { ck0.ing = b.dataset.cki; r.comp = { ...(r.comp || {}), consistent: ck0.ing === 'consistent', jnsq: ck0.ing === 'jnsq' }; }
+  if (b.dataset.cko) { ck0.opener = b.dataset.cko; r.comp = { ...(r.comp || {}), opener: ck0.opener }; }
+  if (b.dataset.ckgo === undefined) { rebuild(); syncActive(); return renderCheck(); }
   if (f.Y === 1 && !ck0.ing) return $('#ckErr').textContent = 'Pick which ingredient it has.';
-  r.comp = { ...(r.comp || {}), subHit: ck0.subHit };
-  if (f.Y === 1) { r.comp.consistent = ck0.ing === 'consistent'; r.comp.jnsq = ck0.ing === 'jnsq'; }
-  if (f.Y <= 2) r.comp.opener = ck0.opener;
+  if (f.Y <= 2) r.comp = { ...(r.comp || {}), opener: ck0.opener };
   ck0 = null;
   rebuild(); syncActive();
-  if (!spinOrder().length) return placeAt(0, '', []);
-  db.workflow.stage = 'spin'; db.workflow.spin = null;
-  syncActive(); startSpin();
+  const info = placeFilm(active.film.id, active.mode);
+  endWorkflow();
   await persist();
-  enterAuditorium();
-  $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
+  startShow(info);
 });
 
-/* ---------- the search ---------- */
-function startSpin() { const n = spinOrder().length; db.workflow.spin = { lo: 0, hi: n, phase: 'search', log: [], pos: null, opp: null, n }; nextOpp(db.workflow.spin, spinOrder()); }
-function nextOpp(s, order) {
-  if (s.phase === 'search') {
-    if (s.lo < s.hi) { s.opp = order[(s.lo + s.hi) >> 1]; return; }
-    s.pos = s.lo; s.phase = 'confirm';
-    const faced = new Set(s.log.map(e => e.opp));
-    const pick = [order[s.pos - 1], order[s.pos]].find(id => id && !faced.has(id));
-    if (pick) { s.opp = pick; return; }
-  }
-  s.phase = 'done'; s.opp = null;
+/* ---------- placing: computed, logged, saved ---------- */
+function placeFilm(id, mode) {
+  const f = byId(id), order = db.wheel.filter(x => x !== id && byId(x));
+  const { pos, battles } = runPlacement(f, order), t = Date.now(), pid = 'wl:' + uid();
+  battles.forEach((b, i) => db.matches.push({ id: 'match:' + uid(), place: pid, a: id, b: b.opp, winner: b.newWins ? id : b.opp, margin: b.margin, chance: r1(b.chance * 1000) / 1000, key: b.key, reason: b.reason, sa: b.sa, sb: b.sb, oppRank: b.oppRank, at: t + i }));
+  db.wheel = order.slice(); db.wheel.splice(pos, 0, id);
+  db.wheelLog.push({ id: pid, type: 'place', film: id, pos, of: db.wheel.length, via: mode, at: t + battles.length + 1 });
+  rebuild();
+  return { film: id, pos, of: db.wheel.length, battles, order, via: mode };
 }
-function applyVerdict(s, order, newWins, lean, sit) {
-  s.log.push({ opp: s.opp, newWins, lean, sit, phase: s.phase, lo: s.lo, hi: s.hi, pos: s.pos });
-  if (s.phase === 'search') { const mid = (s.lo + s.hi) >> 1; if (newWins) s.hi = mid; else s.lo = mid + 1; nextOpp(s, order); return; }
-  if (s.phase === 'confirm') { const i = order.indexOf(s.opp); if (i === s.pos - 1 && newWins) s.pos--; else if (i === s.pos && !newWins) s.pos++; }
-  s.phase = 'done'; s.opp = null;
+function spinAll() {
+  if (!canEdit() || active || !QUEUE.length) return;
+  const ids = QUEUE.map(f => f.id); let k = 0;
+  ids.forEach(id => { if (byId(id) && byId(id).pos == null) { placeFilm(id, 'queue'); k++; } });
+  persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed · every battle is in the Film Vault`); });
+  renderScene(current);
 }
-function undoVerdict(s) { const e = s.log.pop(); if (!e) return; Object.assign(s, { phase: e.phase, lo: e.lo, hi: e.hi, pos: e.pos, opp: e.opp }); }
 
-/* ---------- reading a matchup: what separates the two reviews ---------- */
-function diffs(A, B) {
-  const a = parts(A), b = parts(B), d = {};
-  new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => { const v = (a[k] || 0) - (b[k] || 0); if (v) d[k] = v; });
-  return d;
+/* ---------- the show ---------- */
+function startShow(info) {
+  if (SHOW) clearTimeout(SHOW.timer);
+  SHOW = { ...info, step: 0, phase: 'battle', paused: false, timer: null };
+  if (!info.replay) justPlaced = info.film;
+  if (current === 'auditorium') { enterAuditorium(); $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' }); }
+  else { SHOW.delay = reduceMotion ? 0 : 1500; goTo('auditorium'); }   // let the curtain open before the first battle
 }
-function sitKey(A, B) {
-  if (A.Y !== B.Y) return 'level';
-  const d = diffs(A, B), grp = { claim: 'claim', subHit: 'claim', plot: 'claim', consistent: 'ingredients', jnsq: 'ingredients', opener: 'opener', form: 'form' }, sum = {};
-  Object.entries(d).forEach(([k, v]) => { const g2 = grp[k]; if (g2) sum[g2] = (sum[g2] || 0) + v; });
-  const top = Object.entries(sum).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]))[0];
-  return top && Math.abs(top[1]) >= 1 ? top[0] : 'even';
+function slotHTML(f, me) {
+  return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${Y_NAMES[f.Y]}</div></div></div>`;
 }
-function strengths(f, o) {
-  const a = parts(f), b = parts(o), s = [];
-  if (f.X > o.X) s.push(`cleaner condition (${X_NAMES[f.X]})`);
-  if (f.Y === 1 && o.Y === 1) { if (a.jnsq && !b.jnsq) s.push('je ne sais quoi'); if (a.consistent && !b.consistent) s.push('consistency'); }
-  if (f.Y <= 2 && o.Y <= 2 && (a.opener || 0) > (b.opener || 0)) s.push('one-phrase identity');
-  if (a.plot && !b.plot) s.push('claim drawn from the plot, not memory');
-  if (!a.subHit && b.subHit) s.push('weakness that spares its sub-genre');
-  if ((a.form || 0) - (b.form || 0) >= 2) s.push('form on the wheel');
-  return s;
+function anchorChips(f) {
+  const a = anchorOf(f);
+  return `<div class="fc-anchor">${a.els.filter(e => e.tag !== 'extra').slice(0, 4).map(e => `<span class="ach ${e.tag} sm">${esc(trimTo(e.t, 34))}</span>`).join('')}
+    <span class="ach ${a.weak.tag} sm flaw">Flaw · ${a.weak.tag}</span></div>`;
 }
-function decidingQ(A, B) {
-  if (A.Y !== B.Y) {
-    const hi = A.Y > B.Y ? A : B, lo = hi === A ? B : A;
-    return `Does ${esc(poss(lo.title))} review give a viewer more reason to watch than ${esc(poss(hi.title))}, even though one is ${Y_NAMES[hi.Y]} and the other ${Y_NAMES[lo.Y]}?<small>A recommendation apart. Beating the level should come from the experience itself.</small>`;
-  }
-  const sa = strengths(A, B), sb = strengths(B, A);
-  const side = (f, s) => s.length ? `${esc(poss(f.title))} ${s[0]}` : `${esc(poss(f.title))} case as written`;
-  return `${esc(SHOW_Q.Y[A.Y])}<small>${sa.length || sb.length ? `It comes down to ${side(A, sa)} against ${side(B, sb)}.` : 'Same level, same condition, same ingredients. This one is all in the reading.'}</small>`;
-}
-function outcome(s, order, newWins) {
-  const c = JSON.parse(JSON.stringify(s)); applyVerdict(c, order, newWins, 0.5, '');
-  return c.phase === 'done' ? `lands at <b>#${c.pos + 1}</b> of ${order.length + 1}` : `next meets ${esc(byId(c.opp).title)} <b>(#${order.indexOf(c.opp) + 1})</b>`;
-}
-function watchOut(A, B) {
-  if (A.Y !== B.Y) return 'The level gap is doing most of the work. An upset here should rest on what you experienced, not on how either review is written (Art. 16).';
-  const sit = sitKey(A, B);
-  return {
-    claim: 'Most of this lean comes from the claim. That flaw is already part of the experience the case describes (Art. 9). Let it decide this only if it mattered beyond that.',
-    ingredients: 'This turns on the two ingredients. Ask which a viewer would rather take a chance on: steady realization, or the spark you can’t name.',
-    opener: 'The opening line is tipping this. A sharper sentence isn’t a better experience (Art. 23).',
-    form: 'Form is driving this: your past verdicts, not these two reviews. Judge what’s in front of you.',
-    even: 'Nothing in the components separates them. Read both reviews and trust the experience.',
-  }[sit];
-}
-function trackRecord(A, B) {
-  const sit = sitKey(A, B), past = db.matches.filter(m => m.sit === sit);
-  if (past.length < 3) return `<p>Not enough history for a pattern yet${past.length ? ` · ${past.length} matchup${past.length === 1 ? '' : 's'} ${SIT_NAME[sit]} so far` : ''}.</p>`;
-  const k = past.filter(m => m.winner === m.fav).length;
-  let extra = '';
-  if (sit === 'ingredients') {
-    const j = past.filter(m => { const w = raw(m.winner); return w && w.comp && w.comp.jnsq; }).length;
-    extra = ` The je ne sais quoi won ${j} of them.`;
-  }
-  return `<p>In ${past.length} matchups ${SIT_NAME[sit]}, you went with the lean ${k} time${k === 1 ? '' : 's'}.${extra}</p>`;
-}
-function flipCard(f, o) {
-  const st = standing(f), fm = +db.form[f.id] || 0, fmt = v => (v > 0 ? '+' : '') + v.toFixed(1);
-  const pos = o.mine ? (active.from != null ? '#' + (active.from + 1) : 'New') : '#' + o.rank;
-  const mv = o.mine && active.from == null ? '—' : moveText(moveOf(st, st.overall));
-  const pick = o.pick ? `<button class="pick" data-pick="${o.pick}">This review wins</button>` : '';
+function showCard(f, o) {
+  const st = standing(f), p = parts(f);
   return `<div class="fc-in">
     <div class="face front">
       <div class="fc-art">${posterHTML(f)}<div class="fc-shade"></div>
         <div class="fc-ribbon">${o.label}</div>
-        ${o.pct != null ? `<div class="fc-medal ${o.fav ? 'hi' : ''}"><b>${o.pct}<i>%</i></b><span>${o.fav ? 'The lean’s pick' : o.pct === 50 ? 'Dead even' : 'To win'}</span></div>` : ''}
+        <div class="fc-medal ${o.win ? 'hi' : ''}"><b class="count" data-to="${o.score}">${o.anim ? '0' : o.score}</b><span>Score</span></div>
         <div class="fc-title"><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div>
           <div class="lvl"><span class="cbadge">${Y_NAMES[f.Y]}</span><em>${X_NAMES[f.X]}</em></div></div>
+        ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        <div class="fc-stats"><div><b>${pos}</b><span>Wheel</span></div><div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div>
-          <div><b>${mv}</b><span>Since entry</span></div><div><b>${fm ? fmt(fm) : '0.0'}</b><span>Form</span></div></div>
-        ${o.stake ? `<p class="fc-stake"><b>If it wins,</b> ${o.stake}.</p>` : ''}
+        <div class="fc-stats"><div><b>${o.rank}</b><span>Wheel</span></div><div><b>${p.anchor}</b><span>Anchor</span></div>
+          <div><b>${p.claim > 0 ? '+' : ''}${p.claim}</b><span>Claim</span></div><div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div></div>
+        ${anchorChips(f)}
         <button class="fc-flip" data-flip>Read the review ↻</button>
-        ${pick}
       </div>
     </div>
     <div class="face back">
       <div class="fc-backhead">${posterHTML(f, 46)}<div><div class="lab">The critic’s review</div><div class="ti">${esc(f.title)}</div></div></div>
       <p class="rvtext">${esc(reviewOf(f))}</p>
       <button class="fc-flip" data-flip>↺ Back to the card</button>
-      ${pick}
     </div></div>`;
 }
-
-/* ---------- drawing the spin ---------- */
-function slotHTML(f, me) {
-  return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${Y_NAMES[f.Y]}</div></div></div>`;
+function tapeHTML() {
+  const S = SHOW, n = S.battles.length;
+  return `<div class="tape-row">${S.battles.map((b, i) => {
+    const o = byId(b.opp), st = i < S.step || S.phase === 'final' ? (b.newWins ? 'w' : 'l') : i === S.step ? 'on' : '';
+    return `<div class="tp ${st}"><span>${i + 1}</span><em>${esc(o ? trimTo(o.title, 18) : '—')}</em></div>`;
+  }).join('')}${n ? '' : '<div class="tp on"><span>★</span><em>First on the wheel</em></div>'}</div>
+  <div class="tape-ctl">${S.phase === 'final' ? '<button class="linkish" data-replay>↺ Replay the show</button>' : `<button class="linkish" data-pause>${S.paused ? '▶ Play' : '❚❚ Pause'}</button><button class="linkish" data-skip>Skip to the verdict ⏭</button>`}</div>`;
 }
-function renderSpin() {
-  const s = db.workflow.spin, order = spinOrder(), A = active.film, done = s.phase === 'done';
-  $('#checkIn').hidden = true;
-  const est = estMatchups(order.length);
-  const B0 = done ? null : byId(s.opp);
-  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA[active.mode] || 'The wheel'} · ${done ? 'the wheel has spoken' : `matchup ${s.log.length + 1} of about ${est}${s.phase === 'confirm' ? ' · the check' : ''}`}</div>
-    ${done ? `<h2>${esc(A.title)} lands at #${s.pos + 1} <small class="of">of ${order.length + 1}</small></h2><p class="dq-res">${s.log.length ? s.log.map(e => `<span class="${e.newWins ? 'w' : 'l'}">${e.newWins ? 'Beat' : 'Lost to'} ${esc(byId(e.opp)?.title || '')}${(e.newWins ? e.lean : 1 - e.lean) < 0.5 ? ' · upset' : ''}</span>`).join('') : '<span>The first review on the wheel</span>'}</p>` : `<div class="dq"><span>The question that decides it</span><p>${decidingQ(A, B0)}</p></div>
-    <div class="dq-notes"><p><b>Watch out ·</b> ${watchOut(A, B0)}</p><div><b>Your track record ·</b> ${trackRecord(A, B0).replace(/<\/?p>/g, '')}</div></div>`}
-    <div class="steps">${s.log.map(e => `<i class="${e.newWins ? 'w' : 'l'}" title="${e.newWins ? 'Won' : 'Lost'} against ${esc(byId(e.opp)?.title || '')}"></i>`).join('')}${done ? '' : '<i class="on"></i>'}</div>
-    <div class="under" style="margin-top:6px">${s.log.length ? '<button class="linkish" data-undo>↶ Undo the last verdict</button>' : ''}<button class="linkish" data-cancelspin>${cancelSpinLabel()}</button></div>`;
-  ['#rvMine', '#rvOpp'].forEach(x => { $(x).classList.remove('flipped'); $(x).classList.add('fcard'); });
-  const list = done ? [...order.slice(0, s.pos), A.id, ...order.slice(s.pos)] : order;
-  drum.innerHTML = list.map(id => slotHTML(id === A.id ? A : byId(id), id === A.id)).join('');
-  if (done) {
-    const above = byId(order[s.pos - 1]), below = byId(order[s.pos]);
-    const nb = above || below;
-    $('#rvMine').innerHTML = flipCard(A, { mine: true, label: `Your review · lands at #${s.pos + 1}` });
-    $('#rvOpp').innerHTML = nb ? flipCard(nb, { rank: order.indexOf(nb.id) + 1, label: above ? `Just above it · #${s.pos}` : `Just below it · #${s.pos + 2}` }) : '';
-    $('#rvOpp').hidden = !(above || below);
-    renderDone(s, order);
-    setTarget(s.pos);
-  } else {
-    const B = byId(s.opp), p = leanOf(A, B);
-    $('#rvOpp').hidden = false;
-    const pa = pct(p), even = Math.abs(p - 0.5) < 0.03;
-    $('#rvMine').innerHTML = flipCard(A, { mine: true, label: active.from != null ? `Your review · was #${active.from + 1}` : 'Your review · new to the wheel', pick: 'new', pct: even ? 50 : pa, fav: p > 0.53, stake: 'it ' + outcome(s, order, true) });
-    $('#rvOpp').innerHTML = flipCard(B, { rank: order.indexOf(B.id) + 1, label: `On the wheel · #${order.indexOf(B.id) + 1}`, pick: 'opp', pct: even ? 50 : 100 - pa, fav: p < 0.47, stake: `${esc(A.title)} ${outcome(s, order, false)}` });
-    $('#rvMine').classList.toggle('fav', p > 0.53); $('#rvOpp').classList.toggle('fav', p < 0.47);
-    $('#mu').hidden = true; showDesk(false);
-    setTarget(order.indexOf(B.id));
-  }
-  if (done) { $('#rvMine').classList.remove('fav'); $('#rvOpp').classList.remove('fav'); }
-  drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', !done && el.dataset.id === s.opp));
+function renderShowFrame() {
+  const S = SHOW, A = byId(S.film); if (!A) { SHOW = null; return enterAuditorium(); }
+  $('#checkIn').hidden = true; $('#stage').hidden = false; $('#tape').hidden = false; $('#rvOpp').hidden = false; $('#stage').classList.add('showing');
+  ['#rvMine', '#rvOpp'].forEach(x => { $(x).classList.remove('flipped', 'win', 'lose', 'arrive'); $(x).classList.add('fcard'); });
+  if (S.phase === 'final' || !S.battles.length) return renderFinal();
+  const b = S.battles[S.step], B = byId(b.opp);
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${S.strike ? `Rerun · strike ${S.strike.n} of 3 · ` : S.via === 'rewrite' ? 'Rerun · ' : ''}${esc(A.title)} · battle ${S.step + 1} of ${S.battles.length}</div>
+    <h2 class="bt-h">${esc(A.title)} <i>vs</i> ${esc(B.title)}</h2>
+    <div class="dq"><span id="bfactor">&nbsp;</span><p id="breason">&nbsp;</p></div>`;
+  drum.innerHTML = S.order.map(id => slotHTML(byId(id), false)).join('');
+  drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === b.opp));
+  $('#rvMine').innerHTML = showCard(A, { label: 'The new review', score: b.sa, rank: '—', anim: true });
+  $('#rvOpp').innerHTML = showCard(B, { label: `On the wheel · #${b.oppRank}`, score: b.sb, rank: '#' + b.oppRank, anim: true });
+  $('#endTop').innerHTML = 'Top of the wheel<span>#1</span>';
+  $('#endBot').innerHTML = `Bottom of the wheel<span>#${S.order.length}</span>`;
+  $('#tape').innerHTML = tapeHTML();
+  $('#desk').hidden = true;
+  setTarget(b.oppRank - 1); layoutDrum();
+  const d0 = S.delay || 0;
+  setTimeout(() => { if (SHOW === S) { void $('#rvOpp').offsetWidth; $('#rvOpp').classList.add('arrive'); } }, d0);
+  playBattle();
+}
+const T = ms => reduceMotion ? Math.min(ms, 120) : ms;
+function countUp(el, to, ms) {
+  const t0 = performance.now(), from = 0;
+  const tick = now => { const k = Math.min(1, (now - t0) / ms), v = from + (to - from) * (1 - Math.pow(1 - k, 3)); el.textContent = (Math.round(v * 10) / 10).toString(); if (k < 1 && SHOW) requestAnimationFrame(tick); else el.textContent = String(to); };
+  requestAnimationFrame(tick);
+}
+function playBattle() {
+  const S = SHOW, b = S.battles[S.step], step = S.step, d0 = S.delay || 0;
+  S.delay = 0;
+  clearTimeout(S.timer);
+  const at = (ms, fn) => { S.timer = setTimeout(() => { if (SHOW === S && S.step === step && S.phase === 'battle') fn(); }, T(ms)); };
+  at(700 + d0, () => {
+    document.querySelectorAll('#stage .count').forEach(el => countUp(el, +el.dataset.to, T(900)));
+    at(1100, () => {
+      const winSel = b.newWins ? '#rvMine' : '#rvOpp', loseSel = b.newWins ? '#rvOpp' : '#rvMine';
+      $(winSel).classList.add('win'); $(loseSel).classList.add('lose');
+      $(winSel).querySelector('.fc-medal').classList.add('hi');
+      $(winSel).querySelector('.fc-art').insertAdjacentHTML('beforeend', `<div class="stamp-big win">Wins<small>by ${b.margin} · ${pct(b.chance)}%</small></div>`);
+      $(loseSel).querySelector('.fc-art').insertAdjacentHTML('beforeend', '<div class="stamp-big lose">Falls</div>');
+      $('#bfactor').textContent = `${FACTOR_NAME[b.key]} decides it`;
+      $('#breason').innerHTML = b.reason;
+      $('#tape').innerHTML = tapeHTML();
+      if (!S.paused) at(2600, nextBattle);
+    });
+  });
+}
+function nextBattle() {
+  const S = SHOW; if (!S) return;
+  clearTimeout(S.timer);
+  if (S.step < S.battles.length - 1) { S.step++; renderShowFrame(); }
+  else { S.phase = 'final'; renderShowFrame(); }
+}
+function renderFinal() {
+  const S = SHOW, A = byId(S.film), st = standing(A), list = db.wheel.slice(), now = list.indexOf(A.id), at = now >= 0 ? now : S.pos;
+  const w = S.battles.filter(b => b.newWins).length, l = S.battles.length - w;
+  const close = S.battles.slice().sort((a, b) => a.margin - b.margin)[0];
+  $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${S.strike ? `strike ${S.strike.n} of 3${S.strike.locked ? ' · wording locked' : ''} · moved from #${S.strike.from}` : 'the wheel has spoken'}</div>
+    <h2>${esc(A.title)} ${S.replay ? 'landed' : 'lands'} at #${S.pos + 1} <small class="of">of ${S.of}${S.replay && now >= 0 && now !== S.pos ? ` · now #${now + 1}` : ''}</small></h2>
+    <p class="dq-res">${S.battles.length ? S.battles.map(b => `<span class="${b.newWins ? 'w' : 'l'}">${b.newWins ? 'Beat' : 'Fell to'} ${esc(byId(b.opp)?.title || '')}</span>`).join('') : '<span>The first review on the wheel</span>'}</p>`;
+  drum.innerHTML = list.map(id => slotHTML(byId(id), id === A.id)).join('');
+  const above = byId(list[at - 1]), below = byId(list[at + 1]), nb = above || below;
+  $('#rvMine').innerHTML = showCard(A, { label: `Lands at #${S.pos + 1}`, score: score(A), rank: '#' + (S.pos + 1), win: true, stamp: { cls: 'land', text: `#${S.pos + 1}<small>of ${S.of}</small>` } });
+  $('#rvOpp').hidden = !nb;
+  if (nb) $('#rvOpp').innerHTML = showCard(nb, { label: above ? `Just above · #${at}` : `Just below · #${at + 2}`, score: score(nb), rank: '#' + (list.indexOf(nb.id) + 1) });
   $('#endTop').innerHTML = 'Top of the wheel<span>#1</span>';
   $('#endBot').innerHTML = `Bottom of the wheel<span>#${list.length}</span>`;
-  layoutDrum();
-}
-function showDesk(done) {
-  $('#desk').hidden = false; $('#placing').style.display = '';
-  $('#verdict').innerHTML = ''; $('#tally').innerHTML = '';
-  const c = $('#consider');
-  if (document.activeElement !== c) c.value = db.workflow?.note || '';
-  $('#lockBtn').style.display = done ? '' : 'none';
-  document.querySelector('#placing .consider').style.display = done ? 'none' : '';
-  $('#lockBtn').textContent = 'Lock it in'; $('#lockBtn').disabled = false;
-  $('#considerHint').textContent = done ? '' : 'For this matchup only. It resets after your verdict, and is filed in the Film Vault under the winner when you lock the spin in.';
-}
-function renderDone(s, order) {
-  $('#mu').hidden = true;
-  showDesk(true);
+  $('#tape').innerHTML = tapeHTML();
+  setTarget(at); layoutDrum();
+  $('#desk').hidden = false;
+  $('#results').innerHTML = `<div class="intertitle" style="margin:0 auto">
+      <div class="k">The verdict · ${levelLine(A)}</div>
+      <div class="grid">
+        <div class="cell"><b>${st.overall ? '#' + st.overall : '—'}</b><span>${st.overall ? 'Of ' + st.of : 'Off the wheel'}</span></div>
+        <div class="cell"><b>${w}–${l}</b><span>This show</span></div>
+        <div class="cell"><b>${score(A)}</b><span>Score</span></div>
+        <div class="cell"><b>${st.stars != null ? st.stars.toFixed(1) : '—'}</b><span>Stars</span></div>
+      </div>
+      ${st.stars != null ? `<div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>` : ''}
+      ${close ? `<p class="filed">Closest battle: ${esc(byId(close.opp)?.title || '')}, by ${close.margin} · ${FACTOR_NAME[close.key].toLowerCase()} decided it</p>` : ''}
+      <p class="filed" style="font-size:15px;opacity:.75">Every battle is filed in the Film Vault’s highlight reel.</p>
+      <div><button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open the highlight reel</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
+      <span class="orn"></span></div>`;
+  $('#results').classList.add('show');
 }
 
-/* ---------- the wheel itself: spins to each matchup ---------- */
+/* ---------- replaying a filed show from the highlight reel ---------- */
+function wheelBefore(evId) {
+  let arr = [];
+  for (const e of db.wheelLog.slice().sort((x, y) => x.at - y.at)) {
+    if (e.id === evId) break;
+    if (e.type === 'order') arr = e.order.slice();
+    else { arr = arr.filter(id => id !== e.film); if (e.type !== 'remove') arr.splice(Math.max(0, Math.min(arr.length, e.pos)), 0, e.film); }
+  }
+  return arr.filter(id => byId(id));
+}
+function replayShow(v) {
+  if (!v || !byId(v.film)) return;
+  const order = wheelBefore(v.id);
+  const battles = v.battles.filter(m => byId(m.b)).map(m => ({ opp: m.b, oppRank: order.indexOf(m.b) + 1 || m.oppRank, newWins: m.winner === m.a, margin: m.margin, chance: m.chance, key: m.key, reason: m.reason, sa: m.sa, sb: m.sb }));
+  startShow({ film: v.film, pos: v.pos, of: v.of, battles, order, replay: true, via: v.via });
+}
+
+/* ---------- the wheel itself ---------- */
 function layoutDrum() {
   const slots = drum.children, n = slots.length; if (!n) return;
   const sh = innerWidth <= 640 ? 80 : 92;
@@ -2932,131 +3335,106 @@ function place(el, d, radius, rank) {
 function animate() {
   const diff = target - g;
   if (Math.abs(diff) < 0.002) { g = target; layoutDrum(); raf = null; return; }
-  g += diff * (reduceMotion ? 1 : 0.12);
+  g += diff * (reduceMotion ? 1 : 0.09);
   layoutDrum();
   raf = requestAnimationFrame(animate);
 }
 function setTarget(t) { target = Math.max(0, t); if (!raf) raf = requestAnimationFrame(animate); }
 addEventListener('resize', () => layoutDrum());
 
-/* ---------- verdicts, undo, cancel, lock ---------- */
-$('#auditorium').addEventListener('click', async e => {
-  if (!active || !canEdit()) return;
-  const pk = e.target.closest('[data-pick]');
-  if (pk && db.workflow?.spin && db.workflow.spin.phase !== 'done') {
-    const s = db.workflow.spin, A = active.film, B = byId(s.opp);
-    applyVerdict(s, spinOrder(), pk.dataset.pick === 'new', leanOf(A, B), sitKey(A, B));
-    s.log[s.log.length - 1].note = $('#consider').value.trim();
-    $('#consider').value = ''; db.workflow.note = '';
-    renderSpin(); persist();
-    $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' });
-    return;
-  }
+$('#auditorium').addEventListener('click', e => {
   const fl = e.target.closest('[data-flip]');
   if (fl) { fl.closest('.rv').classList.toggle('flipped'); return; }
-  if (e.target.closest('[data-undo]') && db.workflow?.spin) { const last = db.workflow.spin.log.at(-1); undoVerdict(db.workflow.spin); db.workflow.note = last?.note || ''; $('#consider').value = db.workflow.note; renderSpin(); persist(); return; }
+  if (SHOW) {
+    if (e.target.closest('[data-pause]')) { SHOW.paused = !SHOW.paused; $('#tape').innerHTML = tapeHTML(); if (!SHOW.paused) nextBattle(); else clearTimeout(SHOW.timer); return; }
+    if (e.target.closest('[data-skip]')) { clearTimeout(SHOW.timer); SHOW.phase = 'final'; return renderShowFrame(); }
+    if (e.target.closest('[data-replay]')) { SHOW.step = 0; SHOW.phase = 'battle'; SHOW.paused = false; SHOW.order = SHOW.order; return renderShowFrame(); }
+  }
   if (e.target.closest('[data-cancelspin]')) return cancelWorkflow();
 });
-$('#consider').addEventListener('input', e => { if (db.workflow) { db.workflow.note = e.target.value; clearTimeout(window._noteT); window._noteT = setTimeout(persist, 800); } });
-$('#lockBtn').addEventListener('click', async () => {
-  if (!active || !canEdit() || !db.workflow?.spin || db.workflow.spin.phase !== 'done') return;
-  $('#lockBtn').disabled = true; $('#lockBtn').textContent = 'Recording…';
-  const s = db.workflow.spin, f = active.film, t = Date.now();
-  s.log.forEach((e, i) => {
-    const winner = e.newWins ? f.id : e.opp, loser = e.newWins ? e.opp : f.id, pw = e.newWins ? e.lean : 1 - e.lean, d = FORM_K * (1 - pw);
-    db.matches.push({ id: 'match:' + uid(), a: f.id, b: e.opp, winner, lean: r1(e.lean * 1000) / 1000, fav: e.lean >= 0.5 ? f.id : e.opp, sit: e.sit, via: active.mode, note: e.note || '', at: t + i });
-    db.form[winner] = r1((+db.form[winner] || 0) + d); db.form[loser] = r1((+db.form[loser] || 0) - d);
-  });
-  placeAt(s.pos, '', s.log);
-});
-async function placeAt(pos, note, log) {
-  const f = active.film, order = spinOrder(), from = active.from, mode = active.mode;
-  db.wheel = order.slice(); db.wheel.splice(pos, 0, f.id);
-  db.wheelLog.push({ id: 'wl:' + uid(), type: 'place', film: f.id, pos, of: db.wheel.length, via: mode, from, note, at: Date.now() + 50 });
-  endWorkflow(); justPlaced = f.id; $('#consider').value = '';
-  const ok = await persist();
-  if (ok) showResults(f.id, { log, from, notes: log.filter(e => e.note).length });
-}
-function verdictHTML(f, info) {
-  const st = standing(f), w = info.log.filter(e => e.newWins).length, l = info.log.length - w;
-  const ups = info.log.filter(e => (e.newWins ? e.lean : 1 - e.lean) < 0.5).length;
-  const moved = info.from == null ? (info.log.length ? 'New to the wheel' : 'The first review on the wheel') : info.from + 1 === st.overall ? `Held its place at #${st.overall}` : `Moved from #${info.from + 1} to #${st.overall}`;
-  return `<div class="intertitle" style="margin:0 auto">
-      <div class="k">The verdict · ${levelLine(f)}</div>
-      <h2>${esc(f.title)}</h2>
-      <p>takes its place on the wheel.</p>
-      <div class="grid">
-        <div class="cell"><b>#${st.overall}</b><span>Of ${st.of}</span></div>
-        <div class="cell"><b>${w}–${l}</b><span>This spin</span></div>
-        <div class="cell"><b>${ups}</b><span>Upset${ups === 1 ? '' : 's'}</span></div>
-        <div class="cell"><b>${st.stars.toFixed(1)}</b><span>Stars</span></div>
-      </div>
-      <div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>
-      <p class="filed">${moved}${info.notes ? ` · ${info.notes} consideration${info.notes === 1 ? '' : 's'} filed in the Film Vault` : ''}</p>
-      <p class="filed" style="font-size:15px;opacity:.7">The auditorium closes for this film. Buy another ticket from the lobby to spin it again.</p>
-      <div><button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open the Film Vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
-      <span class="orn"></span></div>`;
-}
-function showResults(id, info) {
-  const f = byId(id); if (!f) return goTo('lobby');
-  lastVerdict = verdictHTML(f, info);
-  if (current === 'auditorium') { enterAuditorium(); $('#auditorium').scrollTo({ top: 0, behavior: 'smooth' }); }
-  else goTo('auditorium');
-}
-// leaving the verdict clears it, so the auditorium goes dark again
+// leaving the show ends it (the placement is already saved)
 document.addEventListener('click', e => {
   const b = e.target.closest('#results [data-goto]'); if (!b) return;
-  lastVerdict = null;
   if (b.dataset.goto === 'lobby' && justPlaced) lobbyShowFilm(justPlaced);
+  if (SHOW) clearTimeout(SHOW.timer); SHOW = null;
 }, true);
-document.querySelectorAll('#stub [data-go]').forEach(b => b.addEventListener('click', () => { if (current === 'auditorium' && b.dataset.go !== 'auditorium') lastVerdict = null; }, true));
+document.querySelectorAll('#stub [data-go]').forEach(b => b.addEventListener('click', () => { if (current === 'auditorium' && b.dataset.go !== 'auditorium' && SHOW) { clearTimeout(SHOW.timer); SHOW = null; } }, true));
+
 
 /* =====================================================================
    THE FILM VAULT
    ===================================================================== */
-let vaultAxis = '', vaultQuery = '', vaultPage = 1;
+let vaultAxis = '', vaultQuery = '', vaultPage = 1, vaultFilm = '';
 const vDate = t => t ? new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-const vHead = v => v.kind === 'match' ? `Beat ${esc((byId(v.opp) || raw(v.opp))?.title || 'a removed film')}${v.upset ? ' · upset' : ''}` : `On placement · #${v.pos + 1} of ${v.of}`;
+function oldConsiderations() {
+  const out = [];
+  (db.archives || []).forEach(a => {
+    (a.matches || []).filter(m => m.note).forEach(m => out.push({ film: m.winner, opp: m.winner === m.a ? m.b : m.a, note: m.note, at: m.at }));
+    (a.wheelLog || []).filter(e => e.note).forEach(e => out.push({ film: e.film, note: e.note, at: e.at }));
+  });
+  return out.filter(o => byId(o.film)).sort((a, b) => b.at - a.at);
+}
 function renderVault() {
+  const films = [...new Set(VAULT.map(v => v.film))].map(byId).filter(Boolean).sort((a, b) => a.title.localeCompare(b.title));
   $('#vaultIn').innerHTML = `
-    <div class="ns"><div class="k">The Film Vault · CmanCinema</div><h2>The Archives</h2><div class="dots"></div>
-      <p>Every decisive consideration from the wheel, filed under the film that won the showdown.</p></div>
+    <div class="ns"><div class="k">The Film Vault · CmanCinema</div><h2>The Highlight Reel</h2><div class="dots"></div>
+      <p>Every show on the wheel, battle by battle, filed in the order it played.</p></div>
     <div class="controls">
-      <input class="placard" id="vSearch" placeholder="Search films or words…" value="${esc(vaultQuery)}" autocomplete="off">
+      <input class="placard" id="vSearch" placeholder="Search films or reasons…" value="${esc(vaultQuery)}" autocomplete="off">
+      <select class="placard" id="vFilm"><option value="">Every film’s shows</option>${films.map(f => `<option value="${esc(f.id)}" ${f.id === vaultFilm ? 'selected' : ''}>${esc(f.title)}</option>`).join('')}</select>
     </div>
-    <div class="vgrid" id="vgrid"></div><div id="vpager"></div>`;
+    <div class="reels" id="vgrid"></div><div id="vpager"></div><div id="vold"></div>`;
   renderVaultGrid();
   $('#vSearch').addEventListener('input', e => { vaultQuery = e.target.value; vaultPage = 1; renderVaultGrid(); });
+  $('#vFilm').addEventListener('change', e => { vaultFilm = e.target.value; vaultPage = 1; renderVaultGrid(); });
+}
+function reelCard(v, i) {
+  const f = byId(v.film), now = f.pos != null ? f.pos + 1 : null, bs = v.battles;
+  const close = bs.slice().sort((a, b) => a.margin - b.margin)[0], big = bs.slice().sort((a, b) => b.margin - a.margin)[0];
+  const w = bs.filter(b => b.winner === f.id).length;
+  return `<article class="reelcard">
+    <header>${posterHTML(f, 64)}<div><span class="rc-k">Show ${i}${v.via === 'strike' ? ' · Rerun · strike' : v.via === 'rewrite' ? ' · Rerun' : v.via === 'dump' ? ' · After a dump' : ''} · ${vDate(v.at)}</span><button class="ti" data-film="${esc(f.id)}">${esc(f.title)}</button>
+      <div class="me">${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div>
+      <div class="rc-land"><b>#${v.pos + 1}</b><span>of ${v.of}</span>${now && now !== v.pos + 1 ? `<em>now #${now}</em>` : ''}</div></header>
+    ${bs.length ? `<ol class="rc-battles">${bs.map(b => {
+      const won = b.winner === f.id, o = byId(b.b) || raw(b.b);
+      return `<li class="${won ? 'w' : 'l'}"><span class="rc-res">${won ? 'Beat' : 'Fell to'}</span><span class="rc-opp">${esc(o?.title || 'a removed film')}<small>#${b.oppRank || '—'} · ${b.sa} vs ${b.sb}</small></span>
+        <span class="rc-key">${FACTOR_NAME[b.key] || '—'}<small>by ${b.margin}</small></span><p>${b.reason || ''}</p></li>`;
+    }).join('')}</ol>
+    <footer><span>${w}–${bs.length - w}</span>${close ? `<span>Closest · ${esc((byId(close.b) || raw(close.b))?.title || '')} by ${close.margin}</span>` : ''}${big && bs.length > 1 ? `<span>Most decisive · ${esc((byId(big.b) || raw(big.b))?.title || '')} by ${big.margin}</span>` : ''}<button class="watch" data-watch="${esc(v.id)}">▶ Watch the show</button></footer>`
+    : '<p class="rc-first">The first review on the wheel. No battles.</p>'}
+  </article>`;
 }
 function renderVaultGrid() {
   const q = vaultQuery.trim().toLowerCase();
-  const hit = v => { const f = byId(v.film); return f && (!q || f.title.toLowerCase().includes(q) || v.note.toLowerCase().includes(q) || vHead(v).toLowerCase().includes(q)); };
-  const groups = new Map();
-  VAULT.filter(hit).forEach(v => { if (!groups.has(v.film)) groups.set(v.film, []); groups.get(v.film).push(v); });
-  const list = [...groups.entries()].map(([id, es]) => ({ f: byId(id), es: es.sort((a, b) => b.at - a.at) })).sort((a, b) => b.es[0].at - a.es[0].at);
-  const total = list.reduce((n, g) => n + g.es.length, 0);
+  const all = VAULT.slice().sort((a, b) => a.at - b.at).map((v, i) => ({ v, n: i + 1 }));
+  const list = all.filter(({ v }) => {
+    const f = byId(v.film); if (!f || (vaultFilm && v.film !== vaultFilm && !v.battles.some(b => b.b === vaultFilm))) return false;
+    if (!q) return true;
+    return f.title.toLowerCase().includes(q) || v.battles.some(b => ((byId(b.b) || raw(b.b))?.title || '').toLowerCase().includes(q) || String(b.reason || '').toLowerCase().includes(q));
+  }).reverse();
   const pages = Math.max(1, Math.ceil(list.length / VAULT_PAGE));
   vaultPage = Math.min(Math.max(1, vaultPage), pages);
-  $('#vpager').innerHTML = pagerHTML(vaultPage, pages, 'vp') + (list.length ? `<p class="pager-note">${total} consideration${total === 1 ? '' : 's'} filed under ${list.length} film${list.length === 1 ? '' : 's'}</p>` : '');
-  $('#vgrid').innerHTML = list.length ? list.slice((vaultPage - 1) * VAULT_PAGE, vaultPage * VAULT_PAGE).map(({ f, es }) => {
-    const now = f.pos != null ? f.pos + 1 : null;
-    return `<div class="can">${now ? `<span class="stamp">#${now}</span>` : ''}${posterHTML(f, 70)}
-      <div><button class="ti" data-film="${esc(f.id)}">${esc(f.title)}</button>
-        <div class="me">${Y_NAMES[f.Y]} · ${es.length} consideration${es.length === 1 ? '' : 's'}</div></div>
-      <div class="vfile">${es.map(v => `<div class="ventry"><b>${vHead(v)}</b><span>${vDate(v.at)}</span><p>${esc(v.note)}</p></div>`).join('')}</div></div>`;
-  }).join('') : `<p class="ns" style="grid-column:1/-1;font:italic 500 19px var(--body)">No considerations filed yet. Write one for a matchup on the wheel, and it’s filed here under the winner.</p>`;
+  const nb = list.reduce((s, { v }) => s + v.battles.length, 0);
+  $('#vpager').innerHTML = pagerHTML(vaultPage, pages, 'vp') + (list.length ? `<p class="pager-note">${list.length} show${list.length === 1 ? '' : 's'} · ${nb} battle${nb === 1 ? '' : 's'}</p>` : '');
+  $('#vgrid').innerHTML = list.length ? list.slice((vaultPage - 1) * VAULT_PAGE, vaultPage * VAULT_PAGE).map(({ v, n }) => reelCard(v, n)).join('')
+    : `<p class="ns" style="font:italic 500 19px var(--body)">${VAULT.length ? 'No shows match.' : 'No shows yet. Send a review to the wheel and its battles are filed here.'}</p>`;
+  const old = oldConsiderations();
+  $('#vold').innerHTML = old.length && !q && !vaultFilm ? `<details class="vold"><summary>From the old wheel · ${old.length} decisive consideration${old.length === 1 ? '' : 's'}</summary>
+    ${old.map(o => `<div class="ventry"><b>${esc(byId(o.film).title)}${o.opp ? ` · beat ${esc((byId(o.opp) || raw(o.opp))?.title || 'a removed film')}` : ''}</b><span>${vDate(o.at)}</span><p>${esc(o.note)}</p></div>`).join('')}</details>` : '';
 }
 $('#vault').addEventListener('click', e => {
   const c = e.target.closest('[data-ax]'); if (c) { vaultAxis = c.dataset.ax; vaultPage = 1; return renderVault(); }
   const p = e.target.closest('[data-vp]');
   if (p) { if (p.disabled) return; vaultPage = +p.dataset.vp; renderVaultGrid(); return $('#vgrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  const w = e.target.closest('[data-watch]'); if (w) return replayShow(VAULT.find(v => v.id === w.dataset.watch));
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
 });
 
 /* =====================================================================
    THE GAME ROOM · statistics only
-   Every number here comes from the wheel: positions, matchups, the lean
-   and the levels you gave each review. Nothing in this room edits anything.
+   Every number here comes from the wheel: positions, battles, and the
+   components the math read in each review. Nothing in this room edits anything.
    ===================================================================== */
 function flip(text) {
   return `<span class="flip">${[...String(text)].map((ch, i) => `<i class="${/[0-9A-Z]/i.test(ch) ? 'go' : 'p'}" style="animation-delay:${i * 70}ms">${esc(ch)}</i>`).join('')}</span>`;
@@ -3070,24 +3448,24 @@ const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', '
 const span = ms => { const h = Math.floor(ms / 3600000), d = Math.floor(h / 24); return d ? `${d}d ${h % 24}h` : h ? `${h}h` : `${Math.max(1, Math.round(ms / 60000))}m`; };
 const Y_SHORT = { 0: 'Not Rec.', 1: 'Rec-able', 2: 'Rec’d', 3: 'Highly', 4: 'Must-See', 5: 'Essential' };
 let hsBoard = 'top';
-const HS_BOARDS = [['top', 'Top of the wheel'], ['climb', 'Biggest climbers'], ['upset', 'Upset kings'], ['reign', 'Longest reign']];
+const HS_BOARDS = [['top', 'Top of the wheel'], ['climb', 'Biggest climbers'], ['anchor', 'Best anchored'], ['reign', 'Longest reign']];
 function hsRows() {
   const { ranked } = board(), N = ranked.length;
   const withSt = ranked.map((f, i) => ({ f, i, st: standing(f) }));
   let list;
   if (hsBoard === 'top') list = withSt.slice(0, 10).map(v => [v.i + 1, v.f, `★ ${STAR(v.i + 1, N).toFixed(1)}`]);
   if (hsBoard === 'climb') list = withSt.map(v => ({ ...v, m: moveOf(v.st, v.i + 1) })).filter(v => v.m > 0).sort((a, b) => b.m - a.m).slice(0, 10).map((v, k) => [k + 1, v.f, `↑${v.m}`]);
-  if (hsBoard === 'upset') list = withSt.filter(v => v.st.upsets).sort((a, b) => b.st.upsets - a.st.upsets || a.i - b.i).slice(0, 10).map((v, k) => [k + 1, v.f, `${v.st.upsets} upset${v.st.upsets === 1 ? '' : 's'}`]);
+  if (hsBoard === 'anchor') list = withSt.map(v => ({ ...v, a: parts(v.f).anchor })).sort((a, b) => b.a - a.a || a.i - b.i).slice(0, 10).map((v, k) => [k + 1, v.f, `${v.a} pts`]);
   if (hsBoard === 'reign') list = withSt.filter(v => v.st.reign).sort((a, b) => b.st.reign - a.st.reign).slice(0, 10).map((v, k) => [k + 1, v.f, span(v.st.reign)]);
   return list.map(([r, f, right], i) => `<button class="hs-row ${r <= 3 ? 'm' + r : ''}" data-film="${esc(f.id)}" style="--d:${i * 55}ms"><b>${ordinal(r)}</b>${posterHTML(f)}<span>${esc(f.title)}</span><em>${right}</em></button>`).join('')
-    || `<div class="hs-empty">${{ top: 'The wheel is empty.', climb: 'No film has climbed yet.', upset: 'No upsets yet. Every verdict has gone with the lean.', reign: 'Nobody has held #1 yet.' }[hsBoard]}</div>`;
+    || `<div class="hs-empty">${{ top: 'The wheel is empty.', climb: 'No film has climbed yet.', anchor: 'The wheel is empty.', reign: 'Nobody has held #1 yet.' }[hsBoard]}</div>`;
 }
 function hsMachine() {
   const name = HS_BOARDS.find(b => b[0] === hsBoard)[1];
   return `<div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${name}</small></div>
     <div class="hs-tabs">${HS_BOARDS.map(([k, l]) => `<button class="${k === hsBoard ? 'on' : ''}" data-hsb="${k}">${l}</button>`).join('')}</div>
     <div class="arc-bezel"><div class="hs-screens one"><div class="crt x roll"><div class="crt-in">
-      <div class="crt-h"><b>★</b><span>${name}<small>${{ top: 'Highest on the wheel right now', climb: 'Most places gained since entry', upset: 'Most wins against the lean', reign: 'Most time spent at #1' }[hsBoard]}</small></span><em class="hi">HI-SCORE</em></div>
+      <div class="crt-h"><b>★</b><span>${name}<small>${{ top: 'Highest on the wheel right now', climb: 'Most places gained since entry', anchor: 'Most of the praise on its sub-genre’s core', reign: 'Most time spent at #1' }[hsBoard]}</small></span><em class="hi">HI-SCORE</em></div>
       <div class="hs-rows">${hsRows()}</div></div></div></div></div>
     <div class="arc-panel" aria-hidden="true"><span class="arc-joy"></span><span class="arc-btns"><i></i><i></i></span></div></div>`;
 }
@@ -3099,11 +3477,12 @@ function renderGame() {
       <p>${cloud.ready ? 'The machines are switched off until the first film is admitted.' : 'The machines are warming up…'}</p></div>`;
     return;
   }
-  const ms = db.matches, ups = ms.filter(m => winnerChance(m) < 0.5).length, withLean = ms.filter(m => m.winner === m.fav).length;
+  const ms = db.matches, avgM = ms.length ? r1(avg(ms.map(m => +m.margin || 0))) : null;
+  const closest = ms.slice().sort((a, b) => (a.margin || 0) - (b.margin || 0))[0];
   const starOf = new Map(ranked.map((f, i) => [f.id, STAR(i + 1, N)]));
   const nLF = db.lostfound.length, seen = n + UNEVALUATED.length + nLF;
   const sb = [[seen, 'Films seen'], [N, 'On the wheel'], [QUEUE.length, 'In the queue'], [nLF, 'Lost & Found'],
-    [ms.length, 'Matchups'], [ups, 'Upsets'], [ms.length ? Math.round(withLean / ms.length * 100) + '%' : '—', 'With the lean'], [N ? avg([...starOf.values()]).toFixed(1) : '—', 'Avg stars']];
+    [ms.length, 'Battles'], [closest ? closest.margin : '—', 'Closest call'], [avgM ?? '—', 'Avg margin'], [N ? avg([...starOf.values()]).toFixed(1) : '—', 'Avg stars']];
   // the Case × Claim board
   const count = {}; all.forEach(f => { const k = f.X + '/' + f.Y; count[k] = (count[k] || 0) + 1; });
   const maxC = Math.max(1, ...Object.values(count));
@@ -3131,21 +3510,23 @@ function renderGame() {
   const bestDec = dk.slice().sort((a, b) => avg(dec[b]) - avg(dec[a]))[0];
   // prizes
   const prize = (k, f, line) => f ? `<button class="prize" data-film="${esc(f.id)}"><div class="k">${k}</div>${posterHTML(f)}<div><strong>${esc(f.title)}</strong><small>${line}</small></div></button>` : '';
-  const big = ms.slice().sort((a, b) => winnerChance(a) - winnerChance(b))[0];
-  const bigUp = big && winnerChance(big) < 0.5 ? big : null;
+  const closeW = closest ? byId(closest.winner) : null, closeL = closest ? byId(closest.winner === closest.a ? closest.b : closest.a) : null;
+  const anchored = ranked.map(f => ({ f, a: parts(f).anchor })).sort((a, b) => b.a - a.a)[0];
   const tested = all.map(f => ({ f, st: standing(f) })).filter(v => v.st.n).sort((a, b) => b.st.n - a.st.n)[0];
   const climber = ranked.map((f, i) => ({ f, m: moveOf(standing(f), i + 1) })).filter(v => v.m > 0).sort((a, b) => b.m - a.m)[0];
   const newest = all.slice().sort((a, b) => b.added - a.added)[0];
-  // the calibration meter
-  const buckets = [[50, 60], [60, 70], [70, 80], [80, 90], [90, 101]].map(([lo, hi]) => {
-    const inB = ms.filter(m => { const p = Math.max(m.lean, 1 - m.lean) * 100; return p >= lo && p < hi; });
-    return { lo, hi, n: inB.length, won: inB.filter(m => m.winner === m.fav).length };
-  });
-  const overrides = ms.filter(m => m.winner !== m.fav), oc = {}; overrides.forEach(m => { oc[m.sit] = (oc[m.sit] || 0) + 1; });
-  const topO = Object.entries(oc).sort((a, b) => b[1] - a[1])[0];
-  const calib = ms.length ? `<div class="bars2">${buckets.map(b => `<div class="bar2"><b style="font-size:13px">${b.lo}${b.hi > 100 ? '+' : '–' + b.hi}</b><div class="tr"><em style="width:0" data-w="${b.n ? (b.won / b.n * 100).toFixed(1) : 0}%"></em><span>${b.n ? `Favorite won ${b.won} of ${b.n}` : 'No matchups at this lean'}</span></div><i>${b.n ? Math.round(b.won / b.n * 100) + '%' : '—'}</i></div>`).join('')}</div>
-    <p class="cal-note">${overrides.length ? `You’ve overruled the lean ${overrides.length} time${overrides.length === 1 ? '' : 's'} in ${ms.length}${topO ? `, most often when it was ${SIT_NAME[topO[0]] || 'close'}` : ''}.` : `You’ve gone with the lean in all ${ms.length} matchup${ms.length === 1 ? '' : 's'}.`} ${ms.length >= 30 ? 'There’s enough history to retune the weights.' : `Around 30 matchups, there’s enough history to retune the weights (${ms.length} so far).`}</p>`
-    : '<p class="cal-note">The meter calibrates as you decide matchups. A good lean’s favorites win about as often as their percentage says.</p>';
+  // what decides the wheel: which component settled each battle
+  const KEYS = ['level', 'anchor', 'claim', 'ingredients', 'opener', 'tie'];
+  const kc = KEYS.map(k => ({ k, n: ms.filter(m => m.key === k).length })).filter(x => x.n), km = Math.max(1, ...kc.map(x => x.n));
+  const topK = kc.slice().sort((a, b) => b.n - a.n)[0];
+  const decides = ms.length ? `<div class="bars2">${kc.map(x => `<div class="bar2"><b style="font-size:13px">${Math.round(x.n / ms.length * 100)}%</b><div class="tr"><em style="width:0" data-w="${(x.n / km * 100).toFixed(1)}%"></em><span>${FACTOR_NAME[x.k]}</span></div><i>${x.n}</i></div>`).join('')}</div>
+    <p class="cal-note">${FACTOR_NAME[topK.k]} settled ${topK.n} of ${ms.length} battle${ms.length === 1 ? '' : 's'}. ${ms.filter(m => (m.margin || 0) < 5).length} were decided by less than 5 points.</p>`
+    : '<p class="cal-note">Fills in as reviews meet on the wheel. Each battle is credited to the component that tipped it.</p>';
+  // how the anchor reads your reviews: praise on the core, flaws by where they land
+  const onW = ranked.length ? ranked : all, els = onW.flatMap(f => anchorOf(f).els), wks = onW.map(f => anchorOf(f).weak.tag);
+  const tagBars = (rows) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="bars2">${rows.map(([l, k, nm]) => `<div class="bar2"><b style="font-size:12px">${l}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm}</span></div><i>${k}</i></div>`).join('')}</div>`; };
+  const praise = tagBars([['Core', els.filter(e => e.tag === 'core').length, 'What the sub-genre runs on'], ['Supp.', els.filter(e => e.tag === 'supporting').length, 'What it leans on'], ['Off', els.filter(e => e.tag === 'extra').length, 'Off the sub-genre’s core']]);
+  const flaws = tagBars([['Core', wks.filter(t => t === 'core').length, 'Flaw hits the core'], ['Supp.', wks.filter(t => t === 'supporting').length, 'Flaw hits a support'], ['Edge', wks.filter(t => t === 'edge').length, 'Flaw at the edge']]);
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
@@ -3159,8 +3540,9 @@ function renderGame() {
         <div class="board-key"><span>Across · the case</span><span>Down · the claim</span><span>Brighter = more films</span></div>`)}
       ${cabinet('Prize Shelf', '', `<div class="prizes" style="grid-template-columns:1fr">
         ${ranked[0] ? prize('Top of the bill', ranked[0], `${Y_NAMES[ranked[0].Y]} · ★ 5.0`) : ''}
-        ${bigUp ? prize('Biggest upset', byId(bigUp.winner), `Won at a ${Math.max(1, Math.round(winnerChance(bigUp) * 100))}% lean against ${esc(byId(bigUp.a === bigUp.winner ? bigUp.b : bigUp.a)?.title || 'a removed film')}`) : ''}
-        ${tested ? prize('Most battle-tested', tested.f, `${tested.st.n} matchup${tested.st.n === 1 ? '' : 's'} · ${tested.st.w}–${tested.st.l}`) : ''}
+        ${closeW ? prize('Closest call', closeW, `Beat ${esc(closeL?.title || 'a removed film')} by ${closest.margin} · ${FACTOR_NAME[closest.key].toLowerCase()}`) : ''}
+        ${anchored && anchored.a > 0 ? prize('Best anchored', anchored.f, `${anchored.a} of ${W().anchorMax} anchor points`) : ''}
+        ${tested ? prize('Most battle-tested', tested.f, `${tested.st.n} battle${tested.st.n === 1 ? '' : 's'} · ${tested.st.w}–${tested.st.l}`) : ''}
         ${climber ? prize('Biggest climber', climber.f, `Up ${climber.m} place${climber.m === 1 ? '' : 's'} since entry`) : ''}
         ${prize('Latest admission', newest, `${Y_NAMES[newest.Y]}${newest.added ? ' · admitted ' + new Date(newest.added).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''}`)}
       </div>`, 40)}
@@ -3169,7 +3551,11 @@ function renderGame() {
       ${cabinet('The Case', 'How far reviews climb.', dist('Y', [5, 4, 3, 2, 1, 0], Y_NAMES))}
       ${cabinet('The Claim', 'How often films hold their aim.', dist('X', [5, 4, 3, 2, 1], X_NAMES))}
     </div>
-    ${cabinet('The Calibration Meter', 'Is the lean learning you? When it says 70%, its pick should win about 70% of the time.', calib)}
+    ${cabinet('What Decides Your Wheel', 'Every battle, credited to the component that tipped it.', decides)}
+    <div class="tri">
+      ${cabinet('The Anchor · Praise', `What your cases praise, read against each film’s own sub-genre${ranked.length ? '' : ' (from the queue)'}.`, praise)}
+      ${cabinet('The Anchor · Flaws', 'Where each claim’s conceded flaw lands on its sub-genre.', flaws)}
+    </div>
     <div class="tri">
       ${cabinet('Stars', N ? `How ${N} film${N === 1 ? '' : 's'} spread across the stars.` : 'Stars come from the wheel.', starHist)}
       ${cabinet('By Decade', bestDec ? `The ’${String(bestDec).slice(2)}s lead with ${avg(dec[bestDec]).toFixed(1)} stars on average.` : '', decades)}
@@ -3485,7 +3871,7 @@ const PB = {
 let pbTab = 'F';
 /* where you are decides what lights up: the film on the reel, or the one in the booth */
 function pbHere() {
-  if (current === 'auditorium' && active && active.film && active.stage === 'spin') return { ax: 'Y', X: active.film.X, Y: active.film.Y };
+  if (current === 'auditorium' && active && active.film && active.stage === 'check') return { ax: 'Y', X: active.film.X, Y: active.film.Y };
   if (current === 'booth' && bt) return { ax: bt.x != null ? 'Y' : 'X', X: bt.x, Y: bt.y };
   return null;
 }
@@ -3508,10 +3894,9 @@ function renderPlaybill() {
     <p class="pb-note">${PB.compassNote}</p>`;
   if (pbTab === 'Q') {
     const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]}</i></div></div>`;
-    body = `<div class="pb-sec">Act III · The Wheel<small>One wheel of critic’s reviews · the case and claim combine, then reviews go head to head</small></div>
-      <p class="pb-note" style="margin:0 0 10px">The wheel spins each new review to the middle of the range still open, then the middle of the half it earns, then checks it against its new neighbor. Each matchup shows the lean: the all-in estimate from the case level, the claim level, the components, and form from past verdicts. The verdict is always yours.</p>
-      <div class="pb-axis"><span>The deciding questions</span></div>
-      <p class="pb-note" style="margin:0 0 4px">When two reviews share a recommendation, its question frames the matchup.</p>
+    body = `<div class="pb-sec">Act III · The Wheel<small>One wheel of critic’s reviews · the math places every one</small></div>
+      <p class="pb-note" style="margin:0 0 10px">Each review gets a placement score: its recommendation, the anchor (how much of what the case praises is what its own sub-genre runs on), the claim (how hard its conceded flaw lands on that sub-genre’s core), and for the lower recommendations the two ingredients and the opening line. A new review meets the middle of the wheel, then the middle of the half it earns, until it has a place. Every comparison is a battle, decided by the score and filed in the Film Vault. A rewrite that changes the recommendation or condition reruns the film; one that changes only the wording keeps its place, and if the new words move it anyway, that’s a strike. Three strikes lock the wording.</p>
+      <div class="pb-axis"><span>The questions behind each recommendation</span></div>
       ${[5, 4, 3, 2, 1, 0].map(l => q('Y', l)).join('')}`;
   }
   $('#pbCard').innerHTML = `<button class="pb-x" data-pbx aria-label="Close">✕</button>
@@ -3544,12 +3929,11 @@ function removeFilm(id) {
   db.wheel = db.wheel.filter(x => x !== id);
   db.matches = db.matches.filter(m => m.a !== id && m.b !== id);
   if (onWheel) db.wheelLog.push({ id: 'wl:' + uid(), type: 'remove', film: id, at: Date.now() });
-  delete db.form[id];
   db.lists.forEach(l => { if (Array.isArray(l.ids)) l.ids = l.ids.filter(x => x !== id); });
   if (db.workflow && db.workflow.film === id) endWorkflow();
   rebuild(); syncActive();
 }
-let officeMsg = { signin: '', backup: '', import: '' }, officeQuery = '', askRemove = null, askImport = null, busySign = false;
+let officeMsg = { signin: '', backup: '', import: '', weights: '' }, officeQuery = '', askRemove = null, askImport = null, busySign = false;
 function renderOffice() {
   const nV = VAULT.length, editor = canEdit();
   const lamp = editor ? 'on' : '';
@@ -3570,7 +3954,7 @@ function renderOffice() {
       ${editor ? `
       <div class="ledger"><span class="tabk">The safe</span><h3>Back up the collection</h3>
         <p>Download everything — films, reviews, the wheel and its matchups, lists and the Film Vault — as one file.</p>
-        <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.matches.length}</b><span>Matchups</span></div><div><b>${nV}</b><span>Considerations</span></div></div>
+        <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.matches.length}</b><span>Battles</span></div><div><b>${nV}</b><span>Shows</span></div></div>
         <div class="btnrow2"><button class="btn-ink solid" data-o="export">Download backup</button></div>
         ${officeMsg.backup ? `<div class="okline">${esc(officeMsg.backup)}</div>` : ''}</div>
 
@@ -3585,6 +3969,18 @@ function renderOffice() {
         <p>Find a film and take it out of the collection, with its matchups and considerations. Every film below it moves up a place.</p>
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
+
+      <div class="ledger wide"><span class="tabk">The rule book</span><h3>The weights</h3>
+        <p>The only lever on the math. A change applies to every review alike, and the wheel re-sorts under the new rules. Past shows stay filed as they played.</p>
+        ${weightsHTML()}
+        <div class="btnrow2"><button class="btn-ink solid" data-o="weights">Apply and re-sort the wheel</button><button class="btn-ink" data-o="weightsreset">Back to the defaults</button></div>
+        ${officeMsg.weights ? `<div class="okline">${esc(officeMsg.weights)}</div>` : ''}</div>
+
+      <div class="ledger danger"><span class="tabk">The house lights</span><h3>Dump the wheel</h3>
+        <p>A dump of the wheel’s history, not a reset of the results. Records, peaks, reigns, strikes on the reel and the highlight reel are archived and start over; then the math places every review again, in the same order it decides now.</p>
+        <label class="tiny" for="oClearW">Type <b>DUMP THE WHEEL</b> to unlock</label>
+        <input class="inkin" id="oClearW" placeholder="DUMP THE WHEEL" autocomplete="off">
+        <div class="btnrow2"><button class="btn-ink red" data-o="clearwheel" id="oClearWBtn" disabled>Dump it</button></div></div>
 
       <div class="ledger danger"><span class="tabk">The fire curtain</span><h3>Clear the whole collection</h3>
         <p>Removes every film, review, matchup and consideration, and empties the wheel. Your lists keep their names but are emptied. This cannot be undone without a backup.</p>
@@ -3604,7 +4000,36 @@ function renderOffice() {
   renderHits();
   $('#oSearch').addEventListener('input', e => { officeQuery = e.target.value; askRemove = null; renderHits(); });
   $('#oClear').addEventListener('input', e => { $('#oClearBtn').disabled = e.target.value.trim().toUpperCase() !== 'CLEAR THE HOUSE'; });
+  $('#oClearW').addEventListener('input', e => { $('#oClearWBtn').disabled = e.target.value.trim().toUpperCase() !== 'DUMP THE WHEEL'; });
   $('#oFile').addEventListener('change', e => readImport(e.target.files[0]));
+}
+const W_FIELDS = [
+  ['The recommendation', [0, 1, 2, 3, 4, 5].map(l => [`case.${l}`, Y_NAMES[l]])],
+  ['The claim · base', [4, 3, 2, 1].map(l => [`claim.${l}`, X_NAMES[l]])],
+  ['Where the flaw lands', ['core', 'supporting', 'edge'].map(t => [`land.${t}`, 'At the ' + t])],
+  ['Unscathed flaw', ['core', 'supporting', 'edge'].map(t => [`x5land.${t}`, 'At the ' + t])],
+  ['The anchor', [['anchorMax', 'Most points'], ['elw.core', 'Core praise'], ['elw.supporting', 'Supporting'], ['elw.extra', 'Off the core']]],
+  ['Components', [['plot', 'From the plot'], ['consistent', 'Consistency'], ['jnsq', 'Je ne sais quoi'], ['identity', 'Identity opener'], ['hedge', 'Hedge opener']]],
+];
+const wGet = (w, k) => k.split('.').reduce((o, p) => o == null ? o : o[p], w);
+function weightsHTML() {
+  const w = W();
+  return `<div class="wgrid">${W_FIELDS.map(([h, fs]) => `<div class="wgrp"><b>${h}</b>${fs.map(([k, l]) => `<label>${l}<input type="number" step="0.5" data-w="${k}" value="${wGet(w, k)}"></label>`).join('')}</div>`).join('')}</div>`;
+}
+function readWeights() {
+  const w = JSON.parse(JSON.stringify(W0));
+  document.querySelectorAll('#officeIn [data-w]').forEach(i => {
+    const v = parseFloat(i.value); if (!isFinite(v)) return;
+    const ks = i.dataset.w.split('.'); let o = w; ks.slice(0, -1).forEach(k => o = o[k]); o[ks.at(-1)] = v;
+  });
+  return w;
+}
+function applyWeights(w) {
+  db.settings ||= {};
+  if (w) db.settings.weights = w; else delete db.settings.weights;
+  rebuild();
+  const before = db.wheel.slice(); sortWheel(true); rebuild();
+  return db.wheel.filter((id, i) => before[i] !== id).length;
 }
 function renderHits() {
   const q = officeQuery.trim().toLowerCase();
@@ -3627,9 +4052,21 @@ $('#office').addEventListener('click', async e => {
   if (o === 'remove') { askRemove = b.dataset.id; return renderHits(); }
   if (o === 'removeno') { askRemove = null; return renderHits(); }
   if (o === 'removeyes') { const t = raw(b.dataset.id)?.title; removeFilm(b.dataset.id); askRemove = null; if (await persist()) toast(t + ' removed'); return renderOffice(); }
+  if (o === 'weights' || o === 'weightsreset') {
+    const moved = applyWeights(o === 'weights' ? readWeights() : null);
+    officeMsg.weights = `✓ ${o === 'weights' ? 'Weights applied' : 'Default weights restored'} · ${moved ? `${moved} place${moved === 1 ? '' : 's'} on the wheel changed hands` : 'the wheel order holds'}.`;
+    await persist(); return renderOffice();
+  }
+  if (o === 'clearwheel') {
+    if (active && active.stage === 'check') endWorkflow();
+    const ids = db.wheel.slice(), ok = clearWheel('Dumped in the office');
+    ids.forEach(id => { if (byId(id)) placeFilm(id, 'dump'); });
+    if (await persist()) toast(ok ? `History dumped · ${db.wheel.length} review${db.wheel.length === 1 ? '' : 's'} placed again by the math` : 'The wheel was already empty');
+    return renderOffice();
+  }
   if (o === 'clear') {
     endWorkflow();
-    db.films = []; db.showdowns = []; db.placements = []; db.wheel = []; db.matches = []; db.wheelLog = []; db.form = {}; db.lostfound = []; db.lists.forEach(l => l.ids = []);
+    db.films = []; db.showdowns = []; db.placements = []; db.wheel = []; db.matches = []; db.wheelLog = []; db.archives = []; db.lostfound = []; db.lists.forEach(l => l.ids = []);
     if (await persist()) toast('The house is cleared'); return renderOffice();
   }
 });
@@ -3672,7 +4109,7 @@ function parseBackup(d) {
     doc = normalize(JSON.parse(JSON.stringify(src)));
     doc.workflow = null;
   }
-  const notes = doc.wheelLog.filter(e => e.note).length + doc.matches.filter(m => m.note).length;
+  const notes = doc.wheelLog.filter(e => e.note).length + doc.matches.filter(m => m.note).length + (doc.archives || []).reduce((n, a) => n + (a.matches || []).filter(m => m.note).length + (a.wheelLog || []).filter(e => e.note).length, 0);
   return { doc, films: doc.films.length, showdowns: doc.matches.length, notes, source: d.format === 'cmancinema-theater' ? 'a preview export' : 'a CmanCinema backup' };
 }
 async function applyImport() {
