@@ -1801,6 +1801,17 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   .vbt .vres{display:none} .vbt .vn{grid-column:1;grid-row:1} .vbt .vopp{grid-column:2;grid-row:1} .vbt .vfac{grid-column:2;grid-row:2} .vbt .vmar{grid-column:3;grid-row:1/3} .vbt p{grid-column:2/-1;grid-row:3}
   .vsum{grid-template-columns:repeat(3,1fr)} .vsum div:nth-child(n+4){display:none}
 }
+.ach.off{opacity:.45;border-style:dashed}
+.themes{display:grid;gap:8px;margin:2px 0 8px}
+.theme{padding:8px 10px;border:1px solid rgba(122,74,42,.3);border-radius:6px;background:rgba(255,255,255,.35)}
+.theme.off{opacity:.5;border-style:dashed}
+.th-h{display:flex;align-items:center;gap:10px}
+.th-h b{font:800 15px var(--serif);color:#2a160e}
+.th-pts{font:800 9px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#7a4a2a}
+.th-h .ach{margin:0 0 0 auto;padding:4px 10px;font:800 10px var(--serif);letter-spacing:.12em;text-transform:uppercase}
+.th-m{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px;font:500 15px var(--body);color:#3a2418}
+.th-m span{display:inline-flex;align-items:center;gap:4px}
+.th-m .mv{border:0;background:transparent;font:600 11px var(--serif);color:#9c7334;cursor:pointer;max-width:70px}
 </style>
 </head>
 <body>
@@ -2165,7 +2176,9 @@ const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
 
 /* =====================================================================
    THE ANCHOR READER
-   Each review is read against what its own sub-genre runs on. The case's
+   Each part of the review is tagged against what the film is going for in its
+   sub-genre: material (core), applicable (supporting) or not applicable (edge).
+   The tags are neutral: material praise lifts, a material flaw costs. The case's
    praised elements and the claim's conceded weakness are pulled from the
    blueprint wording, then matched to the sub-genre's core and supporting
    vocabulary. You can correct a read; the math never asks for a verdict.
@@ -2199,7 +2212,7 @@ function familiesOf(f) {
 }
 const lexOf = f => { const fams = familiesOf(f); return { core: fams.flatMap(x => LEX[x].core), sup: fams.flatMap(x => LEX[x].sup) }; };
 const hitAny = (t, list) => list.find(k => t.includes(k));
-const STOPFRAG = /^(draw some appeal|the film|this film|film|it|its|that|which|this|a|an|and|the|with|has|have|is|are|offers?|builds?|delivers?|realizes?|engages? you|you|me|my|i)$/i;
+const STOPFRAG = /^(draw some appeal|niche|appealing qualities|the film|this film|film|it|its|that|which|this|a|an|and|the|with|has|have|is|are|offers?|builds?|delivers?|realizes?|engages? you|you|me|my|i)$/i;
 function caseElements(f) {
   let t = String(f.yNote || '').replace(/\s+/g, ' ').trim();
   const cut = [/;\s*however/i, /\bThis justifies\b/, /\bIt[’']s (these|this)\b/, /\bso extraordinary\b/i, /\bStill,/];
@@ -2226,32 +2239,63 @@ function claimWeakness(f) {
   return [conceded, cause].filter(Boolean).join(' · ') || firstSentence(t);
 }
 const ANCHOR = new Map();
+const TEXTURE = ['look', 'aesthetic', 'backlot', 'setting', 'cinematograph', 'camera', 'style', 'styliz', 'lighting', 'photograph', 'costume', 'set design', 'production design', 'scenery', 'sleek', 'slick'];
+const TAG_WORD = { core: 'material', supporting: 'applicable', extra: 'not applicable', edge: 'not applicable' };
+// attribute families: every praise is grouped into a theme before it's tagged
+const THEMES = [
+  ['music', 'Music & songs'], ['performance', 'Performances'], ['setpieces', 'Set pieces & moments'], ['tone', 'Tone & feeling'],
+  ['dialogue', 'Dialogue & humor'], ['pacing', 'Pacing & structure'], ['story', 'Story & premise'], ['texture', 'Look & atmosphere'],
+];
+// checked in this order; the first rule that matches decides the theme
+const THEME_RULES = [
+  ['music', ['music', 'song', 'singing', 'number']],
+  ['performance', ['performance', 'portrayal', 'presence', 'lead', 'acting', 'cast', 'trio', 'ensemble', 'charisma', 'charismatic', 'figure']],
+  ['setpieces', ['sequence', 'scene', 'set piece', 'fiasco', 'trial', 'dinner', 'chase', 'stunt', 'showdown', 'escape']],
+  ['tone', ['warm', 'heartfelt', 'wholesome', 'charm', 'melodram', 'sentiment', 'sappy', 'feel', 'terror', 'suspense', 'tension', 'dread', 'irony', 'psycholog', 'thrill', 'exciting', 'entertaining', 'fun', 'dynamism', 'juxtapos', 'disorient', 'vertigo', 'gaslight', 'theatrical']],
+  ['dialogue', ['dialogue', 'banter', 'repartee', 'wit', 'humor', 'humour', 'comic', 'comed', 'gag', 'laugh', 'hilari', 'joke', 'quip', 'slapstick', 'farce', 'farcical', 'tongue-in-cheek']],
+  ['pacing', ['pace', 'pacing', 'construction', 'structure', 'escalat', 'domino', 'chain', 'rhythm', 'momentum', 'full circle', 'kicks into gear', 'propul']],
+  ['setpieces', ['finale', 'ending', 'ends on', 'climax', 'beats', 'moments', 'intro', 'opening', 'tailing', 'final shot', 'ambulance']],
+  ['story', ['story', 'storyline', 'plot', 'premise', 'narrative', 'arc', 'complication', 'conflict', 'skeleton', 'reform', 'involvement', 'sickness', 'friendship', 'relationship', 'romance', 'identit', 'disappearance', 'reveal', 'scheme', 'double-cross', 'intrigue', 'mystery', 'espionage', 'caper', 'situation', 'doubling', 'tale']],
+  ['texture', ['look', 'aesthetic', 'backlot', 'setting', 'cinematograph', 'camera', 'style', 'styliz', 'lighting', 'photograph', 'atmosph', 'mood', 'vibe', 'eerie', 'gothic', 'storybook', 'evocation', 'scenic', 'sleek', 'slick']],
+];
+const THEME_NAME = Object.fromEntries(THEMES);
+const themeOf = t => { const lt = t.toLowerCase(); const hit = THEME_RULES.find(([, ws]) => ws.some(w => lt.includes(w))); return hit ? hit[0] : 'own:' + t; };
+const themeLabel = (key, f) => key.startsWith('own:') ? key.slice(4) : THEME_NAME[key];
 function anchorOf(f) {
   if (ANCHOR.has(f.id)) return ANCHOR.get(f.id);
-  const lx = lexOf(f), ov = (f.comp && f.comp.anchor) || {};
-  const els = caseElements(f).map(t => {
-    const lt = t.toLowerCase(), auto = hitAny(lt, lx.core) ? 'core' : hitAny(lt, lx.sup) ? 'supporting' : 'extra';
-    return { t, tag: (ov.els && ov.els[t]) || auto, auto };
+  const ov = (f.comp && f.comp.anchor) || {}, w = W();
+  // 1) read every attribute, 2) group them into themes (you can move one), 3) tag each theme
+  const els = caseElements(f).map(t => ({ t, theme: (ov.fam && ov.fam[t]) || themeOf(t), autoTheme: themeOf(t) }));
+  const order = [], byKey = new Map();
+  els.forEach((e, i) => { if (!byKey.has(e.theme)) { byKey.set(e.theme, []); order.push(e.theme); } byKey.get(e.theme).push(i); });
+  // the theme holding the case's lead attribute starts material (the case rests on it); the others start applicable;
+  // not applicable is always your call
+  const groups = order.map(key => {
+    const members = byKey.get(key), auto = members.includes(0) ? 'core' : 'supporting';
+    return { key, label: themeLabel(key, f), members, tag: (ov.groups && ov.groups[key]) || auto, auto };
   });
-  const wt = claimWeakness(f), lw = wt.toLowerCase();
-  const wAuto = hitAny(lw, lx.core) ? 'core' : hitAny(lw, lx.sup) ? 'supporting' : 'edge';
-  const a = { els, weak: { t: wt, tag: ov.weak || wAuto, auto: wAuto }, fams: familiesOf(f) };
+  const ranked = groups.map((g, i) => [g, i]).sort((x, y) => w.elw[y[0].tag] - w.elw[x[0].tag] || x[1] - y[1]);
+  ranked.forEach(([g], k) => { g.slot = k < w.slotPts.length ? k : -1; });
+  // the flaw is weighed against the claim: material below X5; at X5 applicable but immaterial, or not applicable when it comes from the plot
+  const wt = claimWeakness(f);
+  const wAuto = f.X <= 4 ? 'core' : fromPlot(f.xNote) ? 'edge' : 'supporting';
+  const a = { els, groups, weak: { t: wt, tag: ov.weak || wAuto, auto: wAuto }, fams: familiesOf(f) };
   ANCHOR.set(f.id, a);
   return a;
 }
 
 /* ---------- the score: everything the review says, weighed ---------- */
 const W0 = { case: [0, 20, 40, 60, 75, 90], claim: { 5: 0, 4: -6, 3: -12, 2: -18, 1: -24 }, land: { core: 1.5, supporting: 1, edge: 0.5 }, x5land: { core: -2, supporting: -1, edge: 0 },
-  anchorMax: 12, elw: { core: 1, supporting: 0.5, extra: 0.15 }, plot: 2, consistent: 3, jnsq: 4, identity: 2, hedge: -1 };
-const W = () => { const w = db.settings && db.settings.weights; return w ? { ...W0, ...w, claim: { ...W0.claim, ...(w.claim || {}) }, land: { ...W0.land, ...(w.land || {}) }, x5land: { ...W0.x5land, ...(w.x5land || {}) }, elw: { ...W0.elw, ...(w.elw || {}) } } : W0; };
+  slotPts: [8, 2, 2], elw: { core: 1, supporting: 0.5, extra: 0.15 }, plot: 2, consistent: 3, jnsq: 4, identity: 2, hedge: -1 };
+const W = () => { const s0 = db.settings && db.settings.weights, w = s0 ? { ...W0, ...s0, slotPts: (Array.isArray(s0.slotPts) ? s0.slotPts : W0.slotPts).slice(), claim: { ...W0.claim, ...(s0.claim || {}) }, land: { ...W0.land, ...(s0.land || {}) }, x5land: { ...W0.x5land, ...(s0.x5land || {}) }, elw: { ...W0.elw, ...(s0.elw || {}) } } : { ...W0 }; w.anchorMax = w.slotPts.reduce((t, v) => t + v, 0); return w; };
 const firstSentence = t => (String(t || '').trim().match(/^.*?[.!?](?=\s|$)/) || [String(t || '').trim()])[0];
 const HEDGE = /\b(niche|underrated|has appealing qualities|appealing qualities)\b/i;
 const guessOpener = t => { const s = firstSentence(t); return HEDGE.test(s) || /:/.test(s) ? 'hedge' : 'identity'; };
 function parts(f) {
   const w = W(), c = f.comp || {}, a = anchorOf(f), p = {};
   p.case = w.case[f.Y];
-  const n = a.els.length;
-  p.anchor = n ? r1(w.anchorMax * a.els.reduce((s, e) => s + w.elw[e.tag], 0) / n) : 0;
+  // what the case rests on: its strongest theme counts most, up to two more themes add a little; the rest is overflow
+  p.anchor = r1(a.groups.filter(g => g.slot >= 0).reduce((t, g) => t + w.slotPts[g.slot] * w.elw[g.tag], 0));
   p.claim = r1(f.X === 5 ? w.x5land[a.weak.tag] : w.claim[f.X] * w.land[a.weak.tag]);
   if (fromPlot(f.xNote)) p.plot = w.plot;
   if (f.Y === 1) { if (c.consistent) p.consistent = w.consistent; if (c.jnsq) p.jnsq = w.jnsq; }
@@ -2264,6 +2308,8 @@ const chanceOf = (a, b) => 1 / (1 + Math.pow(10, -(score(a) - score(b)) / 20));
 function beats(a, b) {
   const d = score(a) - score(b); if (Math.abs(d) > 1e-9) return d > 0;
   const pa = parts(a), pb = parts(b);
+  const ma = anchorOf(a).groups.filter(g => g.tag === 'core').length, mb = anchorOf(b).groups.filter(g => g.tag === 'core').length;
+  if (ma !== mb) return ma > mb;   // ties: more material themes, then the anchor, then the claim, then who arrived first
   if (pa.anchor !== pb.anchor) return pa.anchor > pb.anchor;
   if (a.X !== b.X) return a.X > b.X;
   return a.added <= b.added;
@@ -2277,17 +2323,17 @@ function decide(Wn, L) {
   return top ? top[0] : 'tie';
 }
 const genreWord = f => f.genre ? f.genre.toLowerCase() : 'its sub-genre';
-const coreEls = f => anchorOf(f).els.filter(e => e.tag === 'core').map(e => e.t);
+const coreEls = f => anchorOf(f).groups.filter(g => g.tag === 'core').map(g => g.label.toLowerCase());
 function reasonOf(Wn, L, key) {
   const aw = anchorOf(Wn), al = anchorOf(L), cw = coreEls(Wn), cl = coreEls(L);
   const list = a => a.slice(0, 2).join(' and ');
   if (key === 'level') return `${Y_NAMES[Wn.Y]} over ${Y_NAMES[L.Y]}: a full recommendation apart.`;
   if (key === 'anchor') return cw.length
-    ? `${esc(Wn.title)}’s ${esc(list(cw))} ${cw.length > 1 ? 'are' : 'is'} the core of ${an(esc(genreWord(Wn)))}${cl.length ? `; ${esc(L.title)}’s praise lands there less often` : `, while ${esc(L.title)}’s praise sits off its own core`}.`
-    : `${esc(Wn.title)}’s praise sits closer to what ${an(esc(genreWord(Wn)))} runs on than ${esc(L.title)}’s does.`;
+    ? `${esc(Wn.title)}’s case rests on ${esc(list(cw))}${cl.length ? `; ${esc(L.title)}’s case has fewer attributes it rests on` : `, while nothing in ${esc(L.title)}’s case is material`}.`
+    : `${esc(Wn.title)}’s case fills its slots with stronger attributes than ${esc(L.title)}’s.`;
   if (key === 'claim') return al.weak.tag === 'core' && L.X <= 4
-    ? `${esc(L.title)}’s flaw (${esc(trimTo(al.weak.t, 70))}) is material and hits the core of ${an(esc(genreWord(L)))}.`
-    : al.weak.tag !== 'edge' ? `${esc(L.title)}’s flaw lands on the ${al.weak.tag} of ${an(esc(genreWord(L)))}; ${esc(Wn.title)}’s ${aw.weak.tag === 'edge' ? 'sits at the edge' : 'costs it less'}.`
+    ? `${esc(L.title)}’s claim rests on a material flaw (${esc(trimTo(al.weak.t, 70))}).`
+    : al.weak.tag !== 'edge' ? `${esc(L.title)}’s flaw is ${TAG_WORD[al.weak.tag]} to its claim; ${esc(Wn.title)}’s ${aw.weak.tag === 'edge' ? 'isn’t even applicable' : 'costs it less'}.`
     : `${esc(Wn.title)}’s condition holds up better against its own sub-genre.`;
   if (key === 'ingredients') return `${esc(Wn.title)} has ${(Wn.comp || {}).jnsq ? 'the je ne sais quoi' : 'consistency'}, the ingredient ${esc(L.title)} lacks.`;
   if (key === 'opener') return `${esc(Wn.title)}’s case opens on a clear identity.`;
@@ -2684,7 +2730,7 @@ function openProfile(id, show) {
       ${(raw(id)?.strikes || []).length ? `<div class="vlist"><span class="k">Strikes${raw(id).locked ? ' · wording locked' : ''}</span>${raw(id).strikes.slice().reverse().map(k => `<div class="vmini"><b>Moved #${k.from} → #${k.to}</b>${vDate(k.at)} · ${esc(k.why)}</div>`).join('')}</div>` : ''}
       ${entries.length ? `<div class="vlist"><span class="k">In the highlight reel</span>${entries.map(v => `<div class="vmini"><b>Landed #${v.pos + 1} of ${v.of} · ${v.battles.filter(m => m.winner === id).length}–${v.battles.filter(m => m.winner !== id).length}</b>${vDate(v.at)}</div>`).join('')}</div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
-        ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button>'}
+        ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button><button class="btn-line" data-tk="rewrite" title="Off the wheel, so no strikes">Rewrite the review</button>'}
         ${entries.length ? '<button class="btn-line" data-watchlast>▶ Watch its show</button>' : ''}
         <button class="linkish" data-remove style="margin-left:auto">Remove from collection</button>`}</div>` : ''}
       <div id="confirmBox">${show === 'ticket' && editor && !active && st.overall ? ticketChoice(f) : ''}</div>
@@ -3069,12 +3115,12 @@ function strikeWhy(f1, p0, a0, s0) {
   const p1 = parts(f1), a1 = anchorOf(f1), lines = [];
   const keys = [...new Set([...Object.keys(p0), ...Object.keys(p1)])].filter(k => (p0[k] || 0) !== (p1[k] || 0));
   keys.forEach(k => lines.push(`${PART_NAME[k]} ${p0[k] || 0} → ${p1[k] || 0}`));
-  const core0 = new Set(a0.els.filter(e => e.tag === 'core').map(e => e.t)), core1 = a1.els.filter(e => e.tag === 'core').map(e => e.t);
+  const core0 = new Set(a0.groups.filter(g => g.tag === 'core').map(g => g.label)), core1 = a1.groups.filter(g => g.tag === 'core').map(g => g.label);
   const gained = core1.filter(t => !core0.has(t)), lost = [...core0].filter(t => !core1.includes(t));
   let detail = '';
-  if (gained.length) detail += `“${gained.slice(0, 2).join('”, “')}” now read${gained.length === 1 ? 's' : ''} as core to ${an(genreWord(f1))}. `;
-  if (lost.length) detail += `“${lost.slice(0, 2).join('”, “')}” no longer read${lost.length === 1 ? 's' : ''} as core. `;
-  if (a0.weak.tag !== a1.weak.tag) detail += `The conceded flaw now lands at the ${a1.weak.tag} instead of the ${a0.weak.tag}. `;
+  if (gained.length) detail += `“${gained.slice(0, 2).join('”, “')}” now read${gained.length === 1 ? 's' : ''} as a material theme. `;
+  if (lost.length) detail += `“${lost.slice(0, 2).join('”, “')}” no longer read${lost.length === 1 ? 's' : ''} as material. `;
+  if (a0.weak.tag !== a1.weak.tag) detail += `The conceded flaw now reads as ${TAG_WORD[a1.weak.tag]} instead of ${TAG_WORD[a0.weak.tag]}. `;
   if ((p0.opener || 0) !== (p1.opener || 0)) detail += `The opening line now reads as ${p1.opener > 0 ? 'a one-phrase identity' : 'an inventory or hedge'}. `;
   return `${lines.join(' · ') || 'The score shifted'} (score ${s0} → ${score(f1)}). ${detail}`.trim();
 }
@@ -3159,8 +3205,15 @@ function enterAuditorium() {
 }
 
 /* ---------- before the show: how the math reads this review ---------- */
-function chipHTML(t, tag, kind, i) {
-  return `<button class="ach ${tag}" data-ach="${kind}" data-i="${i}" title="Tap to change">${esc(t)}<i>${tag}</i></button>`;
+function themeHTML(a, g) {
+  const opts = i => `<select class="mv" data-mv="${i}" aria-label="Move to another theme"><option value="">move…</option>${THEMES.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}<option value="own">Its own theme</option></select>`;
+  return `<div class="theme ${g.slot < 0 ? 'off' : ''}">
+    <div class="th-h"><b>${esc(g.label)}</b>${g.slot >= 0 ? `<span class="th-pts">${['top theme', '2nd', '3rd'][g.slot] || ''}</span>` : '<span class="th-pts">overflow · not counted</span>'}
+      <button class="ach ${g.tag}" data-ach="grp" data-i="${esc(g.key)}" title="Tap to change">${TAG_WORD[g.tag]}</button></div>
+    <div class="th-m">${g.members.map(i => `<span>${esc(a.els[i].t)}${opts(i)}</span>`).join('')}</div></div>`;
+}
+function chipHTML(t, tag, kind, i, off) {
+  return `<button class="ach ${tag} ${off ? 'off' : ''}" data-ach="${kind}" data-i="${i}" title="Tap to change">${esc(t)}<i>${TAG_WORD[tag]}</i></button>`;
 }
 function renderCheck() {
   ['#stage', '#tape', '#desk'].forEach(s => { $(s).hidden = true; }); $('#stage').classList.remove('showing');
@@ -3175,12 +3228,12 @@ function renderCheck() {
   $('#checkIn').innerHTML = `<div class="ck-card">
       ${f.genre ? '' : `<div class="ck-q"><b>Sub-genre</b><p>The anchor needs a two-part sub-genre.</p><div class="genre2"><input id="ckG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24"></div><button class="btn-line" data-ckgenre style="margin-top:10px">Read it against this sub-genre</button></div>`}
       <div class="ck-q"><b>The anchor · ${esc(f.genre || 'general reading')}</b>
-        <p>How the math reads your review against what ${an(esc(genreWord(f)))} runs on${f.genre ? ` (${fams})` : ''}. Tap a tag if it misread.</p>
-        <span class="ck-sub">What the case praised</span>
-        <div class="achs">${a.els.length ? a.els.map((e, i) => chipHTML(e.t, e.tag, 'el', i)).join('') : '<em class="ck-none">Nothing to read in the case yet.</em>'}</div>
-        <span class="ck-sub">What the claim conceded</span>
+        <p>Every attribute your case names, grouped into themes; each theme weighed against the case. Tap a tag to change it, or move an attribute to another theme.</p>
+        <span class="ck-sub">The case’s themes · grouped from every attribute it names</span>
+        <div class="themes">${a.groups.length ? a.groups.map(g => themeHTML(a, g)).join('') : '<em class="ck-none">Nothing to read in the case yet.</em>'}</div>
+        <span class="ck-sub">The claim’s attribute</span>
         <div class="achs">${chipHTML(trimTo(a.weak.t, 110), a.weak.tag, 'wk', 0)}</div>
-        <small>Core and supporting praise lift the anchor (now ${p.anchor} of ${W().anchorMax}). A flaw at the core costs the most; at the edge, the least.</small></div>
+        <small><b>Material</b> = the case (or the claim) rests on it · <b>applicable</b> = part of it, but it doesn’t hinge on it · <b>not applicable</b> = mentioned, but doesn’t bear on it. The strongest theme counts ${W().slotPts[0]}, up to two more add ${W().slotPts[1]} each; anything past three is overflow. Now ${p.anchor} of ${W().anchorMax}.</small></div>
       ${f.Y === 1 ? `<div class="ck-q"><b>The two ingredients</b><p>Recommended takes consistency and the je ne sais quoi. Which does this one have?</p>
         <div class="ck-opts">${opt('cki', 'consistent', ck0.ing, 'Consistency only')}${opt('cki', 'jnsq', ck0.ing, 'The je ne sais quoi only')}${opt('cki', 'neither', ck0.ing, 'Neither')}</div></div>` : ''}
       ${f.Y <= 2 ? `<div class="ck-q"><b>The opening line</b><p>“${esc(firstSentence(f.yNote))}”</p>
@@ -3197,19 +3250,34 @@ function breakdownHTML(f) {
   const p = parts(f);
   return `<div class="bd">${Object.entries(p).map(([k, v]) => `<span class="${v < 0 ? 'neg' : ''}"><i>${PART_NAME[k]}</i>${v > 0 && k !== 'case' ? '+' : ''}${v}</span>`).join('')}</div>`;
 }
-function setAnchorTag(f, kind, i) {
+function setAnchorTag(f, kind, key) {
   const r = raw(f.id); if (!r) return;
-  const a = anchorOf(f); r.comp = { ...(r.comp || {}) };
-  const ov = r.comp.anchor = { els: { ...((r.comp.anchor || {}).els || {}) }, weak: (r.comp.anchor || {}).weak };
-  if (kind === 'el') { const e = a.els[i], nx = TAGS_EL[(TAGS_EL.indexOf(e.tag) + 1) % 3]; if (nx === e.auto) delete ov.els[e.t]; else ov.els[e.t] = nx; }
+  const a = anchorOf(f), old = (r.comp && r.comp.anchor) || {};
+  r.comp = { ...(r.comp || {}) };
+  const ov = r.comp.anchor = { groups: { ...(old.groups || {}) }, fam: { ...(old.fam || {}) }, weak: old.weak };
+  if (kind === 'grp') { const g = a.groups.find(x => x.key === key); if (!g) return; const nx = TAGS_EL[(TAGS_EL.indexOf(g.tag) + 1) % 3]; if (nx === g.auto) delete ov.groups[key]; else ov.groups[key] = nx; }
   else { const nx = TAGS_WK[(TAGS_WK.indexOf(a.weak.tag) + 1) % 3]; ov.weak = nx === a.weak.auto ? undefined : nx; }
   if (ov.weak === undefined) delete ov.weak;
 }
+function moveAttribute(f, i, theme) {
+  const r = raw(f.id); if (!r) return;
+  const a = anchorOf(f), e = a.els[i]; if (!e) return;
+  const old = (r.comp && r.comp.anchor) || {};
+  r.comp = { ...(r.comp || {}) };
+  const ov = r.comp.anchor = { groups: { ...(old.groups || {}) }, fam: { ...(old.fam || {}) }, weak: old.weak };
+  if (ov.weak === undefined) delete ov.weak;
+  const to = theme === 'own' ? 'own:' + e.t : theme;
+  if (to === e.autoTheme) delete ov.fam[e.t]; else ov.fam[e.t] = to;
+}
+$('#checkIn').addEventListener('change', e => {
+  const m = e.target.closest('[data-mv]'); if (!m || !m.value || !active || !canEdit()) return;
+  moveAttribute(active.film, +m.dataset.mv, m.value); rebuild(); syncActive(); persist(); renderCheck();
+});
 $('#checkIn').addEventListener('click', async e => {
   if (!ck0 || !active || !canEdit()) return;
   const f = active.film, r = raw(f.id); if (!r) return;
   const ch = e.target.closest('[data-ach]');
-  if (ch) { setAnchorTag(f, ch.dataset.ach, +ch.dataset.i); rebuild(); syncActive(); persist(); return renderCheck(); }
+  if (ch) { setAnchorTag(f, ch.dataset.ach, ch.dataset.i); rebuild(); syncActive(); persist(); return renderCheck(); }
   if (e.target.closest('[data-ckgenre]')) {
     const g1 = capWord($('#ckG1').value), g2 = capWord($('#ckG2').value);
     if (!g1 || !g2) return $('#ckErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
@@ -3261,8 +3329,8 @@ function slotHTML(f, me) {
 }
 function anchorChips(f) {
   const a = anchorOf(f);
-  return `<div class="fc-anchor">${a.els.filter(e => e.tag !== 'extra').slice(0, 4).map(e => `<span class="ach ${e.tag} sm">${esc(trimTo(e.t, 34))}</span>`).join('')}
-    <span class="ach ${a.weak.tag} sm flaw">Flaw · ${a.weak.tag}</span></div>`;
+  return `<div class="fc-anchor">${a.groups.filter(g => g.slot >= 0).map(g => `<span class="ach ${g.tag} sm" title="${esc(g.members.map(i => a.els[i].t).join(' · '))}">${esc(trimTo(g.label, 30))}</span>`).join('')}
+    <span class="ach ${a.weak.tag} sm flaw">Flaw · ${TAG_WORD[a.weak.tag]}</span></div>`;
 }
 function showCard(f, o) {
   const st = standing(f), p = parts(f);
@@ -3663,10 +3731,10 @@ function renderGame() {
     <p class="cal-note">${FACTOR_NAME[topK.k]} settled ${topK.n} of ${ms.length} battle${ms.length === 1 ? '' : 's'}. ${ms.filter(m => (m.margin || 0) < 5).length} were decided by less than 5 points.</p>`
     : '<p class="cal-note">Fills in as reviews meet on the wheel. Each battle is credited to the component that tipped it.</p>';
   // how the anchor reads your reviews: praise on the core, flaws by where they land
-  const onW = ranked.length ? ranked : all, els = onW.flatMap(f => anchorOf(f).els), wks = onW.map(f => anchorOf(f).weak.tag);
+  const onW = ranked.length ? ranked : all, els = onW.flatMap(f => anchorOf(f).groups), wks = onW.map(f => anchorOf(f).weak.tag);
   const tagBars = (rows) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="bars2">${rows.map(([l, k, nm]) => `<div class="bar2"><b style="font-size:12px">${l}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm}</span></div><i>${k}</i></div>`).join('')}</div>`; };
-  const praise = tagBars([['Core', els.filter(e => e.tag === 'core').length, 'What the sub-genre runs on'], ['Supp.', els.filter(e => e.tag === 'supporting').length, 'What it leans on'], ['Off', els.filter(e => e.tag === 'extra').length, 'Off the sub-genre’s core']]);
-  const flaws = tagBars([['Core', wks.filter(t => t === 'core').length, 'Flaw hits the core'], ['Supp.', wks.filter(t => t === 'supporting').length, 'Flaw hits a support'], ['Edge', wks.filter(t => t === 'edge').length, 'Flaw at the edge']]);
+  const praise = tagBars([['Core', els.filter(e => e.tag === 'core').length, 'Material'], ['Supp.', els.filter(e => e.tag === 'supporting').length, 'Applicable'], ['Edge', els.filter(e => e.tag === 'extra').length, 'Not applicable']]);
+  const flaws = tagBars([['Core', wks.filter(t => t === 'core').length, 'Material flaw'], ['Supp.', wks.filter(t => t === 'supporting').length, 'Applicable flaw'], ['Edge', wks.filter(t => t === 'edge').length, 'Flaw not even applicable']]);
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
@@ -3693,7 +3761,7 @@ function renderGame() {
     </div>
     ${cabinet('What Decides Your Wheel', 'Every battle, credited to the component that tipped it.', decides)}
     <div class="tri">
-      ${cabinet('The Anchor · Praise', `What your cases praise, read against each film’s own sub-genre${ranked.length ? '' : ' (from the queue)'}.`, praise)}
+      ${cabinet('The Anchor · Themes', `Every case’s themes, by what the case rests on${ranked.length ? '' : ' (from the queue)'}.`, praise)}
       ${cabinet('The Anchor · Flaws', 'Where each claim’s conceded flaw lands on its sub-genre.', flaws)}
     </div>
     <div class="tri">
@@ -4047,14 +4115,14 @@ function renderPlaybill() {
       <p class="pb-note" style="margin:0 0 10px">You write the claim and the case. The math reads them into a placement score and places the film. You never pick a winner.</p>
       <div class="pb-axis"><span>The placement score</span></div>
       ${it('1', 'The recommendation', 'the biggest part', `Not Recommendable ${w.case[0]} · Recommendable ${w.case[1]} · Recommended ${w.case[2]} · Highly Recommended ${w.case[3]} · Must-See ${w.case[4]} · Essential ${w.case[5]}.`)}
-      ${it('2', 'The anchor', `up to ${w.anchorMax}`, 'How much of what the case praises is what the film’s own sub-genre runs on. Each praised element is tagged, and the anchor is their average weight.')}
+      ${it('2', 'The anchor', `up to ${w.anchorMax}`, `What the case rests on. Every attribute the case names is grouped into themes first (dialogue & humor, performances, story, set pieces, pacing, look, tone), then each theme is tagged. The strongest theme counts ${w.slotPts[0]}, up to two more add ${w.slotPts[1]} and ${w.slotPts[2]}; anything past three is overflow. Focus isn’t punished, and range earns a little.`)}
       ${it('3', 'The claim', 'a penalty', `Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}, scaled by where the conceded flaw lands. Unscathed starts at 0 and only loses points when its flaw hits the core.`)}
       ${it('4', 'The extras', 'small', `From the plot +${w.plot}. For Recommendable: consistency +${w.consistent}, the je ne sais quoi +${w.jnsq}. For Recommended and below, the opening line: a one-phrase identity +${w.identity}, an inventory or hedge ${w.hedge}.`)}
       <div class="pb-axis"><span>Core · supporting · edge</span></div>
-      <p class="pb-note" style="margin:0 0 4px">How close a part of the review sits to what the sub-genre runs on. Read from your wording; tap a tag before the show if it misread.</p>
-      ${it('C', 'Core', 'praise ×' + w.elw.core + ' · flaw ×' + w.land.core, 'The sub-genre’s main draw: suspense in a thriller, gags in a comedy, the rise and fall in a gangster film. Core praise counts fully. A core flaw costs the most, and even an Unscathed film loses ' + Math.abs(w.x5land.core) + '.')}
-      ${it('S', 'Supporting', 'praise ×' + w.elw.supporting + ' · flaw ×' + w.land.supporting, 'What the sub-genre leans on but isn’t built around: atmosphere, charm, cinematography. It counts half as praise and costs the normal penalty as a flaw' + (w.x5land.supporting ? ' (an Unscathed film loses ' + Math.abs(w.x5land.supporting) + ')' : '') + '.')}
-      ${it('E', 'Edge · off the core', 'praise ×' + w.elw.extra + ' · flaw ×' + w.land.edge, 'Real, but beside what the sub-genre is about. Praise here barely counts; a flaw here costs half' + (w.x5land.edge ? '' : ', and nothing at all for an Unscathed film') + '.')}
+      <p class="pb-note" style="margin:0 0 4px">Themes: the attributes the review names, grouped (His Girl Friday’s repartee, overlapping dialogue and banter are one theme: its dialogue). Each theme is weighed against the part of the review it sits in, the case or the claim. The tags are neutral: material praise lifts, a material flaw costs. Tap a tag before the show to change it.</p>
+      ${it('C', 'Core · material', 'theme ×' + w.elw.core + ' · flaw ×' + w.land.core, 'The case or the claim rests on it; take it away and it falls apart. For Casablanca’s case, its melodramatic dynamism. A material theme counts fully; a material flaw costs the most. The theme holding the case’s lead attribute starts here, and so does a flaw below Unscathed.')}
+      ${it('S', 'Supporting · applicable', 'theme ×' + w.elw.supporting + ' · flaw ×' + w.land.supporting, 'Part of it, adding to it, but it doesn’t hinge on it: Casablanca’s seamless pacing, its scene-to-scene construction, its backlot aesthetic. It counts half; a flaw costs the normal amount' + (w.x5land.supporting ? ' (an Unscathed film loses ' + Math.abs(w.x5land.supporting) + ')' : '') + '. The case’s other themes start here, and so does an Unscathed claim’s flaw.')}
+      ${it('E', 'Edge · not applicable', 'theme ×' + w.elw.extra + ' · flaw ×' + w.land.edge, 'Mentioned, but it doesn’t bear on the case or the claim. It barely counts; a flaw costs half' + (w.x5land.edge ? '' : ', and nothing for an Unscathed film') + '. A claim from the plot starts here.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. Each comparison is a battle won by the higher score (ties: stronger anchor, then higher condition, then first admitted), credited to the component that tipped it and filed in the Film Vault.')}
       <div class="pb-axis"><span>The questions behind each recommendation</span></div>
@@ -4167,9 +4235,9 @@ function renderOffice() {
 const W_FIELDS = [
   ['The recommendation', [0, 1, 2, 3, 4, 5].map(l => [`case.${l}`, Y_NAMES[l]])],
   ['The claim · base', [4, 3, 2, 1].map(l => [`claim.${l}`, X_NAMES[l]])],
-  ['Where the flaw lands', ['core', 'supporting', 'edge'].map(t => [`land.${t}`, 'At the ' + t])],
-  ['Unscathed flaw', ['core', 'supporting', 'edge'].map(t => [`x5land.${t}`, 'At the ' + t])],
-  ['The anchor', [['anchorMax', 'Most points'], ['elw.core', 'Core praise'], ['elw.supporting', 'Supporting'], ['elw.extra', 'Off the core']]],
+  ['The flaw · multiplier', ['core', 'supporting', 'edge'].map(t => [`land.${t}`, TAG_WORD[t][0].toUpperCase() + TAG_WORD[t].slice(1)])],
+  ['Unscathed flaw', ['core', 'supporting', 'edge'].map(t => [`x5land.${t}`, TAG_WORD[t][0].toUpperCase() + TAG_WORD[t].slice(1)])],
+  ['The anchor', [['slotPts.0', 'Top theme'], ['slotPts.1', '2nd theme'], ['slotPts.2', '3rd theme'], ['elw.core', 'Material'], ['elw.supporting', 'Applicable'], ['elw.extra', 'Not applicable']]],
   ['Components', [['plot', 'From the plot'], ['consistent', 'Consistency'], ['jnsq', 'Je ne sais quoi'], ['identity', 'Identity opener'], ['hedge', 'Hedge opener']]],
 ];
 const wGet = (w, k) => k.split('.').reduce((o, p) => o == null ? o : o[p], w);
