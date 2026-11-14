@@ -2333,32 +2333,36 @@ function anchorOf(f) {
   return a;
 }
 const topFlaw = a => a.flaws.slice().sort((x, y) => x.slot - y.slot)[0];
-const sgVal = (a, key, w) => key === a.sg.core ? w.sgVal.core : w.sgVal.other;
-const sgMark = (a, key) => key === a.sg.core ? 'core' : 'extra';
+// what a flaw cuts into: the reward you dictated for that category in the case, or nothing praised
+const hitOf = (a, key) => { const c = a.cats.find(x => x.slot >= 0 && x.key === key); return c ? ['core', 'supporting', 'edge'][c.tag] : 'none'; };
+const HIT_WORD = { core: 'cuts into a core reward', supporting: 'cuts into a supporting reward', edge: 'touches an edge', none: 'nothing praised there' };
+const HIT_CLS = { core: 'core', supporting: 'supporting', edge: 'extra', none: 'extra' };
 
 /* ---------- the score: everything the review says, weighed ---------- */
 // the rules any set of weights must keep, or it is refused (and ignored if it ever got saved)
-function mergeW(s0) { return { ...W0, ...s0, case: (Array.isArray(s0.case) ? s0.case : W0.case).slice(), claim: { ...W0.claim, ...(s0.claim || {}) }, sgVal: { ...W0.sgVal, ...(s0.sgVal || {}) }, rankW: (Array.isArray(s0.rankW) ? s0.rankW : W0.rankW).slice() }; }
+function mergeW(s0) { return { ...W0, ...s0, case: (Array.isArray(s0.case) ? s0.case : W0.case).slice(), claim: { ...W0.claim, ...(s0.claim || {}) }, hitW: { ...W0.hitW, ...(s0.hitW || {}) }, rankW: (Array.isArray(s0.rankW) ? s0.rankW : W0.rankW).slice() }; }
 function weightsProblem(w) {
-  const nums = [...w.case, ...Object.values(w.claim), ...Object.values(w.sgVal), ...w.rankW, w.anchorMax, w.flawMax, w.plot, w.consistent, w.jnsq, w.identity, w.hedge];
+  const nums = [...w.case, ...Object.values(w.claim), ...Object.values(w.hitW), ...w.rankW, w.anchorMax, w.flawMax, w.oneFlaw, w.plot, w.consistent, w.jnsq, w.identity, w.hedge];
   if (nums.some(v => typeof v !== 'number' || !isFinite(v))) return 'Every weight has to be a number.';
   for (let i = 1; i < 6; i++) if (!(w.case[i] > w.case[i - 1])) return 'Each recommendation level has to be worth more than the one below it.';
   for (let x = 1; x < 5; x++) if (!(w.claim[x + 1] > w.claim[x])) return 'Each claim level has to cost less than the one below it.';
-  if (!(w.sgVal.core >= w.sgVal.other && w.sgVal.other >= 0 && w.sgVal.core > 0)) return 'What the sub-genre should rest on has to count at least as much as anything else (never below zero).';
+  if (!(w.hitW.core >= w.hitW.supporting && w.hitW.supporting >= w.hitW.edge && w.hitW.edge >= w.hitW.none && w.hitW.none >= 0)) return 'A flaw that cuts into a core reward has to count at least as much as one into a supporting reward, then an edge, then something unpraised (never below zero).';
   if (!(w.rankW[0] >= w.rankW[1] && w.rankW[1] >= w.rankW[2] && w.rankW[2] >= 0 && w.rankW[0] > 0)) return 'Core has to count at least as much as supporting, and supporting at least as much as edge (the same for major, moderate and minor).';
-  if (w.anchorMax < 0 || w.flawMax < 0) return 'The case reading and the claim flaws can’t be negative.';
+  if (w.anchorMax < 0 || w.flawMax < 0 || w.oneFlaw < 0) return 'The case reading and the claim flaws can’t be negative.';
+  if (w.oneFlaw > w.flawMax) return 'One flaw can’t cost more than the most all the flaws can cost.';
   const step = Math.min(...[1, 2, 3, 4, 5].map(i => w.case[i] - w.case[i - 1]), ...[1, 2, 3, 4].map(x => w.claim[x + 1] - w.claim[x]));
   const ex = [0, w.consistent, w.jnsq, w.identity, w.hedge], span = w.anchorMax + w.flawMax + Math.abs(w.plot) + (Math.max(...ex) - Math.min(...ex));
-  if (!(span < step)) return `Everything besides the two levels can swing ${r1(span)} points, which reaches a full level (${r1(step)}). It has to stay below one level, or a modifier could overturn a level.`;
+  if (!(span < 2 * step)) return `Everything besides the two levels can swing ${r1(span)} points, which reaches two full levels (${r1(2 * step)}). It has to stay below two levels, or a reading could overturn a two-level gap.`;
   return '';
 }
-// The claim and the case are equals: one level on either side is worth the same 20 points. Everything else
-// (case reading up to 7, claim flaws up to -6, plot +2, ingredients or opening line +3 / -1) spans at most 19,
-// so no modifier can ever outweigh a full level: a higher combined level always wins, equal levels are settled by the rest.
-const W0 = { v: 3, case: [0, 20, 40, 60, 80, 100], claim: { 5: 0, 4: -20, 3: -40, 2: -60, 1: -80 },
-  anchorMax: 7, flawMax: 6, sgVal: { core: 1, other: 0.4 }, rankW: [1, 0.5, 0.25],
-  plot: 2, consistent: 3, jnsq: 3, identity: 2, hedge: -1 };
-const W = () => { const s1 = db.settings && db.settings.weights, ok = s1 && s1.v === W0.v && !weightsProblem(mergeW(s1)); return ok ? mergeW(s1) : { ...W0, case: W0.case.slice(), claim: { ...W0.claim }, sgVal: { ...W0.sgVal }, rankW: W0.rankW.slice() }; };
+// The claim and the case are equals: one level on either side is worth the same 12 points, and the reading is weighted
+// just as evenly: the case side swings 9 (rewards up to 6, ingredients or opening line up to 3), the claim side swings 9
+// (flaws up to 8, the plot 1). That's 18 in all, a level and a half: a strong reading can pass a film one combined level
+// above it, but a gap of two levels (24) can never be crossed.
+const W0 = { v: 5, case: [0, 12, 24, 36, 48, 60], claim: { 5: 0, 4: -12, 3: -24, 2: -36, 1: -48 },
+  anchorMax: 6, flawMax: 8, hitW: { core: 1, supporting: 0.7, edge: 0.5, none: 0.4 }, rankW: [1, 0.5, 0.25],
+  plot: 1, consistent: 3, jnsq: 3, identity: 1, hedge: 0, oneFlaw: 6 };
+const W = () => { const s1 = db.settings && db.settings.weights, ok = s1 && s1.v === W0.v && !weightsProblem(mergeW(s1)); return ok ? mergeW(s1) : { ...W0, case: W0.case.slice(), claim: { ...W0.claim }, hitW: { ...W0.hitW }, rankW: W0.rankW.slice() }; };
 const firstSentence = t => (String(t || '').trim().match(/^.*?[.!?](?=\s|$)/) || [String(t || '').trim()])[0];
 const HEDGE = /\b(niche|underrated|has appealing qualities|appealing qualities)\b/i;
 const guessOpener = t => { const s = firstSentence(t); return HEDGE.test(s) || /:/.test(s) ? 'hedge' : 'identity'; };
@@ -2367,12 +2371,12 @@ function parts(f) {
   p.case = w.case[f.Y];
   // both sides weighed against one answer, what the film rests on as its sub-genre:
   // the case's core / supporting / edge categories earn, the claim's major / moderate / minor flaws cost
-  // full marks = the best possible line-up: the core reward on what the sub-genre should rest on
-  const norm = (w.sgVal.core * w.rankW[0] + w.sgVal.other * (w.rankW[1] + w.rankW[2])) || 1;
-  p.anchor = r1(w.anchorMax * Math.min(1, a.cats.filter(x => x.slot >= 0).reduce((t, x) => t + sgVal(a, x.key, w) * w.rankW[x.tag], 0) / norm));
+  // the case: your dictated rewards across its three categories (three core rewards = full marks; an empty slot counts zero)
+  p.anchor = r1(w.anchorMax * a.cats.filter(x => x.slot >= 0).reduce((t, x) => t + w.rankW[x.tag], 0) / ((3 * w.rankW[0]) || 1));
   p.claim = w.claim[f.X];
-  // flaws can share a category, so the cost is capped at its most: never more than flawMax
-  p.flaw = -r1(w.flawMax * Math.min(1, a.flaws.filter(x => x.slot >= 0).reduce((t, x) => t + sgVal(a, x.theme, w) * w.rankW[x.slot], 0) / norm)) || 0;
+  // the claim, measured against the case: each flaw's intensity times what it cuts into (a core reward counts most,
+  // something you never praised least): one major flaw in a core reward costs oneFlaw; more flaws can reach flawMax, never beyond
+  p.flaw = -r1(Math.min(w.flawMax, w.oneFlaw * a.flaws.filter(x => x.slot >= 0).reduce((t, x) => t + w.rankW[x.slot] * w.hitW[hitOf(a, x.theme)], 0) / ((w.rankW[0] * w.hitW.core) || 1))) || 0;
   if (fromPlot(f.xNote)) p.plot = w.plot;
   // a Recommendable film has one of the two ingredients (both would make it Recommended), so at most one counts
   if (f.Y === 1) { if (c.jnsq && (!c.consistent || w.jnsq >= w.consistent)) p.jnsq = w.jnsq; else if (c.consistent) p.consistent = w.consistent; }
@@ -2386,8 +2390,7 @@ const chanceOf = (a, b) => 1 / (1 + Math.pow(10, -(score(a) - score(b)) / 20));
 function beats(a, b) {
   const d = score(a) - score(b); if (Math.abs(d) > 1e-9) return d > 0;
   const pa = parts(a), pb = parts(b);
-  const A = anchorOf(a), B = anchorOf(b), ma = A.cats.some(x => x.tag === 0 && x.key === A.sg.core), mb = B.cats.some(x => x.tag === 0 && x.key === B.sg.core);
-  if (ma !== mb) return ma;   // ties: a core reward in what the sub-genre rests on, then the case reading, then the lighter flaws, then who arrived first
+  // ties: the stronger rewards, then the lighter flaws, then who arrived first
   if (pa.anchor !== pb.anchor) return pa.anchor > pb.anchor;
   if ((pa.flaw || 0) !== (pb.flaw || 0)) return (pa.flaw || 0) > (pb.flaw || 0);
   if (a.added !== b.added) return a.added < b.added;
@@ -2406,15 +2409,14 @@ const genreWord = f => f.genre ? f.genre.toLowerCase() : 'its sub-genre';
 function reasonOf(Wn, L, key) {
   const aw = anchorOf(Wn), al = anchorOf(L);
   const list = a => a.slice(0, 2).join(' and ');
-  if (key === 'level') return `${Y_NAMES[Wn.Y]} over ${Y_NAMES[L.Y]}: ${Wn.Y - L.Y > 1 ? 'recommendations' : 'a full recommendation'} apart${Wn.X < L.X ? `, more than its weaker condition costs` : ''}.`;
-  if (key === 'anchor') { const c0 = aw.cats.find(x => x.tag === 0) || aw.cats[0], d0 = al.cats.find(x => x.tag === 0) || al.cats[0];
-    return c0 && c0.key === aw.sg.core
-      ? `${esc(Wn.title)}’s case rests on its ${esc(c0.label.toLowerCase())}, what ${an(esc(genreWord(Wn)))} should rest on${d0 && d0.key !== al.sg.core ? `; ${esc(L.title)}’s case leans on its ${esc(d0.label.toLowerCase())} instead of its ${esc(themeLabel(al.sg.core).toLowerCase())}` : ''}.`
-      : `${esc(Wn.title)}’s case lands closer to what the film rests on than ${esc(L.title)}’s does.`; }
+  if (key === 'level') return Wn.Y > L.Y ? `${Y_NAMES[Wn.Y]} over ${Y_NAMES[L.Y]}${Wn.X < L.X ? `, more than its weaker condition costs` : ''}.` : Wn.X > L.X ? `${X_NAMES[Wn.X]} over ${X_NAMES[L.X]}: its condition holds.` : 'The levels decide it.';
+  if (key === 'anchor') { const cw = aw.cats.filter(x => x.tag === 0), cl = al.cats.filter(x => x.tag === 0);
+    return cw.length > cl.length ? `${esc(Wn.title)}’s case holds ${cw.length} core reward${cw.length === 1 ? '' : 's'} (${esc(cw.map(x => x.label.toLowerCase()).join(', '))}) to ${esc(L.title)}’s ${cl.length}.`
+      : `${esc(Wn.title)}’s case dictates stronger rewards than ${esc(L.title)}’s.`; }
   if (key === 'claim' && Wn.X > L.X) return `${esc(Wn.title)} holds its condition: ${X_NAMES[Wn.X]} over ${X_NAMES[L.X]}, a full level apart.`;
-  if (key === 'claim') { const m = topFlaw(al);
-    return m && m.theme === al.sg.core ? `${esc(L.title)}’s ${INTENSITY[m.slot].toLowerCase()} flaw (${esc(trimTo(m.t, 70))}) lands on its ${esc(m.label.toLowerCase())}, what ${an(esc(genreWord(L)))} should rest on.`
-      : `${esc(L.title)}’s flaws cost it more against what it rests on than ${esc(Wn.title)}’s do.`; }
+  if (key === 'claim') { const m = topFlaw(al), h = m && hitOf(al, m.theme);
+    return m && h === 'core' ? `${esc(L.title)}’s ${INTENSITY[m.slot].toLowerCase()} flaw (${esc(trimTo(m.t, 70))}) cuts into its core reward, its ${esc(m.label.toLowerCase())}.`
+      : `${esc(L.title)}’s flaws cut deeper into what rewarded it than ${esc(Wn.title)}’s do.`; }
   if (key === 'ingredients') return `${esc(Wn.title)} has ${(Wn.comp || {}).jnsq ? 'the je ne sais quoi' : 'consistency'}, the ingredient ${esc(L.title)} lacks.`;
   if (key === 'opener') return `${esc(Wn.title)}’s case opens on a clear identity.`;
   return 'Dead level in every component. The tiebreak goes to the stronger anchor, then the cleaner claim.';
@@ -3217,19 +3219,10 @@ function moveSel(attr, i) {
 function readingHTML(f) {
   const a = anchorOf(f), w = W(), slots = [0, 1, 2].map(i => a.cats[i]), extra = a.cats.slice(3);
   const pick = (which, cur) => `<div class="sgp">${THEMES.map(([k, l]) => `<button class="${cur === k ? 'on' : ''}" data-sg${which}="${k}">${l}</button>`).join('')}</div>`;
-  const val = key => `<span class="sgv ${sgMark(a, key)}">${key === a.sg.core ? 'what it should rest on' : 'elsewhere'}</span>`;
-  const n = sgShare(f), others = n - 1;
-  return `<div class="ck-q"><b>What should ${an(esc(genreWord(f)))} rest on?</b>
-      <p>Is this film really ${an(esc(genreWord(f)))}? If not, file it under what it actually is: <button class="linkish" data-sgrefile>change its sub-genre</button>.</p>
-      <div class="genre2" id="sgRefile" hidden><input id="ckG1" placeholder="Melodrama" maxlength="24" value="${esc((raw(f.id).genre || [])[0] || '')}"><i>·</i><input id="ckG2" placeholder="Film" maxlength="24" value="${esc((raw(f.id).genre || [])[1] || '')}"><button class="btn-line" data-ckgenre>File it here</button></div>
-      ${a.sg.guessed || ck0.editSG
-        ? `<p>${a.sg.guessed ? `<b>New sub-genre.</b> Define it once: it will hold for every film filed as ${an(esc(genreWord(f)))}${others ? ` (${others} other${others === 1 ? '' : 's'} already)` : ''}. A guess is filled in.` : `<b>Changing this changes it for all ${n} film${n === 1 ? '' : 's'} filed as ${an(esc(genreWord(f)))}</b>, and the wheel re-sorts.`}</p>
-          <span class="ck-sub">It should rest on</span>${pick('c', a.sg.core)}`
-        : `<div class="sgfix"><span>Should rest on <b>${esc(themeLabel(a.sg.core))}</b></span><small>the same for all ${n} film${n === 1 ? '' : 's'} filed as ${an(esc(genreWord(f)))}</small><button class="linkish" data-sgedit>Change it for all ${n}</button></div>`}</div>
-    <div class="ck-q"><b>The case · three categories, by reward</b>
+  return `<div class="ck-q"><b>The case · three categories, by reward</b>
       <p>Every attribute the case names, combined into three categories. Dictate how rewarding each was in your memory: <b>core</b>, the reward itself; <b>supporting</b>, it rewarded but less; <b>edge</b>, it registered but barely rewarded.${slots.some(x => x && !x.set) ? ' Not set yet: tap one.' : ''} The arrows choose which three count; move… regroups an attribute.</p>
       <div class="themes">${slots.map((x, i) => x ? `<div class="theme">
-        <div class="th-h"><b>${esc(x.label)}</b>${val(x.key)}
+        <div class="th-h"><b>${esc(x.label)}</b>
           <span class="intn">${RANKS.map((n, k) => `<button class="${x.tag === k ? 'on c' + k : ''}" data-ctag="${k}" data-key="${esc(x.key)}">${n}</button>`).join('')}</span>
           <span class="arw" style="margin-left:6px">${i > 0 ? `<button data-rk="-1" data-key="${esc(x.key)}" aria-label="Rank higher">▲</button>` : ''}${i < a.cats.length - 1 ? `<button data-rk="1" data-key="${esc(x.key)}" aria-label="Rank lower">▼</button>` : ''}</span></div>
         <div class="th-m">${x.members.map(m => `<span>${esc(a.els[m].t)}${moveSel('mv', m)}</span>`).join('')}</div></div>`
@@ -3238,11 +3231,11 @@ function readingHTML(f) {
     <div class="ck-q"><b>The claim · its flaws, against the praise</b>
       ${a.flaws.length ? `<p>How much each flaw weighed against what rewarded you: major, moderate or minor. It says nothing about whether it’s material; the claim’s level already did.${a.flaws.some(x => !x.set) ? ' Not set yet: tap one.' : ''}</p>
       <div class="themes">${a.flaws.map(x => `<div class="theme">
-        <div class="th-h"><b>${esc(x.label)}</b>${val(x.theme)}
+        <div class="th-h"><b>${esc(x.label)}</b><span class="sgv ${HIT_CLS[hitOf(a, x.theme)]}">${HIT_WORD[hitOf(a, x.theme)]}</span>
           <span class="intn">${INTENSITY.map((n, k) => `<button class="${x.slot === k ? 'on r' + k : ''}" data-fint="${k}" data-t="${esc(x.t)}">${n}</button>`).join('')}</span></div>
         <div class="th-m"><span>${esc(trimTo(x.t, 120))}${moveSel('fmv', x.i)}</span></div></div>`).join('')}</div>`
       : '<p>From the plot: the claim names no flaw from memory, so nothing to rank.</p>'}
-      <small>Both sides are weighed against the sub-genre’s answer above. A category is worth ${w.sgVal.core} if it’s what the sub-genre should rest on, ${w.sgVal.other} otherwise; a core reward or a major flaw counts fully, supporting or moderate half, edge or minor a quarter. The case earns up to ${w.anchorMax}; the flaws cost up to ${w.flawMax}.</small></div>`;
+      <small>The claim and the case measure each other. The case earns up to ${w.anchorMax} from your dictated rewards (core ${w.rankW[0]}, supporting ${w.rankW[1]}, edge ${w.rankW[2]}; three core rewards is full marks). Each flaw costs its intensity times what it cuts into: a core reward ${w.hitW.core}, a supporting reward ${w.hitW.supporting}, an edge ${w.hitW.edge}, something you never praised ${w.hitW.none}. One major flaw in a core reward costs ${w.oneFlaw}; all of them up to ${w.flawMax}.</small></div>`;
 }function chipHTML(t, tag, kind, i, off) {
   return `<button class="ach ${tag} ${off ? 'off' : ''}" data-ach="${kind}" data-i="${i}" title="Tap to change">${esc(t)}<i>${TAG_WORD[tag]}</i></button>`;
 }
@@ -3262,7 +3255,7 @@ function renderCheck() {
       ${f.Y === 1 ? `<div class="ck-q"><b>The two ingredients</b><p>Recommended takes consistency and the je ne sais quoi. Which does this one have?</p>
         <div class="ck-opts">${opt('cki', 'consistent', ck0.ing, 'Consistency only')}${opt('cki', 'jnsq', ck0.ing, 'The je ne sais quoi only')}${opt('cki', 'neither', ck0.ing, 'Neither')}</div></div>` : ''}
       ${f.Y === 0 || f.Y === 2 ? `<div class="ck-q"><b>The opening line</b><p>“${esc(firstSentence(f.yNote))}”</p>
-        <div class="ck-opts">${opt('cko', 'identity', ck0.opener, 'A one-phrase identity')}${opt('cko', 'hedge', ck0.opener, 'An inventory or hedge')}</div></div>` : ''}
+        <div class="ck-opts">${opt('cko', 'identity', ck0.opener, `A one-phrase identity (+${W().identity})`)}${opt('cko', 'hedge', ck0.opener, 'An inventory or hedge')}</div></div>` : ''}
       <div class="ck-score"><span>Placement score</span><b>${score(f)}</b>${breakdownHTML(f)}</div>
       <div class="ck-err" id="ckErr"></div>
       <div class="ck-foot"><button class="lock" data-ckgo>${n ? 'Start the show' : 'Take its place'}</button>
@@ -3322,7 +3315,6 @@ $('#checkIn').addEventListener('click', async e => {
   if (b.dataset.ckgo === undefined) { rebuild(); syncActive(); return renderCheck(); }
   if (f.Y === 1 && !ck0.ing) return $('#ckErr').textContent = 'Pick which ingredient it has.';
   if (f.Y === 0 || f.Y === 2) r.comp = { ...(r.comp || {}), opener: ck0.opener };
-  lockGuesses([f.id]);   // seeing the show confirms the sub-genre's answer on screen, for every film filed under it
   ck0 = null;
   rebuild(); syncActive();
   const info = placeFilm(active.film.id, active.mode);
@@ -3345,7 +3337,6 @@ const needsCheck = f => f.Y === 1 && (f.comp || {}).consistent === undefined && 
 function spinAll() {
   if (!canEdit() || active || !QUEUE.length) return;
   const ids = QUEUE.filter(f => !needsCheck(f)).map(f => f.id), wait = QUEUE.length - ids.length; let k = 0;
-  lockGuesses(ids); rebuild();
   ids.forEach(id => { if (byId(id) && byId(id).pos == null) { placeFilm(id, 'queue'); k++; } });
   persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed${wait ? ` · ${wait} still need${wait === 1 ? 's' : ''} the ingredients check: send ${wait === 1 ? 'it' : 'them'} one at a time` : ' · every battle is in the Film Vault'}`); });
   renderScene(current);
@@ -3364,8 +3355,8 @@ function slotHTML(f, me) {
 }
 function anchorChips(f) {
   const a = anchorOf(f), m = topFlaw(a);
-  return `<div class="fc-anchor">${a.cats.filter(x => x.slot >= 0).map(x => `<span class="ach ${sgMark(a, x.key)} sm" title="${RANKS[x.tag]} reward · ${esc(x.members.map(i => a.els[i].t).join(' · '))}">${RANKS[x.tag][0]} · ${esc(trimTo(x.label, 26))}</span>`).join('')}
-    ${m ? `<span class="ach ${sgMark(a, m.theme)} sm flaw">${INTENSITY[m.slot]} flaw · ${esc(trimTo(m.label, 20))}</span>` : ''}</div>`;
+  return `<div class="fc-anchor">${a.cats.filter(x => x.slot >= 0).map(x => `<span class="ach ${['core', 'supporting', 'extra'][x.tag]} sm" title="${RANKS[x.tag]} reward · ${esc(x.members.map(i => a.els[i].t).join(' · '))}">${RANKS[x.tag][0]} · ${esc(trimTo(x.label, 26))}</span>`).join('')}
+    ${m ? `<span class="ach ${HIT_CLS[hitOf(a, m.theme)]} sm flaw">${INTENSITY[m.slot]} flaw · ${esc(trimTo(m.label, 20))}</span>` : ''}</div>`;
 }function showCard(f, o) {
   const st = standing(f), p = parts(f);
   return `<div class="fc-in">
@@ -3764,10 +3755,10 @@ function renderGame() {
     <p class="cal-note">${FACTOR_NAME[topK.k]} settled ${topK.n} of ${ms.length} battle${ms.length === 1 ? '' : 's'}. ${ms.filter(m => (m.margin || 0) < 5).length} were decided by less than 5 points.</p>`
     : '<p class="cal-note">Fills in as reviews meet on the wheel. Each battle is credited to the component that tipped it.</p>';
   // how the anchor reads your reviews: praise on the core, flaws by where they land
-  const onW = ranked.length ? ranked : all, cores = onW.map(f => { const a = anchorOf(f), c = a.cats.find(x => x.tag === 0) || a.cats[0]; return c ? sgMark(a, c.key) : 'none'; }), majors = onW.map(f => { const a = anchorOf(f), m = topFlaw(a); return m ? sgMark(a, m.theme) : 'none'; });
+  const onW = ranked.length ? ranked : all, cores = onW.flatMap(f => anchorOf(f).cats.filter(x => x.slot >= 0).map(x => ['core', 'supporting', 'extra'][x.tag])), majors = onW.map(f => { const a = anchorOf(f), m = topFlaw(a); return m ? hitOf(a, m.theme) : 'noflaw'; });
   const tagBars = (rows) => { const m = Math.max(1, ...rows.map(r => r[1])); return `<div class="bars2">${rows.map(([l, k, nm]) => `<div class="bar2"><b style="font-size:12px">${l}</b><div class="tr"><em style="width:0" data-w="${(k / m * 100).toFixed(1)}%"></em><span>${nm}</span></div><i>${k}</i></div>`).join('')}</div>`; };
-  const praise = tagBars([['Rests', cores.filter(t => t === 'core').length, 'Core reward on what it should rest on'], ['Else', cores.filter(t => t === 'extra').length, 'Core reward elsewhere']]);
-  const flaws = tagBars([['Rests', majors.filter(t => t === 'core').length, 'Worst flaw hits what it should rest on'], ['Else', majors.filter(t => t === 'extra').length, 'Worst flaw lands elsewhere'], ['None', majors.filter(t => t === 'none').length, 'No flaw (from the plot)']]);
+  const praise = tagBars([['Core', cores.filter(t => t === 'core').length, 'Core rewards'], ['Supp.', cores.filter(t => t === 'supporting').length, 'Supporting rewards'], ['Edge', cores.filter(t => t === 'extra').length, 'Edge']]);
+  const flaws = tagBars([['Core', majors.filter(t => t === 'core').length, 'Cuts into a core reward'], ['Supp.', majors.filter(t => t === 'supporting').length, 'Cuts into a supporting reward'], ['Edge', majors.filter(t => t === 'edge').length, 'Touches an edge'], ['None', majors.filter(t => t === 'none').length, 'Nothing praised there'], ['—', majors.filter(t => t === 'noflaw').length, 'No flaw (from the plot)']]);
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
@@ -3794,8 +3785,8 @@ function renderGame() {
     </div>
     ${cabinet('What Decides Your Wheel', 'Every battle, credited to the component that tipped it.', decides)}
     <div class="tri">
-      ${cabinet('The Case · Its Core Reward', `Where each case’s core reward lands against what its sub-genre should rest on${ranked.length ? '' : ' (from the queue)'}.`, praise)}
-      ${cabinet('The Claim · Its Worst Flaw', 'Where each claim’s heaviest flaw lands against what its sub-genre should rest on.', flaws)}
+      ${cabinet('The Case · Its Rewards', `Every counted category, by the reward you dictated${ranked.length ? '' : ' (from the queue)'}.`, praise)}
+      ${cabinet('The Claim · Its Worst Flaw', 'What each claim’s heaviest flaw cuts into, measured against its own case.', flaws)}
     </div>
     <div class="tri">
       ${cabinet('Stars', N ? `How ${N} film${N === 1 ? '' : 's'} spread across the stars.` : 'Stars come from the wheel.', starHist)}
@@ -4137,7 +4128,7 @@ function renderPlaybill() {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a review once it’s on the wheel</small></div>
       <p class="pb-note" style="margin:0 0 10px">The math settles each film. Afterward, you can edit any review, and the film reruns.</p>
-      ${it('↻', 'Rewrites', 'edit freely', 'Buy another ticket and change anything: the claim, the case, its sub-genre, its categories, its flaws. Any change takes the film off the wheel and reruns it in the auditorium, so you always see where it lands and why.')}
+      ${it('↻', 'Rewrites', 'edit freely', 'Buy another ticket and change anything: the claim, the case, its categories, rewards and flaws. Any change takes the film off the wheel and reruns it in the auditorium, so you always see where it lands and why.')}
       ${it('✕', 'Dump the wheel', 'the Office', 'Clears all the math. Only the claim, case, sub-genre and year stay; every review goes back to the queue.')}`;
   }
   if (pbTab === 'Q') {
@@ -4147,11 +4138,11 @@ function renderPlaybill() {
       <p class="pb-note" style="margin:0 0 10px">You write the claim and the case. The math reads them into a placement score and places the film. You never pick a winner.</p>
       <div class="pb-axis"><span>The placement score</span></div>
       ${it('1', 'The recommendation', 'one half', `Not Recommendable ${w.case[0]} · Recommendable ${w.case[1]} · Recommended ${w.case[2]} · Highly Recommended ${w.case[3]} · Must-See ${w.case[4]} · Essential ${w.case[5]}. Each level is worth the same ${w.case[1] - w.case[0]} points.`)}
-      ${it('2', 'The case reading', `up to ${w.anchorMax}`, `Each sub-genre has one answer, defined once and shared by every film filed under it: the category a film like this should rest on. You decide which sub-genre a film really is (Casablanca, a melodrama). The case’s attributes combine into three categories, each dictated by how rewarding it was: core, supporting or edge. Each earns its value against the sub-genre’s answer (should rest on ${w.sgVal.core}, elsewhere ${w.sgVal.other}) times its rank (${w.rankW.join(' / ')}).`)}
-      ${it('3', 'The claim', 'the other half', `The claim and the case are equals: each level down costs what a level of recommendation is worth. Unscathed ${w.claim[5]} · Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}. Then its flaws, each set major, moderate or minor by how much it weighed against what rewarded you, cost up to ${w.flawMax}, by where they land against what the sub-genre should rest on.`)}
-      ${it('4', 'The extras', 'small', `From the plot +${w.plot}. For Recommendable: consistency +${w.consistent} or the je ne sais quoi +${w.jnsq}. For Not Recommendable and Recommended, the opening line: a one-phrase identity +${w.identity}, an inventory or hedge ${w.hedge}. Everything besides the two levels spans less than one level, so it settles films that meet on level and never overturns one.`)}
+      ${it('2', 'The case’s rewards', `up to ${w.anchorMax}`, `The case’s attributes combine into three categories, and you dictate how rewarding each was: core ${w.rankW[0]}, supporting ${w.rankW[1]}, edge ${w.rankW[2]}. Three core rewards is full marks; a case that reaches only two categories leaves a slot at zero.`)}
+      ${it('3', 'The claim', 'the other half', `The claim and the case are equals: each level down costs what a level of recommendation is worth. Unscathed ${w.claim[5]} · Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}. Then its flaws, measured against the case: each costs its intensity (major, moderate, minor) times what it cuts into: a core reward ${w.hitW.core}, a supporting reward ${w.hitW.supporting}, an edge ${w.hitW.edge}, something never praised ${w.hitW.none}. One major flaw in a core reward costs ${w.oneFlaw}; all flaws together up to ${w.flawMax}.`)}
+      ${it('4', 'The extras', 'small', `From the plot +${w.plot}. For Recommendable: consistency +${w.consistent} or the je ne sais quoi +${w.jnsq}. For Not Recommendable and Recommended, a one-phrase identity opening line +${w.identity}. The reading weighs as much on the claim side as on the case side, ${r1(w.anchorMax + Math.max(w.consistent, w.jnsq, w.identity))} each way, a level and a half in all: a strong reading can pass a film one combined level above it, never two.`)}
       <div class="pb-axis"><span>Dictation, not argument</span></div>
-      <p class="pb-note" style="margin:0 0 4px">Core, supporting and edge record how rewarding each of the case’s categories was in your memory; major, moderate and minor record how much each of the claim’s flaws weighed against those rewards. Neither is the claim’s “material”: that’s settled by the claim’s level. Both are weighed against the sub-genre’s shared answer.</p>
+      <p class="pb-note" style="margin:0 0 4px">Core, supporting and edge record how rewarding each of the case’s categories was in your memory; major, moderate and minor record how much each of the claim’s flaws weighed against those rewards. Neither is the claim’s “material”: that’s settled by the claim’s level. The claim and the case measure each other.</p>
       ${it('C', 'Core · major', '×' + w.rankW[0], 'The reward itself. A flaw that weighed heavily against what rewarded you.')}
       ${it('S', 'Supporting · moderate', '×' + w.rankW[1], 'It rewarded, but less. A flaw that weighed somewhat.')}
       ${it('E', 'Edge · minor', '×' + w.rankW[2], 'It registered but barely rewarded. A flaw that barely weighed. A case that reaches only two categories leaves a slot empty (zero); a claim with fewer flaws simply costs less.')}
@@ -4231,12 +4222,6 @@ function renderOffice() {
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
 
-      <div class="ledger wide"><span class="tabk">The yardsticks</span><h3>What each sub-genre should rest on</h3>
-        <p>Defined once per sub-genre and shared by every film filed under it. A change re-sorts the wheel; every film under that sub-genre moves together.</p>
-        ${profilesHTML()}
-        <div class="btnrow2"><button class="btn-ink solid" data-o="profiles">Apply and re-sort the wheel</button></div>
-        ${officeMsg.profiles ? `<div class="okline">${esc(officeMsg.profiles)}</div>` : ''}</div>
-
       <div class="ledger wide"><span class="tabk">The rule book</span><h3>The weights</h3>
         <p>The only lever on the math. A change applies to every review alike, and the wheel re-sorts under the new rules. Past shows stay filed as they played.</p>
         ${weightsHTML()}
@@ -4283,9 +4268,9 @@ function profilesHTML() {
 const W_FIELDS = [
   ['The recommendation', [0, 1, 2, 3, 4, 5].map(l => [`case.${l}`, Y_NAMES[l]])],
   ['The claim', [4, 3, 2, 1].map(l => [`claim.${l}`, X_NAMES[l]])],
-  ['The sub-genre', [['sgVal.core', 'Should rest on'], ['sgVal.other', 'Elsewhere']]],
-  ['Rank & intensity', [['rankW.0', 'Core · major'], ['rankW.1', 'Supporting · moderate'], ['rankW.2', 'Edge · minor']]],
-  ['Most points', [['anchorMax', 'Case earns'], ['flawMax', 'Flaws cost']]],
+  ['What a flaw cuts into', [['hitW.core', 'A core reward'], ['hitW.supporting', 'A supporting reward'], ['hitW.edge', 'An edge'], ['hitW.none', 'Nothing praised']]],
+  ['Reward & intensity', [['rankW.0', 'Core · major'], ['rankW.1', 'Supporting · moderate'], ['rankW.2', 'Edge · minor']]],
+  ['Most points', [['anchorMax', 'Rewards earn'], ['oneFlaw', 'One major flaw'], ['flawMax', 'All flaws']]],
   ['Components', [['plot', 'From the plot'], ['consistent', 'Consistency'], ['jnsq', 'Je ne sais quoi'], ['identity', 'Identity opener'], ['hedge', 'Hedge opener']]],
 ];
 const wGet = (w, k) => k.split('.').reduce((o, p) => o == null ? o : o[p], w);
