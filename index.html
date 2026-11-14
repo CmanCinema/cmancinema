@@ -853,8 +853,8 @@ button.li2:hover{border-color:var(--gold)}
 .pb-h h2{margin:2px 0 0;font:400 34px/1 var(--deco);letter-spacing:.12em;color:#5a0f22}
 .pb-h .s{font:italic 500 15px var(--body);color:#6b5236}
 .pb-x{position:absolute;right:10px;top:8px;width:34px;height:34px;border-radius:50%;border:1.5px solid #7a1a22;background:none;color:#7a1a22;font-size:18px;line-height:1}
-.pb-tabs{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid rgba(122,26,34,.3)}
-.pb-tabs button{border:0;background:none;padding:9px 4px 8px;font:700 10px/1.25 var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a5a3a;border-bottom:3px solid transparent}
+.pb-tabs{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid rgba(122,26,34,.3)}
+.pb-tabs button{border:0;background:none;padding:9px 4px 8px;font:700 10px/1.25 var(--serif);letter-spacing:.1em;text-transform:uppercase;color:#7a5a3a;border-bottom:3px solid transparent}
 .pb-tabs button b{display:block;font:400 15px var(--deco);letter-spacing:.06em;color:#5a0f22}
 .pb-tabs button.on{color:#5a0f22;border-bottom-color:#c4202f;background:rgba(196,32,47,.07)}
 .pb-body{overflow-y:auto;padding:14px 20px 18px;overscroll-behavior:contain}
@@ -885,7 +885,7 @@ button.li2:hover{border-color:var(--gold)}
   .pb{max-height:calc(100vh - 140px)}
   .pb-h h2{font-size:28px}
   .pb-body{padding:12px 14px 16px}
-  .pb-tabs button{font-size:8.5px;letter-spacing:.06em;padding:8px 2px}
+  .pb-tabs button{font-size:7.5px;letter-spacing:.04em;padding:8px 1px}
   .pb-tabs button b{font-size:12px}
 }
 
@@ -4017,7 +4017,7 @@ function pbHere() {
 }
 function renderPlaybill() {
   const here = pbHere();
-  const tabs = [['F', 'Prologue', 'Memory Filter'], ['X', 'Act I', 'X Axis'], ['Y', 'Act II', 'Y Axis'], ['C', 'Interlude', 'Compass'], ['Q', 'Act III', 'Questions']];
+  const tabs = [['F', 'Prologue', 'Memory Filter'], ['X', 'Act I', 'X Axis'], ['Y', 'Act II', 'Y Axis'], ['C', 'Interlude', 'Compass'], ['Q', 'Act III', 'The Wheel'], ['E', 'Epilogue', 'After the Show']];
   const lv = (ax, l, name, tag, body) => `<div class="pb-it ${here && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span>
     <div class="t">${name}${tag ? `<em>${tag}</em>` : ''}</div><p>${body}</p></div>`;
   let body = '';
@@ -4032,10 +4032,31 @@ function renderPlaybill() {
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Recommendation Compass<small>For the top of the Y axis</small></div>
     ${PB.compass.map(([l, head, txt]) => lv('Y', l, head, Y_NAMES[l], txt)).join('')}
     <p class="pb-note">${PB.compassNote}</p>`;
+  if (pbTab === 'E') {
+    const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
+    body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a review once it’s on the wheel</small></div>
+      <p class="pb-note" style="margin:0 0 10px">The math settles each film. Afterward, only a change of opinion moves it, and wording edits are watched.</p>
+      ${it('↻', 'Rewrites', 'reruns', 'Change the recommendation or condition and the film comes off the wheel and reruns, no strike. Change only the wording and it keeps its place.')}
+      ${it('⚠', 'Strikes', 'three lock it', 'If new wording alone moves a film, that’s a strike: take it (the film moves, the strike stays on its record) or restore the old words. Three strikes lock the wording until the recommendation or condition changes.')}
+      ${it('✕', 'Dump the wheel', 'the Office', 'Clears all the math. Only the claim, case, sub-genre and year stay; every review goes back to the queue.')}`;
+  }
   if (pbTab === 'Q') {
     const q = (ax, l) => `<div class="pb-it ${here && here.ax === ax && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span><div class="pb-q">${SHOW_Q[ax][l]}<i>${(ax === 'X' ? X_TAG : Y_TAG)[l]}</i></div></div>`;
+    const w = W(), it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Act III · The Wheel<small>One wheel of critic’s reviews · the math places every one</small></div>
-      <p class="pb-note" style="margin:0 0 10px">Each review gets a placement score: its recommendation, the anchor (how much of what the case praises is what its own sub-genre runs on), the claim (how hard its conceded flaw lands on that sub-genre’s core), and for the lower recommendations the two ingredients and the opening line. A new review meets the middle of the wheel, then the middle of the half it earns, until it has a place. Every comparison is a battle, decided by the score and filed in the Film Vault. A rewrite that changes the recommendation or condition reruns the film; one that changes only the wording keeps its place, and if the new words move it anyway, that’s a strike. Three strikes lock the wording.</p>
+      <p class="pb-note" style="margin:0 0 10px">You write the claim and the case. The math reads them into a placement score and places the film. You never pick a winner.</p>
+      <div class="pb-axis"><span>The placement score</span></div>
+      ${it('1', 'The recommendation', 'the biggest part', `Not Recommendable ${w.case[0]} · Recommendable ${w.case[1]} · Recommended ${w.case[2]} · Highly Recommended ${w.case[3]} · Must-See ${w.case[4]} · Essential ${w.case[5]}.`)}
+      ${it('2', 'The anchor', `up to ${w.anchorMax}`, 'How much of what the case praises is what the film’s own sub-genre runs on. Each praised element is tagged, and the anchor is their average weight.')}
+      ${it('3', 'The claim', 'a penalty', `Qualified ${w.claim[4]} · Invalidated ${w.claim[3]} · Defective ${w.claim[2]} · Uncreditable ${w.claim[1]}, scaled by where the conceded flaw lands. Unscathed starts at 0 and only loses points when its flaw hits the core.`)}
+      ${it('4', 'The extras', 'small', `From the plot +${w.plot}. For Recommendable: consistency +${w.consistent}, the je ne sais quoi +${w.jnsq}. For Recommended and below, the opening line: a one-phrase identity +${w.identity}, an inventory or hedge ${w.hedge}.`)}
+      <div class="pb-axis"><span>Core · supporting · edge</span></div>
+      <p class="pb-note" style="margin:0 0 4px">How close a part of the review sits to what the sub-genre runs on. Read from your wording; tap a tag before the show if it misread.</p>
+      ${it('C', 'Core', 'praise ×' + w.elw.core + ' · flaw ×' + w.land.core, 'The sub-genre’s main draw: suspense in a thriller, gags in a comedy, the rise and fall in a gangster film. Core praise counts fully. A core flaw costs the most, and even an Unscathed film loses ' + Math.abs(w.x5land.core) + '.')}
+      ${it('S', 'Supporting', 'praise ×' + w.elw.supporting + ' · flaw ×' + w.land.supporting, 'What the sub-genre leans on but isn’t built around: atmosphere, charm, cinematography. It counts half as praise and costs the normal penalty as a flaw' + (w.x5land.supporting ? ' (an Unscathed film loses ' + Math.abs(w.x5land.supporting) + ')' : '') + '.')}
+      ${it('E', 'Edge · off the core', 'praise ×' + w.elw.extra + ' · flaw ×' + w.land.edge, 'Real, but beside what the sub-genre is about. Praise here barely counts; a flaw here costs half' + (w.x5land.edge ? '' : ', and nothing at all for an Unscathed film') + '.')}
+      <div class="pb-axis"><span>The show</span></div>
+      ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. Each comparison is a battle won by the higher score (ties: stronger anchor, then higher condition, then first admitted), credited to the component that tipped it and filed in the Film Vault.')}
       <div class="pb-axis"><span>The questions behind each recommendation</span></div>
       ${[5, 4, 3, 2, 1, 0].map(l => q('Y', l)).join('')}`;
   }
