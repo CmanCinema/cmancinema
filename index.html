@@ -1961,15 +1961,24 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   .showing .fc-eq .lbl{display:none}
   .showing .fc-backhead .poster{width:34px!important}
   .showing .fc-backhead .lab{font-size:8px;letter-spacing:.12em}
-  /* phones swap faces instead of a 3D flip (iOS draws the flipped front mirrored through the back) */
+  /* phones: no 3D flip; the review opens in a panel */
   .showing .rv{align-self:start}
-  .showing .rv .fc-in,.showing .rv.flipped .fc-in{transform:none!important;transition:none}
-  .showing .rv .face.back{display:none;transform:none!important;position:relative;inset:auto;overflow:visible}
-  .showing .rv.flipped .face.back{display:flex;animation:faceIn .25s ease}
-  .showing .rv.flipped .face.front{display:none}
-  @keyframes faceIn{from{opacity:0}to{opacity:1}}
+  .showing .rv .fc-in,.showing .rv.flipped .fc-in{transform:none!important;transition:none;transform-style:flat!important}
+  .showing .rv .face.back{display:none!important}
+  .showing .rv .face.front{display:flex!important;transform:none!important}
   .showing .face.back .rvtext{font-size:13.5px;line-height:1.5}
 }
+
+#rvSheet{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;background:rgba(6,1,3,.78);backdrop-filter:blur(2px)}
+#rvSheet.show{display:flex}
+.rvs-in{width:min(560px,100%);max-height:86vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 18px calc(18px + env(safe-area-inset-bottom));border-radius:14px 14px 0 0;background:linear-gradient(#f4e8cc,#e7d5aa);color:#2a1a10;box-shadow:0 -10px 40px rgba(0,0,0,.6);animation:rvsUp .22s ease}
+@keyframes rvsUp{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.rvs-head{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px dashed #b48a4e}
+.rvs-head .lab{font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:#7a1a22}
+.rvs-head .ti{font:800 20px/1.15 var(--serif);margin-top:2px}
+.rvs-head .me{font:600 12px var(--body);opacity:.75;margin-top:3px}
+.rvs-text{margin:12px 0 16px;white-space:pre-line;font:17px/1.6 var(--body)}
+.rvs-x{display:block;width:100%;padding:13px;border:0;border-radius:30px;background:#5a0f22;color:#fff4d8;font:800 12px var(--serif);letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2038,6 +2047,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 <div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
 <div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
+<div id="rvSheet" role="dialog" aria-modal="true" aria-label="The critic’s review"><div class="rvs-in" id="rvsIn"></div></div>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Film profile"><div class="prof" id="prof"></div></div>
 <div id="arcade" role="dialog" aria-modal="true" aria-label="The High Score Machine"></div><div id="arFlash"></div>
 <button id="pbBtn" class="hide" aria-label="Open the Playbill" aria-haspopup="dialog"><span class="ic">P</span><span class="lbl">Playbill</span></button>
@@ -3468,9 +3478,16 @@ function slotHTML(f, me) {
   return `<div class="slot ${me ? 'me' : ''}" data-id="${esc(f.id)}"><span class="rk"></span>${posterHTML(f)}<div><div class="nm">${esc(f.title)}</div><div class="yr">${VERDICT[score(f)]} · ${score(f)}</div></div></div>`;
 }
 const formHTML = fm => fm && fm.length ? `<span class="fm5">${fm.map(r => `<i class="${r === 'W' ? 'w' : 'l'}">${r}</i>`).join('')}</span>` : '—';
+function openReviewSheet(id) {
+  const f = byId(id); if (!f) return;
+  $('#rvsIn').innerHTML = `<div class="rvs-head">${posterHTML(f, 44)}<div><div class="lab">The critic’s review</div><div class="ti">${esc(f.title)}</div><div class="me">${verdictOf(f)} · ${f.X} + ${f.Y} · ${esc(Y_NAMES[f.Y])} · ${esc(X_NAMES[f.X])}</div></div></div>
+    <p class="rvs-text">${esc(reviewOf(f))}</p><button class="rvs-x" data-rvsx>Back to the show</button>`;
+  $('#rvSheet').classList.add('show');
+}
+$('#rvSheet').addEventListener('click', e => { if (e.target.id === 'rvSheet' || e.target.closest('[data-rvsx]')) $('#rvSheet').classList.remove('show'); });
 function showCard(f, o) {
   const st = standing(f), c = score(f);
-  return `<div class="fc-in">
+  return `<div class="fc-in" data-id="${esc(f.id)}">
     <div class="face front">
       <div class="fc-art">${posterHTML(f)}<div class="fc-shade"></div>
         <div class="fc-ribbon">${o.label}</div>
@@ -3674,7 +3691,11 @@ addEventListener('resize', () => layoutDrum());
 
 $('#auditorium').addEventListener('click', e => {
   const fl = e.target.closest('[data-flip]');
-  if (fl) { fl.closest('.rv').classList.toggle('flipped'); return; }
+  if (fl) {
+    // phones read the review in a panel; the 3D card flip is unreliable in mobile Safari
+    if (matchMedia('(max-width:640px)').matches) { const id = fl.closest('.rv').querySelector('[data-id]')?.dataset.id || fl.closest('.rv').dataset.film; return openReviewSheet(id); }
+    fl.closest('.rv').classList.toggle('flipped'); return;
+  }
   if (SHOW) {
     if (e.target.closest('[data-pause]')) { SHOW.paused = !SHOW.paused; $('#tape').innerHTML = tapeHTML(); if (!SHOW.paused) nextBattle(); else clearTimeout(SHOW.timer); return; }
     const cl = e.target.closest('[data-call]'); if (cl) return makeCall(cl.dataset.call);
