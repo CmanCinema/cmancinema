@@ -1936,8 +1936,9 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .dq.cq .cq-q{margin:6px 0 12px;font:800 clamp(22px,3.4vw,34px)/1.15 var(--serif);color:var(--gold-hi,#f3d48a)}
 .cq-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .cq-btns button{flex:1 1 180px;max-width:300px;padding:14px 18px;border-radius:40px;border:2px solid var(--gold-hi,#f3d48a);background:rgba(232,190,106,.12);color:#fff4d8;font:700 17px/1.2 var(--serif);letter-spacing:.02em;cursor:pointer;transition:transform .15s,background .15s}
+.cq-btns button small{display:block;margin-top:4px;font:italic 500 13px/1.2 var(--body);letter-spacing:0;opacity:.8;text-transform:none}
 .cq-btns button:hover,.cq-btns button:focus-visible{background:var(--gold-hi,#f3d48a);color:#2a1a0c;transform:translateY(-2px)}
-.dq.cq .cq-note{margin:10px 0 0;font:italic 500 14px/1.4 var(--body);opacity:.75}
+.dq.cq .cq-note{margin:10px 0 0!important;font:italic 500 14px/1.4 var(--body)!important;opacity:.75}
 .tp.q span{background:var(--gold-hi,#f3d48a);color:#2a1a0c}
 .tp.cl em{font-style:italic}
 .tape-wait{font:italic 600 14px var(--body);color:var(--gold-hi,#f3d48a);animation:cqblink 1.6s ease-in-out infinite}
@@ -2513,6 +2514,9 @@ const score = f => (+f.X || 0) + (+f.Y || 0);
 const verdictOf = f => VERDICT[score(f)] || '—';
 const nextWord = c => c >= 10 ? VERDICT[9] : VERDICT[c + 1];
 const callQuestion = c => `Which is closer to ${nextWord(c)}?`;
+// the next word is measured in each film's own sub-genre, as experienced: a Good crime drama, a Good spy thriller
+const sgWord = f => (f.genre || '').trim().toLowerCase() || 'film';
+const aimAt = (f, c) => `${an(nextWord(c))} ${sgWord(f)}`;
 const tieKey = (a, b) => [String(a), String(b)].sort().join('|');
 // your stored call: true if a ranks above b, false if below, null if never asked
 const callOf = (a, b) => { const w = (db.ties || {})[tieKey(a.id, b.id)]; return w === a.id ? true : w === b.id ? false : null; };
@@ -2533,8 +2537,8 @@ function reasonOf(Wn, L, key, pick) {
   const sw = score(Wn), sl = score(L);
   if (key === 'verdict') return `<b>${VERDICT[sw]}</b> over <b>${VERDICT[sl]}</b> · ${Wn.X} + ${Wn.Y} = ${sw} against ${L.X} + ${L.Y} = ${sl}.`;
   const lead = key === 'recall' ? 'Your earlier call' : 'Your call', nw = nextWord(sw);
-  if (sw >= 10) return `Both ${VERDICT[sw]}. ${lead}: ${esc(L.title)} is closer to ${nw}, so ${esc(Wn.title)} ranks above it.`;
-  return `Both ${VERDICT[sw]}. ${lead}: ${esc(Wn.title)} is closer to ${nw}.`;
+  if (sw >= 10) return `Both ${VERDICT[sw]}. ${lead}: ${esc(L.title)} is closer to ${esc(aimAt(L, sw))} than ${esc(Wn.title)} is to ${esc(aimAt(Wn, sw))}, so ${esc(Wn.title)} ranks above it.`;
+  return `Both ${VERDICT[sw]}. ${lead}: ${esc(Wn.title)} is closer to ${esc(aimAt(Wn, sw))} than ${esc(L.title)} is to ${esc(aimAt(L, sw))}.`;
 }
 const trimTo = (t, n) => t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, '') + '…' : t;
 const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
@@ -3378,7 +3382,7 @@ function renderCheck() {
           <div class="vd-w"><b>${VERDICT[c]}</b><span>The verdict</span><em>${c} of 10</em></div>
         </div>
         <p class="vd-note">A higher verdict always wins. ${same.length
-          ? `${same.length} other ${VERDICT[c]} film${same.length === 1 ? ' is' : 's are'} on the wheel${open < same.length ? ` (${same.length - open} already called)` : ''}. If the show meets one you haven’t called, it stops and asks you: <b>${callQuestion(c)}</b>${c >= 10 ? ' The one you pick sits lower.' : ''}`
+          ? `${same.length} other ${VERDICT[c]} film${same.length === 1 ? ' is' : 's are'} on the wheel${open < same.length ? ` (${same.length - open} already called)` : ''}. If the show meets one you haven’t called, it stops and asks you: <b>${callQuestion(c)}</b> Each film is measured in its own sub-genre: is this closer to ${esc(aimAt(f, c))}?${c >= 10 ? ' The one you pick sits lower.' : ''}`
           : `No other ${VERDICT[c]} film is on the wheel, so the verdicts decide every battle.`}</p>
       </section>
       <footer class="bs-foot">
@@ -3507,8 +3511,8 @@ function renderAsk() {
     <h2 class="bt-h">${esc(A.title)} <i>vs</i> ${esc(B.title)}</h2>
     <div class="dq cq"><span id="bfactor">Both ${VERDICT[c]} · ${c} and ${c}</span>
       <p class="cq-q">${callQuestion(c)}</p>
-      <div class="cq-btns"><button data-call="${esc(A.id)}">${esc(A.title)}</button><button data-call="${esc(B.id)}">${esc(B.title)}</button></div>
-      <p class="cq-note">${c >= 10 ? 'The one you pick sits lower: closer to Awesome, not more Amazing.' : `The one you pick ranks higher. Your answer is kept, so this pair won’t be asked again.`}</p></div>`;
+      <div class="cq-btns">${[A, B].map(f => `<button data-call="${esc(f.id)}">${esc(f.title)}<small>closer to ${esc(aimAt(f, c))}</small></button>`).join('')}</div>
+      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${c >= 10 ? 'The one you pick sits lower: closer to Awesome, not more Amazing.' : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
   drum.innerHTML = S.order.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
   $('#rvMine').innerHTML = showCard(A, { label: 'The new review', rank: '—' });
@@ -4270,7 +4274,7 @@ function renderPlaybill() {
       ${[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(c => it(c, VERDICT[c], '', c === 10 ? 'Unscathed and Essential: 5 + 5.' : `Any claim and case that add to ${c}${c === 1 ? ': Uncreditable and Not Recommendable' : ''}. ${[5, 4, 3, 2, 1].filter(x => c - x >= 0 && c - x <= 5).map(x => `${x} + ${c - x}`).join(' · ')}.`)).join('')}
       <p class="pb-note" style="margin:6px 0 4px">There is no “4 + 3 beats 5 + 2.” Both are 7, both are Cool, and the arithmetic stops there.</p>
       <div class="pb-axis"><span>Your call</span></div>
-      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Meh films, “Which is closer to Alright?” The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
+      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Alright films, “Which is closer to Good?” Each is measured in its own sub-genre, as you experienced it: is San Quentin closer to a Good crime drama than M is to a Good spy thriller? The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
       ${it('★', 'At the top', 'Amazing', 'Nothing sits above Amazing, so two Amazing films get “Which is closer to Awesome?” The one you pick sits lower. It’s never “which is more Amazing.”')}
       ${it('✓', 'Kept', 'asked once', 'Every call is kept, so a pair is never asked twice. Rerunning a film clears its calls and asks again.')}
       <div class="pb-axis"><span>The show</span></div>
