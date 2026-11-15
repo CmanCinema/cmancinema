@@ -2004,6 +2004,14 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 @media (max-width:640px){ .dq.cq .cq-btns.cta .cta-t{font-size:14px!important} }
 .dq.cq .cq-btns.cta button small{font:700 10px/1.3 var(--serif)!important;letter-spacing:.12em!important;margin-top:8px!important}
 @media (max-width:640px){ .cq-btns.cta button{font-size:14px;padding:12px 14px} }
+
+.face.front .fc-stats.inf5{grid-template-columns:repeat(5,1fr)}
+.pstats{grid-template-columns:repeat(5,minmax(0,1fr))!important} @media (max-width:640px){ .pstats{grid-template-columns:repeat(3,minmax(0,1fr))!important} }
+.infb{font-style:normal;font-weight:700;margin-right:8px;color:var(--gold-hi,#f3d48a)}
+@media (max-width:640px){ .showing .face.front .fc-stats.inf5{grid-template-columns:repeat(2,minmax(0,1fr))} .showing .face.front .fc-stats.inf5 div:last-child{grid-column:1/-1;border-left:0;border-top:1px solid rgba(232,190,106,.18)} .showing .face.front .fc-stats.inf5 div:nth-child(3){border-left:0;border-top:1px solid rgba(232,190,106,.18)} .showing .face.front .fc-stats.inf5 div:nth-child(4){border-top:1px solid rgba(232,190,106,.18);border-left:1px solid rgba(232,190,106,.18)} }
+.pinf{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:-6px 0 12px;font:600 13px var(--body);color:rgba(243,230,200,.85)}
+.pinf-k{font:800 11px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi,#f3d48a)}
+.pinf-r{flex-basis:100%;font:italic 500 13px var(--body);opacity:.8}
 </style>
 </head>
 <body>
@@ -2335,7 +2343,7 @@ const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.ye
 const levelLine = f => `${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}`;
 
 /* ---------- the wheel's memory: records, entry, peak, reign — replayed from the log ---------- */
-function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0, form: [] }; }
+function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0, form: [], hold: 0 }; }
 function wheelStats() {
   const st = new Map(), get = id => { if (!st.has(id)) st.set(id, blankStat()); return st.get(id); };
   db.matches.slice().sort((x, y) => x.at - y.at).forEach(m => {
@@ -2345,8 +2353,11 @@ function wheelStats() {
     a.form.push(aw ? 'W' : 'L'); b.form.push(aw ? 'L' : 'W');
   });
   st.forEach(s => { s.form = s.form.slice(-5); });
-  let arr = [], topId = null, topAt = null;
+  let arr = [], topId = null, topAt = null, lastAt = null;
+  // hold: days on the wheel, each weighted by how high the film stood (top = 1, bottom = 0)
+  const accrue = to => { if (lastAt != null && arr.length) { const d = Math.max(0, to - lastAt) / 86400000; arr.forEach((id, i) => { get(id).hold += d * (arr.length < 2 ? 1 : (arr.length - 1 - i) / (arr.length - 1)); }); } lastAt = to; };
   db.wheelLog.slice().sort((x, y) => x.at - y.at).forEach(e => {
+    accrue(e.at);
     if (e.type === 'order') arr = e.order.slice();
     else {
       arr = arr.filter(id => id !== e.film);
@@ -2359,6 +2370,7 @@ function wheelStats() {
     if ((arr[0] || null) !== topId) { if (topId) get(topId).reign += e.at - topAt; topId = arr[0] || null; topAt = e.at; }
   });
   if (topId) get(topId).reign += Date.now() - topAt;
+  accrue(Date.now());
   return st;
 }
 function rebuild() {
@@ -2373,6 +2385,7 @@ function rebuild() {
   COLL.forEach(f => { f.pos = pos.has(f.id) ? pos.get(f.id) : null; });
   QUEUE = COLL.filter(f => f.pos == null && !(db.workflow && db.workflow.film === f.id)).sort((a, b) => a.added - b.added);
   WSTAT = wheelStats();
+  computeInfluence();
   // the Film Vault is the highlight reel: every show, with its battles
   VAULT = db.wheelLog.filter(e => e.type === 'place' && ids.has(e.film)).map(e => ({ ...e, battles: db.matches.filter(m => m.place === e.id).sort((a, b) => a.at - b.at) }));
 }
@@ -2672,9 +2685,37 @@ function orderWheel() {
   ['X', 'Y'].forEach(ax => { let base = 0; LV[ax].slice().reverse().forEach(l => { const a = ladderOf(ax, l), w = SPAN[ax][l]; a.forEach((id, i) => { const pts = base + w * (a.length - i - 0.5) / a.length; r[id][ax + 'p'] = Math.round(pts * 100) / 100; r[id][ax + 'd'] = LANE_TOP[ax] - pts; }); base += w; }); });
   const sum = id => r[id].Xd + r[id].Yd, gap = id => Math.abs(r[id].Xd - r[id].Yd);
   db.wheel = db.wheel.filter(id => r[id] && byId(id)).sort((a, b) => sum(a) - sum(b) || gap(a) - gap(b) || r[a].X - r[b].X || byId(a).added - byId(b).added || (a < b ? -1 : 1));
+  // influence: the share of the wheel's strength sitting below a film, where each film's strength is its lane points.
+  // Built from position alone (never the record): #1 holds 100, the last film 0, at any collection size
+  const pts = id => r[id].Xp + r[id].Yp, total = db.wheel.reduce((t, id) => t + pts(id), 0);
+  let below = 0;
+  db.wheel.slice().reverse().forEach(id => { const rest = total - pts(id); r[id].place = db.wheel.length < 2 ? 100 : 100 * below / (rest || 1); below += pts(id); });
   LANES = r;
   return r;
 }
+/* influence: the film's whole standing, never its record.
+   Placement 40% (the share of the wheel's strength below it) · case reach 30% (its case-lane points: every film below it
+   on the case lane, faced or not, the higher lineups counting most) · claim reach 10% (the same on the claim lane) ·
+   defenses 20% (newcomers that challenged it in a showdown and stayed below it, each counting its lineup's worth;
+   the film with the most sets 100). */
+const defensesOf = id => db.matches.filter(m => m.ax && m.b === id && m.winner === id).reduce((t, m) => t + ((SPAN[m.ax] || {})[m.level] || 0), 0);
+const INF_W = { place: 0.4, Y: 0.3, X: 0.1, def: 0.2 };
+function computeInfluence() {
+  const defs = new Map(db.wheel.map(id => [id, defensesOf(id)])), maxDef = Math.max(0, ...defs.values());
+  db.wheel.forEach(id => {
+    const r = LANES[id]; if (!r) return;
+    const parts = { place: r.place ?? 0, Y: 100 * r.Yp / LANE_TOP.Y, X: 100 * r.Xp / LANE_TOP.X, def: maxDef > 0 ? 100 * defs.get(id) / maxDef : 0 };
+    r.infParts = Object.fromEntries(Object.entries(parts).map(([k, v]) => [k, Math.round(v)]));
+    r.inf = Math.round(Object.entries(INF_W).reduce((t, [k, w]) => t + w * parts[k], 0));
+  });
+}
+// in a lineup: the films below it, and how many it actually faced and beat
+function reachOf(f, ax) {
+  const a = ladderOf(ax, lvOf(f, ax)), i = a.indexOf(f.id); if (i < 0) return null;
+  const below = a.slice(i + 1), faced = below.filter(o => db.matches.some(m => m.ax === ax && m.winner === f.id && (m.a === o || m.b === o))).length;
+  return { below: below.length, faced, implied: below.length - faced };
+}
+const infOf = f => LANES[f.id] && LANES[f.id].inf != null ? LANES[f.id].inf : null;
 const laneText = (f, ax) => { const r = LANES[f.id]; return r ? `${ax}${lvOf(f, ax)} #${r[ax + 'l']} of ${r[ax + 'n']}` : `${ax}${lvOf(f, ax)}`; };
 /* place a review: two showdowns. First the claim, against every film in its X lineup; then the case, against
    every film in its Y lineup. Each meeting asks you that level's question; a binary search keeps it short. */
@@ -3023,7 +3064,7 @@ function rowHTML(f, rank, stars) {
   const st = standing(f), mv = moveOf(st, rank);
   return `<div class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}" role="button" tabindex="0"><span class="rk">${rank}</span>${posterHTML(f)}
     <span class="t">${esc(f.title)}${strikeBadge(f)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
-    <span class="gp">${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}${st.form.length ? formHTML(st.form) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
+    <span class="gp">${infOf(f) != null ? `<em class="infb" title="Influence: the share of the wheel’s strength below it">◆ ${infOf(f)}</em>` : ''}${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}${st.form.length ? formHTML(st.form) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
 }
 function renderBill() {
   const { ranked } = board(), N = ranked.length, q = lobbyQuery.trim().toLowerCase();
@@ -3084,7 +3125,11 @@ function openProfile(id, show) {
       <div class="pstats">
         <div><b>${st.overall ? '#' + st.overall : '—'}</b><span>On the wheel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
         <div><b>${st.w}–${st.l}</b><span>Record</span></div><div><b>${moveText(mv)}</b><span>Since entry</span></div>
+        <div><b>${infOf(f) ?? '—'}</b><span>Influence</span></div>
       </div>
+      ${LANES[f.id] && LANES[f.id].infParts ? (() => { const ip = LANES[f.id].infParts, rx = reachOf(f, 'X'), ry = reachOf(f, 'Y'), rl = (r, ax) => r ? `${ax}${lvOf(f, ax)} lineup: above ${r.below}${r.below ? ` (${r.faced} beaten head-to-head, ${r.implied} by placement)` : ''}` : '';
+        return `<div class="pinf"><span class="pinf-k">Influence ◆ ${infOf(f)}</span><span>Placement ${ip.place}</span><span>Case reach ${ip.Y}</span><span>Claim reach ${ip.X}</span><span>Defenses ${ip.def}</span>
+          <div class="pinf-r">${rl(ry, 'Y')}${ry && rx ? ' · ' : ''}${rl(rx, 'X')}</div></div>`; })() : ''}
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pev"><p class="note" style="white-space:pre-line"><b>The critic’s review</b>${esc(reviewOf(f) || '—')}</p></div>
       <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Claim lane <b>${laneText(f, 'X')}</b></span><span>Case lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane points <b>${LANES[f.id].Xp} + ${LANES[f.id].Yp} = ${r1(LANES[f.id].Xp + LANES[f.id].Yp)}</b></span>` : ''}</div>
@@ -3595,7 +3640,7 @@ function showCard(f, o) {
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        <div class="fc-stats"><div><b>${o.rank}</b><span>Wheel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
+        <div class="fc-stats inf5"><div><b>${o.rank}</b><span>Wheel</span></div><div><b>${infOf(f) ?? '—'}</b><span>Influence</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
           <div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div><div><b>${formHTML(st.form)}</b><span>Form</span></div></div>
         <div class="fc-eq"><span><em class="lbl">Claim </em><b>${laneText(f, 'X')}</b></span><span><em class="lbl">Case </em><b>${laneText(f, 'Y')}</b></span></div>
         <button class="fc-flip" data-flip>Read the review ↻</button>
@@ -4005,7 +4050,7 @@ const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', '
 const span = ms => { const h = Math.floor(ms / 3600000), d = Math.floor(h / 24); return d ? `${d}d ${h % 24}h` : h ? `${h}h` : `${Math.max(1, Math.round(ms / 60000))}m`; };
 const Y_SHORT = { 0: 'Not Rec.', 1: 'Rec-able', 2: 'Rec’d', 3: 'Highly', 4: 'Must-See', 5: 'Essential' };
 let hsBoard = 'top';
-const HS_BOARDS = [['top', 'Top of the wheel'], ['climb', 'Biggest climbers'], ['calls', 'Most calls won'], ['reign', 'Longest reign']];
+const HS_BOARDS = [['top', 'Top of the wheel'], ['climb', 'Biggest climbers'], ['calls', 'Most calls won'], ['influence', 'Most influence'], ['reign', 'Longest reign']];
 const callsWon = id => db.matches.filter(m => m.ax && m.winner === id).length;
 function hsRows() {
   const { ranked } = board(), N = ranked.length;
@@ -4014,16 +4059,17 @@ function hsRows() {
   if (hsBoard === 'top') list = withSt.slice(0, 10).map(v => [v.i + 1, v.f, `★ ${STAR(v.i + 1, N).toFixed(1)}`]);
   if (hsBoard === 'climb') list = withSt.map(v => ({ ...v, m: moveOf(v.st, v.i + 1) })).filter(v => v.m > 0).sort((a, b) => b.m - a.m).slice(0, 10).map((v, k) => [k + 1, v.f, `↑${v.m}`]);
   if (hsBoard === 'calls') list = withSt.map(v => ({ ...v, a: callsWon(v.f.id) })).filter(v => v.a).sort((a, b) => b.a - a.a || a.i - b.i).slice(0, 10).map((v, k) => [k + 1, v.f, `${v.a} won`]);
+  if (hsBoard === 'influence') list = withSt.map(v => ({ ...v, a: infOf(v.f) ?? 0 })).sort((a, b) => b.a - a.a || a.i - b.i).slice(0, 10).map((v, k) => [k + 1, v.f, `◆ ${v.a}`]);
   if (hsBoard === 'reign') list = withSt.filter(v => v.st.reign).sort((a, b) => b.st.reign - a.st.reign).slice(0, 10).map((v, k) => [k + 1, v.f, span(v.st.reign)]);
   return list.map(([r, f, right], i) => `<button class="hs-row ${r <= 3 ? 'm' + r : ''}" data-film="${esc(f.id)}" style="--d:${i * 55}ms"><b>${ordinal(r)}</b>${posterHTML(f)}<span>${esc(f.title)}</span><em>${right}</em></button>`).join('')
-    || `<div class="hs-empty">${{ top: 'The wheel is empty.', climb: 'No film has climbed yet.', calls: 'No calls made yet.', reign: 'Nobody has held #1 yet.' }[hsBoard]}</div>`;
+    || `<div class="hs-empty">${{ top: 'The wheel is empty.', climb: 'No film has climbed yet.', calls: 'No calls made yet.', influence: 'The wheel is empty.', reign: 'Nobody has held #1 yet.' }[hsBoard]}</div>`;
 }
 function hsMachine() {
   const name = HS_BOARDS.find(b => b[0] === hsBoard)[1];
   return `<div class="arc"><div class="arc-marquee"><b>High Score</b><small>CmanCinema · ${name}</small></div>
     <div class="hs-tabs">${HS_BOARDS.map(([k, l]) => `<button class="${k === hsBoard ? 'on' : ''}" data-hsb="${k}">${l}</button>`).join('')}</div>
     <div class="arc-bezel"><div class="hs-screens one"><div class="crt x roll"><div class="crt-in">
-      <div class="crt-h"><b>★</b><span>${name}<small>${{ top: 'Highest on the wheel right now', climb: 'Most places gained since entry', calls: 'Most ties you called its way', reign: 'Most time spent at #1' }[hsBoard]}</small></span><em class="hi">HI-SCORE</em></div>
+      <div class="crt-h"><b>★</b><span>${name}<small>${{ top: 'Highest on the wheel right now', influence: 'Share of the wheel’s strength sitting below it', climb: 'Most places gained since entry', calls: 'Most ties you called its way', reign: 'Most time spent at #1' }[hsBoard]}</small></span><em class="hi">HI-SCORE</em></div>
       <div class="hs-rows">${hsRows()}</div></div></div></div></div>
     <div class="arc-panel" aria-hidden="true"><span class="arc-joy"></span><span class="arc-btns"><i></i><i></i></span></div></div>`;
 }
@@ -4471,6 +4517,7 @@ function renderPlaybill() {
       ${it('⇅', 'Two lanes', 'claim · case', 'The claim lane runs the X5 lineup, then X4’s, down to X1’s. The case lane runs the Y5 lineup down to Y0’s. Every film on the wheel has a spot in each.')}
       ${it('◎', 'The seamless pair', 'the wheel', 'A film’s wheel spot comes from its points on both lanes added together: the more points, the higher it sits. A tie goes to the more even pair, then the better claim-lane spot, then whoever arrived first.')}
       ${it('⚖', 'What a lineup is worth', 'however many films', 'Each lineup is worth a fixed share of its lane, whether it holds 3 films or 300. A film earns every lineup below its own, plus its share of its own: near the top, almost all of it; near the bottom, almost none. Case lineups earn far more, and more the higher they sit: Y0 1 · Y1 2 · Y2 3 · Y3 4 · Y4 5 · Y5 6 (21 in all). Claim lineups earn less, and least at X5, where most films land: X1 3 · X2 2.5 · X3 2 · X4 1.5 · X5 1 (10 in all).')}
+      ${it('◆', 'Influence', 'the career', 'A stat beside the record, never the record itself. 40% placement (the share of the wheel’s strength sitting below it) · 30% case reach (everyone below it on the case lane, faced or not, the higher lineups counting most) · 10% claim reach (the same on the claim lane) · 20% defenses (newcomers that challenged it in a showdown and stayed below it, a held Y5 defense counting 6 and an X5 defense 1; the film with the most sets 100). It never moves a film; your showdowns do that.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'your calls', 'Each showdown is a binary search: the film meets the middle of the lineup, then the middle of the half you send it to, until it lands. Every answer is filed in the Film Vault.')}
       ${it('⟳', 'Spin them all', 'marathon', 'Places every queued review. A film with no lineup to meet is placed at once; the rest open their shows one after another.')}
