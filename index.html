@@ -1979,6 +1979,19 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .rvs-head .me{font:600 12px var(--body);opacity:.75;margin-top:3px}
 .rvs-text{margin:12px 0 16px;white-space:pre-line;font:17px/1.6 var(--body)}
 .rvs-x{display:block;width:100%;padding:13px;border:0;border-radius:30px;background:#5a0f22;color:#fff4d8;font:800 12px var(--serif);letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+
+.dc{margin:14px auto 6px;max-width:560px;padding:12px 16px;border:1px solid rgba(232,190,106,.45);border-radius:10px;background:rgba(232,190,106,.08);text-align:left}
+.dc-k{display:block;font:800 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi,#f3d48a)}
+.dc-note{margin:6px 0 4px;font:italic 500 17px/1.45 var(--body);color:#fff4d8}
+.dc-hint{margin:4px 0 8px;font:500 14px/1.4 var(--body);opacity:.8}
+.dc textarea{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid rgba(232,190,106,.5);background:rgba(0,0,0,.35);color:#fff4d8;font:500 16px/1.4 var(--body);resize:vertical}
+.dc-btns{display:flex;gap:12px;align-items:center;margin-top:8px}
+.vbody .dc,.pdc{background:rgba(122,26,34,.06);border-color:rgba(122,26,34,.3);margin:4px 0 12px;max-width:none}
+.vbody .dc-k,.pdc .dc-k{color:#7a1a22} .vbody .dc-note,.pdc .dc-note{color:#2a1a10}
+.vbody .dc textarea{background:#fffaf0;color:#2a1a10}
+.pdc{background:rgba(232,190,106,.1);border-color:rgba(232,190,106,.45)} .pdc .dc-k{color:var(--gold-hi,#f3d48a)} .pdc .dc-note{color:#fff4d8}
+.dc-add{margin:2px 0 10px}
+.vnote{display:block;margin-top:2px;font:italic 500 12px/1.3 var(--body);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -2279,6 +2292,18 @@ function normalize(d) {
   }
   delete d.form;
   d.ties ||= {};
+  // verdict words renamed: 7 Cool→Good, 6 Good→Decent, 5 Alright→So-So; filed reasons follow
+  if (!d.words2) {
+    const W2 = { Cool: 'Good', Good: 'Decent', Alright: 'So-So' }, art = w => /^[AEIOU]/.test(w) ? 'an' : 'a';
+    // only the verdict words the engine wrote (never film titles or your own notes)
+    const fix = t => typeof t !== 'string' ? t : t
+      .replace(/<b>(Cool|Good|Alright)<\/b>/g, (m, w) => `<b>${W2[w]}</b>`)
+      .replace(/Both (Cool|Good|Alright)\./g, (m, w) => `Both ${W2[w]}.`)
+      .replace(/closer to (?:a|an) (Cool|Good|Alright) /g, (m, w) => `closer to ${art(W2[w])} ${W2[w]} `);
+    const sweep = ms => (ms || []).forEach(m => { if (['verdict', 'call', 'recall'].includes(m.key)) m.reason = fix(m.reason); });
+    sweep(d.matches); (d.archives || []).forEach(a => sweep(a.matches));
+    d.words2 = true;
+  }
   // the verdict engine: the wheel keeps its history and is re-sorted by composite (stable within a verdict)
   if ((d.v || 0) < 4) { d._resort = true; delete d.settings.weights; }
   d.v = 4;
@@ -2542,15 +2567,15 @@ function parts(f) {
    The claim (condition, 1–5) plus the case (viewing recommendation, 0–5) is the
    composite, 1–10, and each composite has its word. A higher composite always
    wins. Two films with the same composite are your call: which one is closer to
-   the next word up (at Amazing: which one is closer to Awesome, and that one sits
+   the next word up (at Exceptional: which one is closer to Excellent, and that one sits
    lower). Your answers are kept, so a pair is only asked once.
    ===================================================================== */
-const VERDICT = { 10: 'Amazing', 9: 'Awesome', 8: 'Great', 7: 'Cool', 6: 'Good', 5: 'Alright', 4: 'Meh', 3: 'Lame', 2: 'Bad', 1: 'Garbage' };
+const VERDICT = { 10: 'Exceptional', 9: 'Excellent', 8: 'Very Good', 7: 'Good', 6: 'Pretty Good', 5: 'Not Bad', 4: 'So-So', 3: 'Not Good', 2: 'Bad', 1: 'Terrible' };
 const score = f => (+f.X || 0) + (+f.Y || 0);
 const verdictOf = f => VERDICT[score(f)] || '—';
 const nextWord = c => c >= 10 ? VERDICT[9] : VERDICT[c + 1];
 const callQuestion = c => `Which is closer to ${nextWord(c)}?`;
-// the next word is measured in each film's own sub-genre, as experienced: a Good crime drama, a Good spy thriller
+// the next word is measured in each film's own sub-genre, as experienced: a Pretty Good crime drama, a Pretty Good spy thriller
 const sgWord = f => (f.genre || '').trim().toLowerCase() || 'film';
 const aimAt = (f, c) => `${an(nextWord(c))} ${sgWord(f)}`;
 const tieKey = (a, b) => [String(a), String(b)].sort().join('|');
@@ -2569,6 +2594,16 @@ function beats(a, b) {
 const chanceOf = () => 1;
 // the old engine's factors stay named so filed shows still replay
 const FACTOR_NAME = { verdict: 'The verdict', call: 'Your call', recall: 'Your earlier call', level: 'The levels', anchor: 'The case’s rewards', claim: 'The claim', ingredients: 'The two ingredients', opener: 'The opening line', tie: 'The tiebreak' };
+// a filed battle's reason, rebuilt from its stored composites with today's words and sub-genres
+function liveReason(m) {
+  if (!['verdict', 'call', 'recall'].includes(m.key)) return m.reason || '';
+  const aWon = m.winner === m.a, W = byId(m.winner), L = byId(aWon ? m.b : m.a), sw = aWon ? m.sa : m.sb, sl = aWon ? m.sb : m.sa;
+  if (!W || !L || !VERDICT[sw] || !VERDICT[sl]) return m.reason || '';
+  if (m.key === 'verdict') return `<b>${VERDICT[sw]}</b> over <b>${VERDICT[sl]}</b> · ${sw} against ${sl}.`;
+  const lead = m.key === 'recall' ? 'Your earlier call' : 'Your call', at = (f) => `${an(nextWord(sw))} ${sgWord(f)}`;
+  return sw >= 10 ? `Both ${VERDICT[sw]}. ${lead}: ${esc(L.title)} is closer to ${esc(at(L))} than ${esc(W.title)} is to ${esc(at(W))}, so ${esc(W.title)} ranks above it.`
+    : `Both ${VERDICT[sw]}. ${lead}: ${esc(W.title)} is closer to ${esc(at(W))} than ${esc(L.title)} is to ${esc(at(L))}.`;
+}
 function reasonOf(Wn, L, key, pick) {
   const sw = score(Wn), sl = score(L);
   if (key === 'verdict') return `<b>${VERDICT[sw]}</b> over <b>${VERDICT[sl]}</b> · ${Wn.X} + ${Wn.Y} = ${sw} against ${L.X} + ${L.Y} = ${sl}.`;
@@ -2614,7 +2649,7 @@ function commitPlacement(P, mode) {
   db.wheelLog.push({ id: pid, type: 'place', film: id, pos: P.pos, of: db.wheel.length, via: mode, at: t + P.battles.length + 1 });
   P.committed = true;
   rebuild();
-  return { film: id, pos: P.pos, of: db.wheel.length, battles: P.battles, order: P.order, via: mode };
+  return { film: id, pos: P.pos, of: db.wheel.length, battles: P.battles, order: P.order, via: mode, pid };
 }
 // keep the wheel in score order (after weights change, or on load)
 function sortWheel(log) {
@@ -2974,7 +3009,7 @@ function openProfile(id, show) {
   const f = byId(id); if (!f) return;
   const st = standing(f), entries = VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at);
   const ms = db.matches.filter(m => m.a === id || m.b === id).sort((a, b) => b.at - a.at);
-  const busy = active && active.film.id !== id, editor = canEdit(), mv = moveOf(st, st.overall);
+  const busy = active && active.film.id !== id, editor = canEdit(), mv = moveOf(st, st.overall), lastNote = entries.find(v => v.note);
   $('#prof').innerHTML = `<button class="x" aria-label="Close">✕</button>
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
       <div class="k">Film profile · ${st.overall ? `#${st.overall} of ${st.of} on the wheel` : 'Waiting in the queue'}</div>
@@ -2989,11 +3024,8 @@ function openProfile(id, show) {
       <div class="pscore"><div class="lab">The verdict <b>${verdictOf(f)}</b></div><div class="fc-eq"><span>Claim <b>${f.X}</b></span><i>+</i><span>Case <b>${f.Y}</b></span><i>=</i><span class="v">${verdictOf(f)} <b>${score(f)}</b></span></div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} call${callsOf(id) === 1 ? '' : 's'} you’ve made with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
-      ${ms.length ? `<div class="vlist"><span class="k">On the wheel · latest battles</span>${ms.slice(0, 8).map(m => {
-        const won = m.winner === id, opp = byId(m.a === id ? m.b : m.a) || raw(m.a === id ? m.b : m.a);
-        return `<div class="vmini"><b>${won ? 'Beat' : 'Fell to'} ${esc(opp?.title || 'a removed film')} · ${FACTOR_NAME[m.key] || 'the math'}${m.key === 'verdict' ? ` · ${VERDICT[m.a === id ? m.sa : m.sb]} vs ${VERDICT[m.a === id ? m.sb : m.sa]}` : m.key === 'call' || m.key === 'recall' ? '' : ` · by ${m.margin}`}</b>${vDate(m.at)}</div>`;
-      }).join('')}</div>` : ''}
-      ${entries.length ? `<div class="vlist"><span class="k">In the highlight reel</span>${entries.map(v => `<div class="vmini"><b>Landed #${v.pos + 1} of ${v.of} · ${v.battles.filter(m => m.winner === id).length}–${v.battles.filter(m => m.winner !== id).length}</b>${vDate(v.at)}</div>`).join('')}</div>` : ''}
+      ${lastNote ? `<div class="dc pdc"><span class="dc-k">The decisive consideration</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
+      ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
         ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the wheel</button><button class="btn-line" data-tk="rewrite" title="Off the wheel, so no strikes">Rewrite the review</button>'}
         ${entries.length ? '<button class="btn-line" data-watchlast>▶ Watch its show</button>' : ''}
@@ -3014,6 +3046,7 @@ $('#sheet').addEventListener('click', e => {
   if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
   if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
   if (e.target.closest('[data-queuego]')) { closeSheet(); return sendToWheel(id); }
+  if (e.target.closest('[data-vaultfilm]')) { closeSheet(); vaultFilm = id; vaultTab = 'log'; vaultKind = ''; vaultQuery = ''; vaultPage = 1; vaultOpen.clear(); const v0 = VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at)[0]; if (v0) vaultOpen.add(v0.id); return goTo('vault'); }
   if (e.target.closest('[data-watchlast]')) { closeSheet(); return replayShow(VAULT.filter(v => v.film === id).sort((a, b) => b.at - a.at)[0]); }
   const tk = e.target.closest('[data-tk]');
   if (tk) {
@@ -3555,7 +3588,7 @@ function renderAsk() {
     <div class="dq cq"><span id="bfactor">Both ${VERDICT[c]} · ${c} and ${c}</span>
       <p class="cq-q">${callQuestion(c)}</p>
       <div class="cq-btns">${[A, B].map(f => `<button data-call="${esc(f.id)}">${esc(f.title)}<small>closer to ${esc(aimAt(f, c))}</small></button>`).join('')}</div>
-      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${c >= 10 ? 'The one you pick sits lower: closer to Awesome, not more Amazing.' : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
+      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${c >= 10 ? 'The one you pick sits lower: closer to Excellent, not more Exceptional.' : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
   drum.innerHTML = S.order.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
   $('#rvMine').innerHTML = showCard(A, { label: 'The new review', rank: '—' });
@@ -3571,7 +3604,7 @@ function makeCall(pick) {
   const S = SHOW; if (!S || S.phase !== 'ask' || !S.P) return;
   const n0 = S.battles.length;
   answerCall(S.P, pick);
-  if (!S.P.ask) { const info = commitPlacement(S.P, S.via); S.pos = info.pos; S.of = info.of; }
+  if (!S.P.ask) { const info = commitPlacement(S.P, S.via); S.pos = info.pos; S.of = info.of; S.pid = info.pid; }
   persist();
   S.step = n0; S.phase = 'battle'; S.paused = false;
   renderShowFrame();
@@ -3610,6 +3643,34 @@ function nextBattle() {
   else if (pendingCall(S)) { S.step = S.battles.length; S.phase = 'ask'; renderShowFrame(); }
   else { S.phase = 'final'; renderShowFrame(); }
 }
+/* the decisive consideration: one line, in your words, on why this film landed where it did (Bylaws Art. 41) */
+const placeEntry = pid => db.wheelLog.find(e => e.id === pid && e.type === 'place');
+function considerationHTML(pid, film, compact) {
+  const e = placeEntry(pid); if (!e) return '';
+  const note = e.note || '', edit = canEdit(), editing = edit && ((!note && !compact) || considerEditing === pid);
+  if (editing) return `<div class="dc dc-edit"><label class="dc-k" for="dcIn">The decisive consideration</label>
+      <p class="dc-hint">One line, in your words: what decided where ${esc(titleOf(film))} landed?</p>
+      <textarea id="dcIn" maxlength="280" rows="2" placeholder="e.g. Its screwball tempo is closer to a Great comedy than Larceny, Inc.’s gangster spoof is.">${esc(note)}</textarea>
+      <div class="dc-btns"><button class="again" data-dcsave="${esc(pid)}">Save it</button>${note ? `<button class="linkish" data-dccancel>Cancel</button>` : ''}</div></div>`;
+  if (!note) return compact && edit ? `<button class="linkish dc-add" data-dcedit="${esc(pid)}">+ Add the decisive consideration</button>` : '';
+  return `<div class="dc"><span class="dc-k">The decisive consideration</span><p class="dc-note">“${esc(note)}”</p>${edit ? `<button class="linkish" data-dcedit="${esc(pid)}">Edit</button>` : ''}</div>`;
+}
+let considerEditing = null;
+document.addEventListener('click', async e => {
+  const sv = e.target.closest('[data-dcsave]'), ed = e.target.closest('[data-dcedit]'), cn = e.target.closest('[data-dccancel]');
+  if (!sv && !ed && !cn) return;
+  if (ed) { considerEditing = ed.dataset.dcedit; }
+  if (cn) { considerEditing = null; }
+  if (sv) {
+    const ent = placeEntry(sv.dataset.dcsave), box = sv.closest('.dc'), val = (box.querySelector('textarea').value || '').trim().replace(/\s+/g, ' ');
+    if (!ent || !canEdit()) return;
+    if (val) ent.note = val; else delete ent.note;
+    considerEditing = null; rebuild();
+    if (await persist()) toast(val ? 'Decisive consideration filed with the show' : 'Decisive consideration cleared');
+  }
+  const host = e.target.closest('.dc-host'); if (host) host.innerHTML = considerationHTML(host.dataset.pid, host.dataset.film, host.classList.contains('vdc'));
+  if (sv && current === 'vault') renderVaultGrid();
+});
 function renderFinal() {
   const S = SHOW, A = byId(S.film), st = standing(A), list = db.wheel.slice(), now = list.indexOf(A.id), at = now >= 0 ? now : S.pos;
   const w = S.battles.filter(b => b.newWins).length, l = S.battles.length - w, c = score(A);
@@ -3640,6 +3701,7 @@ function renderFinal() {
       ${st.stars != null ? `<div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>` : ''}
       ${!S.battles.length ? '' : modern ? `<p class="filed">${calls ? `${calls} of ${S.battles.length} battle${S.battles.length === 1 ? ' was' : 's were'} your call` : 'The verdicts decided every battle'}</p>`
         : close ? `<p class="filed">Closest battle: ${esc(byId(close.opp)?.title || '')}, by ${close.margin} · ${(FACTOR_NAME[close.key] || 'the math').toLowerCase()} decided it</p>` : ''}
+      ${S.pid ? `<div class="dc-host" data-pid="${esc(S.pid)}" data-film="${esc(A.id)}">${considerationHTML(S.pid, A.id)}</div>` : ''}
       <p class="filed" style="font-size:15px;opacity:.75">Every battle is filed in the Film Vault’s highlight reel.</p>
       <div>${more ? `<button class="again" data-marathon>Keep spinning · ${QUEUE.length} in the queue</button>` : ''}<button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open the highlight reel</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
       <span class="orn"></span></div>`;
@@ -3659,8 +3721,8 @@ function wheelBefore(evId) {
 function replayShow(v) {
   if (!v || !byId(v.film)) return;
   const order = wheelBefore(v.id);
-  const battles = v.battles.filter(m => byId(m.b)).map(m => ({ opp: m.b, oppRank: order.indexOf(m.b) + 1 || m.oppRank, newWins: m.winner === m.a, margin: m.margin, chance: m.chance, key: m.key, reason: m.reason, sa: m.sa, sb: m.sb }));
-  startShow({ film: v.film, pos: v.pos, of: v.of, battles, order, replay: true, via: v.via });
+  const battles = v.battles.filter(m => byId(m.b)).map(m => ({ opp: m.b, oppRank: order.indexOf(m.b) + 1 || m.oppRank, newWins: m.winner === m.a, margin: m.margin, chance: m.chance, key: m.key, reason: liveReason(m), sa: m.sa, sb: m.sb }));
+  startShow({ film: v.film, pos: v.pos, of: v.of, battles, order, replay: true, via: v.via, pid: v.id });
 }
 
 /* ---------- the wheel itself ---------- */
@@ -3771,7 +3833,7 @@ function battleRows(v) {
       <button class="vopp" data-film="${esc(b.b)}">${esc(titleOf(b.b))}</button>
       <span class="vfac">${FACTOR_NAME[b.key] || '—'}</span>
       <span class="vmar ${isCall(b) || (b === close && v.battles.length > 1 && !b.key.match(/verdict/)) ? 'cl' : ''}">${b.key === 'verdict' || isCall(b) ? `${b.sa} – ${b.sb}<small>${isCall(b) ? 'your call' : `${VERDICT[b.sa]} – ${VERDICT[b.sb]}`}</small>` : `${b.sa} – ${b.sb}<small>by ${b.margin}</small>`}</span>
-      <p>${b.reason || ''}</p></li>`;
+      <p>${liveReason(b)}</p></li>`;
   }).join('')}</ol>`;
 }
 function logRow(v) {
@@ -3782,13 +3844,13 @@ function logRow(v) {
       <span class="vno">${v.n}</span>
       <span class="vday">${vDay(v.at)}</span>
       ${posterHTML(f, 30)}
-      <span class="vti"><b>${esc(f.title)}</b><small>${verdictOf(f)} · ${f.X} + ${f.Y}</small></span>
+      <span class="vti"><b>${esc(f.title)}</b><small>${verdictOf(f)} · ${f.X} + ${f.Y}</small>${v.note ? `<em class="vnote">“${esc(trimTo(v.note, 90))}”</em>` : ''}</span>
       ${tag ? `<span class="vtag ${tag[1]}">${tag[0]}</span>` : '<span></span>'}
       ${pips(v.battles)}
       <span class="vland"><b>#${v.pos + 1}</b><small>of ${v.of}${now && now !== v.pos + 1 ? ` · now #${now}` : ''}</small></span>
       <span class="vchev">›</span>
     </button>
-    ${open ? `<div class="vbody">${battleRows(v)}
+    ${open ? `<div class="vbody"><div class="dc-host vdc" data-pid="${esc(v.id)}" data-film="${esc(f.id)}">${considerationHTML(v.id, f.id, true)}</div>${battleRows(v)}
       <div class="vfoot"><span>${w}–${v.battles.length - w} · ${vDate(v.at)}</span><button class="vlink" data-film="${esc(f.id)}">Profile</button><button class="watch" data-watch="${esc(v.id)}">▶ Watch the show</button></div></div>` : ''}
   </div>`;
 }
@@ -3810,7 +3872,7 @@ function filmDrawer(f, vs) {
 }
 function renderVaultGrid() {
   const q = vaultQuery.trim().toLowerCase(), shows = vaultShows();
-  const hitQ = v => !q || titleOf(v.film).toLowerCase().includes(q) || v.battles.some(b => titleOf(b.b).toLowerCase().includes(q) || String(b.reason || '').toLowerCase().includes(q));
+  const hitQ = v => !q || titleOf(v.film).toLowerCase().includes(q) || String(v.note || '').toLowerCase().includes(q) || v.battles.some(b => titleOf(b.b).toLowerCase().includes(q) || liveReason(b).toLowerCase().includes(q));
   const hitF = v => !vaultFilm || v.film === vaultFilm || v.battles.some(b => b.b === vaultFilm);
   let html = '', total = 0, pages = 1;
   if (vaultTab === 'log') {
@@ -4319,10 +4381,10 @@ function renderPlaybill() {
       <p class="pb-note" style="margin:0 0 10px">The claim and the case stay their own judgments. Added together they make the verdict, one of ten words. A higher verdict always wins. When two films share a verdict, the winner is your call.</p>
       <div class="pb-axis"><span>The verdict · claim + case</span></div>
       ${[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(c => it(c, VERDICT[c], '', c === 10 ? 'Unscathed and Essential: 5 + 5.' : `Any claim and case that add to ${c}${c === 1 ? ': Uncreditable and Not Recommendable' : ''}. ${[5, 4, 3, 2, 1].filter(x => c - x >= 0 && c - x <= 5).map(x => `${x} + ${c - x}`).join(' · ')}.`)).join('')}
-      <p class="pb-note" style="margin:6px 0 4px">There is no “4 + 3 beats 5 + 2.” Both are 7, both are Cool, and the arithmetic stops there.</p>
+      <p class="pb-note" style="margin:6px 0 4px">There is no “4 + 3 beats 5 + 2.” Both are 7, both are Good, and the arithmetic stops there.</p>
       <div class="pb-axis"><span>Your call</span></div>
-      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Alright films, “Which is closer to Good?” Each is measured in its own sub-genre, as you experienced it: is San Quentin closer to a Good crime drama than M is to a Good spy thriller? The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
-      ${it('★', 'At the top', 'Amazing', 'Nothing sits above Amazing, so two Amazing films get “Which is closer to Awesome?” The one you pick sits lower. It’s never “which is more Amazing.”')}
+      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Not Bad films, “Which is closer to Pretty Good?” Each is measured in its own sub-genre, as you experienced it: is San Quentin closer to a Pretty Good crime drama than M is to a Pretty Good spy thriller? The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
+      ${it('★', 'At the top', 'Exceptional', 'Nothing sits above Exceptional, so two Exceptional films get “Which is closer to Excellent?” The one you pick sits lower. It’s never “which is more Exceptional.”')}
       ${it('✓', 'Kept', 'asked once', 'Every call is kept, so a pair is never asked twice. Rerunning a film clears its calls and asks again.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. A different verdict settles a battle on its own; the same verdict waits for your call. Every battle is filed in the Film Vault.')}
