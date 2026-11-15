@@ -2567,20 +2567,20 @@ function parts(f) {
    The claim (condition, 1–5) plus the case (viewing recommendation, 0–5) is the
    composite, 1–10, and each composite has its word. A higher composite always
    wins. Two films with the same composite are your call: which one is closer to
-   the neighboring word (up from Decent, down from Mediocre; Masterpiece looks down, Unbearable up), and that one sits
+   the neighboring word (up from Good, down from Alright; Amazing looks down, Garbage up), and that one sits
    lower). Your answers are kept, so a pair is only asked once.
    ===================================================================== */
-const VERDICT = { 10: 'Masterpiece', 9: 'Amazing', 8: 'Great', 7: 'Good', 6: 'Decent', 5: 'Mediocre', 4: 'Bad', 3: 'Awful', 2: 'Painful', 1: 'Unbearable' };
+const VERDICT = { 10: 'Amazing', 9: 'Awesome', 8: 'Great', 7: 'Cool', 6: 'Good', 5: 'Alright', 4: 'Meh', 3: 'Lame', 2: 'Bad', 1: 'Garbage' };
 const score = f => (+f.X || 0) + (+f.Y || 0);
 const verdictOf = f => VERDICT[score(f)] || '—';
-// the tie question points up from Decent to Amazing and down from Mediocre to Painful;
-// at the ends there is nowhere further, so Masterpiece looks down and Unbearable looks up
+// the tie question points up from Good to Awesome and down from Alright to Bad;
+// at the ends there is nowhere further, so Amazing looks down and Garbage looks up
 const callDir = c => c >= 10 ? 'down' : c <= 1 ? 'up' : c <= 5 ? 'down' : 'up';
 const nextWord = c => VERDICT[callDir(c) === 'up' ? c + 1 : c - 1];
 // "Masterpiece" is a noun, so it reads "a Masterpiece" in a question and "a crime drama masterpiece" against a sub-genre
 const wordRef = w => w === 'Masterpiece' ? 'a Masterpiece' : w;
 const callQuestion = c => `Which is closer to ${wordRef(nextWord(c))}?`;
-// the next word is measured in each film's own sub-genre, as experienced: a Decent crime drama, a Decent spy thriller
+// the next word is measured in each film's own sub-genre, as experienced: a Great crime drama, a Meh spy thriller
 const sgWord = f => (f.genre || '').trim().toLowerCase() || 'film';
 const aimAt = (f, c) => nextWord(c) === 'Masterpiece' ? `${an(sgWord(f))} masterpiece` : `${an(nextWord(c))} ${sgWord(f)}`;
 const tieKey = (a, b) => [String(a), String(b)].sort().join('|');
@@ -3593,7 +3593,7 @@ function renderAsk() {
     <div class="dq cq"><span id="bfactor">Both ${VERDICT[c]} · ${c} and ${c}</span>
       <p class="cq-q">${callQuestion(c)}</p>
       <div class="cq-btns">${[A, B].map(f => `<button data-call="${esc(f.id)}">${esc(f.title)}<small>closer to ${esc(aimAt(f, c))}</small></button>`).join('')}</div>
-      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${callDir(c) === 'down' ? `The one you pick sits lower.${c >= 10 ? ' Never “more of a Masterpiece.”' : ''}` : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
+      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${callDir(c) === 'down' ? `The one you pick sits lower.${c >= 10 ? ' Never “more Amazing.”' : ''}` : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
   drum.innerHTML = S.order.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
   $('#rvMine').innerHTML = showCard(A, { label: 'The new review', rank: '—' });
@@ -4006,7 +4006,7 @@ function renderGame() {
   const verdicts = tagBars(C10.map(c => [c, all.filter(f => score(f) === c).length, VERDICT[c]]));
   const tieComp = Object.keys(db.ties || {}).map(k => { const f = byId(k.split('|')[0]); return f ? score(f) : null; }).filter(Boolean);
   const callBars = tieComp.length ? tagBars(C10.filter(c => tieComp.includes(c)).map(c => [c, tieComp.filter(x => x === c).length, `${VERDICT[c]} · closer to ${nextWord(c)}?`]))
-    : '<p class="cal-note">No ties called yet. When two films share a verdict, the show asks you which is closer to the next word: up from Decent, down from Mediocre.</p>';
+    : '<p class="cal-note">No ties called yet. When two films share a verdict, the show asks you which is closer to the next word: up from Good, down from Alright.</p>';
   const lfm = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
   const lfBars = `<div class="bars2">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length;
     return `<div class="bar2"><b>${c.door}</b><div class="tr"><em style="width:0" data-w="${(k / lfm * 100).toFixed(1)}%"></em><span>${c.name}</span></div><i>${k}</i></div>`; }).join('')}</div>`;
@@ -4388,9 +4388,9 @@ function renderPlaybill() {
       ${[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(c => it(c, VERDICT[c], '', c === 10 ? 'Unscathed and Essential: 5 + 5.' : `Any claim and case that add to ${c}${c === 1 ? ': Uncreditable and Not Recommendable' : ''}. ${[5, 4, 3, 2, 1].filter(x => c - x >= 0 && c - x <= 5).map(x => `${x} + ${c - x}`).join(' · ')}.`)).join('')}
       <p class="pb-note" style="margin:6px 0 4px">There is no “4 + 3 beats 5 + 2.” Both are 7, both are Good, and the arithmetic stops there.</p>
       <div class="pb-axis"><span>Your call</span></div>
-      ${it('↑', 'Decent and up: closer to the word above?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you. From Decent to Amazing it points up: two Good films get “Which is closer to Great?”, and the one you pick ranks higher. Each is measured in its own sub-genre, as you experienced it: closer to a Great crime drama, or a Great spy thriller? The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
-      ${it('↓', 'Mediocre and down: closer to the word below?', 'same verdict', 'From Mediocre down to Painful it points down: two Mediocre films get “Which is closer to Bad?”, and the one you pick ranks lower. Is San Quentin closer to a Bad crime drama than M is to a Bad spy thriller?')}
-      ${it('★', 'The ends', 'Masterpiece · Unbearable', 'Nothing sits above Masterpiece, so two Masterpieces get “Which is closer to Amazing?” and the pick sits lower; it’s never “which is more of a Masterpiece.” Nothing sits below Unbearable, so two Unbearable films get “Which is closer to Painful?” and the pick ranks higher.')}
+      ${it('↑', 'Good and up: closer to the word above?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you. From Good to Awesome it points up: two Cool films get “Which is closer to Great?”, and the one you pick ranks higher. Each is measured in its own sub-genre, as you experienced it: closer to a Great crime drama, or a Great spy thriller? The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
+      ${it('↓', 'Alright and down: closer to the word below?', 'same verdict', 'From Alright down to Bad it points down: two Alright films get “Which is closer to Meh?”, and the one you pick ranks lower. Is San Quentin closer to a Meh crime drama than M is to a Meh spy thriller?')}
+      ${it('★', 'The ends', 'Amazing · Garbage', 'Nothing sits above Amazing, so two Amazing films get “Which is closer to Awesome?” and the pick sits lower; it’s never “which is more Amazing.” Nothing sits below Garbage, so two Garbage films get “Which is closer to Bad?” and the pick ranks higher.')}
       ${it('✓', 'Kept', 'asked once', 'Every call is kept, so a pair is never asked twice. Rerunning a film clears its calls and asks again.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. A different verdict settles a battle on its own; the same verdict waits for your call. Every battle is filed in the Film Vault.')}
