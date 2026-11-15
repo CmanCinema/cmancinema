@@ -2567,17 +2567,19 @@ function parts(f) {
    The claim (condition, 1–5) plus the case (viewing recommendation, 0–5) is the
    composite, 1–10, and each composite has its word. A higher composite always
    wins. Two films with the same composite are your call: which one is closer to
-   the next word up (at Exceptional: which one is closer to Excellent, and that one sits
+   the next word up (at Masterpiece: which one is closer to Amazing, and that one sits
    lower). Your answers are kept, so a pair is only asked once.
    ===================================================================== */
-const VERDICT = { 10: 'Exceptional', 9: 'Excellent', 8: 'Very Good', 7: 'Good', 6: 'Pretty Good', 5: 'Not Bad', 4: 'So-So', 3: 'Not Good', 2: 'Bad', 1: 'Terrible' };
+const VERDICT = { 10: 'Masterpiece', 9: 'Amazing', 8: 'Great', 7: 'Good', 6: 'Decent', 5: 'Mediocre', 4: 'Bad', 3: 'Awful', 2: 'Painful', 1: 'Unbearable' };
 const score = f => (+f.X || 0) + (+f.Y || 0);
 const verdictOf = f => VERDICT[score(f)] || '—';
 const nextWord = c => c >= 10 ? VERDICT[9] : VERDICT[c + 1];
-const callQuestion = c => `Which is closer to ${nextWord(c)}?`;
-// the next word is measured in each film's own sub-genre, as experienced: a Pretty Good crime drama, a Pretty Good spy thriller
+// "Masterpiece" is a noun, so it reads "a Masterpiece" in a question and "a crime drama masterpiece" against a sub-genre
+const wordRef = w => w === 'Masterpiece' ? 'a Masterpiece' : w;
+const callQuestion = c => `Which is closer to ${wordRef(nextWord(c))}?`;
+// the next word is measured in each film's own sub-genre, as experienced: a Decent crime drama, a Decent spy thriller
 const sgWord = f => (f.genre || '').trim().toLowerCase() || 'film';
-const aimAt = (f, c) => `${an(nextWord(c))} ${sgWord(f)}`;
+const aimAt = (f, c) => nextWord(c) === 'Masterpiece' ? `${an(sgWord(f))} masterpiece` : `${an(nextWord(c))} ${sgWord(f)}`;
 const tieKey = (a, b) => [String(a), String(b)].sort().join('|');
 // your stored call: true if a ranks above b, false if below, null if never asked
 const callOf = (a, b) => { const w = (db.ties || {})[tieKey(a.id, b.id)]; return w === a.id ? true : w === b.id ? false : null; };
@@ -2600,7 +2602,7 @@ function liveReason(m) {
   const aWon = m.winner === m.a, W = byId(m.winner), L = byId(aWon ? m.b : m.a), sw = aWon ? m.sa : m.sb, sl = aWon ? m.sb : m.sa;
   if (!W || !L || !VERDICT[sw] || !VERDICT[sl]) return m.reason || '';
   if (m.key === 'verdict') return `<b>${VERDICT[sw]}</b> over <b>${VERDICT[sl]}</b> · ${sw} against ${sl}.`;
-  const lead = m.key === 'recall' ? 'Your earlier call' : 'Your call', at = (f) => `${an(nextWord(sw))} ${sgWord(f)}`;
+  const lead = m.key === 'recall' ? 'Your earlier call' : 'Your call', at = (f) => aimAt(f, sw);
   return sw >= 10 ? `Both ${VERDICT[sw]}. ${lead}: ${esc(L.title)} is closer to ${esc(at(L))} than ${esc(W.title)} is to ${esc(at(W))}, so ${esc(W.title)} ranks above it.`
     : `Both ${VERDICT[sw]}. ${lead}: ${esc(W.title)} is closer to ${esc(at(W))} than ${esc(L.title)} is to ${esc(at(L))}.`;
 }
@@ -3588,7 +3590,7 @@ function renderAsk() {
     <div class="dq cq"><span id="bfactor">Both ${VERDICT[c]} · ${c} and ${c}</span>
       <p class="cq-q">${callQuestion(c)}</p>
       <div class="cq-btns">${[A, B].map(f => `<button data-call="${esc(f.id)}">${esc(f.title)}<small>closer to ${esc(aimAt(f, c))}</small></button>`).join('')}</div>
-      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${c >= 10 ? 'The one you pick sits lower: closer to Excellent, not more Exceptional.' : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
+      <p class="cq-note">Each in its own sub-genre, as you experienced it. ${c >= 10 ? 'The one you pick sits lower: closer to Amazing, never “more of a Masterpiece.”' : 'The one you pick ranks higher.'} Your answer is kept, so this pair won’t be asked again.</p></div>`;
   drum.innerHTML = S.order.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
   $('#rvMine').innerHTML = showCard(A, { label: 'The new review', rank: '—' });
@@ -4383,8 +4385,8 @@ function renderPlaybill() {
       ${[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(c => it(c, VERDICT[c], '', c === 10 ? 'Unscathed and Essential: 5 + 5.' : `Any claim and case that add to ${c}${c === 1 ? ': Uncreditable and Not Recommendable' : ''}. ${[5, 4, 3, 2, 1].filter(x => c - x >= 0 && c - x <= 5).map(x => `${x} + ${c - x}`).join(' · ')}.`)).join('')}
       <p class="pb-note" style="margin:6px 0 4px">There is no “4 + 3 beats 5 + 2.” Both are 7, both are Good, and the arithmetic stops there.</p>
       <div class="pb-axis"><span>Your call</span></div>
-      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Not Bad films, “Which is closer to Pretty Good?” Each is measured in its own sub-genre, as you experienced it: is San Quentin closer to a Pretty Good crime drama than M is to a Pretty Good spy thriller? The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
-      ${it('★', 'At the top', 'Exceptional', 'Nothing sits above Exceptional, so two Exceptional films get “Which is closer to Excellent?” The one you pick sits lower. It’s never “which is more Exceptional.”')}
+      ${it('?', 'Which is closer to the next word up?', 'same verdict', 'When the show meets two films with the same verdict, it stops and asks you which one is closer to the next word: two Mediocre films, “Which is closer to Decent?” Each is measured in its own sub-genre, as you experienced it: is San Quentin closer to a Decent crime drama than M is to a Decent spy thriller? The one you pick ranks higher. The question is about your idea of the word as a whole, not the condition or the recommendation, and it never changes a level.')}
+      ${it('★', 'At the top', 'Masterpiece', 'Nothing sits above Masterpiece, so two Masterpieces get “Which is closer to Amazing?” The one you pick sits lower. It’s never “which is more of a Masterpiece.”')}
       ${it('✓', 'Kept', 'asked once', 'Every call is kept, so a pair is never asked twice. Rerunning a film clears its calls and asks again.')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'automatic', 'A new review meets the middle of the wheel, then the middle of the half it earns, until it lands. A different verdict settles a battle on its own; the same verdict waits for your call. Every battle is filed in the Film Vault.')}
