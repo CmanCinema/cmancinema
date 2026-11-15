@@ -2638,7 +2638,8 @@ const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
    Every level has a lineup in your own showdown order: all the X5s on the wheel, all the Y0s, and so on,
    whatever the film's other level. The claim lane runs the X5 lineup, then X4's, down to X1's; the case lane
    runs Y5's lineup down to Y0's. A film's spot on the wheel is where its two lane spots pair up best:
-   the lower sum of its two lane ranks; ties go to the more even pair, then the better claim-lane spot, then who arrived first.
+   the most lane points: each lineup is worth a fixed share of its lane (SPAN), so a film earns the lineups below it plus its share of its own, whatever their size;
+   ties go to the more even pair, then the better claim-lane spot, then who arrived first.
    ===================================================================== */
 const LV = { X: [5, 4, 3, 2, 1], Y: [5, 4, 3, 2, 1, 0] };
 const AX_NAME = { X: 'claim', Y: 'case' };
@@ -2655,12 +2656,21 @@ function tidyLadders() {
   });
 }
 let LANES = {};
+// what one spot in a lineup is worth: the higher the case level, the more a showdown win there carries;
+// the higher the claim level, the less (most films sit at X5, and holding X5 is the norm)
+// what each lineup is worth on its lane, however many films it holds: the Y lineups earn far more, and more the higher
+// they sit; the X lineups earn less, and least at X5, where most films land
+const SPAN = { X: { 1: 3, 2: 2.5, 3: 2, 4: 1.5, 5: 1 }, Y: { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 } };
+const LANE_TOP = { X: 10, Y: 21 };
 function orderWheel() {
   tidyLadders();
   const r = {};
   ['X', 'Y'].forEach(ax => laneOf(ax).forEach((id, i) => { (r[id] ||= {})[ax] = i + 1; }));
   ['X', 'Y'].forEach(ax => LV[ax].forEach(l => ladderOf(ax, l).forEach((id, i, a) => { r[id][ax + 'l'] = i + 1; r[id][ax + 'n'] = a.length; })));
-  const sum = id => r[id].X + r[id].Y, gap = id => Math.abs(r[id].X - r[id].Y);
+  // lane points: the lineups below yours, plus your share of your own lineup (top ≈ all of it, bottom ≈ none),
+  // so a film's points don't depend on how many films the lineups hold; distance = what's left above it
+  ['X', 'Y'].forEach(ax => { let base = 0; LV[ax].slice().reverse().forEach(l => { const a = ladderOf(ax, l), w = SPAN[ax][l]; a.forEach((id, i) => { const pts = base + w * (a.length - i - 0.5) / a.length; r[id][ax + 'p'] = Math.round(pts * 100) / 100; r[id][ax + 'd'] = LANE_TOP[ax] - pts; }); base += w; }); });
+  const sum = id => r[id].Xd + r[id].Yd, gap = id => Math.abs(r[id].Xd - r[id].Yd);
   db.wheel = db.wheel.filter(id => r[id] && byId(id)).sort((a, b) => sum(a) - sum(b) || gap(a) - gap(b) || r[a].X - r[b].X || byId(a).added - byId(b).added || (a < b ? -1 : 1));
   LANES = r;
   return r;
@@ -3077,7 +3087,7 @@ function openProfile(id, show) {
       </div>
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pev"><p class="note" style="white-space:pre-line"><b>The critic’s review</b>${esc(reviewOf(f) || '—')}</p></div>
-      <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Claim lane <b>${laneText(f, 'X')}</b></span><span>Case lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane ranks <b>${LANES[f.id].X} + ${LANES[f.id].Y}</b></span>` : ''}</div>
+      <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Claim lane <b>${laneText(f, 'X')}</b></span><span>Case lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane points <b>${LANES[f.id].Xp} + ${LANES[f.id].Yp} = ${r1(LANES[f.id].Xp + LANES[f.id].Yp)}</b></span>` : ''}</div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The decisive consideration</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
@@ -3770,7 +3780,7 @@ function renderFinal() {
       <div class="grid">
         <div class="cell"><b>${st.overall ? '#' + st.overall : '—'}</b><span>${st.overall ? 'Of ' + st.of : 'Off the wheel'}</span></div>
         <div class="cell"><b>${w}–${l}</b><span>This show</span></div>
-        <div class="cell"><b>${lr.X ? `${lr.X} + ${lr.Y}` : '—'}</b><span>Claim + case lane</span></div>
+        <div class="cell"><b>${lr.X ? r1(lr.Xp + lr.Yp) : '—'}</b><span>Lane points · ${lr.X ? `${lr.Xp} + ${lr.Yp}` : 'claim + case'}</span></div>
         <div class="cell"><b>${st.stars != null ? st.stars.toFixed(1) : '—'}</b><span>Stars</span></div>
       </div>
       ${st.stars != null ? `<div class="starline" style="font-size:24px;letter-spacing:.1em;color:var(--gold-hi)">${starText(st.stars)} <span style="font:600 16px var(--serif);letter-spacing:.1em">${st.stars.toFixed(1)}</span></div>` : ''}
@@ -4459,7 +4469,8 @@ function renderPlaybill() {
       ${it('2', 'The case', 'Y lineup', 'Then tap over to the case: the same 5/0 meets every Y0 on the wheel, whatever its claim. Each meeting asks the call to action in that level’s verb: Y0 incentivizes, Y1 invites, Y2 encourages, Y3 influences, Y4 obligates, Y5 redefines. “Whose case invites viewing its sub-genre more?” The statement you pick ranks its film higher.')}
       <div class="pb-axis"><span>The lanes and the wheel</span></div>
       ${it('⇅', 'Two lanes', 'claim · case', 'The claim lane runs the X5 lineup, then X4’s, down to X1’s. The case lane runs the Y5 lineup down to Y0’s. Every film on the wheel has a spot in each.')}
-      ${it('◎', 'The seamless pair', 'the wheel', 'A film’s wheel spot is where its two lane spots pair up best: the lower sum of its claim-lane and case-lane ranks. A tie goes to the more even pair, then the better claim-lane spot, then whoever arrived first.')}
+      ${it('◎', 'The seamless pair', 'the wheel', 'A film’s wheel spot comes from its points on both lanes added together: the more points, the higher it sits. A tie goes to the more even pair, then the better claim-lane spot, then whoever arrived first.')}
+      ${it('⚖', 'What a lineup is worth', 'however many films', 'Each lineup is worth a fixed share of its lane, whether it holds 3 films or 300. A film earns every lineup below its own, plus its share of its own: near the top, almost all of it; near the bottom, almost none. Case lineups earn far more, and more the higher they sit: Y0 1 · Y1 2 · Y2 3 · Y3 4 · Y4 5 · Y5 6 (21 in all). Claim lineups earn less, and least at X5, where most films land: X1 3 · X2 2.5 · X3 2 · X4 1.5 · X5 1 (10 in all).')}
       <div class="pb-axis"><span>The show</span></div>
       ${it('▶', 'Battles', 'your calls', 'Each showdown is a binary search: the film meets the middle of the lineup, then the middle of the half you send it to, until it lands. Every answer is filed in the Film Vault.')}
       ${it('⟳', 'Spin them all', 'marathon', 'Places every queued review. A film with no lineup to meet is placed at once; the rest open their shows one after another.')}
