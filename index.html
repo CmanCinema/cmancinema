@@ -1925,7 +1925,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .fc-eq{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0 6px;font:600 13px var(--body);color:inherit;opacity:.9}
 .fc-eq span{padding:3px 9px;border-radius:20px;border:1px solid rgba(156,115,52,.45)}
 .fc-eq span b{font:800 14px var(--serif);margin-left:3px}
-.fc-eq i{font-style:normal;opacity:.6}
+.fc-eq i{font-style:normal;opacity:.6} .fc-eq em{font-style:normal}
 .fc-eq .v{background:rgba(232,190,106,.22);border-color:#9c7334}
 .fm5{display:inline-flex;gap:3px;vertical-align:middle;margin-left:6px}
 .fm5 i{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:4px;font:800 10px/1 var(--serif);font-style:normal;color:#fff}
@@ -1944,6 +1944,28 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .tape-wait{font:italic 600 14px var(--body);color:var(--gold-hi,#f3d48a);animation:cqblink 1.6s ease-in-out infinite}
 @keyframes cqblink{50%{opacity:.45}}
 .cbadge.vd{background:#7a1a22;color:#fff4d8}
+
+/* phone: the review card, tidied */
+@media (max-width:640px){
+  .showing .fc-title .lvl{gap:5px;margin-top:6px}
+  .showing .fc-title .lvl em{display:inline-block;font-size:7.5px;padding:2px 5px;letter-spacing:.1em}
+  .showing .fc-art .stamp-big{top:40%}
+  .showing .fc-art:has(.stamp-big) .fc-ribbon{opacity:0;transition:opacity .2s}
+  .showing .face.front .fc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .showing .face.front .fc-stats div{min-width:0}
+  .showing .fm5{gap:2px;margin:0}
+  .showing .fm5 i{width:12px;height:13px;font-size:7.5px;border-radius:3px}
+  .showing .fc-eq{flex-wrap:nowrap;gap:3px;margin:7px 0 5px;font-size:10px;white-space:nowrap}
+  .showing .fc-eq span{padding:2px 5px}
+  .showing .fc-eq span b{font-size:11px;margin-left:2px}
+  .showing .fc-eq .lbl{display:none}
+  .showing .fc-backhead .poster{width:34px!important}
+  .showing .fc-backhead .lab{font-size:8px;letter-spacing:.12em}
+  /* flipped: the review sets the card's height, so all of it reads without scrolling inside the card */
+  .showing .rv.flipped .face.back{position:relative;inset:auto;overflow:visible}
+  .showing .rv.flipped .face.front{position:absolute;inset:0;overflow:hidden}
+  .showing .face.back .rvtext{font-size:13.5px;line-height:1.5}
+}
 </style>
 </head>
 <body>
@@ -3456,7 +3478,7 @@ function showCard(f, o) {
       <div class="fc-body">
         <div class="fc-stats"><div><b>${o.rank}</b><span>Wheel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
           <div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div><div><b>${formHTML(st.form)}</b><span>Form</span></div></div>
-        <div class="fc-eq"><span>Claim <b>${f.X}</b></span><i>+</i><span>Case <b>${f.Y}</b></span><i>=</i><span class="v">${VERDICT[c]} <b>${c}</b></span></div>
+        <div class="fc-eq"><span><em class="lbl">Claim </em><b>${f.X}</b></span><i>+</i><span><em class="lbl">Case </em><b>${f.Y}</b></span><i>=</i><span class="v">${VERDICT[c]} <b>${c}</b></span></div>
         <button class="fc-flip" data-flip>Read the review ↻</button>
       </div>
     </div>
