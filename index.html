@@ -1961,9 +1961,13 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   .showing .fc-eq .lbl{display:none}
   .showing .fc-backhead .poster{width:34px!important}
   .showing .fc-backhead .lab{font-size:8px;letter-spacing:.12em}
-  /* flipped: the review sets the card's height, so all of it reads without scrolling inside the card */
-  .showing .rv.flipped .face.back{position:relative;inset:auto;overflow:visible}
-  .showing .rv.flipped .face.front{position:absolute;inset:0;overflow:hidden}
+  /* phones swap faces instead of a 3D flip (iOS draws the flipped front mirrored through the back) */
+  .showing .rv{align-self:start}
+  .showing .rv .fc-in,.showing .rv.flipped .fc-in{transform:none!important;transition:none}
+  .showing .rv .face.back{display:none;transform:none!important;position:relative;inset:auto;overflow:visible}
+  .showing .rv.flipped .face.back{display:flex;animation:faceIn .25s ease}
+  .showing .rv.flipped .face.front{display:none}
+  @keyframes faceIn{from{opacity:0}to{opacity:1}}
   .showing .face.back .rvtext{font-size:13.5px;line-height:1.5}
 }
 </style>
