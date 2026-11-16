@@ -906,6 +906,7 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .pbd-line b{font:400 19px var(--deco);letter-spacing:.1em;text-transform:uppercase;color:#fff1cc}
 .pbd-line i{flex:1;border-bottom:2px dotted rgba(232,190,106,.4);transform:translateY(-4px)}
 .pbd-price{font:400 22px var(--deco);color:#f3c45a;text-shadow:0 0 10px rgba(243,196,90,.5);min-width:28px;text-align:right}
+.pbd-lad{display:block;margin-top:1px;font:700 15px var(--serif);font-style:normal;color:#f3c45a}
 .pbd-row small{display:block;margin-top:1px;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.66)}
 .pbd-row.on small{color:rgba(243,230,200,.9)}
 .pbd .wp-heart{color:#f3e6c8;border-color:rgba(232,190,106,.4)}
@@ -2136,21 +2137,23 @@ const X_NAMES = { 5: 'Unscathed', 4: 'Qualified', 3: 'Invalidated', 2: 'Defectiv
 const Y_NAMES = { 10: 'Masterpiece', 9: 'Amazing', 8: 'Great', 7: 'Good', 6: 'Okay', 5: 'Mediocre', 4: 'Bad', 3: 'Awful', 2: 'Painful', 1: 'Unbearable' };
 const LEVELS = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 const WORDS = Y_NAMES;
-// each word's showdown rule, exactly as written
-const W_RULE = { 10: 'the more awe-inspiring ranks higher', 9: 'the more impactful ranks higher', 8: 'the more impressive ranks higher', 7: 'the more standout ranks higher',
-  6: 'the more satisfactory ranks higher', 5: 'the less dull ranks higher', 4: 'the less objectionable ranks higher', 3: 'the less detestable ranks higher',
-  2: 'the more bearable ranks higher', 1: 'the less worthless ranks higher' };
-const W_QUAL = Object.fromEntries(LEVELS.map(l => [l, W_RULE[l].split(' ')[2]]));
-const W_MORE = l => / more /.test(' ' + W_RULE[l]);
-const wordRule = l => W_RULE[l] ? W_RULE[l][0].toUpperCase() + W_RULE[l].slice(1) : '';
-// what each word means, in your words
-const W_DESC = { 10: 'Supreme artistic or intellectual achievement, displaying extraordinary skill, depth, and/or critical acclaim.',
-  9: 'Great surprise, wonder, astonishment, or perplexity.', 8: 'Exceptional, superior, or well above average.',
-  7: 'Meeting expectations, proper, or of positive quality.',
-  6: 'Acceptable, adequate, or sufficient to pass. It does the job well enough without causing problems.',
-  5: 'Moderate or low quality, value, or ability: neither very good nor terrible, often disappointing or unremarkable.',
-  4: 'Not good: of poor quality or undesirable.', 3: 'Extremely bad, shocking, or unpleasant.',
-  2: 'Causes physical or emotional hurt or distress.', 1: 'Too painful, harsh, extreme, or unpleasant to accept, handle, or endure.' };
+// the ladder: what each pass did to you
+const W_LINE = { 10: 'It inspires', 9: 'It wows', 8: 'It stands out', 7: 'It impresses', 6: 'It satisfies', 5: 'It dulls', 4: 'It displeases', 3: 'It repulses', 2: 'It pains', 1: 'It tortures' };
+// what each pass means, so each is distinguishable from its neighbours
+const W_DESC = { 10: 'It fills you with awe and stirs something beyond the film itself. You come away moved to think, feel, or create.',
+  9: 'It strikes you with surprise and admiration. It delivers more than you thought it could.',
+  8: 'It rises clearly above the films around it. It’s distinct and memorable for its excellence.',
+  7: 'It makes a strong, vivid, or positive impression.',
+  6: 'It meets your expectations and does the job well enough. Nothing more is owed.',
+  5: 'It drains your interest. It’s neither good nor bad, and leaves little behind.',
+  4: 'It falls short in ways you disapprove of. It leaves you unhappy with it.',
+  3: 'It provokes strong aversion. It pushes you away.',
+  2: 'It hurts to sit through. It causes real distress or discomfort.',
+  1: 'It’s relentless suffering, too much to endure.' };
+// the ordinal: one question at every price, about what the film offers its sub-genre
+const ORD_Q = 'which offers more to its sub-genre?';
+const ORD_RULE = 'The more it offers its sub-genre, the higher it ranks';
+const wordRule = l => Y_NAMES[l] ? ORD_RULE : '';
 const HEART = '❤️';
 const heartHTML = f => f && f.heart ? ' <span class="hrt" title="Worth revisiting">❤️</span>' : '';
 const X_TAG = { 5: 'Vulnerability to meaningful qualification', 4: 'Nature and consequences of compromise', 3: 'Failure that defeats demonstrated capacity', 2: 'Nature of fundamental incapacity', 1: 'Nature and extent of underlying discredit' };
@@ -2193,7 +2196,7 @@ const SHOW_Q = {
        3: 'Which film’s weakening more consequentially invalidates the achievement it demonstrated itself capable of realizing?',
        2: 'Which film exhibits the more consequential fundamental incapacity to realize its intended achievement?',
        1: 'Which film’s underlying proposal is more fundamentally discredited by its defects?' },
-  Y: Object.fromEntries(LEVELS.map(l => [l, `Both ${Y_NAMES[l]}: ${W_RULE[l]}`])),
+  Y: Object.fromEntries(LEVELS.map(l => [l, `Both ${Y_NAMES[l]}: ${ORD_Q}`])),
 };
 const ck = f => String(f.Y);
 const STAR = (rank, n) => n <= 1 ? 5 : (Math.round(9 * (n - rank) / (n - 1)) + 1) / 2;
@@ -2485,7 +2488,7 @@ function placementRun(P) {
 }
 const placementDone = P => P.done.Y != null;
 // the call to action, in the argument card's words: the claim word or the case verb for that level, read against each film's own sub-genre
-function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `Both ${Y_NAMES[l]}, ${W_RULE[l]}: ${esc(W.title)} ranks above ${esc(L.title)}.`; }
+function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `Both ${Y_NAMES[l]}: ${esc(W.title)} offers more to its sub-genre than ${esc(L.title)}.`; }
 const ctaQuestion = (ax, l) => esc(SHOW_Q.Y[l]);
 // pick: the film whose call-to-action statement you agree with; it ranks higher in the lineup
 // every answer can be taken back until the placement is saved
@@ -2934,7 +2937,7 @@ function openProfile(id, show) {
         return `<div class="pinf"><span class="pinf-k">Influence ◆ ${infOf(f)}</span><span>Placement ${ip.place}</span><span>Word standing ${ip.Y}</span>
           ${ry ? `<div class="pinf-r">${Y_NAMES[f.Y]} lineup: above ${ry.below}${ry.below ? ` (${ry.faced} beaten head-to-head, ${ry.implied} by placement)` : ''}</div>` : ''}</div>`; })() : ''}
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
-      <div class="pscore"><div class="lab">Its pass <b>${Y_NAMES[f.Y]}</b></div><p class="pmean">${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>${esc(wordRule(f.Y))}</span><span>Lineup <b>${laneText(f)}</b></span></div>
+      <div class="pscore"><div class="lab">Its pass <b>${Y_NAMES[f.Y]}</b></div><p class="pmean"><b>${W_LINE[f.Y] || ''}.</b> ${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>Ranked by what it offers its sub-genre</span><span>Lineup <b>${laneText(f)}</b></span></div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
@@ -3053,7 +3056,7 @@ function wordRender() {
     <div class="pbd-film">${posterHTML(v, 40)}<span><b>${esc(r.title)}</b>${r.year ? ' · ' + esc(r.year) : ''}${genreOf(r) ? '<br>' + esc(genreOf(r)) : ''}</span></div>
     <p class="pbd-ask">Think of the whole shape you have of the film, and pay for the pass that fits it best.</p>
     <div class="pbd-list">${LEVELS.map(l => `<button class="pbd-row ${wp.w === l ? 'on' : ''}" data-wpw="${l}" aria-pressed="${wp.w === l}">
-      <span class="pbd-line"><b>${Y_NAMES[l]}</b><i></i><span class="pbd-price">${l}</span></span><small>${esc(W_DESC[l])}</small></button>`).join('')}</div>
+      <span class="pbd-line"><b>${Y_NAMES[l]}</b><i></i><span class="pbd-price">${l}</span></span><em class="pbd-lad">${W_LINE[l]}.</em><small>${esc(W_DESC[l])}</small></button>`).join('')}</div>
     <button class="wp-heart ${wp.heart ? 'on' : ''}" data-wph aria-pressed="${wp.heart}"><span class="wp-hi">${wp.heart ? '❤️' : '♡'}</span><span><b>Worth revisiting</b><small>The film as I saw it is worth revisiting. It doesn’t affect ranking.</small></span></button>
     <div class="pbd-foot"><button class="later" data-wpx>${wp.mode === 'edit' ? 'Cancel' : 'Later · it waits in the lobby'}</button>
       <button class="bf-go" data-wpgo ${wp.w == null ? 'disabled' : ''}>${same ? 'Save' : wp.mode === 'edit' ? 'Pay · rerun its showdown' : wp.w == null ? 'Pick a pass' : `Pay for ${Y_NAMES[wp.w]} · to the auditorium`}</button></div>`;
@@ -3356,7 +3359,7 @@ function renderCheck() {
           <div><b>${Y_NAMES[f.Y]}</b><span>The showdown</span><em>${ny ? `vs ${ny} other ${Y_NAMES[f.Y]} film${ny === 1 ? '' : 's'}` : `the first ${Y_NAMES[f.Y]}`}</em></div><i>=</i>
           <div class="vd-w"><b>The reel</b><span>Masterpiece down to Unbearable</span><em>its spot in its word</em></div>
         </div>
-        <p class="vd-note">One showdown: every ${Y_NAMES[f.Y]} film on the reel. ${esc(SHOW_Q.Y[f.Y])} ${esc(wordRule(f.Y))}.</p>
+        <p class="vd-note">One showdown: every ${Y_NAMES[f.Y]} film on the reel. ${esc(SHOW_Q.Y[f.Y])}</p>
       </section>
       <footer class="bs-foot">
         <div class="bs-bd"><div class="ck-err" id="ckErr"></div></div>
@@ -3467,7 +3470,7 @@ function rescreenFilm(id) {
 function openReviewSheet(id) {
   const f = byId(id); if (!f) return;
   $('#rvsIn').innerHTML = `<div class="rvs-head">${posterHTML(f, 44)}<div><div class="lab">Its pass</div><div class="ti">${esc(f.title)}</div><div class="me">${esc(Y_NAMES[f.Y])}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div></div>
-    <p class="rvs-text">${esc(wordRule(f.Y))}.</p><button class="rvs-x" data-rvsx>Back to the show</button>`;
+    <p class="rvs-text"><b>${W_LINE[f.Y]}.</b> ${esc(W_DESC[f.Y] || '')}</p><button class="rvs-x" data-rvsx>Back to the show</button>`;
   setFocus(showFocus());
   $('#rvSheet').classList.add('show');
 }
@@ -4469,7 +4472,7 @@ function renderPlaybill() {
     <p class="pb-note">Yes, and the film goes to the price board. No, and it is held at the Security Checkpoint: seen for Letterboxd, but not rated. Rewatch it and send it back through.</p>`;
   if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Price Board<small>Each word is a ticket price: a pass into the movie</small></div>
     <p class="pb-note" style="margin:0 0 10px">You don’t see the showdown question here. Think of the whole shape you have of the film and pay for the pass that fits it best. An 8 can still have letdown moments; what matters is the pass that fits the entire shape. For a 3, the whole shape has to be dominated by that price.</p>
-    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(W_DESC[l])}</p></div>`).join('')}
+    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}<em>${W_LINE[l]}</em></div><p>${esc(W_DESC[l])}</p></div>`).join('')}
     <div class="pb-it"><span class="n">❤️</span><div class="t">Worth revisiting</div><p>The film as I saw it is worth revisiting. Not a good or bad thing, and it doesn’t affect ranking.</p></div>`;
   if (pbTab === 'E') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
@@ -4481,13 +4484,13 @@ function renderPlaybill() {
   if (pbTab === 'Q') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Act II · The Reel<small>Masterpiece at the top, Unbearable at the bottom · one showdown places every film</small></div>
-      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that shares its word, and you answer by that word’s rule. Every Masterpiece sits above every Amazing, every Amazing above every Great, and so on down; the showdowns decide the order inside each word.</p>
+      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that paid the same price. Every Masterpiece sits above every Amazing, every Amazing above every Great, and so on down; the showdowns decide the order inside each price.</p>
       <div class="pb-axis"><span>The showdown</span></div>
-      ${it('?', 'The question', 'only here', 'The question shows up only in the showdown, when two films paid the same price, like “Both Great: the more impressive ranks higher.” Tap the film that ranks higher.')}
-      ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(wordRule(l))}</p></div>`).join('')}
+      ${it('?', 'The question', 'every price', 'The pass already says what the film did to you. The showdown asks something else: what it offers its sub-genre. The question is the same at every price, like “Both Great: which offers more to its sub-genre?” Each card shows its film’s sub-genre. Tap the film that offers more.')}
+      ${it('↕', 'Down to Unbearable', 'still offers more', 'The film that offers more ranks higher at every price. Two Painful films hurt about the same by definition; the one that still gives its sub-genre something ranks above the one that gives it nothing.')}
       ${it('▶', 'Battles', 'your answers', 'Each showdown is a binary search: the film meets the middle of its word’s lineup, then the middle of the half you send it to, until it lands. Every answer is filed in that film’s can in the Film Vault.')}
       ${it('✎', 'A consideration for every answer', 'optional', 'Each question has a line for your decisive consideration. It’s filed with that matchup, shown when the battle plays back, and editable in the Film Vault.')}
-      ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left. The word’s question heads the screen, and the Double Bill sets the two films side by side, fight-card style: on the reel, peak, record and form, influence, lineup spot. ◀ marks the edge in each row.')}
+      ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left. The showdown question heads the screen, and the Double Bill sets the two films side by side, fight-card style: on the reel, peak, record and form, influence, lineup spot. ◀ marks the edge in each row.')}
       ${it('↶', 'Undo', 'misclicks', 'Take back your last answer, even the one that finished the show; the placement is unsaved and the question comes back.')}
       <div class="pb-axis"><span>The championship</span></div>
       ${it('★', 'Stars', 'from placement', 'Stars come from where a film sits on the whole reel: #1 earns 5.0, the last film 0.5, the rest spread evenly between.')}
