@@ -795,7 +795,7 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .bell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;border-radius:3px;background:linear-gradient(#3a2a1a,#140c06)}
 .bell i{position:absolute;left:50%;top:-1px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#e8be6a}
 .counter .note{flex:none;font:700 9px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#f3d58f;opacity:.75;max-width:70px;line-height:1.3}
-.lf-room{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 20px;margin-top:30px}
+.lf-room{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px;margin-top:30px}
 .lf-room.solo{grid-template-columns:minmax(0,1fr)}
 .fx{position:relative;min-width:0;display:flex;flex-direction:column}
 .plate{display:flex;align-items:center;gap:9px;margin:0 auto 10px;padding:6px 12px 6px 8px;border-radius:4px;background:linear-gradient(#f6dc9a,#c99a4a 55%,#9c7334);color:#2a0a10;box-shadow:0 3px 0 #5a3a10,0 6px 12px rgba(0,0,0,.5);max-width:100%}
@@ -968,8 +968,23 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 /* ===================== SUB-GENRE · ORDINAL BRIEF · ARGUMENT CARD ===================== */
 .genre2{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
 .genre2 i{font:400 22px var(--deco);color:#a8834a;padding-bottom:20px}
-#brief{position:fixed;inset:0;z-index:47;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.85);backdrop-filter:blur(3px)}
-#brief.show{display:grid}
+#brief,#wp{position:fixed;inset:0;z-index:47;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.85);backdrop-filter:blur(3px)}
+#brief.show,#wp.show{display:grid}
+.wp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.wp-w{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(90,15,34,.25);background:rgba(255,255,255,.4);color:#2a160e;text-align:left;cursor:pointer}
+.wp-w .wp-n{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--wc);color:#24160a;font:400 17px var(--deco);box-shadow:inset 0 0 0 2px rgba(0,0,0,.15)}
+.wp-w b{display:block;font:800 16px var(--serif);color:#5a0f22}
+.wp-w small{display:block;font:italic 500 14px/1.3 var(--body);color:#6b5236}
+.wp-w:hover{border-color:#a8834a}
+.wp-w.on{border-color:#c4202f;background:rgba(196,32,47,.1);box-shadow:0 0 0 2px rgba(196,32,47,.25)}
+.wp-heart{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;width:100%;margin-top:12px;padding:10px 12px;border-radius:8px;border:1.5px dashed rgba(90,15,34,.35);background:transparent;color:#2a160e;text-align:left;cursor:pointer}
+.wp-heart .wp-hi{display:grid;place-items:center;font-size:24px;color:#c4202f}
+.wp-heart b{display:block;font:800 15px var(--serif);color:#5a0f22}
+.wp-heart small{display:block;font:italic 500 14px/1.3 var(--body);color:#6b5236}
+.wp-heart.on{border-style:solid;border-color:#c4202f;background:rgba(196,32,47,.08)}
+.bf-go:disabled{opacity:.4;cursor:default}
+.hrt{font-size:.8em;vertical-align:1px}
+@media (max-width:560px){ .wp-grid{grid-template-columns:1fr} }
 .bfc{position:relative;width:min(720px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:24px 26px 22px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
 .bfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
 .bfc h2{margin:2px 0 0;text-align:center;font:400 30px/1.05 var(--deco);letter-spacing:.1em;color:#5a0f22}
@@ -1971,7 +1986,6 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   <button class="mono" data-go="marquee" title="Back to the marquee"><img class="logo-dot" data-logo="s" alt="">CmanCinema</button>
   <button data-go="lobby">Lobby</button>
   <button data-go="boxoffice">Box Office</button>
-  <button data-go="booth">Projection Booth</button>
   <button data-go="auditorium">Auditorium</button>
   <button data-go="vault">Film Vault</button>
   <button data-go="lostfound">Lost &amp; Found</button>
@@ -2020,6 +2034,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 <section class="scene" id="vault"><div class="vt" id="vaultIn"></div></section>
 <section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
 <div id="brief" role="dialog" aria-modal="true" aria-label="The Ordinal Brief"><div class="bfc" id="bfIn"></div></div>
+<div id="wp" role="dialog" aria-modal="true" aria-label="Its word"><div class="bfc" id="wpIn"></div></div>
 <div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
 <div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
@@ -2069,7 +2084,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
       <div class="counter"><button class="print" id="printBtn">Print my ticket</button></div>
     </div>
     <div class="ticket-zone" id="ticketZone"></div>
-    <button class="take-seat" id="takeSeat">Tear the ticket · Up to the booth</button>
+    <button class="take-seat" id="takeSeat">Tear the ticket · Through the filter</button>
   </div>
 </section>
 
@@ -2169,14 +2184,20 @@ const uid = () => String(Date.now()) + Math.random().toString(36).slice(2, 8);
    ===================================================================== */
 const X_NAMES = { 5: 'Unscathed', 4: 'Qualified', 3: 'Invalidated', 2: 'Defective', 1: 'Uncreditable' };
 // THE SIX WORDS (2026-11-15): one word per film, from memory of its approach to its sub-genre. The word places it; showdowns order each word.
-const Y_NAMES = { 5: 'Amazing', 4: 'Great', 3: 'Good', 2: 'Fine', 1: 'Meh', 0: 'Bad' };
+const Y_NAMES = { 10: 'Amazing', 9: 'Awesome', 8: 'Great', 7: 'Cool', 6: 'Good', 5: 'Alright', 4: 'Meh', 3: 'Lame', 2: 'Bad', 1: 'Garbage' };
+const LEVELS = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 const WORDS = Y_NAMES;
-const W_QUAL = { 5: 'awe-inspiring', 4: 'impactful', 3: 'standout', 2: 'unsatisfactory', 1: 'dull', 0: 'painful' };
-const W_MORE = l => l >= 3;   // Amazing, Great, Good: the more ___ ranks higher · Fine, Meh, Bad: the less ___ ranks higher
-const wordRule = l => `The ${W_MORE(l) ? 'more' : 'less'} ${W_QUAL[l]} ranks higher`;
-const W_ASK = 'Based on your experience with it, which word does your memory share regarding its approach to the sub-genre?';
+// each word's showdown rule, exactly as written
+const W_RULE = { 10: 'the more astonishing ranks higher', 9: 'the more impressive ranks higher', 8: 'the more standout ranks higher', 7: 'the more desirable ranks higher',
+  6: 'the more satisfactory ranks higher', 5: 'the less unsatisfactory ranks higher', 4: 'the less dull ranks higher', 3: 'the less disappointing ranks higher',
+  2: 'the more bearable ranks higher', 1: 'the less worthless ranks higher' };
+const W_QUAL = Object.fromEntries(LEVELS.map(l => [l, W_RULE[l].split(' ')[2]]));
+const W_MORE = l => / more /.test(' ' + W_RULE[l]);
+const wordRule = l => W_RULE[l] ? W_RULE[l][0].toUpperCase() + W_RULE[l].slice(1) : '';
+const HEART = '❤️';
+const heartHTML = f => f && f.heart ? ' <span class="hrt" title="Worth revisiting">❤️</span>' : '';
 const X_TAG = { 5: 'Vulnerability to meaningful qualification', 4: 'Nature and consequences of compromise', 3: 'Failure that defeats demonstrated capacity', 2: 'Nature of fundamental incapacity', 1: 'Nature and extent of underlying discredit' };
-const Y_TAG = Object.fromEntries([0, 1, 2, 3, 4, 5].map(l => [l, wordRule(l)]));
+const Y_TAG = Object.fromEntries(LEVELS.map(l => [l, wordRule(l)]));
 const X_TESTS = [
   { to: 4, gain: 'Material compromise', q: 'Has the weakening materially changed the outcome away from the intended aim?' },
   { to: 3, gain: 'Invalidation despite demonstrated capability', q: 'Has the core aim failed altogether, even though the film showed it could achieve it?' },
@@ -2215,7 +2236,7 @@ const SHOW_Q = {
        3: 'Which film’s weakening more consequentially invalidates the achievement it demonstrated itself capable of realizing?',
        2: 'Which film exhibits the more consequential fundamental incapacity to realize its intended achievement?',
        1: 'Which film’s underlying proposal is more fundamentally discredited by its defects?' },
-  Y: Object.fromEntries([0, 1, 2, 3, 4, 5].map(l => [l, `Both ${Y_NAMES[l]}: whose approach to its sub-genre is ${W_MORE(l) ? 'more' : 'less'} ${W_QUAL[l]}?`])),
+  Y: Object.fromEntries(LEVELS.map(l => [l, `Both ${Y_NAMES[l]}: ${W_RULE[l]}`])),
 };
 const ck = f => String(f.Y);
 const STAR = (rank, n) => n <= 1 ? 5 : (Math.round(9 * (n - rank) / (n - 1)) + 1) / 2;
@@ -2283,19 +2304,28 @@ function normalize(d) {
     d.wheel = []; d.matches = []; d.wheelLog = []; d.ladders = { X: {}, Y: {} }; d.ties = {};
     if (d.workflow) d.workflow = null;
   }
-  d.v = 6;
+  if ((d.v || 0) < 7) {
+    // the ten words replace the six: the six-word reel is archived and every film waits for its new word
+    if (d.wheel.length || d.matches.length || d.wheelLog.length) d.archives.push({ at: Date.now(), why: 'The ten words replaced the six', wheel: d.wheel, matches: d.matches, wheelLog: d.wheelLog, ladders: d.ladders });
+    d.wheel = []; d.matches = []; d.wheelLog = []; d.ladders = { X: {}, Y: {} }; d.ties = {};
+    d.films.forEach(f => { f.w = null; });
+    d.workflow = null;
+    // Door 2 now only catches viewings that ended without your choosing
+    d.lostfound = (d.lostfound || []).map(f => f.cat === 'lost' || f.cat === 'tapout' ? { ...f, cat: 'fade' } : f);
+  }
+  d.v = 7;
   return d;
 }
 let db = normalize(null);
 let COLL = [], VAULT = [], UNEVALUATED = [], QUEUE = [], WSTAT = new Map();
 const raw = id => db.films.find(f => f.id === id);
-const evaluated = f => Number.isInteger(f.w) && f.w >= 0 && f.w <= 5;
+const evaluated = f => Number.isInteger(f.w) && f.w >= 1 && f.w <= 10;
 function styleFor(id) { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6; }
 const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
 const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
-  X: null, Y: f.w, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, pos: null });
+  X: null, Y: f.w, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, heart: !!f.heart, pos: null });
 const levelLine = f => Y_NAMES[f.Y];
-const wbadge = f => `<span class="cbadge vd wb w${f.Y}">${Y_NAMES[f.Y] || '—'}</span>`;
+const wbadge = f => `<span class="cbadge vd wb" style="background:${W_COL[f.Y] || '#4e3820'};color:${f.Y >= 7 ? '#24160a' : '#fff4d8'}">${Y_NAMES[f.Y] || '—'}</span>`;
 
 /* ---------- the reel's memory: records, entry, peak, reign — replayed from the log ---------- */
 function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0, form: [], hold: 0 }; }
@@ -2410,7 +2440,7 @@ const an = w => /^[aeiou]/i.test(w) ? 'an ' + w : 'a ' + w;
    the most lane points: each lineup is worth a fixed share of its lane (SPAN), so a film earns the lineups below it plus its share of its own, whatever their size;
    ties go to the more case points, then the more claim points, then who arrived first.
    ===================================================================== */
-const LV = { X: [], Y: [5, 4, 3, 2, 1, 0] };   // the claim lane is retired: only the word lineups remain
+const LV = { X: [], Y: LEVELS };   // the claim lane is retired: only the word lineups remain
 const AX_NAME = { X: 'claim', Y: 'word' };
 const lvOf = (f, ax) => ax === 'X' ? f.X : f.Y;
 function ladders() { db.ladders ||= { X: {}, Y: {} }; db.ladders.X ||= {}; db.ladders.Y ||= {}; return db.ladders; }
@@ -2429,8 +2459,8 @@ let LANES = {};
 // the higher the claim level, the less (most films sit at X5, and holding X5 is the norm)
 // what each lineup is worth on its lane, however many films it holds: the Y lineups earn far more, and more the higher
 // they sit; the X lineups earn less, and least at X5, where most films land
-const SPAN = { X: { 1: 3, 2: 2.5, 3: 2, 4: 1.5, 5: 1 }, Y: { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 } };
-const LANE_TOP = { X: 10, Y: 21 };
+const SPAN = { X: { 1: 3, 2: 2.5, 3: 2, 4: 1.5, 5: 1 }, Y: { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10 } };
+const LANE_TOP = { X: 10, Y: 55 };
 function orderWheel() {
   tidyLadders();
   const r = {};
@@ -2490,7 +2520,7 @@ function placementRun(P) {
 }
 const placementDone = P => P.done.Y != null;
 // the call to action, in the argument card's words: the claim word or the case verb for that level, read against each film's own sub-genre
-function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `${Y_NAMES[l]}: ${argueCase(W, L, ax)}`; }
+function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `Both ${Y_NAMES[l]}, ${W_RULE[l]}: ${esc(W.title)} ranks above ${esc(L.title)}.`; }
 const ctaQuestion = (ax, l) => esc(SHOW_Q.Y[l]);
 // pick: the film whose call-to-action statement you agree with; it ranks higher in the lineup
 // every answer can be taken back until the placement is saved
@@ -2797,7 +2827,7 @@ function syncActive() {
 }
 function beginWorkflow(filmId, mode) {
   const f = byId(filmId);
-  db.workflow = { film: filmId, mode, stage: mode === 'new' || mode === 'rewrite' || mode === 'word' ? 'booth' : 'check', from: f && f.pos != null ? f.pos : null, at: Date.now() };
+  db.workflow = { film: filmId, mode, stage: 'check', from: f && f.pos != null ? f.pos : null, at: Date.now() };
   syncActive();
   return persist();
 }
@@ -2824,14 +2854,14 @@ const canTicket = () => canEdit() && !active;
 function renderLobby() {
   const { ranked } = board(), N = ranked.length;
   const top = ranked.slice(0, 3);
-  const levels = [5, 4, 3, 2, 1, 0].filter(l => ranked.some(f => f.Y === l));
+  const levels = LEVELS.filter(l => ranked.some(f => f.Y === l));
   const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its review before starting another film.' : 'Start its show, or leave it in the queue, to free the auditorium.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
   $('#lobbyIn').innerHTML = `
     <div class="ns"><div class="k">The Lobby · CmanCinema</div><h2>Now Showing</h2><div class="dots"></div>
       <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'} on the reel, ranked review against review${QUEUE.length ? ` · ${QUEUE.length} waiting in the queue` : ''}.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
     ${banner}
     ${top.length ? `<div class="topbill">${top.map((f, i) => `<button class="frame" data-film="${f.id}"><div class="fr">${posterHTML(f)}</div>
-      <div class="plaque"><b>${i + 1}</b><span>${esc(f.title)}</span><i>${Y_NAMES[f.Y]} · ★ ${STAR(i + 1, N).toFixed(1)}</i></div></button>`).join('')}</div>` : ''}
+      <div class="plaque"><b>${i + 1}</b><span>${esc(f.title)}${heartHTML(f)}</span><i>${Y_NAMES[f.Y]} · ★ ${STAR(i + 1, N).toFixed(1)}</i></div></button>`).join('')}</div>` : ''}
     <div class="controls">
       <input class="placard" id="lSearch" placeholder="Search the collection…" value="${esc(lobbyQuery)}" autocomplete="off">
       <select class="placard" id="lLevel"><option value="">Every word</option>${levels.map(l => `<option value="${l}" ${String(l) === String(lobbyLevel) ? 'selected' : ''}>${Y_NAMES[l]} · ${ranked.filter(f => f.Y === l).length}</option>`).join('')}</select>
@@ -2842,7 +2872,7 @@ function renderLobby() {
     <div id="bill"></div>
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
       ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} reviews</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
-      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
+      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}${heartHTML(f)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting their word</h3><p>Each film gets one word for its approach to its sub-genre, then meets the others that share it.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}${genreOf(f) ? ' · ' + esc(genreOf(f)) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Give it a word</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
   renderBill();
@@ -2852,7 +2882,7 @@ function renderLobby() {
 function rowHTML(f, rank, stars) {
   const st = standing(f), mv = moveOf(st, rank);
   return `<div class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}" role="button" tabindex="0"><span class="rk">${rank}</span>${posterHTML(f)}
-    <span class="t">${esc(f.title)}${strikeBadge(f)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
+    <span class="t">${esc(f.title)}${heartHTML(f)}${strikeBadge(f)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
     <span class="gp">${infOf(f) != null ? `<em class="infb" title="Influence: the share of the reel’s strength below it">◆ ${infOf(f)}</em>` : ''}${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}${st.form.length ? formHTML(st.form) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
 }
 document.addEventListener('click', e => {
@@ -2895,7 +2925,7 @@ $('#lobby').addEventListener('click', e => {
   const p = e.target.closest('[data-lp]');
   if (p) { if (p.disabled) return; lobbyPage = +p.dataset.lp; renderBill(); return $('#bill').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   const ev = e.target.closest('[data-evaluate]');
-  if (ev) { if (!canEdit() || active) return; beginWorkflow(ev.dataset.evaluate, raw(ev.dataset.evaluate) && raw(ev.dataset.evaluate).watched ? 'word' : 'new'); startBooth(); return goTo('booth'); }
+  if (ev) { if (!canEdit() || active) return; return wordOpen(ev.dataset.evaluate, 'new'); }
   const qd = e.target.closest('[data-queue]'); if (qd) return sendToWheel(qd.dataset.queue);
   if (e.target.closest('[data-spinall]')) return spinAll();
   const tk = e.target.closest('[data-ticket]'); if (tk) return openProfile(tk.dataset.ticket, 'ticket');
@@ -2917,7 +2947,7 @@ let confirming = null;
 function ticketChoice(f) {
   return `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Buy another ticket · ${esc(f.title)}</b>
     <div class="tk-opts">
-      <button class="tk-opt" data-tk="rewrite"><b>Change its word</b><span>Back to the booth, as if you rewatched it. A new word reruns its showdown in the auditorium.</span></button>
+      <button class="tk-opt" data-tk="rewrite"><b>Change its word or ❤️</b><span>A new word takes it off the reel and reruns its showdown in the auditorium. Changing only the heart leaves its place alone.</span></button>
     </div>
     <div class="btns"><button class="btn-line" data-no>Not now</button></div></div>`;
 }
@@ -2929,7 +2959,7 @@ function openProfile(id, show) {
   $('#prof').innerHTML = `<button class="x" aria-label="Close">✕</button>
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
       <div class="k">Film profile · ${st.overall ? `#${st.overall} of ${st.of} on the reel` : 'Waiting in the queue'}</div>
-      <h3>${esc(f.title)}</h3>
+      <h3>${esc(f.title)}${heartHTML(f)}</h3>
       <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · ${wbadge(f)}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
       <div class="pstats">
         <div><b>${st.overall ? '#' + st.overall : '—'}</b><span>On the reel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
@@ -2970,7 +3000,7 @@ $('#sheet').addEventListener('click', e => {
   const tk = e.target.closest('[data-tk]');
   if (tk) {
     if (!canEdit() || active) return;
-    beginWorkflow(id, 'rewrite'); closeSheet(); startBooth(); goTo('booth');
+    closeSheet(); wordOpen(id, 'edit');
     return;
   }
   if (e.target.closest('[data-remove]')) {
@@ -3040,13 +3070,48 @@ function admitPending() {
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
   db.films.push(pending);
   const id = pending.id; pending = null;
-  rebuild();
-  beginWorkflow(id, 'new');
-  setTimeout(() => {
-    startBooth(); goTo('booth');
-    clearTicket();
-  }, reduceMotion ? 0 : 650);
+  rebuild(); persist();
+  setTimeout(() => { clearTicket(); wordOpen(id, 'new'); }, reduceMotion ? 0 : 650);
 }
+
+/* ---------- the word: picked once the film passes the filter, then straight to the showdowns ---------- */
+let wp = null;
+function wordOpen(id, mode) {
+  const r = raw(id); if (!r || !canEdit()) return;
+  wp = { id, mode, w: evaluated(r) ? r.w : null, w0: evaluated(r) ? r.w : null, heart: !!r.heart };
+  wordRender(); $('#wp').classList.add('show');
+}
+function wordClose() { wp = null; $('#wp').classList.remove('show'); }
+function wordRender() {
+  const r = raw(wp.id); if (!r) return wordClose();
+  const v = { ...r, year: String(r.year || ''), style: styleFor(r.id) }, same = wp.mode === 'edit' && wp.w === wp.w0;
+  $('#wpIn').innerHTML = `<div class="k">${wp.mode === 'edit' ? 'Buy another ticket' : 'Through the filter'}</div>
+    <h2>Its word</h2>
+    <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}${genreOf(r) ? ' · ' + esc(genreOf(r)) : ''}</span></div>
+    <div class="wp-grid">${LEVELS.map(l => `<button class="wp-w ${wp.w === l ? 'on' : ''}" data-wpw="${l}" style="--wc:${W_COL[l]}" aria-pressed="${wp.w === l}"><span class="wp-n">${l}</span><span><b>${Y_NAMES[l]}</b><small>${esc(W_RULE[l])}</small></span></button>`).join('')}</div>
+    <button class="wp-heart ${wp.heart ? 'on' : ''}" data-wph aria-pressed="${wp.heart}"><span class="wp-hi">${wp.heart ? '❤️' : '♡'}</span><span><b>Worth revisiting</b><small>The film as I saw it is worth revisiting. It doesn’t affect ranking.</small></span></button>
+    <div class="bf-foot"><button class="later" data-wpx>${wp.mode === 'edit' ? 'Cancel' : 'Later · it waits in the lobby'}</button>
+      <button class="bf-go" data-wpgo ${wp.w == null ? 'disabled' : ''}>${same ? 'Save' : wp.mode === 'edit' ? 'Rerun its showdown' : 'Down to the auditorium'}</button></div>`;
+}
+$('#wp').addEventListener('click', async e => {
+  if (!wp) return;
+  if (e.target.id === 'wp' || e.target.closest('[data-wpx]')) { const m = wp.mode; wordClose(); if (m !== 'edit') { renderScene(current); toast('It waits in the lobby for its word'); } return; }
+  const b = e.target.closest('[data-wpw]'); if (b) { wp.w = +b.dataset.wpw; return wordRender(); }
+  if (e.target.closest('[data-wph]')) { wp.heart = !wp.heart; return wordRender(); }
+  if (!e.target.closest('[data-wpgo]') || wp.w == null) return;
+  const o = wp, r = raw(o.id); wordClose();
+  if (!r || !canEdit()) return;
+  if (active) return alertBox('The auditorium is busy', `${workflowLabel()}. Finish it first.`);
+  r.heart = o.heart; r.watched = true;
+  if (o.mode === 'edit' && r.w === o.w) { rebuild(); renderScene(current); if (await persist()) toast(o.heart ? `${r.title} · worth revisiting ❤️` : `${r.title} saved`); return; }
+  if (db.wheel.includes(r.id)) { db.wheel = db.wheel.filter(x => x !== r.id); db.wheelLog.push({ id: 'wl:' + uid(), type: 'remove', film: r.id, at: Date.now() }); }
+  clearCalls(r.id);
+  r.w = o.w;
+  rebuild();
+  db.workflow = { film: r.id, mode: o.mode === 'edit' ? 'rewrite' : 'new', stage: 'check', from: null, at: Date.now() };
+  syncActive(); persist();
+  goTo('auditorium');
+});
 
 /* ---------- seats ---------- */
 (function seats() {
@@ -3324,7 +3389,7 @@ function renderCheck() {
       <section class="bs-sec vd-sum">
         <div class="vd-eq">
           <div><b>${Y_NAMES[f.Y]}</b><span>The showdown</span><em>${ny ? `vs ${ny} other ${Y_NAMES[f.Y]} film${ny === 1 ? '' : 's'}` : `the first ${Y_NAMES[f.Y]}`}</em></div><i>=</i>
-          <div class="vd-w"><b>The reel</b><span>Amazing down to Bad</span><em>its spot in its word</em></div>
+          <div class="vd-w"><b>The reel</b><span>Amazing down to Garbage</span><em>its spot in its word</em></div>
         </div>
         <p class="vd-note">One showdown: every ${Y_NAMES[f.Y]} film on the reel. ${esc(SHOW_Q.Y[f.Y])} ${esc(wordRule(f.Y))}.</p>
       </section>
@@ -3398,7 +3463,7 @@ function openSpot() {
 function renderSpot() {
   const S2 = SPOT, A = byId(S2.hi), B = byId(S2.lo), lineup = `${S2.ax}${S2.l} lineup`;
   let body;
-  if (S2.res == null) body = `<p class="sp-k">Spot-check · the ${lineup}</p><h3 class="sp-q">${esc(SHOW_Q[S2.ax][S2.l])}</h3><p class="sp-ctx">You’ve never been asked this pair. Pick the statement you’d make.</p>
+  if (S2.res == null) body = `<p class="sp-k">Spot-check · the ${lineup}</p><h3 class="sp-q">${esc(SHOW_Q[S2.ax][S2.l])}</h3><p class="sp-ctx">You’ve never been asked this pair. Tap the film that ranks higher.</p>
     <div class="cq-btns cta sp-btns">${(S2.flip ? [[B, A], [A, B]] : [[A, B], [B, A]]).map(([P, Q]) => `<button data-spotpick="${esc(P.id)}"><span class="cta-t">${argueCase(P, Q, S2.ax)}</span><small>${esc(P.title)} · ${esc(P.genre || '')}</small></button>`).join('')}</div>
     <div class="cq-alt"><button class="linkish" data-spotx>Close</button></div>`;
   else if (S2.res) body = `<p class="sp-k">Spot-check · the ${lineup}</p><h3 class="sp-q">✓ It agrees with your reel</h3><p class="sp-ctx">${esc(A.title)} already sits above ${esc(B.title)} in the ${lineup}.</p>
@@ -3469,7 +3534,7 @@ function duelCard(f, o) {
     <div class="os-hero">${art}
       <div class="os-seal"><div><b>${esc(Y_NAMES[f.Y] || '')}</b><small>Its word</small></div></div>
       ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
-      <div class="os-tt"><h3>${esc(f.title)}</h3>${f.genre ? `<p>${esc(f.genre)}</p>` : ''}</div></div>
+      <div class="os-tt"><h3>${esc(f.title)}${heartHTML(f)}</h3>${f.genre ? `<p>${esc(f.genre)}</p>` : ''}</div></div>
     ${o.call ? `<button class="os-tix" data-call="${esc(f.id)}"><span class="os-k"><span>Admit one · your call</span><span>${f.id === (SHOW && SHOW.film) ? '№ 1' : '№ 2'}</span></span><span class="cta-t">${o.call}</span><span class="os-f"><span>Make this call</span><span>Ranks higher ›</span></span></button>` : ''}
   </div>`;
 }
@@ -3591,7 +3656,7 @@ function renderAsk() {
   }
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA_SHOW[S.via] || ''}${esc(A.title)} · the ${Y_NAMES[l]} showdown · battle ${S.battles.length + 1} · your answer</div>
     <h2 class="db-q">${esc(SHOW_Q[ax][l])}</h2>
-    <p class="db-sd">${esc(wordRule(l))} · <b>Pick the card whose statement you’d make</b></p>
+    <p class="db-sd"><b>Tap the film that ranks higher</b></p>
     ${doubleBillHTML(A, B, { ax, level: l, oppRank: q.oppRank, of: pool.length, arriving: true, tagA: VIA_SHOW[S.via] ? VIA_SHOW[S.via].replace(' · ', '') : 'The new review', tagB: `${lineup} · #${q.oppRank}` })}`;
   drum.innerHTML = pool.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
@@ -3950,7 +4015,7 @@ function renderVaultGrid() {
     const by = new Map(); list.forEach(c => { const k = c.last ? new Date(c.last).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) : 'Undated'; if (!by.has(k)) by.set(k, []); by.get(k).push(c); });
     groups = [...by.entries()].map(([k, cs]) => ({ tag: k.toUpperCase(), cs }));
   } else if (vaultTab === 'lineup') {
-    groups = [5, 4, 3, 2, 1, 0].map(l => ({ tag: `${esc(Y_NAMES[l]).toUpperCase()}`, cs: list.filter(c => c.f.Y === l).sort((a, b) => ((LANES[a.f.id] || {}).Yl || 1e9) - ((LANES[b.f.id] || {}).Yl || 1e9)) })).filter(g => g.cs.length);
+    groups = LEVELS.map(l => ({ tag: `${esc(Y_NAMES[l]).toUpperCase()}`, cs: list.filter(c => c.f.Y === l).sort((a, b) => ((LANES[a.f.id] || {}).Yl || 1e9) - ((LANES[b.f.id] || {}).Yl || 1e9)) })).filter(g => g.cs.length);
   } else {
     list.sort((a, b) => (a.f.pos ?? 1e9) - (b.f.pos ?? 1e9) || a.f.title.localeCompare(b.f.title));
     groups = [{ tag: '', cs: list }];
@@ -4047,10 +4112,10 @@ function bumpHTML(H, ranked) {
   return `<svg class="gr-svg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Each film's standing on the reel after every show">${svg}</svg>`;
 }
 // each word's color: one gold ramp, Amazing brightest (the words are an order, so the color is too)
-const W_COL = { 5: '#f3d48a', 4: '#dcae4e', 3: '#bc8628', 2: '#93672a', 1: '#6e4e26', 0: '#4e3820' };
+const W_COL = { 10: '#fbe3a3', 9: '#f3d48a', 8: '#e6bf62', 7: '#d7a843', 6: '#bc8628', 5: '#9c7130', 4: '#80603a', 3: '#6a4c34', 2: '#56392c', 1: '#422a22' };
 // ---- the six words: films in each, and the showdowns asked there
 function wordsHTML(ms) {
-  const lv = [5, 4, 3, 2, 1, 0], ph = innerWidth < 600, W = ph ? 360 : 420, L = 78, rh = 40;
+  const lv = LEVELS, ph = innerWidth < 600, W = ph ? 360 : 420, L = 78, rh = 40;
   const n = l => ladderOf('Y', l).filter(id => byId(id)).length, asked = l => ms.filter(m => m.ax === 'Y' && m.level === l).length;
   const max = Math.max(1, ...lv.map(n)), sc = (W - L - (ph ? 40 : 110)) / max; let svg = '';
   lv.forEach((l, i) => {
@@ -4185,7 +4250,7 @@ function renderGame() {
     <div class="gr-grid">
       ${tiles}
       ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump))}
-      ${grCard(4, 'The six words', 'Films in each word, with the showdowns asked there.', wordsHTML(ms))}
+      ${grCard(4, 'The ten words', 'Films in each word, with the showdowns asked there.', wordsHTML(ms))}
       ${grCard(6, 'The championship', 'Every film that has held #1: how long, and how many new arrivals it held off while on top.', champsHTML())}
       ${grCard(6, 'How influence is earned', 'The top ten, split into its two parts (each already weighted).', influenceHTML(ranked))}
       ${grCard(7, `Who’s actually met · the ${grMet ? Y_NAMES[+grMet.slice(1)] : ''} lineup`, 'Each square is a pair, in lineup order. Filled: you answered it. Outlined: the order says so, but you were never asked.', `<div id="grMet">${m.body}</div>`, m.tabs)}
@@ -4273,12 +4338,8 @@ $('#brief').addEventListener('click', async e => {
    X: "I think [A]'s claim is less [case word] to viewing its [sub-genre] than [B]'s claim is to its [sub-genre]."
    Y: "I think [A]'s case [verb]s viewing its [sub-genre] more than [B]'s case [verb]s viewing its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
-function argueCase(A, B, ax) {
-  const miss = w => `<span class="miss">${w}</span>`;
-  const gn = f => f.genre ? esc(f.genre.toLowerCase()) : miss('no sub-genre');
-  const l = A.Y, word = `<b>${W_MORE(l) ? 'more' : 'less'} ${W_QUAL[l]}</b>`;
-  return `I think ${esc(poss(A.title))} approach to its ${gn(A)} is ${word} than ${esc(poss(B.title))} approach to its ${gn(B)}.`;
-}
+// the showdown has no statement any more: tapping a film says it ranks higher under its word's rule
+function argueCase(A) { return `<b>${esc(A.title)}</b> ranks higher`; }
 
 /* =====================================================================
    THE MEMORY FILTER · three doors before the booth
@@ -4288,17 +4349,15 @@ function argueCase(A, B, ax) {
 const LF = [
   { id: 'caught', door: 1, name: 'Caught It Along the Way', d: 'I retain a more specific spatial/momentary element.' },
   { id: 'met', door: 1, name: 'I Know We’ve Met', d: 'The memory does not place me anywhere in time spatially enough to be grounding.' },
-  { id: 'lost', door: 2, name: 'Lost Me Along the Way', d: 'I ended it on purpose after slipping away, including skimming or skipping ahead because it lost me.' },
-  { id: 'tapout', door: 2, name: 'I Had to Tap Out', d: 'I ended it on purpose, all at once, including skipping past something I couldn’t bear.' },
   { id: 'fade', door: 2, name: 'Fade to Black', d: 'It ended without my choosing, or I can’t say how it ended: I fell asleep (whatever the cause), got interrupted and never returned, or have no memory of the ending.' },
   { id: 'once', door: 3, name: 'Once Upon a Watch', d: 'My View doesn’t retain sufficient experiential shape to support faithful judgements.' },
 ];
-const lfCat = id => LF.find(c => c.id === id) || LF[4];
+const lfCat = id => LF.find(c => c.id === id) || LF.find(c => c.id === 'fade');
 const DOORS = {
   1: { name: 'The Gateway', q: 'Does the memory I share with the film confirm there was at least an official encounter — a deliberate, formal sit-down of some kind to watch it?',
        note: 'If you can neither confirm nor deny it, you must claim no as an assumption.', fail: 'Attempting to rate these would corrupt the integrity of the framework.' },
-  2: { name: 'The Finish', q: 'Did I see it all the way through, without skipping, sleeping, or bailing?',
-       note: 'Pausing and coming back with nothing missed counts as finished. If you can’t confirm it, the answer is no.', fail: 'Attempting to rate these could be possible, however the View is skewed. How did the viewing end?' },
+  2: { name: 'The Finish', q: 'Did the viewing end on my terms, either by finishing it or by choosing to stop?',
+       note: 'Choosing to stop because I couldn’t bear it passes this door; that is what Bad and Garbage are for. Falling asleep, getting interrupted and never returning, or not remembering how it ended does not. If you can’t confirm it, the answer is no.', fail: 'Attempting to rate these could be possible, however the View is skewed.' },
   3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what each axis asks for?',
        note: 'It does not require scene-by-scene reconstruction, exhaustive factual recall, precise recollection of every reaction, or the ability to reproduce the film’s narrative in detail. Forgettability is normal. What matters is to not allow uncertainty around a View to be able to manufacture judgements. The shape may be complex, mixed, shifting, or emotionally restrained. A remembered lack of emotion may itself constitute legitimate experiential information. An absence of emotional access caused by failure to remember, however, does not.',
        fail: '' },
@@ -4368,10 +4427,9 @@ async function promoteLF(id) {
   db.lostfound = db.lostfound.filter(f => f.id !== id);
   db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, watched: false, w: null, added: Date.now(),
                   lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
-  rebuild();
-  await beginWorkflow(e.id, 'new');
-  toast(`${e.title} passed the filter · up to the booth`);
-  startBooth(); goTo('booth');
+  rebuild(); persist();
+  toast(`${e.title} passed the filter`);
+  wordOpen(e.id, 'new');
 }
 
 /* =====================================================================
@@ -4506,31 +4564,32 @@ function pbHere() {
 }
 function renderPlaybill() {
   const here = pbHere();
-  const tabs = [['F', 'Prologue', 'Memory Filter'], ['W', 'Act I', 'The Six Words'], ['Q', 'Act II', 'The Reel'], ['E', 'Epilogue', 'After the Show']];
+  const tabs = [['F', 'Prologue', 'Memory Filter'], ['W', 'Act I', 'The Ten Words'], ['Q', 'Act II', 'The Reel'], ['E', 'Epilogue', 'After the Show']];
   if (!tabs.some(t => t[0] === pbTab)) pbTab = 'W';
   const lv = (ax, l, name, tag, body) => `<div class="pb-it ${here && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span>
     <div class="t">${name}${tag ? `<em>${tag}</em>` : ''}</div><p>${body}</p></div>`;
   let body = '';
-  if (pbTab === 'F') body = `<div class="pb-sec">Prologue · The Memory Filter<small>For rating eligibility · three doors before the booth</small></div>
+  if (pbTab === 'F') body = `<div class="pb-sec">Prologue · The Memory Filter<small>For rating eligibility · three doors before the word</small></div>
     ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
       <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
     <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
-  if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Six Words<small>One word per film · it places the film; showdowns order the films that share it</small></div>
-    <p class="pb-note" style="margin:0 0 10px">${esc(W_ASK)} If several fit, pick the one you most associate with it. The gaps between the words are wide on purpose, so a word is never in doubt; only the order inside a word is.</p>
-    ${[5, 4, 3, 2, 1, 0].map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l + 1}</span><div class="t">${Y_NAMES[l]}<em>${wordRule(l)}</em></div><p>${esc(SHOW_Q.Y[l])}</p></div>`).join('')}`;
+  if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Ten Words<small>One word per film, picked at the box office · showdowns order the films that share it</small></div>
+    <p class="pb-note" style="margin:0 0 10px">It grows out from the middle pair. Good is a step into the upper half, Alright a step into the lower half; neither is positive or negative yet. Bad and Garbage are films you couldn’t finish: Bad you couldn’t bear, Garbage drove you away.</p>
+    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(wordRule(l))}</p></div>`).join('')}
+    <div class="pb-it"><span class="n">❤️</span><div class="t">Worth revisiting</div><p>The film as I saw it is worth revisiting. Not a good or bad thing, and it doesn’t affect ranking.</p></div>`;
   if (pbTab === 'E') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a review once it’s on the reel</small></div>
       <p class="pb-note" style="margin:0 0 10px">Your showdowns settle each film. Afterward, you can change any film’s word, and it reruns.</p>
-      ${it('↻', 'A new word', 'edit freely', 'Buy another ticket and pick a different word. The film comes off the reel and meets its new word’s lineup in the auditorium.')}
+      ${it('↻', 'A new word', 'edit freely', 'Buy another ticket and pick a different word or change its ❤️. A new word takes the film off the reel and reruns its showdown in the auditorium; the heart alone changes nothing on the reel.')}
       ${it('✕', 'Dump the reel', 'the Office', 'Clears the reel, every lineup and every showdown. Only the word, sub-genre and year stay; every film goes back to the queue.')}`;
   }
   if (pbTab === 'Q') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
-    body = `<div class="pb-sec">Act II · The Reel<small>Amazing at the top, Bad at the bottom · one showdown places every film</small></div>
-      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that shares its word, and you answer that word’s question. Every Amazing film sits above every Great, every Great above every Good, and so on down; the showdowns decide the order inside each word.</p>
+    body = `<div class="pb-sec">Act II · The Reel<small>Amazing at the top, Garbage at the bottom · one showdown places every film</small></div>
+      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that shares its word, and you answer by that word’s rule. Every Amazing film sits above every Great, every Great above every Good, and so on down; the showdowns decide the order inside each word.</p>
       <div class="pb-axis"><span>The showdown</span></div>
-      ${it('1', 'The statement', 'tap the one you’d make', 'Each card carries its film’s statement: “I think Casablanca’s approach to its romantic drama is more awe-inspiring than His Girl Friday’s approach to its screwball comedy.” For Fine, Meh and Bad it asks for less: less unsatisfactory, less dull, less painful. The film whose statement you’d make ranks higher.')}
+      ${it('1', 'The rule', 'tap the film', 'The screen reads the word’s rule, like “Both Bad: the more bearable ranks higher.” Tap the film that ranks higher by that rule.')}
       ${it('▶', 'Battles', 'your answers', 'Each showdown is a binary search: the film meets the middle of its word’s lineup, then the middle of the half you send it to, until it lands. Every answer is filed in that film’s can in the Film Vault.')}
       ${it('✎', 'A consideration for every answer', 'optional', 'Each question has a line for your decisive consideration. It’s filed with that matchup, shown when the battle plays back, and editable in the Film Vault.')}
       ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left. The word’s question heads the screen, and the Double Bill sets the two films side by side, fight-card style: on the reel, peak, record and form, influence, lineup spot. ◀ marks the edge in each row.')}
@@ -4562,7 +4621,7 @@ $('#playbill').addEventListener('click', e => {
   const t = e.target.closest('[data-pbt]'); if (t) { pbTab = t.dataset.pbt; renderPlaybill(); $('#pbBody').scrollTop = 0; const h = $('#pbBody .here'); if (h) h.scrollIntoView({ block: 'center' }); return; }
   if (e.target.id === 'playbill' || e.target.closest('[data-pbx]')) closePlaybill();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlaybill(); if (mf) mfClose(); closeSlip(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePlaybill(); if (mf) mfClose(); closeSlip(); if (wp) wordClose(); } });
 
 /* =====================================================================
    THE MANAGER'S OFFICE · sign-in, backup, import, removal, clearing
@@ -4614,8 +4673,8 @@ function renderOffice() {
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
 
-      <div class="ledger wide"><span class="tabk">The rule book</span><h3>The six words</h3>
-        <p>Each word has a lineup in your showdown order: every Amazing film together, every Bad film together. The reel runs Amazing down to Bad, each word in its own order. To redo a film’s showdown, change its word or rerun it; to redo them all, dump the reel.</p>
+      <div class="ledger wide"><span class="tabk">The rule book</span><h3>The ten words</h3>
+        <p>Each of the ten words has a lineup in your showdown order: every Amazing film together, every Garbage film together. The reel runs Amazing down to Garbage, each word in its own order. To redo a film’s showdown, change its word or rerun it; to redo them all, dump the reel.</p>
         ${officeMsg.weights ? `<div class="okline">${esc(officeMsg.weights)}</div>` : ''}</div>
 
       <div class="ledger danger"><span class="tabk">The house lights</span><h3>Dump the reel</h3>
