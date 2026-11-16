@@ -775,146 +775,51 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 }
 
 
-/* ---- LOST & FOUND · a back room, one fixture per rack ---- */
+/* ---- THE SECURITY CHECKPOINT · a conveyor belt of held films ---- */
 #lostfound{background:
-  radial-gradient(ellipse 70% 45% at 50% 0,rgba(255,214,150,.16),transparent 70%),
-  repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 64px),
-  repeating-linear-gradient(90deg,rgba(0,0,0,.10) 0 2px,transparent 2px 128px),
-  linear-gradient(#3a2a1c,#211611 60%,#160d09)}
-.lf-signbox{display:flex;justify-content:center;margin-top:4px}
-.enamel{position:relative;padding:14px 38px 12px;border-radius:12px;background:linear-gradient(#f4ead2,#e6d3a8);border:5px solid #5a0f22;box-shadow:0 0 0 2px #b8873c,0 16px 34px rgba(0,0,0,.6),inset 0 0 0 2px #b8873c;text-align:center;transform:rotate(-1deg)}
-.enamel::before,.enamel::after{content:"";position:absolute;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#eee,#888 60%,#444)}
-.enamel::before{left:12px}.enamel::after{right:12px}
-.enamel b{display:block;font:400 clamp(34px,6vw,58px)/1 var(--deco);letter-spacing:.12em;color:#5a0f22}
-.enamel small{display:block;margin-top:4px;font:700 10px var(--serif);letter-spacing:.32em;text-transform:uppercase;color:#7a4a2a}
+  radial-gradient(ellipse 70% 40% at 50% 0,rgba(255,214,150,.12),transparent 70%),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0 2px,transparent 2px 80px),
+  linear-gradient(#22191a,#141011 60%,#0c0909)}
+.cp-sign{display:flex;align-items:center;gap:16px;width:max-content;max-width:100%;margin:4px auto 0;padding:14px 26px;border-radius:8px;background:linear-gradient(#141414,#050505);border:3px solid #3a3a3a;box-shadow:0 0 0 2px #0a0a0a,0 16px 34px rgba(0,0,0,.6),inset 0 0 18px rgba(0,0,0,.8)}
+.cp-ico{display:grid;place-items:center;width:52px;height:52px;flex:none;border-radius:50%;background:#f3b13a;color:#1a1208;font-size:30px;line-height:1;box-shadow:0 0 18px rgba(243,177,58,.5)}
+.cp-sign b{display:block;font:400 clamp(26px,5vw,46px)/1 var(--deco);letter-spacing:.1em;color:#f3c45a;text-shadow:0 0 14px rgba(243,177,58,.5)}
+.cp-sign small{display:block;margin-top:5px;font:700 10px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:rgba(243,230,200,.7)}
 .lf-intro{max-width:640px;margin:16px auto 0;text-align:center;font:italic 500 18px/1.45 var(--body);color:rgba(243,230,200,.75)}
-.counter{position:relative;max-width:760px;margin:22px auto 0;padding:16px 18px 18px;border-radius:6px 6px 2px 2px;background:linear-gradient(#7a4a26,#5a3418 40%,#3e230f);box-shadow:0 -4px 0 #9a6a3a inset,0 14px 0 -6px #1a0d06,0 22px 30px rgba(0,0,0,.6);display:flex;align-items:center;gap:14px}
-.counter .placard{flex:1;margin:0}
-.bell{flex:none;position:relative;width:46px;height:34px}
-.bell::before{content:"";position:absolute;left:5px;right:5px;bottom:6px;height:24px;border-radius:24px 24px 4px 4px;background:radial-gradient(circle at 35% 30%,#fff6d0,#e8be6a 45%,#8a6026)}
-.bell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;border-radius:3px;background:linear-gradient(#3a2a1a,#140c06)}
-.bell i{position:absolute;left:50%;top:-1px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#e8be6a}
-.counter .note{flex:none;font:700 9px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#f3d58f;opacity:.75;max-width:70px;line-height:1.3}
-.lf-room{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px;margin-top:30px}
-.lf-room.solo{grid-template-columns:minmax(0,1fr)}
-.fx{position:relative;min-width:0;display:flex;flex-direction:column}
-.plate{display:flex;align-items:center;gap:9px;margin:0 auto 10px;padding:6px 12px 6px 8px;border-radius:4px;background:linear-gradient(#f6dc9a,#c99a4a 55%,#9c7334);color:#2a0a10;box-shadow:0 3px 0 #5a3a10,0 6px 12px rgba(0,0,0,.5);max-width:100%}
-.plate .no{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#5a0f22;color:var(--gold-hi);font:400 13px var(--deco)}
-.plate b{min-width:0;font:800 12px var(--serif);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.plate .ct{flex:none;font:400 15px var(--deco);color:#5a0f22;padding-left:8px;border-left:1px solid rgba(90,15,34,.35)}
-.fx-d{margin:10px 6px 0;text-align:center;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.6)}
-.fx-body{position:relative;height:250px;border-radius:6px;overflow:hidden}
-.fx-scroll{position:absolute;inset:0;display:flex;align-items:flex-start;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(232,190,106,.5) transparent}
-.fx-empty{position:absolute;left:0;right:0;bottom:16px;text-align:center;font:italic 600 15px var(--body);z-index:3}
-.it{position:relative;flex:none;padding:0;border:0;background:none;cursor:pointer;text-align:center;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
-.it:hover,.it:focus-visible{z-index:5}
-.it .t{display:block;font:700 11px/1.15 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* 1 · corkboard of snapshots */
-.fx-caught .fx-body{border:10px solid #6a4224;border-image:linear-gradient(#8a5a30,#5a3418) 1;background:radial-gradient(circle,rgba(0,0,0,.18) 1px,transparent 1.5px) 0 0/7px 7px,radial-gradient(circle,rgba(255,255,255,.12) 1px,transparent 1.5px) 3px 4px/9px 9px,linear-gradient(135deg,#c99a62,#b07f4a 50%,#c4925a);box-shadow:inset 0 0 20px rgba(0,0,0,.4),0 10px 22px rgba(0,0,0,.5)}
-.fx-caught .fx-scroll{padding:22px 16px;align-items:center;gap:16px}
-.it.pol{width:96px;padding:7px 7px 6px;background:#fbf8f0;box-shadow:0 6px 12px rgba(0,0,0,.4);transform:rotate(var(--r))}
-.it.pol .poster{width:82px!important;margin:0 auto}
-.it.pol .t{margin-top:5px;font:italic 600 13px var(--body);color:#2a1a10}
-.it.pol .pin{position:absolute;left:50%;top:-6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8a,#c4202f 55%,#6a0a14);box-shadow:0 3px 3px rgba(0,0,0,.45);z-index:2}
-.it.pol:hover{transform:rotate(0) scale(1.05)}
-.fx-caught .fx-empty{color:rgba(60,30,10,.7)}
-
-/* 2 · the unclaimed bin */
-.fx-met .fx-body{background:radial-gradient(ellipse 70% 30% at 50% 100%,rgba(0,0,0,.4),transparent)}
-.fx-met .fx-scroll{padding:44px 22px 0;gap:0}
-.it.fog{width:74px;margin-right:-14px;transform:rotate(var(--r)) translateY(var(--y));transition:transform .35s}
-.it.fog .poster{width:74px!important;box-shadow:0 4px 10px rgba(0,0,0,.5);filter:saturate(.6) brightness(.92);transition:filter .3s}
-.it.fog:hover{transform:rotate(0) translateY(-14px)}
-.it.fog:hover .poster{filter:none}
-/* a blank "HELLO my name is" tag: you know the face, not the name or the when */
-.hello{position:absolute;left:50%;top:14px;z-index:2;width:62px;margin-left:-31px;border-radius:4px;overflow:hidden;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.45);transform:rotate(calc(var(--r) * -1.6));transition:transform .35s}
-.hello b{display:block;padding:2px 0 0;background:#c4202f;color:#fff;font:900 9px/1 var(--serif);letter-spacing:.14em}
-.hello small{display:block;padding:1px 0 2px;background:#c4202f;color:#fff;font:600 5.5px/1 var(--serif);letter-spacing:.18em;text-transform:uppercase}
-.hello i{display:block;padding:2px 0 3px;font:italic 700 17px/1 var(--body);color:#2a3a8a}
-.it.fog:hover .hello{transform:rotate(0) translateY(-2px)}
-.bin{position:absolute;left:6px;right:6px;bottom:0;height:36%;z-index:4;pointer-events:none;border-radius:3px 3px 6px 6px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 3px,transparent 3px 6px),linear-gradient(#c9a06a,#a87c48 60%,#8a6236);box-shadow:inset 0 6px 0 rgba(255,255,255,.18),inset 0 -10px 18px rgba(0,0,0,.25),0 12px 20px rgba(0,0,0,.5);display:grid;place-items:center}
-.bin::before{content:"";position:absolute;left:38%;top:0;width:24%;height:100%;background:linear-gradient(rgba(220,200,150,.55),rgba(200,180,130,.45));border-left:1px solid rgba(0,0,0,.08);border-right:1px solid rgba(0,0,0,.08)}
-.bin span{position:relative;font:800 13px/1.2 var(--serif);letter-spacing:.28em;text-transform:uppercase;color:rgba(40,20,10,.72);text-align:center;transform:rotate(-2deg)}
-.bin span small{display:block;font-size:9px;letter-spacing:.3em}
-.fx-met .fx-empty{bottom:auto;top:40px;color:rgba(243,230,200,.5)}
-
-/* 3 · the coat-hook board: each tag drifts lower down the line */
-.fx-lost .fx-body{background:linear-gradient(#3a2414,#2a190e)}
-.fx-lost .fx-body::before{content:"";position:absolute;left:0;right:0;top:14px;height:30px;background:linear-gradient(#a0703e,#7a4f28 55%,#5a3418);box-shadow:0 6px 10px rgba(0,0,0,.45)}
-.fx-lost .fx-scroll{padding:30px 20px 0;gap:14px}
-.it.coat{width:88px;margin-top:var(--y);transform-origin:50% -24px;transform:rotate(var(--r));opacity:var(--o)}
-.it.coat::before{content:"";position:absolute;left:50%;top:-24px;width:2px;height:30px;margin-left:-1px;background:#c9a46a}
-.it.coat::after{content:"";position:absolute;left:50%;top:-33px;width:10px;height:14px;margin-left:-5px;border:3px solid #e8be6a;border-top:0;border-radius:0 0 8px 8px}
-.it.coat .card{display:block;padding:16px 6px 7px;background:linear-gradient(#f6ead0,#e3cc9a);border-radius:3px 3px 8px 8px;box-shadow:0 8px 14px rgba(0,0,0,.5);clip-path:polygon(24% 0,76% 0,100% 9%,100% 100%,0 100%,0 9%)}
-.it.coat .card::before{content:"";position:absolute;left:50%;top:5px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#140806}
-.it.coat .poster{width:58px!important;margin:0 auto 4px}
-.it.coat .t{color:var(--ink)}
-.it.coat:hover{transform:rotate(0);opacity:1}
-.hooks{position:absolute;left:0;right:0;top:20px;height:18px;z-index:1;background:radial-gradient(circle at 50% 50%,#f3d58f 3px,#9c7334 5px,transparent 6px) 30px 0/102px 18px repeat-x}
-.fx-lost .fx-empty{color:rgba(243,230,200,.5)}
-
-/* 4 · pegboard of torn ticket stubs */
-.fx-tapout .fx-body{background:radial-gradient(circle,#1a1a1a 2.4px,transparent 3px) 0 0/18px 18px,linear-gradient(#8a8578,#6e6a60);box-shadow:inset 0 0 0 6px #4a463e,inset 0 0 24px rgba(0,0,0,.45),0 10px 22px rgba(0,0,0,.5)}
-.fx-tapout .fx-scroll{padding:26px 18px;gap:14px}
-.it.stub{width:84px;padding:10px 7px 18px;background:linear-gradient(#f2e2c0,#e2c896);transform:rotate(var(--r));clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),92% 100%,82% calc(100% - 9px),70% 100%,58% calc(100% - 8px),47% 100%,36% calc(100% - 10px),24% 100%,13% calc(100% - 7px),0 100%);filter:drop-shadow(0 5px 6px rgba(0,0,0,.45))}
-.it.stub::before{content:"ADMIT ONE";display:block;margin-bottom:5px;padding:2px 0;border-top:1px dashed #9a2a2a;border-bottom:1px dashed #9a2a2a;font:800 7.5px var(--serif);letter-spacing:.2em;color:#9a2a2a}
-.it.stub::after{content:"";position:absolute;left:50%;top:-4px;width:26px;height:12px;margin-left:-13px;border-radius:2px;background:linear-gradient(#555,#222);box-shadow:0 2px 2px rgba(0,0,0,.4)}
-.it.stub .poster{width:62px!important;margin:0 auto 5px}
-.it.stub .t{color:#3a0c14}
-.it.stub:hover{transform:rotate(0) translateY(-3px)}
-.fx-tapout .fx-empty{color:rgba(20,20,20,.75)}
-
-/* 5 · the dark shelf: tapes fade into the night */
-.fx-fade .fx-body{background:radial-gradient(ellipse 55% 70% at 14% 0,rgba(255,214,140,.28),transparent 70%),linear-gradient(#141010,#050404)}
-.fx-fade .fx-body::after{content:"";position:absolute;left:0;right:0;bottom:30px;height:14px;background:linear-gradient(#5a3a22,#2a1a10);box-shadow:0 8px 14px rgba(0,0,0,.8)}
-.fx-fade .fx-body::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(90deg,transparent 30%,rgba(0,0,0,.75) 100%)}
-.fx-fade .fx-scroll{align-items:flex-end;padding:0 18px 44px;gap:10px}
-.lamp{position:absolute;left:10%;top:0;width:30px;height:16px;border-radius:0 0 16px 16px;background:linear-gradient(#5a4a3a,#2a2018);z-index:5}
-.lamp::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#ffe2a0;box-shadow:0 0 18px 6px rgba(255,200,110,.45);animation:lampDim 6s ease-in-out infinite}
-@keyframes lampDim{0%,100%{opacity:1}45%{opacity:.75}50%{opacity:.35}55%{opacity:.8}}
-.zz{position:absolute;right:16px;top:14px;z-index:5;font:italic 600 18px var(--body);color:rgba(200,210,255,.55);letter-spacing:.2em;animation:zz 3.5s ease-in-out infinite}
-@keyframes zz{50%{transform:translateY(-6px);opacity:.3}}
-.it.vhs{width:70px;filter:brightness(var(--b));transition:filter .4s}
-.it.vhs .poster{width:70px!important;box-shadow:0 6px 10px rgba(0,0,0,.7)}
-.it.vhs .t{margin-top:4px;color:#d8c8a8}
-.it.vhs:hover{filter:brightness(1)}
-.fx-fade .fx-empty{color:rgba(243,230,200,.4)}
-
-/* 6 · the old steamer trunk */
-.fx-once .fx-body{overflow:visible}
-.trunk-lid{position:absolute;left:4%;right:4%;top:0;height:30%;border-radius:14px 14px 0 0;background:linear-gradient(#5a3418,#3a200e);box-shadow:inset 0 0 0 4px #2a1508,inset 0 -8px 14px rgba(0,0,0,.5);transform:perspective(300px) rotateX(18deg);transform-origin:bottom}
-.trunk-lid::before{content:"";position:absolute;inset:8px 12px;border:2px solid rgba(232,190,106,.35);border-radius:8px 8px 0 0}
-.trunk-in{position:absolute;left:4%;right:4%;top:30%;bottom:0;border-radius:0 0 8px 8px;background:radial-gradient(ellipse at 50% 30%,#4a3020,#1e120a 80%);box-shadow:inset 0 0 0 6px #6a4222,inset 0 0 0 9px #2a1508,inset 0 10px 24px rgba(0,0,0,.7),0 14px 24px rgba(0,0,0,.6);overflow:hidden}
-.trunk-in::before,.trunk-in::after{content:"";position:absolute;bottom:0;width:22px;height:22px;background:linear-gradient(135deg,#f3d58f,#9c7334);z-index:4}
-.trunk-in::before{left:0;clip-path:polygon(0 0,100% 100%,0 100%)}
-.trunk-in::after{right:0;clip-path:polygon(100% 0,100% 100%,0 100%)}
-.fx-once .fx-scroll{padding:14px 18px 10px;align-items:center;gap:6px}
-.it.sepia{width:84px;padding:6px 6px 14px;background:#e9dcc0;transform:rotate(var(--r));box-shadow:0 5px 10px rgba(0,0,0,.55);filter:sepia(.85) contrast(.9) brightness(.92);transition:filter .4s,transform .35s}
-.it.sepia .poster{width:72px!important;margin:0 auto}
-.it.sepia .t{margin-top:4px;font:italic 600 12px var(--body);color:#4a3220}
-.it.sepia:hover{filter:none;transform:rotate(0) scale(1.05)}
-.cobweb{position:absolute;right:4%;top:30%;width:60px;height:60px;z-index:6;pointer-events:none;opacity:.55}
-.dust{position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle,rgba(255,240,210,.35) .8px,transparent 1.3px) 0 0/23px 19px,radial-gradient(circle,rgba(255,240,210,.25) .8px,transparent 1.3px) 9px 7px/31px 27px}
-.fx-once .fx-empty{bottom:30px;color:rgba(243,230,200,.45)}
-
-@media (max-width:1100px){ .lf-room{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.cp-search{max-width:520px;margin:20px auto 0}
+.cp-search .placard{width:100%;margin:0}
+.cp-belt{position:relative;margin:28px auto 0;max-width:1000px;padding:22px 18px 30px;border-radius:12px;background:linear-gradient(#3a3a3c,#2a2a2c);box-shadow:inset 0 0 0 4px #1a1a1c,0 18px 30px rgba(0,0,0,.5)}
+.cp-belt::before{content:"";position:absolute;left:18px;right:18px;top:12px;bottom:18px;border-radius:6px;background:repeating-linear-gradient(90deg,#1c1c1e 0 26px,#151517 26px 30px);box-shadow:inset 0 3px 8px rgba(0,0,0,.7)}
+.cp-belt::after{content:"";position:absolute;left:10px;right:10px;bottom:6px;height:10px;border-radius:5px;background:repeating-linear-gradient(90deg,#8a8a8e 0 14px,#55555a 14px 18px)}
+.cp-trays{position:relative;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
+.cp-tray{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 10px 12px;border:0;border-radius:10px;background:linear-gradient(#9a9ca2,#76787e);box-shadow:inset 0 0 0 3px #5e6066,inset 0 8px 14px rgba(0,0,0,.35),0 6px 10px rgba(0,0,0,.5);cursor:pointer;transition:transform .2s}
+.cp-tray:hover,.cp-tray:focus-visible{transform:translateY(-4px)}
+.cp-tray .poster{box-shadow:0 6px 12px rgba(0,0,0,.5)}
+.cp-tag{display:block;width:100%;padding:5px 6px;border-radius:3px;background:#f3c45a;color:#1a1208;text-align:center}
+.cp-tag b{display:block;font:800 12px/1.15 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp-tag small{display:block;font:700 10px var(--serif);letter-spacing:.12em;opacity:.75}
+.cp-belt.empty .cp-trays{min-height:110px;place-items:center;grid-template-columns:1fr}
+.cp-none{margin:0;font:italic 600 17px var(--body);color:rgba(243,230,200,.55)}
+.lf-empty{text-align:center;font:italic 500 19px var(--body);color:rgba(243,230,200,.7);padding:30px 0}
 @media (max-width:640px){
-  .lf-room{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px;margin:20px -6px 0}
-  .lf-room .fx-body{zoom:.6}
-  .lf-room.solo .fx-body{zoom:1}
-  .fx-d{display:none}
-  .lf-room.solo .fx-d{display:block}
-  .plate{gap:6px;padding:5px 8px 5px 5px;margin-bottom:8px;width:100%;justify-content:space-between}
-  .plate .no{width:18px;height:18px;font-size:11px}
-  .plate b{white-space:normal;font-size:9px;letter-spacing:.06em;line-height:1.2;text-align:center;flex:1}
-  .plate .ct{font-size:12px;padding-left:6px}
-  .lf-room.solo .plate{width:auto}
-  .counter{padding:12px;gap:10px}
-  .counter .note{display:none}
-  .enamel{padding:10px 26px 9px}
+  .cp-sign{padding:10px 16px;gap:10px}.cp-ico{width:38px;height:38px;font-size:22px}
+  .cp-belt{padding:16px 10px 24px;margin-top:20px}.cp-belt::before{left:10px;right:10px}
+  .cp-trays{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 }
-/* claim slip for a tag */
+/* the security check: one question, one arch */
+.sc-top{text-align:center}
+.sc-k{font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
+.sc-top h2{margin:2px 0 0;font:400 30px/1.05 var(--deco);letter-spacing:.1em;color:#5a0f22}
+.sc-gate{display:flex;align-items:center;justify-content:center;gap:16px;margin:14px 0 4px}
+.sc-arch{position:relative;padding:22px 16px 8px;border:6px solid #4a4a4e;border-bottom:0;border-radius:40px 40px 0 0;background:linear-gradient(rgba(0,0,0,.06),rgba(0,0,0,.02));overflow:hidden}
+.sc-light{position:absolute;left:50%;top:6px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#e8be6a;box-shadow:0 0 8px #e8be6a}
+.sc-gate:not(.held) .sc-light{background:#3ac46a;box-shadow:0 0 8px #3ac46a}
+.sc-gate.held .sc-light{background:#c4202f;box-shadow:0 0 10px #c4202f}
+.sc-beam{position:absolute;left:0;right:0;top:20px;height:2px;background:linear-gradient(90deg,transparent,#3ac46a,transparent);box-shadow:0 0 8px #3ac46a;animation:scBeam 2.4s ease-in-out infinite}
+.sc-gate.held .sc-beam{display:none}
+@keyframes scBeam{0%,100%{transform:translateY(0)}50%{transform:translateY(92px)}}
+.sc-film b{display:block;font:800 19px/1.2 var(--serif);color:#2a160e}
+.sc-film span{font:italic 600 16px var(--body);color:#6b5236}
+/* the hold slip */
 #lfSlip{position:fixed;inset:0;z-index:46;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.75);backdrop-filter:blur(2px)}
 #lfSlip.show{display:grid}
 .slip{position:relative;width:min(400px,100%);display:grid;grid-template-columns:96px 1fr;gap:14px;padding:22px 20px 18px 34px;background:linear-gradient(#f6ead0,#e3cc9a);color:var(--ink);border-radius:4px 14px 14px 4px;box-shadow:0 0 0 2px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .3s cubic-bezier(.2,1.3,.4,1)}
@@ -984,6 +889,32 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .wp-heart small{display:block;font:italic 500 14px/1.3 var(--body);color:#6b5236}
 .wp-heart.on{border-style:solid;border-color:#c4202f;background:rgba(196,32,47,.08)}
 .bf-go:disabled{opacity:.4;cursor:default}
+/* the price board: a lit box-office menu, words on the left, prices on the right */
+.pbd{position:relative;width:min(640px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:18px 22px 20px;border-radius:10px;background:linear-gradient(#1c0a0e,#0e0507);border:3px solid #b8873c;box-shadow:0 0 0 2px #3a0c16,0 0 0 6px #b8873c55,0 24px 60px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.6);color:#f3e6c8}
+.pbd-top{display:flex;align-items:center;justify-content:center;gap:14px;text-align:center}
+.pbd-bulb{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff8d8,#f3c45a 55%,#8a5a18);box-shadow:0 0 10px #f3c45a}
+.pbd-k{font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#e8be6a}
+.pbd h2{margin:2px 0 0;font:400 30px/1.05 var(--deco);letter-spacing:.12em;color:#fff1cc;text-shadow:0 0 14px rgba(243,196,90,.45)}
+.pbd-film{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;font:italic 500 16px/1.3 var(--body);color:rgba(243,230,200,.8)}
+.pbd-film b{font:700 17px var(--serif);font-style:normal;color:#fff1cc}
+.pbd-ask{margin:12px 0 0;text-align:center;font:italic 500 16px/1.4 var(--body);color:#e8be6a}
+.pbd-list{display:grid;gap:4px;margin-top:12px;padding:8px;border-radius:6px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px),#140608;box-shadow:inset 0 0 0 1px rgba(232,190,106,.25)}
+.pbd-row{display:block;width:100%;padding:8px 12px;border:1.5px solid transparent;border-radius:6px;background:none;color:inherit;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.pbd-row:hover{background:rgba(232,190,106,.07)}
+.pbd-row.on{border-color:#f3c45a;background:rgba(243,196,90,.14);box-shadow:0 0 16px rgba(243,196,90,.2)}
+.pbd-line{display:flex;align-items:baseline;gap:8px}
+.pbd-line b{font:400 19px var(--deco);letter-spacing:.1em;text-transform:uppercase;color:#fff1cc}
+.pbd-line i{flex:1;border-bottom:2px dotted rgba(232,190,106,.4);transform:translateY(-4px)}
+.pbd-price{font:400 22px var(--deco);color:#f3c45a;text-shadow:0 0 10px rgba(243,196,90,.5);min-width:28px;text-align:right}
+.pbd-row small{display:block;margin-top:1px;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.66)}
+.pbd-row.on small{color:rgba(243,230,200,.9)}
+.pbd .wp-heart{color:#f3e6c8;border-color:rgba(232,190,106,.4)}
+.pbd .wp-heart b{color:#fff1cc}.pbd .wp-heart small{color:rgba(243,230,200,.7)}
+.pbd .wp-heart.on{border-color:#e05060;background:rgba(224,80,96,.1)}
+.pbd-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pbd-foot .later{background:none;border:0;color:#e8be6a;font:700 11px var(--serif);letter-spacing:.2em;text-transform:uppercase;padding:8px 0;cursor:pointer}
+.pbd .bf-go{background:linear-gradient(#f3d58f,#c99a48);color:#2a0a10;border:0}
+@media (max-width:560px){ .pbd{padding:14px 12px 16px} .pbd-line b{font-size:16px} .pbd-price{font-size:19px} }
 .hrt{font-size:.8em;vertical-align:1px}
 .pmean{margin:-2px 0 8px;font:italic 500 16px/1.4 var(--body);color:rgba(243,230,200,.85)}
 @media (max-width:560px){ .wp-grid{grid-template-columns:1fr} }
@@ -2017,7 +1948,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   <button data-go="boxoffice">Box Office</button>
   <button data-go="auditorium">Auditorium</button>
   <button data-go="vault">Film Vault</button>
-  <button data-go="lostfound">Lost &amp; Found</button>
+  <button data-go="lostfound">Checkpoint</button>
   <button data-go="gameroom">Game Room</button>
   <button data-go="office">Office</button>
 </nav>
@@ -2063,9 +1994,9 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 <section class="scene" id="vault"><div class="vt" id="vaultIn"></div></section>
 <section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
 <div id="brief" role="dialog" aria-modal="true" aria-label="The Ordinal Brief"><div class="bfc" id="bfIn"></div></div>
-<div id="wp" role="dialog" aria-modal="true" aria-label="Its word"><div class="bfc" id="wpIn"></div></div>
-<div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
-<div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
+<div id="wp" role="dialog" aria-modal="true" aria-label="The Price Board"><div class="pbd" id="wpIn"></div></div>
+<div id="lfSlip" role="dialog" aria-modal="true" aria-label="Hold slip"></div>
+<div id="mf" role="dialog" aria-modal="true" aria-label="Security Check"><div class="mfc" id="mfIn"></div></div>
 
 <div id="rvSheet" role="dialog" aria-modal="true" aria-label="The critic’s review"><div class="rvs-in" id="rvsIn"></div></div>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Film profile"><div class="prof" id="prof"></div></div>
@@ -2113,7 +2044,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
       <div class="counter"><button class="print" id="printBtn">Print my ticket</button></div>
     </div>
     <div class="ticket-zone" id="ticketZone"></div>
-    <button class="take-seat" id="takeSeat">Tear the ticket · Through the filter</button>
+    <button class="take-seat" id="takeSeat">Tear the ticket · Through security</button>
   </div>
 </section>
 
@@ -2202,22 +2133,24 @@ const uid = () => String(Date.now()) + Math.random().toString(36).slice(2, 8);
    ===================================================================== */
 const X_NAMES = { 5: 'Unscathed', 4: 'Qualified', 3: 'Invalidated', 2: 'Defective', 1: 'Uncreditable' };
 // THE SIX WORDS (2026-11-15): one word per film, from memory of its approach to its sub-genre. The word places it; showdowns order each word.
-const Y_NAMES = { 10: 'Amazing', 9: 'Awesome', 8: 'Great', 7: 'Cool', 6: 'Good', 5: 'Alright', 4: 'Meh', 3: 'Lame', 2: 'Bad', 1: 'Garbage' };
+const Y_NAMES = { 10: 'Masterpiece', 9: 'Amazing', 8: 'Great', 7: 'Good', 6: 'Okay', 5: 'Mediocre', 4: 'Bad', 3: 'Awful', 2: 'Painful', 1: 'Unbearable' };
 const LEVELS = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 const WORDS = Y_NAMES;
 // each word's showdown rule, exactly as written
-const W_RULE = { 10: 'the more astonishing ranks higher', 9: 'the more impressive ranks higher', 8: 'the more standout ranks higher', 7: 'the more desirable ranks higher',
-  6: 'the more satisfactory ranks higher', 5: 'the less unsatisfactory ranks higher', 4: 'the less dull ranks higher', 3: 'the less disappointing ranks higher',
+const W_RULE = { 10: 'the more awe-inspiring ranks higher', 9: 'the more impactful ranks higher', 8: 'the more impressive ranks higher', 7: 'the more standout ranks higher',
+  6: 'the more satisfactory ranks higher', 5: 'the less dull ranks higher', 4: 'the less objectionable ranks higher', 3: 'the less detestable ranks higher',
   2: 'the more bearable ranks higher', 1: 'the less worthless ranks higher' };
 const W_QUAL = Object.fromEntries(LEVELS.map(l => [l, W_RULE[l].split(' ')[2]]));
 const W_MORE = l => / more /.test(' ' + W_RULE[l]);
 const wordRule = l => W_RULE[l] ? W_RULE[l][0].toUpperCase() + W_RULE[l].slice(1) : '';
 // what each word means, in your words
-const W_DESC = { 10: 'Wondrous, from an astonishing standpoint.', 9: 'Awe-inspiring, from an extremely impressive standpoint.', 8: 'Leaves an impact a 7 can’t.',
-  7: 'A legit good movie, not just a good watch.', 6: 'The first step up: it leans “that was good.”',
-  5: 'The first step down: it leans “it was fine, but I can’t call it good.”', 4: 'The dull zone.',
-  3: 'A bigger drop: genuinely disappointing, not casually.', 2: 'I couldn’t finish it. Measured by how bearable it was.',
-  1: 'Truly unbearable. I didn’t finish because it drove me away.' };
+const W_DESC = { 10: 'Supreme artistic or intellectual achievement, displaying extraordinary skill, depth, and/or critical acclaim.',
+  9: 'Great surprise, wonder, astonishment, or perplexity.', 8: 'Exceptional, superior, or well above average.',
+  7: 'Meeting expectations, proper, or of positive quality.',
+  6: 'Acceptable, adequate, or sufficient to pass. It does the job well enough without causing problems.',
+  5: 'Moderate or low quality, value, or ability: neither very good nor terrible, often disappointing or unremarkable.',
+  4: 'Not good: of poor quality or undesirable.', 3: 'Extremely bad, shocking, or unpleasant.',
+  2: 'Causes physical or emotional hurt or distress.', 1: 'Too painful, harsh, extreme, or unpleasant to accept, handle, or endure.' };
 const HEART = '❤️';
 const heartHTML = f => f && f.heart ? ' <span class="hrt" title="Worth revisiting">❤️</span>' : '';
 const X_TAG = { 5: 'Vulnerability to meaningful qualification', 4: 'Nature and consequences of compromise', 3: 'Failure that defeats demonstrated capacity', 2: 'Nature of fundamental incapacity', 1: 'Nature and extent of underlying discredit' };
@@ -2337,7 +2270,15 @@ function normalize(d) {
     // Door 2 now only catches viewings that ended without your choosing
     d.lostfound = (d.lostfound || []).map(f => f.cat === 'lost' || f.cat === 'tapout' ? { ...f, cat: 'fade' } : f);
   }
-  d.v = 7;
+  if ((d.v || 0) < 8) {
+    if (d.wheel.length || d.matches.length || d.wheelLog.length) d.archives.push({ at: Date.now(), why: 'The price board replaced the ten words', wheel: d.wheel, matches: d.matches, wheelLog: d.wheelLog, ladders: d.ladders });
+    d.wheel = []; d.matches = []; d.wheelLog = []; d.ladders = { X: {}, Y: {} }; d.ties = {};
+    d.films.forEach(f => { f.w = null; });
+    d.workflow = null;
+  }
+  // one security check, one checkpoint: every held film sits in the same place
+  d.lostfound = (d.lostfound || []).map(f => f.cat === 'held' ? f : { ...f, cat: 'held' });
+  d.v = 8;
   return d;
 }
 let db = normalize(null);
@@ -2349,7 +2290,7 @@ const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') 
 const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
   X: null, Y: f.w, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, heart: !!f.heart, pos: null });
 const levelLine = f => Y_NAMES[f.Y];
-const wbadge = f => `<span class="cbadge vd wb" style="background:${W_COL[f.Y] || '#4e3820'};color:${f.Y >= 7 ? '#24160a' : '#fff4d8'}">${Y_NAMES[f.Y] || '—'}</span>`;
+const wbadge = f => `<span class="cbadge vd wb" style="background:${W_COL[f.Y] || '#4e3820'};color:${f.Y >= 6 ? '#24160a' : '#fff4d8'}">${Y_NAMES[f.Y] || '—'}</span>`;
 
 /* ---------- the reel's memory: records, entry, peak, reign — replayed from the log ---------- */
 function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0, form: [], hold: 0 }; }
@@ -2419,7 +2360,7 @@ const pct = v => Math.min(99, Math.max(1, Math.round(v * 100)));
    the neighboring word (up from Good, down from Alright; Amazing looks down, Garbage up), and that one sits
    lower). Your answers are kept, so a pair is only asked once.
    ===================================================================== */
-const VERDICT = { 10: 'Amazing', 9: 'Awesome', 8: 'Great', 7: 'Cool', 6: 'Good', 5: 'Alright', 4: 'Meh', 3: 'Lame', 2: 'Bad', 1: 'Garbage' };
+const VERDICT = Y_NAMES;
 const score = f => +f.Y || 0;
 // the tie question points up from Good to Awesome and down from Alright to Bad;
 // at the ends there is nowhere further, so Amazing looks down and Garbage looks up
@@ -2896,8 +2837,8 @@ function renderLobby() {
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Worded and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
       ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} films</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
       ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}${heartHTML(f)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
-    ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting their word</h3><p>Each film gets one word for its approach to its sub-genre, then meets the others that share it.</p>
-      ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}${genreOf(f) ? ' · ' + esc(genreOf(f)) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Give it a word</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
+    ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting their pass</h3><p>Pay for the pass that fits each film’s whole shape, then it meets the others that paid the same price.</p>
+      ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}${genreOf(f) ? ' · ' + esc(genreOf(f)) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Pay for a pass</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
   renderBill();
   $('#lSearch').addEventListener('input', e => { lobbyQuery = e.target.value; lobbyPage = 1; if (lobbyView === 'lanes') { lobbyView = 'list'; renderLobby(); return; } renderBill(); });
   $('#lLevel').addEventListener('change', e => { lobbyLevel = e.target.value; lobbyPage = 1; renderBill(); });
@@ -2936,7 +2877,7 @@ function renderBill() {
   lobbyPage = Math.min(Math.max(1, lobbyPage), pages);
   const slice = rows.slice((lobbyPage - 1) * LOBBY_PAGE, lobbyPage * LOBBY_PAGE);
   let h = slice.map(({ f, rank }) => rowHTML(f, rank, STAR(rank, N))).join('');
-  if (!rows.length) h = cloud.ready ? `<p class="ns" style="font:italic 500 19px var(--body)">${N ? 'No films match.' : QUEUE.length ? 'The reel is empty. Send a film from the queue below to start it.' : UNEVALUATED.length ? 'The reel is empty. Give the films below their words to start it.' : 'The house is empty. Admit your first film at the box office.'}</p>` : '';
+  if (!rows.length) h = cloud.ready ? `<p class="ns" style="font:italic 500 19px var(--body)">${N ? 'No films match.' : QUEUE.length ? 'The reel is empty. Send a film from the queue below to start it.' : UNEVALUATED.length ? 'The reel is empty. Pay for a pass for the films below to start it.' : 'The house is empty. Admit your first film at the box office.'}</p>` : '';
   else h += pagerHTML(lobbyPage, pages, 'lp') + `<p class="pager-note">${slice[0].rank === slice.at(-1).rank ? '#' + slice[0].rank : `#${slice[0].rank}–${slice.at(-1).rank}`} of ${rows.length}${rows.length !== N ? ' matching' : ''}</p>`;
   $('#bill').innerHTML = h;
 }
@@ -2970,7 +2911,7 @@ let confirming = null;
 function ticketChoice(f) {
   return `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Buy another ticket · ${esc(f.title)}</b>
     <div class="tk-opts">
-      <button class="tk-opt" data-tk="rewrite"><b>Change its word or ❤️</b><span>A new word takes it off the reel and reruns its showdown in the auditorium. Changing only the heart leaves its place alone.</span></button>
+      <button class="tk-opt" data-tk="rewrite"><b>Change its pass or ❤️</b><span>A new pass takes it off the reel and reruns its showdown in the auditorium. Changing only the heart leaves its place alone.</span></button>
     </div>
     <div class="btns"><button class="btn-line" data-no>Not now</button></div></div>`;
 }
@@ -2993,7 +2934,7 @@ function openProfile(id, show) {
         return `<div class="pinf"><span class="pinf-k">Influence ◆ ${infOf(f)}</span><span>Placement ${ip.place}</span><span>Word standing ${ip.Y}</span>
           ${ry ? `<div class="pinf-r">${Y_NAMES[f.Y]} lineup: above ${ry.below}${ry.below ? ` (${ry.faced} beaten head-to-head, ${ry.implied} by placement)` : ''}</div>` : ''}</div>`; })() : ''}
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
-      <div class="pscore"><div class="lab">Its word <b>${Y_NAMES[f.Y]}</b></div><p class="pmean">${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>${esc(wordRule(f.Y))}</span><span>Lineup <b>${laneText(f)}</b></span></div>
+      <div class="pscore"><div class="lab">Its pass <b>${Y_NAMES[f.Y]}</b></div><p class="pmean">${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>${esc(wordRule(f.Y))}</span><span>Lineup <b>${laneText(f)}</b></span></div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
@@ -3073,7 +3014,7 @@ function printTicket() {
   const dupe = db.films.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (dupe) { $('#boErr').textContent = 'That film is already in the collection — open it from the lobby to re-evaluate.'; return; }
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
-  if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
+  if (lost) { $('#boErr').textContent = 'That film is held at the Security Checkpoint. If you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
   pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], watched: false, w: null, added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
@@ -3108,17 +3049,18 @@ function wordClose() { wp = null; $('#wp').classList.remove('show'); }
 function wordRender() {
   const r = raw(wp.id); if (!r) return wordClose();
   const v = { ...r, year: String(r.year || ''), style: styleFor(r.id) }, same = wp.mode === 'edit' && wp.w === wp.w0;
-  $('#wpIn').innerHTML = `<div class="k">${wp.mode === 'edit' ? 'Buy another ticket' : 'Through the filter'}</div>
-    <h2>Its word</h2>
-    <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}${genreOf(r) ? ' · ' + esc(genreOf(r)) : ''}</span></div>
-    <div class="wp-grid">${LEVELS.map(l => `<button class="wp-w ${wp.w === l ? 'on' : ''}" data-wpw="${l}" style="--wc:${W_COL[l]}" aria-pressed="${wp.w === l}"><span class="wp-n">${l}</span><span><b>${Y_NAMES[l]}</b><em>${esc(W_DESC[l])}</em><small>${esc(W_RULE[l])}</small></span></button>`).join('')}</div>
+  $('#wpIn').innerHTML = `<div class="pbd-top"><span class="pbd-bulb"></span><div><div class="pbd-k">${wp.mode === 'edit' ? 'Buy another ticket' : 'Cleared security'}</div><h2>The Price Board</h2></div><span class="pbd-bulb"></span></div>
+    <div class="pbd-film">${posterHTML(v, 40)}<span><b>${esc(r.title)}</b>${r.year ? ' · ' + esc(r.year) : ''}${genreOf(r) ? '<br>' + esc(genreOf(r)) : ''}</span></div>
+    <p class="pbd-ask">Think of the whole shape you have of the film, and pay for the pass that fits it best.</p>
+    <div class="pbd-list">${LEVELS.map(l => `<button class="pbd-row ${wp.w === l ? 'on' : ''}" data-wpw="${l}" aria-pressed="${wp.w === l}">
+      <span class="pbd-line"><b>${Y_NAMES[l]}</b><i></i><span class="pbd-price">${l}</span></span><small>${esc(W_DESC[l])}</small></button>`).join('')}</div>
     <button class="wp-heart ${wp.heart ? 'on' : ''}" data-wph aria-pressed="${wp.heart}"><span class="wp-hi">${wp.heart ? '❤️' : '♡'}</span><span><b>Worth revisiting</b><small>The film as I saw it is worth revisiting. It doesn’t affect ranking.</small></span></button>
-    <div class="bf-foot"><button class="later" data-wpx>${wp.mode === 'edit' ? 'Cancel' : 'Later · it waits in the lobby'}</button>
-      <button class="bf-go" data-wpgo ${wp.w == null ? 'disabled' : ''}>${same ? 'Save' : wp.mode === 'edit' ? 'Rerun its showdown' : 'Down to the auditorium'}</button></div>`;
+    <div class="pbd-foot"><button class="later" data-wpx>${wp.mode === 'edit' ? 'Cancel' : 'Later · it waits in the lobby'}</button>
+      <button class="bf-go" data-wpgo ${wp.w == null ? 'disabled' : ''}>${same ? 'Save' : wp.mode === 'edit' ? 'Pay · rerun its showdown' : wp.w == null ? 'Pick a pass' : `Pay for ${Y_NAMES[wp.w]} · to the auditorium`}</button></div>`;
 }
 $('#wp').addEventListener('click', async e => {
   if (!wp) return;
-  if (e.target.id === 'wp' || e.target.closest('[data-wpx]')) { const m = wp.mode; wordClose(); if (m !== 'edit') { renderScene(current); toast('It waits in the lobby for its word'); } return; }
+  if (e.target.id === 'wp' || e.target.closest('[data-wpx]')) { const m = wp.mode; wordClose(); if (m !== 'edit') { renderScene(current); toast('It waits in the lobby for its pass'); } return; }
   const b = e.target.closest('[data-wpw]'); if (b) { wp.w = +b.dataset.wpw; return wordRender(); }
   if (e.target.closest('[data-wph]')) { wp.heart = !wp.heart; return wordRender(); }
   if (!e.target.closest('[data-wpgo]') || wp.w == null) return;
@@ -3407,12 +3349,12 @@ function renderCheck() {
   $('#checkIn').innerHTML = `<div class="bs">
       <header class="bs-top">
         <div class="bs-film">${posterHTML(f, 58)}<div><span class="bs-k">Before the show</span><h3>${esc(f.title)}</h3><p>${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</p></div></div>
-        <div class="bs-dial"><b>${Y_NAMES[f.Y]}</b><span>Its word</span></div>
+        <div class="bs-dial"><b>${Y_NAMES[f.Y]}</b><span>Its pass</span></div>
       </header>
       <section class="bs-sec vd-sum">
         <div class="vd-eq">
           <div><b>${Y_NAMES[f.Y]}</b><span>The showdown</span><em>${ny ? `vs ${ny} other ${Y_NAMES[f.Y]} film${ny === 1 ? '' : 's'}` : `the first ${Y_NAMES[f.Y]}`}</em></div><i>=</i>
-          <div class="vd-w"><b>The reel</b><span>Amazing down to Garbage</span><em>its spot in its word</em></div>
+          <div class="vd-w"><b>The reel</b><span>Masterpiece down to Unbearable</span><em>its spot in its word</em></div>
         </div>
         <p class="vd-note">One showdown: every ${Y_NAMES[f.Y]} film on the reel. ${esc(SHOW_Q.Y[f.Y])} ${esc(wordRule(f.Y))}.</p>
       </section>
@@ -3524,7 +3466,7 @@ function rescreenFilm(id) {
 }
 function openReviewSheet(id) {
   const f = byId(id); if (!f) return;
-  $('#rvsIn').innerHTML = `<div class="rvs-head">${posterHTML(f, 44)}<div><div class="lab">Its word</div><div class="ti">${esc(f.title)}</div><div class="me">${esc(Y_NAMES[f.Y])}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div></div>
+  $('#rvsIn').innerHTML = `<div class="rvs-head">${posterHTML(f, 44)}<div><div class="lab">Its pass</div><div class="ti">${esc(f.title)}</div><div class="me">${esc(Y_NAMES[f.Y])}${f.genre ? ' · ' + esc(f.genre) : ''}</div></div></div>
     <p class="rvs-text">${esc(wordRule(f.Y))}.</p><button class="rvs-x" data-rvsx>Back to the show</button>`;
   setFocus(showFocus());
   $('#rvSheet').classList.add('show');
@@ -3536,7 +3478,7 @@ function showCard(f, o) {
     <div class="face front">
       <div class="fc-art">${posterHTML(f)}<div class="fc-shade"></div>
         <div class="fc-ribbon">${o.label}</div>
-        <div class="fc-medal ${o.win ? 'hi' : ''}"><b class="fc-word">${Y_NAMES[f.Y]}</b><span>Its word</span></div>
+        <div class="fc-medal ${o.win ? 'hi' : ''}"><b class="fc-word">${Y_NAMES[f.Y]}</b><span>Its pass</span></div>
         <div class="fc-title"><div class="ti">${esc(f.title)}</div><div class="me">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</div>
           <div class="lvl">${wbadge(f)}</div></div>
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
@@ -3555,7 +3497,7 @@ function duelCard(f, o) {
   return `<div class="duel os" data-id="${esc(f.id)}">
     <div class="os-top"><span>${o.label}</span><i>${esc(f.year || '')}</i></div>
     <div class="os-hero">${art}
-      <div class="os-seal"><div><b>${esc(Y_NAMES[f.Y] || '')}</b><small>Its word</small></div></div>
+      <div class="os-seal"><div><b>${esc(Y_NAMES[f.Y] || '')}</b><small>Its pass</small></div></div>
       ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       <div class="os-tt"><h3>${esc(f.title)}${heartHTML(f)}</h3>${f.genre ? `<p>${esc(f.genre)}</p>` : ''}</div></div>
     ${o.call ? `<button class="os-tix" data-call="${esc(f.id)}"><span class="os-k"><span>Admit one · your call</span><span>${f.id === (SHOW && SHOW.film) ? '№ 1' : '№ 2'}</span></span><span class="cta-t">${o.call}</span><span class="os-f"><span>Make this call</span><span>Ranks higher ›</span></span></button>` : ''}
@@ -4256,7 +4198,7 @@ function renderGame() {
   const avgStars = N ? avg([...starOf.values()]) : null;
   const starTrend = H.map(h => avg(h.order.map((id, i) => STAR(i + 1, h.order.length))));
   const tiles = `
-    <section class="gr-card gr-tile" style="--span:3"><span class="gr-tl">On the reel</span><b class="gr-big">${N}<small>of ${seen} seen</small></b><span class="gr-sub">${QUEUE.length ? `${QUEUE.length} waiting in the queue` : 'nothing in the queue'}${nLF ? ` · ${nLF} in Lost &amp; Found` : ''}</span>${sparkSVG(H.map(h => h.order.length))}</section>
+    <section class="gr-card gr-tile" style="--span:3"><span class="gr-tl">On the reel</span><b class="gr-big">${N}<small>of ${seen} seen</small></b><span class="gr-sub">${QUEUE.length ? `${QUEUE.length} waiting in the queue` : 'nothing in the queue'}${nLF ? ` · ${nLF} held at the checkpoint` : ''}</span>${sparkSVG(H.map(h => h.order.length))}</section>
     <section class="gr-card gr-tile" style="--span:3"><span class="gr-tl">Showdowns answered</span><b class="gr-big">${mX + mY}</b><span class="gr-sub">${(() => { const t = {}; ms.filter(x => x.ax === 'Y').forEach(x => { t[x.level] = (t[x.level] || 0) + 1; }); const top = Object.entries(t).sort((a, b) => b[1] - a[1])[0]; return top ? `busiest word: ${Y_NAMES[top[0]]} · ${top[1]}` : 'none yet'; })()}</span>${sparkSVG(perShow)}</section>
     <section class="gr-card gr-tile" style="--span:3"><span class="gr-tl">Lineup pairs you've actually asked</span><b class="gr-big">${pairs ? Math.round(asked / pairs * 100) + '%' : '—'}<small>${asked} of ${pairs}</small></b><span class="gr-meter"><i style="width:${pairs ? asked / pairs * 100 : 0}%"></i></span><span class="gr-sub">the rest follow from your answers</span></section>
     <section class="gr-card gr-tile" style="--span:3"><span class="gr-tl">Average stars</span><b class="gr-big">${avgStars != null ? avgStars.toFixed(1) : '—'}<small>/ 5</small></b><span class="gr-sub">${ranked.length ? `median word: ${Y_NAMES[ranked[Math.floor(N / 2)].Y]}` : ''}</span>${sparkSVG(starTrend)}</section>`;
@@ -4267,20 +4209,20 @@ function renderGame() {
   const dk = Object.keys(dec).sort();
   const decades = dk.length ? colsHTML(dk.map(d => ({ v: dec[d].length, l: `’${String(d).slice(2)}s`, sub: `★ ${avg(dec[d]).toFixed(1)}`, tip: `The ${d}s|${dec[d].length} film${dec[d].length === 1 ? '' : 's'} · ★ ${avg(dec[d]).toFixed(1)} average` })), '#8a7a68') : '<p class="gr-empty">No release years on the reel yet.</p>';
   const lfMax = Math.max(1, ...LF.map(c => db.lostfound.filter(f => f.cat === c.id).length));
-  const lf = `<div class="gr-meters">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length; return `<div class="gr-mrow"><span>${c.door} · ${esc(c.name)}</span><span class="gr-meter"><i style="width:${k / lfMax * 100}%"></i></span><b>${k}</b></div>`; }).join('')}</div>`;
+  const lf = `<div class="gr-meters">${LF.map(c => { const k = db.lostfound.filter(f => f.cat === c.id).length; return `<div class="gr-mrow"><span>${esc(c.name)}</span><span class="gr-meter"><i style="width:${k / lfMax * 100}%"></i></span><b>${k}</b></div>`; }).join('')}</div>`;
   $('#gameIn').innerHTML = `
     <div class="gr-hd"><div><div class="k">The Game Room · CmanCinema</div><h2>By the Numbers</h2></div><p>Every number comes from the reel. Nothing here edits anything.</p></div>
     <div class="gr-grid">
       ${tiles}
       ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump))}
-      ${grCard(4, 'The ten words', 'Films in each word, with the showdowns asked there.', wordsHTML(ms))}
+      ${grCard(4, 'The price board', 'Films at each price, with the showdowns asked there.', wordsHTML(ms))}
       ${grCard(6, 'The championship', 'Every film that has held #1: how long, and how many new arrivals it held off while on top.', champsHTML())}
       ${grCard(6, 'How influence is earned', 'The top ten, split into its two parts (each already weighted).', influenceHTML(ranked))}
       ${grCard(7, `Who’s actually met · the ${grMet ? Y_NAMES[+grMet.slice(1)] : ''} lineup`, 'Each square is a pair, in lineup order. Filled: you answered it. Outlined: the order says so, but you were never asked.', `<div id="grMet">${m.body}</div>`, m.tabs)}
       ${grCard(5, 'High scores', 'Record holders, with each film’s path on the reel.', `<div id="hsIn">${hsRows(H)}</div>`, grTabs('hs', HS_BOARDS, hsBoard))}
       ${grCard(6, 'Stars', N ? `How ${N} film${N === 1 ? '' : 's'} spread across the stars.` : 'Stars come from the reel.', stars)}
       ${grCard(6, 'By decade', 'Films on the reel by release decade, with their average stars.', decades)}
-      ${grCard(12, 'The Memory Filter', `${nLF ? `${nLF} film${nLF === 1 ? '' : 's'} seen but not rated, by the door that stopped ${nLF === 1 ? 'it' : 'them'}.` : 'Every film so far has made it through all three doors.'}`, lf, '<button class="gr-btn" data-goto="lostfound">Lost &amp; Found</button>')}
+      ${grCard(12, 'Security', `${nLF ? `${nLF} film${nLF === 1 ? '' : 's'} seen but not rated, held at the checkpoint.` : 'Every film so far has cleared security.'}`, lf, '<button class="gr-btn" data-goto="lostfound">Checkpoint</button>')}
     </div>
     <div class="gr-tip" id="grTip" hidden></div>`;
   // the met card's title follows its tab
@@ -4365,180 +4307,110 @@ const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
 function argueCase(A) { return `<b>${esc(A.title)}</b> ranks higher`; }
 
 /* =====================================================================
-   THE MEMORY FILTER · three doors before the booth
-   Pass all three and the film is rating eligible. Stopped at a door, it is
-   seen for Letterboxd but not rated, and goes on a Lost & Found shelf.
+   THE SECURITY CHECK · one question before the price board
+   Pass and the film goes to the price board. Fail and it is held at the
+   Security Checkpoint: seen for Letterboxd, but not rated.
    ===================================================================== */
-const LF = [
-  { id: 'caught', door: 1, name: 'Caught It Along the Way', d: 'I retain a more specific spatial/momentary element.' },
-  { id: 'met', door: 1, name: 'I Know We’ve Met', d: 'The memory does not place me anywhere in time spatially enough to be grounding.' },
-  { id: 'fade', door: 2, name: 'Fade to Black', d: 'It ended without my choosing, or I can’t say how it ended: I fell asleep (whatever the cause), got interrupted and never returned, or have no memory of the ending.' },
-  { id: 'once', door: 3, name: 'Once Upon a Watch', d: 'My View doesn’t retain sufficient experiential shape to support faithful judgements.' },
-];
-const lfCat = id => LF.find(c => c.id === id) || LF.find(c => c.id === 'fade');
-const DOORS = {
-  1: { name: 'The Gateway', q: 'Does the memory I share with the film confirm there was at least an official encounter — a deliberate, formal sit-down of some kind to watch it?',
-       note: 'If you can neither confirm nor deny it, you must claim no as an assumption.', fail: 'Attempting to rate these would corrupt the integrity of the framework.' },
-  2: { name: 'The Finish', q: 'Did the viewing end on my terms, either by finishing it or by choosing to stop?',
-       note: 'Choosing to stop because I couldn’t bear it passes this door; that is what Bad and Garbage are for. Falling asleep, getting interrupted and never returning, or not remembering how it ended does not. If you can’t confirm it, the answer is no.', fail: 'Attempting to rate these could be possible, however the View is skewed.' },
-  3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what the word asks for?',
-       note: 'It does not require scene-by-scene reconstruction, exhaustive factual recall, precise recollection of every reaction, or the ability to reproduce the film’s narrative in detail. Forgettability is normal. What matters is to not allow uncertainty around a View to be able to manufacture judgements. The shape may be complex, mixed, shifting, or emotionally restrained. A remembered lack of emotion may itself constitute legitimate experiential information. An absence of emotional access caused by failure to remember, however, does not.',
-       fail: '' },
-};
+const LF = [{ id: 'held', name: 'Held at the Checkpoint', d: 'The shape I have of this film doesn’t meet the threshold to confidently pay for a pass.' }];
+const lfCat = () => LF[0];
+const SHAPE_Q = 'Does the shape I have of this film meet the threshold to confidently pay for a pass?';
+const SHAPE_NOTE = 'Finishing isn’t required. Think of the whole shape you have of the film, not scene-by-scene recall; forgettability is normal. A remembered lack of emotion counts. An absence of emotion because you can’t remember does not. If you can’t confidently pay for any pass, the answer is no.';
 let mf = null;
-function mfOpen(o) { mf = { ...o, door: 1, no: false, pick: null }; mfRender(); $('#mf').classList.add('show'); }
+function mfOpen(o) { mf = { ...o, no: false }; mfRender(); $('#mf').classList.add('show'); }
 function mfClose() { mf = null; $('#mf').classList.remove('show'); }
 function mfRender() {
   if (!mf) return;
-  const D = DOORS[mf.door], opts = LF.filter(c => c.door === mf.door);
-  const doors = [1, 2, 3].map(n => `<div class="mf-door ${n < mf.door ? 'ok' : n === mf.door ? (mf.no ? 'fail cur' : 'cur') : ''}">${n}<small>${DOORS[n].name.replace('The ', '')}</small></div>`).join('');
-  const body = !mf.no ? `
-      <div class="mf-step"><h3>Door ${mf.door} · ${D.name}</h3><p class="mf-q">${D.q}</p>
-        <p class="mf-note">${D.note}</p>
-        <div class="mf-yn"><button class="btn-ink solid" data-mf="yes">Yes</button><button class="btn-ink" data-mf="no">No</button></div></div>`
-    : `
-      <div class="mf-step"><h3>Stopped at Door ${mf.door} · ${D.name}</h3>
-        <p class="mf-q" style="font-size:18px">Seen for Letterboxd, but not rated. ${D.fail}</p>
-        <div class="mf-opts">${opts.map(c => `<button class="mf-opt ${mf.pick === c.id || opts.length === 1 ? 'on' : ''}" data-mfpick="${c.id}"><b>${c.name}</b><span>${c.d}</span></button>`).join('')}</div></div>`;
-  const ready = mf.no && (mf.pick || opts.length === 1);
+  const v = { ...mf.film, year: String(mf.film.year || ''), style: styleFor(mf.film.id) };
   $('#mfIn').innerHTML = `
-    <div class="k">${mf.src === 'rewatch' ? 'A rewatch · back through the filter' : 'Before the ticket is torn'}</div>
-    <h2>The Memory Filter</h2><div class="film">${esc(mf.film.title)}${mf.film.year ? ' · ' + esc(mf.film.year) : ''}</div>
-    <div class="mf-doors">${doors}</div>${body}
-    <div class="mf-foot"><button class="back" data-mf="${mf.door > 1 || mf.no ? 'back' : 'cancel'}">${mf.door > 1 || mf.no ? '← Back' : 'Cancel'}</button>
-      ${mf.no ? `<button class="btn-ink solid" data-mf="file" ${ready ? '' : 'disabled'}>File it in Lost &amp; Found</button>` : '<button class="back" data-mf="cancel">Close</button>'}</div>`;
+    <div class="sc-top"><span class="sc-k">${mf.src === 'rewatch' ? 'A rewatch · back through security' : 'Before the ticket is torn'}</span><h2>Security Check</h2></div>
+    <div class="sc-gate ${mf.no ? 'held' : ''}"><div class="sc-arch"><span class="sc-light"></span>${posterHTML(v, 62)}<i class="sc-beam"></i></div>
+      <div class="sc-film"><b>${esc(mf.film.title)}</b>${mf.film.year ? '<span>' + esc(mf.film.year) + '</span>' : ''}</div></div>
+    ${!mf.no ? `<p class="mf-q">${SHAPE_Q}</p><p class="mf-note">${SHAPE_NOTE}</p>
+      <div class="mf-yn"><button class="btn-ink solid" data-mf="yes">Yes · cleared</button><button class="btn-ink" data-mf="no">No</button></div>`
+    : `<p class="mf-q" style="font-size:19px">Held at the Security Checkpoint.</p><p class="mf-note">Seen for Letterboxd, but not rated. If you rewatch it, send it back through security from the checkpoint.</p>`}
+    <div class="mf-foot"><button class="back" data-mf="${mf.no ? 'back' : 'cancel'}">${mf.no ? '← Back' : 'Cancel'}</button>
+      ${mf.no ? '<button class="btn-ink solid" data-mf="file">Send to the Checkpoint</button>' : ''}</div>`;
 }
 $('#mf').addEventListener('click', async e => {
   if (e.target.id === 'mf') return mfClose();
-  const p = e.target.closest('[data-mfpick]'); if (p && mf) { mf.pick = p.dataset.mfpick; return mfRender(); }
   const b = e.target.closest('[data-mf]'); if (!b || !mf) return;
   const a = b.dataset.mf;
   if (a === 'cancel') return mfClose();
-  if (a === 'back') { if (mf.no) { mf.no = false; mf.pick = null; } else mf.door--; return mfRender(); }
-  if (a === 'no') { mf.no = true; mf.pick = LF.filter(c => c.door === mf.door).length === 1 ? LF.find(c => c.door === mf.door).id : null; return mfRender(); }
-  if (a === 'yes') {
-    if (mf.door < 3) { mf.door++; return mfRender(); }
-    // through all three doors: rating eligible
-    const o = mf; mfClose();
-    if (o.src === 'new') return admitPending();
-    return promoteLF(o.film.id);
-  }
-  if (a === 'file' && !b.disabled) {
-    const o = mf, cat = o.pick || LF.find(c => c.door === o.door).id; mfClose();
-    return o.src === 'new' ? fileNew(cat) : refileLF(o.film.id, cat, 'rewatch');
-  }
+  if (a === 'back') { mf.no = false; return mfRender(); }
+  if (a === 'no') { mf.no = true; return mfRender(); }
+  if (a === 'yes') { const o = mf; mfClose(); return o.src === 'new' ? admitPending() : promoteLF(o.film.id); }
+  if (a === 'file') { const o = mf; mfClose(); return o.src === 'new' ? fileNew() : refileLF(o.film.id); }
 });
-async function fileNew(cat) {
+async function fileNew() {
   if (!pending || !canEdit()) return;
   const f = pending; pending = null;
-  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, cat, at: Date.now(), history: [] });
+  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, cat: 'held', at: Date.now(), history: [] });
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
-  lfShelf = ''; lfPage = 1; lfQuery = '';
+  lfQuery = '';
   const ok = await persist();
-  setTimeout(() => { clearTicket(); if (ok) { toast(`${f.title} · filed under “${lfCat(cat).name}”`); goTo('lostfound'); } }, reduceMotion ? 0 : 650);
+  setTimeout(() => { clearTicket(); if (ok) { toast(`${f.title} · held at the Security Checkpoint`); goTo('lostfound'); } }, reduceMotion ? 0 : 650);
 }
-async function refileLF(id, cat, why) {
+async function refileLF(id) {
   const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
-  if (e.cat !== cat) { (e.history ||= []).push({ cat: e.cat, at: e.at, why }); e.cat = cat; }
-  e.at = Date.now();
-  if (await persist()) toast(`${e.title} · now on “${lfCat(cat).name}”`);
+  (e.history ||= []).push({ cat: e.cat, at: e.at, why: 'rewatch' }); e.at = Date.now();
+  if (await persist()) toast(`${e.title} · still held at the checkpoint`);
   renderLF();
 }
 async function promoteLF(id) {
   const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
-  if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film up.`);
+  if (active) return alertBox('The auditorium is busy', `${workflowLabel()}. Finish it before sending another film through.`);
   db.lostfound = db.lostfound.filter(f => f.id !== id);
   db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, watched: false, w: null, added: Date.now(),
                   lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
   rebuild(); persist();
-  toast(`${e.title} passed the filter`);
+  toast(`${e.title} cleared security`);
   wordOpen(e.id, 'new');
 }
 
 /* =====================================================================
-   LOST & FOUND · seen for Letterboxd, not rated
+   THE SECURITY CHECKPOINT · held films: seen for Letterboxd, not rated
    ===================================================================== */
-let lfShelf = '', lfQuery = '', lfPage = 1, lfAsk = null;
+let lfQuery = '', lfAsk = null, lfOpen = null;
 function renderLF() {
-  const n = db.lostfound.length, cnt = id => db.lostfound.filter(f => f.cat === id).length;
+  const n = db.lostfound.length;
   $('#lfIn').innerHTML = `
-    <div class="lf-signbox"><div class="enamel"><b>Lost &amp; Found</b><small>CmanCinema · Back of house</small></div></div>
-    <p class="lf-intro">Seen for Letterboxd, but not rated. Whatever the Memory Filter stopped at the door ends up back here, kept the way it was left.</p>
-    <div class="lf-chips">${[['', 'All', n], ...LF.map(c => [c.id, c.name, cnt(c.id)])].map(([v, l, k]) => `<button data-lfs="${v}" class="${lfShelf === v ? 'on' : ''}">${l}<i>${k}</i></button>`).join('')}</div>
-    <div class="counter"><span class="bell"><i></i></span><input class="placard" id="lfSearch" placeholder="Ask the counter · title or year…" value="${esc(lfQuery)}" autocomplete="off"><span class="note">Claims by slip only</span></div>
+    <div class="cp-sign"><span class="cp-ico">⛨</span><div><b>Security Checkpoint</b><small>Held at the gate · seen, not rated</small></div></div>
+    <p class="lf-intro">Films that didn’t clear security wait here. Their shape didn’t meet the threshold to confidently pay for a pass. Rewatch one and send it back through.</p>
+    ${n ? `<div class="cp-search"><input class="placard" id="lfSearch" placeholder="Search held films · title or year…" value="${esc(lfQuery)}" autocomplete="off"></div>` : ''}
     <div id="lfGrid"></div><div id="lfPager"></div>`;
   renderLFGrid();
-  $('#lfSearch').addEventListener('input', e => { lfQuery = e.target.value; lfPage = 1; renderLFGrid(); });
-}
-const FX_EMPTY = { caught: 'Nothing pinned up yet', met: 'The bin is empty', lost: 'No tags on the hooks', tapout: 'No stubs on the board', fade: 'The shelf sits dark and empty', once: 'The trunk is empty' };
-const COBWEB = `<svg class="cobweb" viewBox="0 0 60 60" fill="none" stroke="#e8dcc0" stroke-width=".8"><path d="M60 0L10 50M60 0L30 58M60 0L2 28M60 0L60 60M60 0L0 0"/><path d="M48 0q2 10 12 12M36 0q3 18 24 24M24 0q5 26 36 36M12 0q6 34 48 48"/></svg>`;
-function fxItem(c, f, i) {
-  const p = w => posterHTML({ ...f, year: String(f.year || '') }, w), t = `<span class="t">${esc(f.title)}</span>`;
-  const a = `data-lftag="${esc(f.id)}" title="${esc(f.title)}${f.year ? ' (' + esc(f.year) + ')' : ''}"`;
-  const r = ['-4deg', '3deg', '-2deg', '5deg', '-3deg', '2deg'][i % 6];
-  switch (c.id) {
-    case 'caught': return `<button class="it pol" style="--r:${r}" ${a}><i class="pin"></i>${p(82)}${t}</button>`;
-    case 'met':    return `<button class="it fog" style="--r:${r};--y:${[0, 10, 4, 14, 2, 8][i % 6]}px" ${a}>${p(74)}<span class="hello"><b>HELLO</b><small>my name is</small><i>?</i></span></button>`;
-    case 'lost':   return `<button class="it coat" style="--r:${Math.min(2 + i * 3, 16)}deg;--y:${Math.min(i * 8, 48)}px;--o:${Math.max(1 - i * .07, .6)}" ${a}><span class="card">${p(58)}${t}</span></button>`;
-    case 'tapout': return `<button class="it stub" style="--r:${r}" ${a}>${p(62)}${t}</button>`;
-    case 'fade':   return `<button class="it vhs" style="--b:${Math.max(1 - i * .14, .3)}" ${a}>${p(70)}${t}</button>`;
-    default:       return `<button class="it sepia" style="--r:${r}" ${a}>${p(72)}${t}</button>`;
-  }
-}
-function fxBody(c, items) {
-  const empty = items ? '' : `<div class="fx-empty">${FX_EMPTY[c.id]}</div>`;
-  const scroll = `<div class="fx-scroll">${items}</div>`;
-  switch (c.id) {
-    case 'met':  return `<div class="fx-body">${scroll}<div class="bin"><span>Unclaimed<small>No name · no date</small></span></div>${empty}</div>`;
-    case 'lost': return `<div class="fx-body">${scroll}${empty}</div>`;
-    case 'fade': return `<div class="fx-body"><span class="lamp"></span><span class="zz">z z z</span>${scroll}${empty}</div>`;
-    case 'once': return `<div class="fx-body"><div class="trunk-lid"></div><div class="trunk-in">${scroll}<div class="dust"></div></div>${COBWEB}${empty}</div>`;
-    default:     return `<div class="fx-body">${scroll}${empty}</div>`;
-  }
+  const sIn = $('#lfSearch'); if (sIn) sIn.addEventListener('input', e => { lfQuery = e.target.value; renderLFGrid(); });
 }
 function renderLFGrid() {
-  const q = lfQuery.trim().toLowerCase();
-  const room = LF.map((c, ri) => {
-    if (lfShelf && lfShelf !== c.id) return '';
-    const all = db.lostfound.filter(f => f.cat === c.id), list = all.filter(f => !q || String(f.title).toLowerCase().includes(q) || String(f.year || '').includes(q)).sort((a, b) => b.at - a.at);
-    if (q && !list.length) return '';
-    return `<section class="fx fx-${c.id}" data-rack="${c.id}">
-      <div class="plate" title="Door ${c.door} · ${DOORS[c.door].name}"><span class="no">${ri + 1}</span><b>${c.name}</b><span class="ct">${all.length}</span></div>
-      ${fxBody(c, list.map((f, i) => fxItem(c, f, i)).join(''))}
-      <div class="fx-d">Door ${c.door} · ${c.d}</div>
-    </section>`;
-  }).join('');
-  $('#lfGrid').innerHTML = room ? `<div class="lf-room ${lfShelf ? 'solo' : ''}">${room}</div>` : `<p class="lf-empty">Nothing at the counter matches “${esc(lfQuery)}”.</p>`;
-  const n = db.lostfound.length;
-  $('#lfPager').innerHTML = `<p class="pager-note">${n ? `${n} film${n === 1 ? '' : 's'} seen, not rated · tap anything for its claim slip` : 'Films stopped by the Memory Filter at the Box Office end up back here.'}</p>`;
+  const q = lfQuery.trim().toLowerCase(), all = db.lostfound.slice().sort((a, b) => b.at - a.at);
+  const list = all.filter(f => !q || String(f.title).toLowerCase().includes(q) || String(f.year || '').includes(q));
+  $('#lfGrid').innerHTML = !all.length ? `<div class="cp-belt empty"><div class="cp-trays"><p class="cp-none">The belt is clear. Nothing is held.</p></div></div>`
+    : !list.length ? `<p class="lf-empty">No held film matches “${esc(lfQuery)}”.</p>`
+    : `<div class="cp-belt"><div class="cp-trays">${list.map(f => `<button class="cp-tray" data-lftag="${esc(f.id)}" title="${esc(f.title)}${f.year ? ' (' + esc(f.year) + ')' : ''}">
+        ${posterHTML({ ...f, year: String(f.year || '') }, 76)}<span class="cp-tag"><b>${esc(f.title)}</b>${f.year ? `<small>${esc(f.year)}</small>` : ''}</span></button>`).join('')}</div></div>`;
+  const n = all.length;
+  $('#lfPager').innerHTML = `<p class="pager-note">${n ? `${n} film${n === 1 ? '' : 's'} held · tap one for its hold slip` : 'Films that don’t clear security at the Box Office are held here.'}</p>`;
   renderSlip();
 }
-/* the claim slip: a tag's details and, for the editor, what to do with it */
-let lfOpen = null;
 function renderSlip() {
   const f = lfOpen && db.lostfound.find(x => x.id === lfOpen), el = $('#lfSlip');
   if (!f) { lfOpen = null; el.classList.remove('show'); return; }
-  const c = lfCat(f.cat), was = (f.history || []).slice(-1)[0], edit = canEdit();
+  const edit = canEdit(), tries = (f.history || []).filter(h => h.why === 'rewatch').length;
   el.innerHTML = `<div class="slip"><button class="x" data-slipx aria-label="Close">✕</button>
     ${posterHTML({ ...f, year: String(f.year || '') }, 96)}
-    <div><div class="k">Claim slip · No. ${LF.indexOf(c) + 1}</div><h3>${esc(f.title)}</h3>
-      <div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · filed ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
-      <span class="cat">Door ${c.door} · ${c.name}</span>${was ? `<span class="was">Earlier: ${lfCat(was.cat).name}</span>` : ''}</div>
+    <div><div class="k">Hold slip</div><h3>${esc(f.title)}</h3>
+      <div class="yr">${esc(f.year || 'Year unknown')}${f.at ? ' · held ' + new Date(f.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''}</div>
+      <span class="cat">Didn’t clear security</span>${tries ? `<span class="was">Back through ${tries} time${tries === 1 ? '' : 's'} after a rewatch</span>` : ''}</div>
     ${edit ? `<div class="acts">${lfAsk === f.id ? `<span class="ask">Remove it entirely?</span><button class="warn" data-lfa="delyes" data-id="${esc(f.id)}">Remove</button><button data-lfa="delno">Keep</button>`
-      : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it</button>
-         <select data-lfmove="${esc(f.id)}" aria-label="Move to another rack"><option value="">Move to…</option>${LF.filter(x => x.id !== f.cat).map(x => `<option value="${x.id}">${x.name}</option>`).join('')}</select>
-         <button class="del" data-lfa="del" data-id="${esc(f.id)}">Remove</button>`}</div>` : ''}</div>`;
+      : `<button class="go" data-lfa="rewatch" data-id="${esc(f.id)}">Rewatched it · back through security</button>
+         <button class="del" data-lfa="del" data-id="${esc(f.id)}" style="grid-column:1/-1">Remove</button>`}</div>` : ''}</div>`;
   el.classList.add('show');
 }
-const n0 = () => db.lostfound.length;
 function closeSlip() { lfOpen = null; lfAsk = null; const el = $('#lfSlip'); if (el) el.classList.remove('show'); }
 function lfAct(e) { const t = e.target.closest('[data-lftag]'); if (t) { lfOpen = t.dataset.lftag; lfAsk = null; renderSlip(); } }
 $('#lfSlip').addEventListener('click', e => { if (e.target.id === 'lfSlip' || e.target.closest('[data-slipx]')) return closeSlip(); lfClick(e); });
-$('#lfSlip').addEventListener('change', e => { const m = e.target.closest('[data-lfmove]'); if (m && m.value) { lfOpen = null; refileLF(m.dataset.lfmove, m.value, 'moved'); } });
 $('#lostfound').addEventListener('click', e => { if (e.target.closest('[data-lftag]')) return lfAct(e); lfClick(e); });
 async function lfClick(e) {
-  const s = e.target.closest('[data-lfs]'); if (s) { lfShelf = s.dataset.lfs; lfPage = 1; return renderLF(); }
-  const p = e.target.closest('[data-lfp]'); if (p) { if (p.disabled) return; lfPage = +p.dataset.lfp; renderLFGrid(); return $('#lfGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   const b = e.target.closest('[data-lfa]'); if (!b || !canEdit()) return;
   const a = b.dataset.lfa, id = b.dataset.id;
   if (a === 'del') { lfAsk = id; return renderSlip(); }
@@ -4546,11 +4418,10 @@ async function lfClick(e) {
   if (a === 'delyes') { const t = db.lostfound.find(f => f.id === id)?.title; db.lostfound = db.lostfound.filter(f => f.id !== id); lfAsk = null; lfOpen = null; if (await persist()) toast(t + ' removed'); return renderLF(); }
   if (a === 'rewatch') {
     lfOpen = null; renderSlip();
-    if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film through the filter.`);
+    if (active) return alertBox('The auditorium is busy', `${workflowLabel()}. Finish it before sending another film through security.`);
     const f = db.lostfound.find(x => x.id === id); if (f) mfOpen({ src: 'rewatch', film: { ...f, year: String(f.year || '') } });
   }
 }
-$('#lostfound').addEventListener('change', e => { const m = e.target.closest('[data-lfmove]'); if (m && m.value) refileLF(m.dataset.lfmove, m.value, 'moved'); });
 
 /* save power: pause the looping animations while the tab is hidden */
 document.addEventListener('visibilitychange', () => document.body.classList.toggle('idle', document.hidden));
@@ -4587,18 +4458,18 @@ function pbHere() {
 }
 function renderPlaybill() {
   const here = pbHere();
-  const tabs = [['F', 'Prologue', 'Memory Filter'], ['W', 'Act I', 'The Ten Words'], ['Q', 'Act II', 'The Reel'], ['E', 'Epilogue', 'After the Show']];
+  const tabs = [['F', 'Prologue', 'Security'], ['W', 'Act I', 'The Price Board'], ['Q', 'Act II', 'The Reel'], ['E', 'Epilogue', 'After the Show']];
   if (!tabs.some(t => t[0] === pbTab)) pbTab = 'W';
   const lv = (ax, l, name, tag, body) => `<div class="pb-it ${here && here[ax] === l ? 'here' : ''}"><span class="n">${ax}${l}</span>
     <div class="t">${name}${tag ? `<em>${tag}</em>` : ''}</div><p>${body}</p></div>`;
   let body = '';
-  if (pbTab === 'F') body = `<div class="pb-sec">Prologue · The Memory Filter<small>For rating eligibility · three doors before the word</small></div>
-    ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
-      <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
-    <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
-  if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Ten Words<small>One word per film, picked at the box office · showdowns order the films that share it</small></div>
-    <p class="pb-note" style="margin:0 0 10px">The scale grows outward from the middle pair. 6 and 5 aren’t positive or negative yet, they’re the first step either way: Good leans “that was good,” Alright leans “it was fine, but I can’t call it good.”</p>
-    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}<em>${esc(W_RULE[l])}</em></div><p>${esc(W_DESC[l])}</p></div>`).join('')}
+  if (pbTab === 'F') body = `<div class="pb-sec">Prologue · Security<small>One question at the box office, before the price board</small></div>
+    <div class="pb-it"><span class="n">⛨</span><div class="t">The shape</div><p>${SHAPE_Q}</p></div>
+    <p class="pb-note" style="margin:0 0 10px">${SHAPE_NOTE}</p>
+    <p class="pb-note">Yes, and the film goes to the price board. No, and it is held at the Security Checkpoint: seen for Letterboxd, but not rated. Rewatch it and send it back through.</p>`;
+  if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Price Board<small>Each word is a ticket price: a pass into the movie</small></div>
+    <p class="pb-note" style="margin:0 0 10px">You don’t see the showdown question here. Think of the whole shape you have of the film and pay for the pass that fits it best. An 8 can still have letdown moments; what matters is the pass that fits the entire shape. For a 3, the whole shape has to be dominated by that price.</p>
+    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(W_DESC[l])}</p></div>`).join('')}
     <div class="pb-it"><span class="n">❤️</span><div class="t">Worth revisiting</div><p>The film as I saw it is worth revisiting. Not a good or bad thing, and it doesn’t affect ranking.</p></div>`;
   if (pbTab === 'E') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
@@ -4609,10 +4480,11 @@ function renderPlaybill() {
   }
   if (pbTab === 'Q') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
-    body = `<div class="pb-sec">Act II · The Reel<small>Amazing at the top, Garbage at the bottom · one showdown places every film</small></div>
-      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that shares its word, and you answer by that word’s rule. Every Amazing film sits above every Great, every Great above every Good, and so on down; the showdowns decide the order inside each word.</p>
+    body = `<div class="pb-sec">Act II · The Reel<small>Masterpiece at the top, Unbearable at the bottom · one showdown places every film</small></div>
+      <p class="pb-note" style="margin:0 0 10px">A film meets every other film that shares its word, and you answer by that word’s rule. Every Masterpiece sits above every Amazing, every Amazing above every Great, and so on down; the showdowns decide the order inside each word.</p>
       <div class="pb-axis"><span>The showdown</span></div>
-      ${it('1', 'The rule', 'tap the film', 'The screen reads the word’s rule, like “Both Bad: the more bearable ranks higher.” Tap the film that ranks higher by that rule.')}
+      ${it('?', 'The question', 'only here', 'The question shows up only in the showdown, when two films paid the same price, like “Both Great: the more impressive ranks higher.” Tap the film that ranks higher.')}
+      ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(wordRule(l))}</p></div>`).join('')}
       ${it('▶', 'Battles', 'your answers', 'Each showdown is a binary search: the film meets the middle of its word’s lineup, then the middle of the half you send it to, until it lands. Every answer is filed in that film’s can in the Film Vault.')}
       ${it('✎', 'A consideration for every answer', 'optional', 'Each question has a line for your decisive consideration. It’s filed with that matchup, shown when the battle plays back, and editable in the Film Vault.')}
       ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left. The word’s question heads the screen, and the Double Bill sets the two films side by side, fight-card style: on the reel, peak, record and form, influence, lineup spot. ◀ marks the edge in each row.')}
@@ -4696,8 +4568,8 @@ function renderOffice() {
         <input class="inkin" id="oSearch" placeholder="Search the collection…" value="${esc(officeQuery)}" autocomplete="off">
         <div class="hits" id="oHits"></div></div>
 
-      <div class="ledger wide"><span class="tabk">The rule book</span><h3>The ten words</h3>
-        <p>Each of the ten words has a lineup in your showdown order: every Amazing film together, every Garbage film together. The reel runs Amazing down to Garbage, each word in its own order. To redo a film’s showdown, change its word or rerun it; to redo them all, dump the reel.</p>
+      <div class="ledger wide"><span class="tabk">The rule book</span><h3>The price board</h3>
+        <p>Each price has a lineup in your showdown order: every Masterpiece together, every Unbearable film together. The reel runs Masterpiece down to Unbearable, each word in its own order. To redo a film’s showdown, change its word or rerun it; to redo them all, dump the reel.</p>
         ${officeMsg.weights ? `<div class="okline">${esc(officeMsg.weights)}</div>` : ''}</div>
 
       <div class="ledger danger"><span class="tabk">The house lights</span><h3>Dump the reel</h3>
