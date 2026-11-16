@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CmanCinema</title>
-<meta name="description" content="CmanCinema — claim, case, and a reel that decides.">
+<meta name="description" content="CmanCinema — one word, and a reel that decides.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Special+Elite&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -974,7 +974,8 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .wp-w{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(90,15,34,.25);background:rgba(255,255,255,.4);color:#2a160e;text-align:left;cursor:pointer}
 .wp-w .wp-n{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--wc);color:#24160a;font:400 17px var(--deco);box-shadow:inset 0 0 0 2px rgba(0,0,0,.15)}
 .wp-w b{display:block;font:800 16px var(--serif);color:#5a0f22}
-.wp-w small{display:block;font:italic 500 14px/1.3 var(--body);color:#6b5236}
+.wp-w em{display:block;font:500 14px/1.3 var(--body);font-style:normal;color:#3a2418}
+.wp-w small{display:block;margin-top:2px;font:italic 500 13px/1.3 var(--body);color:#8a6a4a}
 .wp-w:hover{border-color:#a8834a}
 .wp-w.on{border-color:#c4202f;background:rgba(196,32,47,.1);box-shadow:0 0 0 2px rgba(196,32,47,.25)}
 .wp-heart{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;width:100%;margin-top:12px;padding:10px 12px;border-radius:8px;border:1.5px dashed rgba(90,15,34,.35);background:transparent;color:#2a160e;text-align:left;cursor:pointer}
@@ -984,6 +985,7 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .wp-heart.on{border-style:solid;border-color:#c4202f;background:rgba(196,32,47,.08)}
 .bf-go:disabled{opacity:.4;cursor:default}
 .hrt{font-size:.8em;vertical-align:1px}
+.pmean{margin:-2px 0 8px;font:italic 500 16px/1.4 var(--body);color:rgba(243,230,200,.85)}
 @media (max-width:560px){ .wp-grid{grid-template-columns:1fr} }
 .bfc{position:relative;width:min(720px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:24px 26px 22px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
 .bfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
@@ -2035,7 +2037,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
       <div class="sign">
         <div class="bulbs" id="signBulbs"></div>
         <h1>CmanCinema</h1>
-        <div class="sub">Claim. Case. The reel decides.</div>
+        <div class="sub">One word. The reel decides.</div>
       </div>
       <div class="letterboard">
         <div id="nowShowing">NOW SHOWING</div>
@@ -2116,17 +2118,6 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 </section>
 
 <!-- ===================== PROJECTION BOOTH ===================== -->
-<section class="scene" id="booth">
-  <div class="bw">
-    <div class="dark" id="boothDark" hidden></div>
-    <div class="bhead" id="bHead"></div>
-    <div class="bgrid" id="bGrid">
-      <div class="ladder" id="ladder"></div>
-      <div class="glass"><div class="pane" id="pane"></div></div>
-    </div>
-  </div>
-</section>
-<div id="compass" role="dialog" aria-modal="true" aria-label="The Recommendation Compass"><div class="cmp" id="cmp"></div></div>
 
 <!-- ===================== AUDITORIUM ===================== -->
 <section class="scene" id="auditorium">
@@ -2221,6 +2212,12 @@ const W_RULE = { 10: 'the more astonishing ranks higher', 9: 'the more impressiv
 const W_QUAL = Object.fromEntries(LEVELS.map(l => [l, W_RULE[l].split(' ')[2]]));
 const W_MORE = l => / more /.test(' ' + W_RULE[l]);
 const wordRule = l => W_RULE[l] ? W_RULE[l][0].toUpperCase() + W_RULE[l].slice(1) : '';
+// what each word means, in your words
+const W_DESC = { 10: 'Wondrous, from an astonishing standpoint.', 9: 'Awe-inspiring, from an extremely impressive standpoint.', 8: 'Leaves an impact a 7 can’t.',
+  7: 'A legit good movie, not just a good watch.', 6: 'The first step up: it leans “that was good.”',
+  5: 'The first step down: it leans “it was fine, but I can’t call it good.”', 4: 'The dull zone.',
+  3: 'A bigger drop: genuinely disappointing, not casually.', 2: 'I couldn’t finish it. Measured by how bearable it was.',
+  1: 'Truly unbearable. I didn’t finish because it drove me away.' };
 const HEART = '❤️';
 const heartHTML = f => f && f.heart ? ' <span class="hrt" title="Worth revisiting">❤️</span>' : '';
 const X_TAG = { 5: 'Vulnerability to meaningful qualification', 4: 'Nature and consequences of compromise', 3: 'Failure that defeats demonstrated capacity', 2: 'Nature of fundamental incapacity', 1: 'Nature and extent of underlying discredit' };
@@ -2782,7 +2779,6 @@ function renderScene(id) {
   if (id === 'lostfound') renderLF();
   if (id === 'gameroom') renderGame();
   if (id === 'office') renderOffice();
-  if (id === 'booth') renderBooth();
   if (id === 'auditorium') enterAuditorium();
   if (id === 'boxoffice') renderBoxOffice();
   if (id === 'marquee') renderMarquee();
@@ -2885,7 +2881,7 @@ function renderLobby() {
   const banner = active ? `<div class="wf-banner">${posterHTML(active.film, 40)}<span><b>${esc(workflowLabel())}.</b> ${active.stage === 'booth' ? 'Finish its review before starting another film.' : 'Start its show, or leave it in the queue, to free the auditorium.'}</span><button class="btn-gold" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button></div>` : '';
   $('#lobbyIn').innerHTML = `
     <div class="ns"><div class="k">The Lobby · CmanCinema</div><h2>Now Showing</h2><div class="dots"></div>
-      <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'} on the reel, ranked review against review${QUEUE.length ? ` · ${QUEUE.length} waiting in the queue` : ''}.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
+      <p>${cloud.ready ? `${N} film${N === 1 ? '' : 's'} on the reel, ranked word by word${QUEUE.length ? ` · ${QUEUE.length} waiting in the queue` : ''}.` : cloud.failed ? 'The collection could not be reached. Try again in a moment.' : 'Threading the projector…'}</p></div>
     ${banner}
     ${top.length ? `<div class="topbill">${top.map((f, i) => `<button class="frame" data-film="${f.id}"><div class="fr">${posterHTML(f)}</div>
       <div class="plaque"><b>${i + 1}</b><span>${esc(f.title)}${heartHTML(f)}</span><i>${Y_NAMES[f.Y]} · ★ ${STAR(i + 1, N).toFixed(1)}</i></div></button>`).join('')}</div>` : ''}
@@ -2897,8 +2893,8 @@ function renderLobby() {
     <div class="lview"><div class="seg"><button data-lview="list" class="on">The reel</button></div>
       ${canEdit() && N >= 3 ? '<button class="linkish" data-spot>Spot-check a pair</button>' : ''}</div>
     <div id="bill"></div>
-    ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
-      ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} reviews</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
+    ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Worded and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
+      ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} films</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
       ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}${heartHTML(f)}<small>${wbadge(f)}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting their word</h3><p>Each film gets one word for its approach to its sub-genre, then meets the others that share it.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}${genreOf(f) ? ' · ' + esc(genreOf(f)) : ''}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Give it a word</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
@@ -2997,7 +2993,7 @@ function openProfile(id, show) {
         return `<div class="pinf"><span class="pinf-k">Influence ◆ ${infOf(f)}</span><span>Placement ${ip.place}</span><span>Word standing ${ip.Y}</span>
           ${ry ? `<div class="pinf-r">${Y_NAMES[f.Y]} lineup: above ${ry.below}${ry.below ? ` (${ry.faced} beaten head-to-head, ${ry.implied} by placement)` : ''}</div>` : ''}</div>`; })() : ''}
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
-      <div class="pscore"><div class="lab">Its word <b>${Y_NAMES[f.Y]}</b></div><div class="fc-eq"><span>${esc(wordRule(f.Y))}</span><span>Lineup <b>${laneText(f)}</b></span></div>
+      <div class="pscore"><div class="lab">Its word <b>${Y_NAMES[f.Y]}</b></div><p class="pmean">${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>${esc(wordRule(f.Y))}</span><span>Lineup <b>${laneText(f)}</b></span></div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
@@ -3032,14 +3028,14 @@ $('#sheet').addEventListener('click', e => {
   }
   if (e.target.closest('[data-remove]')) {
     const n = db.matches.filter(m => m.a === id || m.b === id).length;
-    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its review and its ${n} battle${n === 1 ? '' : 's'} go with it, and every film below it moves up a place.
+    $('#confirmBox').innerHTML = `<div class="confirm">Remove <b>${esc(f.title)}</b> from the collection? Its word and its ${n} battle${n === 1 ? '' : 's'} go with it, and every film below it moves up a place.
       <div class="btns"><button class="btn-gold" data-removeyes>Remove it</button><button class="btn-line" data-no>Keep it</button></div></div>`;
     return;
   }
   if (e.target.closest('[data-removeyes]')) { const t = f.title; removeFilm(id); closeSheet(); renderScene(current); persist().then(ok => { if (ok) toast(t + ' removed from the collection'); }); return; }
   if (e.target.closest('[data-no]')) { $('#confirmBox').innerHTML = ''; return; }
 });
-addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#compass').classList.remove('show'); $('#alert').classList.remove('show'); } });
+addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#compass')?.classList.remove('show'); $('#alert').classList.remove('show'); } });
 
 /* =====================================================================
    BOX OFFICE
@@ -3115,7 +3111,7 @@ function wordRender() {
   $('#wpIn').innerHTML = `<div class="k">${wp.mode === 'edit' ? 'Buy another ticket' : 'Through the filter'}</div>
     <h2>Its word</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}${genreOf(r) ? ' · ' + esc(genreOf(r)) : ''}</span></div>
-    <div class="wp-grid">${LEVELS.map(l => `<button class="wp-w ${wp.w === l ? 'on' : ''}" data-wpw="${l}" style="--wc:${W_COL[l]}" aria-pressed="${wp.w === l}"><span class="wp-n">${l}</span><span><b>${Y_NAMES[l]}</b><small>${esc(W_RULE[l])}</small></span></button>`).join('')}</div>
+    <div class="wp-grid">${LEVELS.map(l => `<button class="wp-w ${wp.w === l ? 'on' : ''}" data-wpw="${l}" style="--wc:${W_COL[l]}" aria-pressed="${wp.w === l}"><span class="wp-n">${l}</span><span><b>${Y_NAMES[l]}</b><em>${esc(W_DESC[l])}</em><small>${esc(W_RULE[l])}</small></span></button>`).join('')}</div>
     <button class="wp-heart ${wp.heart ? 'on' : ''}" data-wph aria-pressed="${wp.heart}"><span class="wp-hi">${wp.heart ? '❤️' : '♡'}</span><span><b>Worth revisiting</b><small>The film as I saw it is worth revisiting. It doesn’t affect ranking.</small></span></button>
     <div class="bf-foot"><button class="later" data-wpx>${wp.mode === 'edit' ? 'Cancel' : 'Later · it waits in the lobby'}</button>
       <button class="bf-go" data-wpgo ${wp.w == null ? 'disabled' : ''}>${same ? 'Save' : wp.mode === 'edit' ? 'Rerun its showdown' : 'Down to the auditorium'}</button></div>`;
@@ -3180,7 +3176,7 @@ function lockedNotice(where) {
   return `<div class="intertitle" style="margin:0 auto">
     <img class="projected" src="${LOGO_B}" alt=""><div class="k">${where}</div><h2>The house is dark</h2>
     <p>${visitor ? 'Only the editor works the projector. Visitors are welcome in the lobby, the Film Vault and the Game Room.'
-      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one whose review you rewrite with another ticket from the lobby.' : 'The screening room opens for a review headed to the reel. Send one from the queue in the lobby, or watch any past show from the Film Vault’s highlight reel.'}</p>
+      : where === 'The Projection Booth' ? 'The booth only opens for a film entering the collection, or one whose review you rewrite with another ticket from the lobby.' : 'The screening room opens for a film headed to the reel. Send one from the queue in the lobby, or watch any past show from the Film Vault’s highlight reel.'}</p>
     <span class="orn"></span>
     <div class="yn" style="margin-top:6px">${visitor ? '' : '<button class="btn-gold" data-goto="boxoffice">Admit a film</button>'}${where === 'The Screening Room' && VAULT.length ? '<button class="btn-line" data-goto="vault">The Film Vault</button>' : ''}<button class="btn-line" data-goto="lobby">Back to the lobby</button></div></div>`;
 }
@@ -3277,16 +3273,16 @@ function selectSlot(ra, from, forward) {
   return false;
 }
 // click (or tap) inside a [bracketed part] selects it, so typing replaces it; after the browser places the caret
-$('#pane').addEventListener('mouseup', e => {
+$('#pane')?.addEventListener('mouseup', e => {
   const ra = e.target.id === 'raIn' ? e.target : null; if (!ra) return;
   setTimeout(() => { if (ra.selectionStart === ra.selectionEnd) selectSlot(ra, ra.selectionStart, false); }, 0);
 });
-$('#pane').addEventListener('keydown', e => {
+$('#pane')?.addEventListener('keydown', e => {
   if (e.target.id === 'raIn' && e.key === 'Tab' && !e.shiftKey && SLOT.test(e.target.value)) {
     e.preventDefault(); selectSlot(e.target, e.target.selectionEnd, true);
   }
 });
-$('#pane').addEventListener('input', e => {
+$('#pane')?.addEventListener('input', e => {
   if (e.target.id === 'raIn') {
     const n = wordCount(e.target.value);
     // past the limit, new words are refused; deleting always works (older, longer rationales can be trimmed down)
@@ -3299,7 +3295,7 @@ $('#pane').addEventListener('input', e => {
   }
   saveWriting(); saveDraft();
 });
-$('#pane').addEventListener('click', e => {
+$('#pane')?.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || !bt || !active) return;
   if (b.dataset.word !== undefined) { bt.w = +b.dataset.word; bt.phase = 'done'; }
   else if (b.dataset.restart !== undefined) { bt.phase = 'pick'; }
@@ -3359,10 +3355,10 @@ function openCompass(l) {
     <div class="body">${esc(c.body)}</div>
     <div class="why"><div><b>Why not the level below?</b>${esc(c.below)}</div><div><b>Why not the level above?</b>${esc(c.above)}</div></div>
     <div class="foot">This guidance helps you answer the existing threshold question; it does not replace that question or decide the classification.</div>`;
-  $('#compass').classList.add('show');
+  $('#compass')?.classList.add('show');
   $('#cmp .x').focus();
 }
-$('#compass').addEventListener('click', e => { if (e.target.id === 'compass' || e.target.closest('.x')) $('#compass').classList.remove('show'); });
+$('#compass')?.addEventListener('click', e => { if (e.target.id === 'compass' || e.target.closest('.x')) $('#compass')?.classList.remove('show'); });
 
 /* =====================================================================
    THE AUDITORIUM · THE SHOW
@@ -3642,11 +3638,11 @@ function renderShowFrame() {
   const b = S.battles[S.step], B = byId(b.opp), pool = (b.ax && S.pools && S.pools[b.ax]) || S.order, lineup = b.ax === 'Y' ? `${Y_NAMES[b.level]} lineup` : b.ax ? `${b.ax}${b.level} lineup` : 'reel';
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA_SHOW[S.via] || ''}${esc(A.title)} · ${b.ax === 'Y' ? `the ${Y_NAMES[b.level]} showdown · ` : ''}battle ${S.step + 1} of ${S.battles.length}${pendingCall(S) ? '+' : ''}</div>
     ${b.ax ? `<h2 class="db-q">${esc(SHOW_Q[b.ax][b.level])}</h2>` : `<h2 class="bt-h">${esc(A.title)} <i>vs</i> ${esc(B.title)}</h2>`}
-    ${doubleBillHTML(A, B, { ax: b.ax, level: b.level, oppRank: b.oppRank, of: pool.length, arriving: true, pid: S.pid, tagA: S.replay ? 'The arrival' : 'The new review', tagB: b.ax ? `${lineup} · #${b.oppRank}` : `On the reel · #${b.oppRank}` })}
+    ${doubleBillHTML(A, B, { ax: b.ax, level: b.level, oppRank: b.oppRank, of: pool.length, arriving: true, pid: S.pid, tagA: S.replay ? 'The arrival' : 'The new film', tagB: b.ax ? `${lineup} · #${b.oppRank}` : `On the reel · #${b.oppRank}` })}
     <div class="dq"><span id="bfactor">&nbsp;</span><p id="breason">&nbsp;</p></div>`;
   drum.innerHTML = pool.filter(id => byId(id)).map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === b.opp));
-  $('#rvMine').innerHTML = duelCard(A, { label: 'The new review' });
+  $('#rvMine').innerHTML = duelCard(A, { label: 'The new film' });
   $('#rvOpp').innerHTML = duelCard(B, { label: `${b.ax ? 'The ' + lineup : 'On the reel'} · #${b.oppRank}` });
   setScreenBg(A, B); renderDcBar();
   $('#endTop').innerHTML = `Top of the ${lineup}<span>#1</span>`;
@@ -3672,7 +3668,7 @@ function renderAsk() {
         <p class="cq-note">${esc(A.title)} meets the ${pool.length} other Y${l}${pool.length === 1 ? '' : 's'} on the reel, whatever their claim.</p>
         <div class="cq-btns"><button data-tocase>2 · The case →<small>the Y${l} showdown</small></button></div></div>`;
     drum.innerHTML = pool.map(id => slotHTML(byId(id), false)).join('');
-    $('#rvMine').innerHTML = duelCard(A, { label: 'The new review' });
+    $('#rvMine').innerHTML = duelCard(A, { label: 'The new film' });
     $('#rvOpp').hidden = true;
     setScreenBg(A, null); renderDcBar();
     $('#endTop').innerHTML = `Top of the ${lineup}<span>#1</span>`;
@@ -3684,10 +3680,10 @@ function renderAsk() {
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA_SHOW[S.via] || ''}${esc(A.title)} · the ${Y_NAMES[l]} showdown · battle ${S.battles.length + 1} · your answer</div>
     <h2 class="db-q">${esc(SHOW_Q[ax][l])}</h2>
     <p class="db-sd"><b>Tap the film that ranks higher</b></p>
-    ${doubleBillHTML(A, B, { ax, level: l, oppRank: q.oppRank, of: pool.length, arriving: true, tagA: VIA_SHOW[S.via] ? VIA_SHOW[S.via].replace(' · ', '') : 'The new review', tagB: `${lineup} · #${q.oppRank}` })}`;
+    ${doubleBillHTML(A, B, { ax, level: l, oppRank: q.oppRank, of: pool.length, arriving: true, tagA: VIA_SHOW[S.via] ? VIA_SHOW[S.via].replace(' · ', '') : 'The new film', tagB: `${lineup} · #${q.oppRank}` })}`;
   drum.innerHTML = pool.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
-  $('#rvMine').innerHTML = duelCard(A, { label: 'The new review', call: argueCase(A, B, ax) });
+  $('#rvMine').innerHTML = duelCard(A, { label: 'The new film', call: argueCase(A, B, ax) });
   $('#rvOpp').innerHTML = duelCard(B, { label: `The ${lineup} · #${q.oppRank}`, call: argueCase(B, A, ax) });
   setScreenBg(A, B); renderDcBar();
   $('#endTop').innerHTML = `Top of the ${lineup}<span>#1</span>`;
@@ -3780,7 +3776,7 @@ function renderFinal() {
   const close = S.battles.slice().sort((a, b) => a.margin - b.margin)[0];
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · the reel has spoken</div>
     <h2>${esc(A.title)} ${S.replay ? 'landed' : 'lands'} at #${S.pos + 1} <small class="of">of ${S.of}${S.replay && now >= 0 && now !== S.pos ? ` · now #${now + 1}` : ''}</small></h2>
-    <p class="dq-res">${S.battles.length ? S.battles.map(b => `<span class="${b.newWins ? 'w' : 'l'}">${b.newWins ? 'Beat' : 'Fell to'} ${esc(byId(b.opp)?.title || '')}</span>`).join('') : '<span>The first review on the reel</span>'}</p>`;
+    <p class="dq-res">${S.battles.length ? S.battles.map(b => `<span class="${b.newWins ? 'w' : 'l'}">${b.newWins ? 'Beat' : 'Fell to'} ${esc(byId(b.opp)?.title || '')}</span>`).join('') : '<span>The first film on the reel</span>'}</p>`;
   drum.innerHTML = list.map(id => slotHTML(byId(id), id === A.id)).join('');
   const above = byId(list[at - 1]), below = byId(list[at + 1]), nb = above || below;
   $('#rvMine').innerHTML = duelCard(A, { label: `Lands at #${S.pos + 1}`, stamp: { cls: 'land', text: `#${S.pos + 1}<small>of ${S.of}</small>` } });
@@ -3935,7 +3931,7 @@ document.addEventListener('click', async e => {
    newer films that challenged it in its lineups. */
 let vaultCan = '', vaultShifts = false;
 const RERUN_VIA = new Set(['rewrite', 'spot', 'rescreen', 'strike']);
-const REEL_NAME = { rewrite: 'Rerun · the review rewritten', spot: 'Rerun · after a spot-check', rescreen: 'Re-screening', strike: 'Strike' };
+const REEL_NAME = { rewrite: 'Rerun · a new word', spot: 'Rerun · after a spot-check', rescreen: 'Re-screening', strike: 'Strike' };
 const pad3 = n => String(n).padStart(3, '0');
 function vaultCans() {
   const ids = new Set([...db.wheel.filter(id => byId(id)), ...VAULT.map(v => v.film)]);
@@ -4059,7 +4055,7 @@ function renderVaultGrid() {
     }
   });
   $('#vgrid').innerHTML = list.length ? `<div class="rack">${html}</div>`
-    : `<p class="vempty">${VAULT.length || db.wheel.length ? 'No can in the catalogue matches.' : 'The vault is empty. Send a review to the reel and its can is shelved here.'}</p>`;
+    : `<p class="vempty">${VAULT.length || db.wheel.length ? 'No can in the catalogue matches.' : 'The vault is empty. Send a film to the reel and its can is shelved here.'}</p>`;
   const cnt = $('#vCount'); if (cnt) cnt.textContent = `${list.length} CAN${list.length === 1 ? '' : 'S'}`;
   const old = oldConsiderations();
   $('#vold').innerHTML = old.length && !q ? `<details class="vold"><summary>From the old reel · ${old.length} decisive consideration${old.length === 1 ? '' : 's'}</summary>
@@ -4337,7 +4333,7 @@ function briefOpen(id, mode) {
     <div class="k">${mode === 'reel' ? 'Before the reel' : 'Film profile'}${Y_NAMES[r.w] ? ' · ' + Y_NAMES[r.w] : ''}</div>
     <h2>Sub-genre</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
-    <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel.' : 'The reel reads every claim against its own sub-genre.'}</p>
+    <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel.' : 'Its sub-genre shows on its cards and in the Film Vault.'}</p>
     <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
       <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
     <div class="bf-err" id="bfErr"></div>
@@ -4385,7 +4381,7 @@ const DOORS = {
        note: 'If you can neither confirm nor deny it, you must claim no as an assumption.', fail: 'Attempting to rate these would corrupt the integrity of the framework.' },
   2: { name: 'The Finish', q: 'Did the viewing end on my terms, either by finishing it or by choosing to stop?',
        note: 'Choosing to stop because I couldn’t bear it passes this door; that is what Bad and Garbage are for. Falling asleep, getting interrupted and never returning, or not remembering how it ended does not. If you can’t confirm it, the answer is no.', fail: 'Attempting to rate these could be possible, however the View is skewed.' },
-  3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what each axis asks for?',
+  3: { name: 'The Blueprint', q: 'Does my View retain sufficient experiential shape to support faithful judgements, given what the word asks for?',
        note: 'It does not require scene-by-scene reconstruction, exhaustive factual recall, precise recollection of every reaction, or the ability to reproduce the film’s narrative in detail. Forgettability is normal. What matters is to not allow uncertainty around a View to be able to manufacture judgements. The shape may be complex, mixed, shifting, or emotionally restrained. A remembered lack of emotion may itself constitute legitimate experiential information. An absence of emotional access caused by failure to remember, however, does not.',
        fail: '' },
 };
@@ -4601,12 +4597,12 @@ function renderPlaybill() {
       <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
     <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
   if (pbTab === 'W') body = `<div class="pb-sec">Act I · The Ten Words<small>One word per film, picked at the box office · showdowns order the films that share it</small></div>
-    <p class="pb-note" style="margin:0 0 10px">It grows out from the middle pair. Good is a step into the upper half, Alright a step into the lower half; neither is positive or negative yet. Bad and Garbage are films you couldn’t finish: Bad you couldn’t bear, Garbage drove you away.</p>
-    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}</div><p>${esc(wordRule(l))}</p></div>`).join('')}
+    <p class="pb-note" style="margin:0 0 10px">The scale grows outward from the middle pair. 6 and 5 aren’t positive or negative yet, they’re the first step either way: Good leans “that was good,” Alright leans “it was fine, but I can’t call it good.”</p>
+    ${LEVELS.map(l => `<div class="pb-it ${here && here.Y === l ? 'here' : ''}"><span class="n">${l}</span><div class="t">${Y_NAMES[l]}<em>${esc(W_RULE[l])}</em></div><p>${esc(W_DESC[l])}</p></div>`).join('')}
     <div class="pb-it"><span class="n">❤️</span><div class="t">Worth revisiting</div><p>The film as I saw it is worth revisiting. Not a good or bad thing, and it doesn’t affect ranking.</p></div>`;
   if (pbTab === 'E') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
-    body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a review once it’s on the reel</small></div>
+    body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a film once it’s on the reel</small></div>
       <p class="pb-note" style="margin:0 0 10px">Your showdowns settle each film. Afterward, you can change any film’s word, and it reruns.</p>
       ${it('↻', 'A new word', 'edit freely', 'Buy another ticket and pick a different word or change its ❤️. A new word takes the film off the reel and reruns its showdown in the auditorium; the heart alone changes nothing on the reel.')}
       ${it('✕', 'Dump the reel', 'the Office', 'Clears the reel, every lineup and every showdown. Only the word, sub-genre and year stay; every film goes back to the queue.')}`;
@@ -4683,7 +4679,7 @@ function renderOffice() {
 
       ${editor ? `
       <div class="ledger"><span class="tabk">The safe</span><h3>Back up the collection</h3>
-        <p>Download everything — films, reviews, the reel and its matchups, lists and the Film Vault — as one file.</p>
+        <p>Download everything — films, words, the reel and its matchups, lists and the Film Vault — as one file.</p>
         <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.matches.length}</b><span>Battles</span></div><div><b>${nV}</b><span>Shows</span></div></div>
         <div class="btnrow2"><button class="btn-ink solid" data-o="export">Download backup</button></div>
         ${officeMsg.backup ? `<div class="okline">${esc(officeMsg.backup)}</div>` : ''}</div>
@@ -4705,13 +4701,13 @@ function renderOffice() {
         ${officeMsg.weights ? `<div class="okline">${esc(officeMsg.weights)}</div>` : ''}</div>
 
       <div class="ledger danger"><span class="tabk">The house lights</span><h3>Dump the reel</h3>
-        <p>Clears the reel and every lineup. Only each film’s word, sub-genre and year stay. Everything else goes: the reel, every show and showdown, records, peaks and reigns, decisive considerations and the archives. Every review goes back to the queue. This can’t be undone without a backup.</p>
+        <p>Clears the reel and every lineup. Only each film’s word, sub-genre and year stay. Everything else goes: the reel, every show and showdown, records, peaks and reigns, decisive considerations and the archives. Every film goes back to the queue. This can’t be undone without a backup.</p>
         <label class="tiny" for="oClearW">Type <b>DUMP THE REEL</b> to unlock</label>
         <input class="inkin" id="oClearW" placeholder="DUMP THE REEL" autocomplete="off">
         <div class="btnrow2"><button class="btn-ink red" data-o="clearwheel" id="oClearWBtn" disabled>Dump it</button></div></div>
 
       <div class="ledger danger"><span class="tabk">The fire curtain</span><h3>Clear the whole collection</h3>
-        <p>Removes every film, review, matchup and consideration, and empties the reel. Your lists keep their names but are emptied. This cannot be undone without a backup.</p>
+        <p>Removes every film, word, matchup and consideration, and empties the reel. Your lists keep their names but are emptied. This cannot be undone without a backup.</p>
         <label class="tiny" for="oClear">Type <b>CLEAR THE HOUSE</b> to unlock</label>
         <input class="inkin" id="oClear" placeholder="CLEAR THE HOUSE" autocomplete="off">
         <div class="btnrow2"><button class="btn-ink red" data-o="clear" id="oClearBtn" disabled>Clear everything</button></div></div>` : ''}
@@ -4762,7 +4758,7 @@ $('#office').addEventListener('click', async e => {
     db.wheel = []; db.matches = []; db.wheelLog = []; db.archives = []; db.ties = {}; db.ladders = { X: {}, Y: {} }; delete db.archive;
     db.films.forEach(f => { ['strikes', 'strikeCount', 'locked', 'comp'].forEach(k => delete f[k]); });
     rebuild(); vaultOpen.clear();
-    if (await persist()) toast(`Reel dumped · all ${QUEUE.length} review${QUEUE.length === 1 ? '' : 's'} wait in the queue with only the claim, case, sub-genre and year`);
+    if (await persist()) toast(`Reel dumped · all ${QUEUE.length} film${QUEUE.length === 1 ? '' : 's'} wait in the queue with only their word, sub-genre and year`);
     return renderOffice();
   }
   if (o === 'clear') {
