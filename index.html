@@ -2151,8 +2151,8 @@ const W_DESC = { 10: 'It fills you with awe and stirs something beyond the film 
   2: 'It hurts to sit through. It causes real distress or discomfort.',
   1: 'It’s relentless suffering, too much to endure.' };
 // the ordinal: one question at every price, about what the film offers its sub-genre
-const ORD_Q = 'which offers more to its sub-genre?';
-const ORD_RULE = 'The more it offers its sub-genre, the higher it ranks';
+const ORD_Q = 'as a take on its sub-genre, which is better to me?';
+const ORD_RULE = 'As a take on its sub-genre, the better it is to me, the higher it ranks';
 const wordRule = l => Y_NAMES[l] ? ORD_RULE : '';
 const HEART = '❤️';
 const heartHTML = f => f && f.heart ? ' <span class="hrt" title="Worth revisiting">❤️</span>' : '';
@@ -2488,7 +2488,7 @@ function placementRun(P) {
 }
 const placementDone = P => P.done.Y != null;
 // the call to action, in the argument card's words: the claim word or the case verb for that level, read against each film's own sub-genre
-function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `Both ${Y_NAMES[l]}: ${esc(W.title)} offers more to its sub-genre than ${esc(L.title)}.`; }
+function showdownReason(ax, l, W, L, even) { return even ? `${Y_NAMES[l]}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `Both ${Y_NAMES[l]}: as a take on its sub-genre, ${esc(W.title)} is better to me than ${esc(L.title)}.`; }
 const ctaQuestion = (ax, l) => esc(SHOW_Q.Y[l]);
 // pick: the film whose call-to-action statement you agree with; it ranks higher in the lineup
 // every answer can be taken back until the placement is saved
@@ -2937,7 +2937,7 @@ function openProfile(id, show) {
         return `<div class="pinf"><span class="pinf-k">Influence ◆ ${infOf(f)}</span><span>Placement ${ip.place}</span><span>Word standing ${ip.Y}</span>
           ${ry ? `<div class="pinf-r">${Y_NAMES[f.Y]} lineup: above ${ry.below}${ry.below ? ` (${ry.faced} beaten head-to-head, ${ry.implied} by placement)` : ''}</div>` : ''}</div>`; })() : ''}
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
-      <div class="pscore"><div class="lab">Its pass <b>${Y_NAMES[f.Y]}</b></div><p class="pmean"><b>${W_LINE[f.Y] || ''}.</b> ${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>Ranked by what it offers its sub-genre</span><span>Lineup <b>${laneText(f)}</b></span></div>
+      <div class="pscore"><div class="lab">Its pass <b>${Y_NAMES[f.Y]}</b></div><p class="pmean"><b>${W_LINE[f.Y] || ''}.</b> ${esc(W_DESC[f.Y] || '')}</p><div class="fc-eq"><span>Ranked as a take on its sub-genre</span><span>Lineup <b>${laneText(f)}</b></span></div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       ${editor ? `<div style="margin-top:8px"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
@@ -4486,8 +4486,8 @@ function renderPlaybill() {
     body = `<div class="pb-sec">Act II · The Reel<small>Masterpiece at the top, Unbearable at the bottom · one showdown places every film</small></div>
       <p class="pb-note" style="margin:0 0 10px">A film meets every other film that paid the same price. Every Masterpiece sits above every Amazing, every Amazing above every Great, and so on down; the showdowns decide the order inside each price.</p>
       <div class="pb-axis"><span>The showdown</span></div>
-      ${it('?', 'The question', 'every price', 'The pass already says what the film did to you. The showdown asks something else: what it offers its sub-genre. The question is the same at every price, like “Both Great: which offers more to its sub-genre?” Each card shows its film’s sub-genre. Tap the film that offers more.')}
-      ${it('↕', 'Down to Unbearable', 'still offers more', 'The film that offers more ranks higher at every price. Two Painful films hurt about the same by definition; the one that still gives its sub-genre something ranks above the one that gives it nothing.')}
+      ${it('?', 'The question', 'every price', 'The pass already says what the film did to you. The showdown asks one thing at every price: as a take on its sub-genre, which is better to you? Like “Both Great: as a take on its sub-genre, which is better to me?” Each card shows its film’s sub-genre. Tap the one that’s better to you.')}
+      ${it('↕', 'Down to Unbearable', 'same question', 'The better take ranks higher at every price. Two Painful films hurt about the same by definition; the one that’s the better take on its sub-genre to you ranks above the other.')}
       ${it('▶', 'Battles', 'your answers', 'Each showdown is a binary search: the film meets the middle of its word’s lineup, then the middle of the half you send it to, until it lands. Every answer is filed in that film’s can in the Film Vault.')}
       ${it('✎', 'A consideration for every answer', 'optional', 'Each question has a line for your decisive consideration. It’s filed with that matchup, shown when the battle plays back, and editable in the Film Vault.')}
       ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left. The showdown question heads the screen, and the Double Bill sets the two films side by side, fight-card style: on the reel, peak, record and form, influence, lineup spot. ◀ marks the edge in each row.')}
