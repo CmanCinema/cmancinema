@@ -919,6 +919,9 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .hrt{font-size:.8em;vertical-align:1px}
 .pst-row{display:flex;gap:14px;align-items:center;margin:12px 0 4px;text-align:left}
 .pst-in{flex:1;min-width:0}
+.pst-in .dvd-btn{color:var(--gold-hi);border-color:rgba(232,190,106,.6);background:rgba(232,190,106,.08)}
+.pst-in .dvd-btn:hover{background:rgba(232,190,106,.18)}
+.pst-in .hint{color:rgba(243,230,200,.7)}
 .pst-in .placard{width:100%;margin:0}
 .pst-err{display:block;min-height:1.2em;margin-top:4px;font:600 13px var(--body);color:#ff9a9a}
 .pmean{margin:-2px 0 8px;font:italic 500 16px/1.4 var(--body);color:rgba(243,230,200,.85)}
@@ -2969,7 +2972,7 @@ $('#sheet').addEventListener('click', e => {
     if (!canEdit()) return;
     $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The poster · ${esc(f.title)}</b>
       <div class="pst-row"><span id="pstPrev">${posterHTML({ ...f, style: styleFor(f.id) }, 70)}</span>
-        <div class="pst-in"><input class="placard" id="pstUrl" placeholder="Paste the picture address here" inputmode="url" value="${esc(f.poster || '')}" autocomplete="off"><span class="pst-err" id="pstErr"></span></div></div>
+        <div class="pst-in"><a class="dvd-btn" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(f.title + ' ' + (f.year || '') + ' DVD')}" target="_blank" rel="noopener" style="margin-bottom:8px">Find the DVD on Google ↗</a><input class="placard" id="pstUrl" placeholder="Paste the picture address here" inputmode="url" value="${esc(f.poster || '')}" autocomplete="off"><span class="pst-err" id="pstErr"></span><p class="hint" style="margin:2px 0 0">On Google Images, right-click the DVD cover and choose “Copy image address”, then paste it above.</p></div></div>
       <div class="btns"><button class="btn-gold" data-postersave>Save poster</button>${f.poster ? '<button class="btn-line" data-posterclear>Remove poster</button>' : ''}<button class="btn-line" data-no>Cancel</button></div></div>`;
     const inp = $('#pstUrl');
     inp.addEventListener('input', () => { $('#pstErr').textContent = ''; $('#pstPrev').innerHTML = posterHTML({ ...f, poster: inp.value.trim(), style: styleFor(f.id) }, 70); });
