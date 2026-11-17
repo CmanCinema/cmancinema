@@ -1905,37 +1905,38 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   #vault .btn{flex:1 1 auto}
 }
 
-/* ---- phone auditorium: each film a compact card (whole poster beside its title), the two statements
-   right after one another, the projector and the stats out of the way ---- */
+/* ---- phone auditorium: the two films side by side, each poster smaller but at its true 2:3 shape,
+   its statement underneath; the projector below them at a good size ---- */
 @media (max-width:640px){
-  #auditorium .stage.sw.showing{display:flex!important;flex-direction:column;gap:12px;align-items:stretch}
-  #auditorium .stage.sw.showing #rvMine{order:1} #auditorium .stage.sw.showing #rvOpp{order:2}
-  #auditorium .stage.sw.showing .reel-col{order:3;zoom:.55;margin:0 auto}
-  #screenCard .dbill{margin-top:8px}
-  #screenCard .db-r{min-height:30px}
-  #screenCard .db-r .a,#screenCard .db-r .b{font-size:15px;padding:0 10px}
-  #screenCard .db-head{margin-bottom:4px}
-  #screenCard .db-q{margin:4px auto 2px}
-  .showing .rv.fcard{width:100%;max-width:none}
-  .showing .rv.fcard .face.front{display:grid!important;grid-template-columns:92px 1fr;grid-template-areas:"art rib" "art ttl" "body body";column-gap:12px;row-gap:4px;padding:12px!important;align-items:start}
-  .showing .rv.fcard .fc-art{display:contents}
-  .showing .rv.fcard .fc-art > .poster{grid-area:art;position:relative!important;inset:auto;width:92px!important;height:auto;aspect-ratio:2/3;border-radius:4px;box-shadow:0 6px 14px rgba(0,0,0,.55)}
+  #auditorium .stage.sw.showing{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;align-items:start}
+  #auditorium .stage.sw.showing #rvMine{grid-column:1;grid-row:1} #auditorium .stage.sw.showing #rvOpp{grid-column:2;grid-row:1}
+  #auditorium .stage.sw.showing #rvOpp[hidden] ~ *, #auditorium .stage.sw.showing:has(#rvOpp[hidden]) #rvMine{grid-column:1 / -1}
+  #auditorium .stage.sw.showing .reel-col{grid-column:1 / -1;grid-row:2;zoom:.82;margin:6px auto 0}
+  .showing .rv.fcard{width:100%;max-width:none;min-width:0}
+  .showing .rv.fcard .face.front{display:flex!important;flex-direction:column;padding:8px!important;min-width:0}
+  .showing .rv.fcard .fc-art{display:flex;flex-direction:column;align-items:center;min-height:0!important;flex:none!important;overflow:visible;border:0;padding-top:24px}
+  .showing .rv.fcard .fc-art > .poster{position:relative!important;inset:auto;width:58%!important;height:auto;aspect-ratio:2/3;border-radius:4px;box-shadow:0 6px 14px rgba(0,0,0,.55)}
   .showing .rv.fcard .fc-art > .poster img{object-position:center}
   .showing .rv.fcard .fc-art > .poster .one strong,.showing .rv.fcard .fc-art > .poster .one span{display:block}
   .showing .rv.fcard .fc-shade,.showing .rv.fcard .fc-medal{display:none!important}
-  .showing .rv.fcard .fc-ribbon{grid-area:rib;position:static;justify-self:start;align-self:end;font-size:9px;padding:4px 8px}
-  .showing .rv.fcard .fc-title{grid-area:ttl;position:static;align-self:start}
-  .showing .rv.fcard .fc-title .ti{font-size:20px!important;text-shadow:none}
-  .showing .rv.fcard .fc-title .me{font-size:10px}
-  .showing .rv.fcard .fc-title .lvl{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-  .showing .rv.fcard .stamp-big{top:8px!important;right:8px;left:auto!important;font-size:18px!important}
-  .showing .rv.fcard .fc-body{grid-area:body;padding:6px 0 0!important;border:0}
-  .showing .rv.fcard .fc-body .duel-cta{margin:4px 0 0}
-  .showing .rv.fcard .duel-cta .cta-t{font-size:15.5px;line-height:1.45}
+  .showing .rv.fcard .fc-ribbon{position:absolute;top:0;left:0;right:0;text-align:center;font-size:7.5px;letter-spacing:.12em;padding:4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .showing .rv.fcard .fc-title{position:static;width:100%;margin-top:8px;text-align:center}
+  .showing .rv.fcard .fc-title .ti{font-size:15px!important;line-height:1.15;text-shadow:none}
+  .showing .rv.fcard .fc-title .me{font-size:8.5px;letter-spacing:.1em;margin-top:2px}
+  .showing .rv.fcard .fc-title .lvl{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:5px}
+  .showing .rv.fcard .fc-title .lvl .cbadge{font-size:7.5px;padding:2px 5px;letter-spacing:.06em}
+  .showing .rv.fcard .fc-body{padding:6px 0 0!important;border:0}
+  .showing .rv.fcard .duel-cta{margin:2px 0 0;padding:9px 9px 8px}
+  .showing .rv.fcard .duel-cta .cta-t{font-size:12.5px;line-height:1.42}
+  .showing .rv.fcard .duel-cta small{font-size:8px;letter-spacing:.08em;margin-top:6px}
   .showing .rv.fcard .fc-stats,.showing .rv.fcard .fc-eq{display:none!important}
-  /* the final screen keeps the stats under each card */
-  .showing .rv.fcard:not(:has(.duel-cta)) .fc-stats{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:8px}
 }
+
+/* a hidden stage stays hidden, whatever the layout rules say */
+#auditorium .stage[hidden],#auditorium .stage.sw.showing[hidden],#auditorium #screenCard[hidden],#auditorium #tape[hidden]{display:none!important}
+#audDark .dq-res{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px;margin:8px 0 0}
+#audDark .dq-res span{padding:3px 10px;border-radius:20px;font:600 14px var(--body);border:1px solid rgba(232,190,106,.35)}
+#audDark .dq-res .w{color:#9fe0b0;border-color:rgba(120,200,140,.5)} #audDark .dq-res .l{color:#f0a0a0;border-color:rgba(220,120,120,.5)}
 </style>
 </head>
 <body>
@@ -3612,7 +3613,7 @@ function tapeHTML() {
 }
 function frameBase() {
   setFocus(showFocus());
-  $('#checkIn').hidden = true; $('#stage').hidden = false; $('#tape').hidden = false; $('#rvOpp').hidden = false; $('#stage').classList.add('showing');
+  $('#checkIn').hidden = true; $('#audDark').hidden = true; $('#screenCard').hidden = false; $('#stage').hidden = false; $('#tape').hidden = false; $('#rvOpp').hidden = false; $('#stage').classList.add('showing');
   ['#rvMine', '#rvOpp'].forEach(x => { $(x).classList.remove('flipped', 'win', 'lose', 'arrive', 'duelc'); $(x).classList.add('fcard'); });
 }
 function renderShowFrame() {
@@ -3790,6 +3791,15 @@ function renderFinal() {
       <div>${canUndo ? '<button class="again" data-undo>↶ Undo last answer</button>' : ''}${more ? `<button class="again" data-marathon>Keep spinning · ${QUEUE.length} in the queue</button>` : ''}<button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open its can in the vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
       <span class="orn"></span></div>`;
   $('#results').classList.add('show');
+  // the show is over: the showdown leaves the screen and the house goes dark again, with where the film landed
+  ['#screenCard', '#stage', '#tape'].forEach(x => { $(x).hidden = true; });
+  setScreenBg(null, null); setFocus(null);
+  $('#audDark').hidden = false;
+  $('#audDark').innerHTML = `<div class="intertitle" style="margin:0 auto">
+    <img class="projected" src="${LOGO_B}" alt=""><div class="k">The Screening Room · the house lights are down</div>
+    <h2>${esc(A.title)} ${S.replay ? 'landed' : 'lands'} at #${S.pos + 1} <small class="of">of ${S.of}</small></h2>
+    <p class="dq-res">${S.battles.length ? S.battles.map(b => `<span class="${b.newWins ? 'w' : 'l'}">${b.newWins ? 'Beat' : 'Fell to'} ${esc(byId(b.opp)?.title || '')}</span>`).join('') : '<span>The first film on the reel</span>'}</p>
+    ${S.battles.length ? '<div class="yn" style="margin-top:8px"><button class="btn-line" data-replay>↺ Replay the show</button></div>' : ''}</div>`;
 }
 
 /* ---------- replaying a filed show from the highlight reel ---------- */
