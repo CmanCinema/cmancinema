@@ -1904,6 +1904,38 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   #vault .bench .note2{margin-left:0;flex-basis:100%}
   #vault .btn{flex:1 1 auto}
 }
+
+/* ---- phone auditorium: each film a compact card (whole poster beside its title), the two statements
+   right after one another, the projector and the stats out of the way ---- */
+@media (max-width:640px){
+  #auditorium .stage.sw.showing{display:flex!important;flex-direction:column;gap:12px;align-items:stretch}
+  #auditorium .stage.sw.showing #rvMine{order:1} #auditorium .stage.sw.showing #rvOpp{order:2}
+  #auditorium .stage.sw.showing .reel-col{order:3;zoom:.55;margin:0 auto}
+  #screenCard .dbill{margin-top:8px}
+  #screenCard .db-r{min-height:30px}
+  #screenCard .db-r .a,#screenCard .db-r .b{font-size:15px;padding:0 10px}
+  #screenCard .db-head{margin-bottom:4px}
+  #screenCard .db-q{margin:4px auto 2px}
+  .showing .rv.fcard{width:100%;max-width:none}
+  .showing .rv.fcard .face.front{display:grid!important;grid-template-columns:92px 1fr;grid-template-areas:"art rib" "art ttl" "body body";column-gap:12px;row-gap:4px;padding:12px!important;align-items:start}
+  .showing .rv.fcard .fc-art{display:contents}
+  .showing .rv.fcard .fc-art > .poster{grid-area:art;position:relative!important;inset:auto;width:92px!important;height:auto;aspect-ratio:2/3;border-radius:4px;box-shadow:0 6px 14px rgba(0,0,0,.55)}
+  .showing .rv.fcard .fc-art > .poster img{object-position:center}
+  .showing .rv.fcard .fc-art > .poster .one strong,.showing .rv.fcard .fc-art > .poster .one span{display:block}
+  .showing .rv.fcard .fc-shade,.showing .rv.fcard .fc-medal{display:none!important}
+  .showing .rv.fcard .fc-ribbon{grid-area:rib;position:static;justify-self:start;align-self:end;font-size:9px;padding:4px 8px}
+  .showing .rv.fcard .fc-title{grid-area:ttl;position:static;align-self:start}
+  .showing .rv.fcard .fc-title .ti{font-size:20px!important;text-shadow:none}
+  .showing .rv.fcard .fc-title .me{font-size:10px}
+  .showing .rv.fcard .fc-title .lvl{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .showing .rv.fcard .stamp-big{top:8px!important;right:8px;left:auto!important;font-size:18px!important}
+  .showing .rv.fcard .fc-body{grid-area:body;padding:6px 0 0!important;border:0}
+  .showing .rv.fcard .fc-body .duel-cta{margin:4px 0 0}
+  .showing .rv.fcard .duel-cta .cta-t{font-size:15.5px;line-height:1.45}
+  .showing .rv.fcard .fc-stats,.showing .rv.fcard .fc-eq{display:none!important}
+  /* the final screen keeps the stats under each card */
+  .showing .rv.fcard:not(:has(.duel-cta)) .fc-stats{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:8px}
+}
 </style>
 </head>
 <body>
@@ -2125,7 +2157,7 @@ const Y_TAG = { 5: 'Profundity · alters what an experience can be', 4: 'An exce
 const X_TESTS = [
   { q: 'Is the film triumphant in its approach toward what it wanted to accomplish for itself?', to: 5,
     opts: [{ k: 'yes', label: 'Yes', to: 5, end: true }, { k: 'no', label: 'No', to: 4 }] },
-  { q: 'Do you see the film in a qualified light, whereby something produced an outcome because something steered it away from the main intended plan?', to: 3,
+  { q: 'Do you see the film in a qualified light, whereby the presumed weakening hits a core aspect of what it wanted to accomplish for itself?', to: 3,
     opts: [{ k: 'yes', label: 'Yes', to: 3 }, { k: 'no', label: 'No', to: 4, end: true }] },
   { q: 'Did what it wanted to accomplish at its core just merely fail outright, or did it fail to prove it could even achieve it in the first place?', to: 2,
     opts: [{ k: 'outright', label: 'It failed outright', to: 2, end: true }, { k: 'never', label: 'It never proved it could', to: 1 }, { k: 'neither', label: 'Neither', to: 3, end: true }] },
@@ -4312,8 +4344,8 @@ $('#brief').addEventListener('click', async e => {
    X: "I think [A]'s claim is less [case word] to viewing its [sub-genre] than [B]'s claim is to its [sub-genre]."
    Y: "I think [A]'s case [verb]s viewing its [sub-genre] more than [B]'s case [verb]s viewing its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
-const X_APP = { 5: 'actively triumphing in what it is trying to accomplish', 4: 'any presumed weakening immaterial to its aim', 3: 'its outcome materially changed away from its aim',
-  2: 'failing its core aim despite showing it could', 1: 'fundamentally incapable of fulfilling its aim', 0: 'its proposal unworthy of credit' };
+const X_APP = { 5: 'actively triumphing in what it is trying to accomplish', 4: 'with any presumed weakening immaterial to its aim', 3: 'with the presumed weakening hitting a core aspect of what it wanted to accomplish for itself',
+  2: 'failing its core aim despite showing it could achieve it', 1: 'fundamentally incapable of fulfilling its aim', 0: 'with its proposal unworthy of credit' };
 const X_BASE = { 5: 'master', 4: 'preserve', 3: 'compromise', 2: 'defeat', 1: 'debilitate', 0: 'discredit' };
 function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
@@ -4325,11 +4357,11 @@ function argueCase(A, B, ax) {
     return `${lead}${ta}, ${X_APP[l]}, <b>${X_VERB[l]}</b> the aim of its ${gn(A)} ${X_MORE(l) ? 'more' : 'less'} than ${tb} does (${X_BASE[l]}) for its ${gn(B)}.`;
   }
   const l = A.Y, ga = gn(A), gb = gn(B), art = A.genre ? aOrAn(genreOf(A).trim()) : 'a';
-  if (l === 5) return `${lead}${pa} defining quality, that profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} over ${pb} defining quality does (redefine) for its ${gb}.`;
-  if (l === 4) return `${lead}${pa} exceptionally high-caliber realization of appeal, that defines its ${ga} experience, <b>obligates</b> viewing its ${ga} over ${pb} exceptionally high-caliber realization of appeal does (obligate) for its ${gb}.`;
+  if (l === 5) return `${lead}${pa} defining quality, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} defining quality does (redefine) for its ${gb}.`;
+  if (l === 4) return `${lead}${pa} exceptionally high-caliber realization of appeal, which defines its ${ga} experience, <b>obligates</b> viewing its ${ga} beyond what ${pb} exceptionally high-caliber realization of appeal does (obligate) for its ${gb}.`;
   if (l === 3) return `${lead}${pa} highly rewarding appeal, the superlative-like experiential effects received from that delivery, <b>influences</b> viewing its ${ga} more than ${pb} highly rewarding appeal does (influence) for its ${gb}.`;
   if (l === 2) return `${lead}${pa} sufficient appeal, how its positive engagement is delivered experientially, <b>invites</b> viewing its ${ga} more than ${pb} sufficient appeal does (invite) for its ${gb}.`;
-  return `${lead}${pa} insufficient appeal, lack of delivered positive engagement, still <b>incentivizes</b> viewing its ${ga} more than ${pb} insufficient appeal does (incentivize) for its ${gb}.`;
+  return `${lead}${pa} insufficient appeal, a lack of delivered positive engagement, still <b>incentivizes</b> viewing its ${ga} more than ${pb} insufficient appeal does (incentivize) for its ${gb}.`;
 }
 
 /* =====================================================================
