@@ -4341,13 +4341,13 @@ function briefOpen(id, mode) {
   const x = r.x, y = r.y, c = x + '/' + y, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ').filter(Boolean);
   bf = { id, mode };
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
-  const t = encodeURIComponent((r.title || '') + ' ' + (r.year || '') + ' film sub-genre');
+  const t = encodeURIComponent(`${r.title || 'classic movie'}${r.year ? ' - ' + r.year : ''} - what is the single specific sub-genre specific to it if you had to name`);
   $('#bfIn').innerHTML = `
     <div class="k">${mode === 'reel' ? 'Before the reel' : 'Film profile'} · ${X_NAMES[x]} · ${Y_NAMES[y]}</div>
     <h2>Sub-genre</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
     <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel.' : 'The showdowns measure each film against its own sub-genre.'}</p>
-    <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
+    <div class="bf-sec"><a class="dvd-btn" href="https://www.google.com/search?q=${t}" target="_blank" rel="noopener" style="margin-bottom:10px">Ask Google for its single sub-genre ↗</a>
       <div class="genre2"><input id="bfG1" placeholder="Gangster" maxlength="24" value="${esc(g[0] || '')}"><i>·</i><input id="bfG2" placeholder="Film" maxlength="24" value="${esc(g.slice(1).join(' ') || '')}"></div></div>
     <div class="bf-err" id="bfErr"></div>
     <div class="bf-foot"><button class="later" data-bflater>${mode === 'reel' ? 'Later · it waits for the reel' : 'Cancel'}</button>
