@@ -145,6 +145,30 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .row2{display:grid;grid-template-columns:1fr 120px;gap:18px}
 .dvd-btn{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:9px 14px;border-radius:4px;border:1.5px solid #6a1a1e;background:transparent;color:#6a1a1e;font:700 13px var(--serif);letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
 .dvd-btn:hover{background:#6a1a1e;color:var(--paper)}
+.aim-in{width:100%;border:1.5px solid #a8834a;border-radius:4px;background:rgba(255,255,255,.35);font:500 17px/1.45 var(--body);color:var(--ink);padding:8px 10px;resize:vertical;outline:none}
+.aim-in:focus{border-color:#6a1a1e}
+.pst-in .aim-in{background:rgba(255,240,210,.06);color:#f3e6c8;border-color:rgba(232,190,106,.5)}
+.aim-bx{max-width:680px;margin:4px auto 14px;text-align:left}
+.aim-bx label{display:block;font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-hi,#f3d48a);margin-bottom:5px}
+.aim-bx textarea{width:100%;border:1px solid rgba(232,190,106,.45);border-radius:4px;background:rgba(0,0,0,.25);color:#f3e6c8;font:500 16px/1.45 var(--body);padding:8px 10px;resize:vertical;outline:none}
+.paim{margin-top:12px;padding:10px 12px;border-left:3px solid var(--gold-hi,#f3d48a);background:rgba(255,240,210,.05);border-radius:4px}
+.paim p{margin:4px 0 0;font:500 16px/1.5 var(--body);white-space:pre-line}
+.paim .none{opacity:.6;font-style:italic}
+.eng-guide{margin:2px 0 6px;font:italic 500 14.5px/1.4 var(--body);opacity:.8}
+.aim-bx .eng-guide{color:#f3e6c8}
+.cta-flip{position:relative;perspective:1200px;margin:2px 0 10px}
+.fc-body .cta-flip{margin:0 0 10px}
+.cta-flip .duel-cta{margin:0}
+.cta-card{position:relative;transition:transform .5s;transform-style:preserve-3d}
+.cta-flip.flipped .cta-card{transform:rotateY(180deg)}
+.cta-flip.flipped .duel-cta,.cta-flip:not(.flipped) .cta-back{pointer-events:none}
+.cta-card>.duel-cta,.cta-back{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.cta-back{position:absolute;inset:0;transform:rotateY(180deg);border:2px solid var(--cc);border-radius:12px;background:#1a070b;background:color-mix(in srgb,var(--cc) 18%,#120408);color:#fff4d8;padding:12px 14px;overflow:auto;cursor:pointer;font:500 15px/1.45 var(--body);text-align:left}
+.cta-back .k{display:block;font:700 10px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi,#f3d48a);margin-bottom:6px;padding-right:26px}
+.cta-back p{margin:0;white-space:pre-line}
+.cta-back .none{opacity:.65;font-style:italic}
+.cta-turn{position:absolute;top:6px;right:8px;z-index:3;width:24px;height:24px;border-radius:50%;border:1px solid var(--gold-hi,#f3d48a);background:rgba(0,0,0,.45);color:var(--gold-hi,#f3d48a);font:700 13px/22px var(--serif);text-align:center;padding:0;cursor:pointer}
+.cta-flip .duel-cta .cta-t{display:block;padding-right:24px}
 .pst-row{display:flex;gap:14px;align-items:center;margin:12px 0 4px;text-align:left}
 .pst-in{flex:1;min-width:0}
 .pst-in .placard{width:100%;margin:0}
@@ -1927,6 +1951,11 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
   .showing .rv.fcard .fc-title .lvl .cbadge{font-size:7.5px;padding:2px 5px;letter-spacing:.06em}
   .showing .rv.fcard .fc-body{padding:6px 0 0!important;border:0}
   .showing .rv.fcard .duel-cta{margin:2px 0 0;padding:9px 9px 8px}
+  .showing .rv.fcard .cta-flip{margin:2px 0 0}
+  .showing .rv.fcard .cta-back{padding:9px 9px 8px;font-size:12.5px;line-height:1.42}
+  .showing .rv.fcard .cta-back .k{font-size:8px;letter-spacing:.08em}
+  .showing .rv.fcard .cta-turn{width:20px;height:20px;font-size:11px;line-height:18px;top:4px;right:4px}
+  .showing .rv.fcard .cta-flip .duel-cta .cta-t{padding-right:18px}
   .showing .rv.fcard .duel-cta .cta-t{font-size:12.5px;line-height:1.42}
   .showing .rv.fcard .duel-cta small{font-size:8px;letter-spacing:.08em;margin-top:6px}
   .showing .rv.fcard .fc-stats,.showing .rv.fcard .fc-eq{display:none!important}
@@ -2029,16 +2058,22 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
         <div class="window-in">
           <form class="paper" id="ticketForm" autocomplete="off">
             <div class="row2">
-              <div><label for="fTitle">Film title</label><input id="fTitle" placeholder="e.g. Casablanca" maxlength="90"></div>
+              <div><label for="fTitle">Film title</label><input id="fTitle" placeholder="e.g. Casablanca" maxlength="90"><a class="dvd-btn" id="wikiBtn" href="#" target="_blank" rel="noopener" style="margin-top:-8px">The film on Wikipedia ↗</a></div>
               <div><label for="fYear">Year</label><input id="fYear" inputmode="numeric" maxlength="4" placeholder="1942"></div>
             </div>
             <label for="fG1">Sub-genre <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· always two parts</span></label>
-            <a class="dvd-btn" id="genreBtn" href="#" target="_blank" rel="noopener" style="margin-bottom:10px">Find the sub-genre on Google ↗</a>
+            <a class="dvd-btn" id="genreBtn" href="#" target="_blank" rel="noopener" style="margin-bottom:10px">Ask Google for its single sub-genre ↗</a>
             <div class="genre2"><input id="fG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="fG2" placeholder="Film" maxlength="24"></div>
             <label>Poster</label>
             <a class="dvd-btn" id="dvdBtn" href="#" target="_blank" rel="noopener">Find the DVD on Google ↗</a>
             <input id="fPoster" placeholder="Paste the picture address here" inputmode="url">
             <p class="hint">On Google Images, right-click the DVD cover and choose “Copy image address”, then paste it above.</p>
+            <label for="fAim">The Aim <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· what X judges against</span></label>
+            <a class="dvd-btn" id="aimBtn" href="#" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
+            <textarea id="fAim" class="aim-in" rows="4" maxlength="2000"></textarea>
+            <label for="fEng">Engagement <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· how the film delivered its appeal · what Y judges against</span></label>
+            <p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p>
+            <textarea id="fEng" class="aim-in" rows="4" maxlength="2000"></textarea>
           </form>
           <div class="preview-poster">
             <div class="poster" id="pvPoster" style="width:170px"></div>
@@ -2153,51 +2188,26 @@ const X_NAMES = { 5: 'Conquered', 4: 'Unscathed', 3: 'Qualified', 2: 'Invalidate
 const Y_NAMES = { 1: 'Not Recommendable', 2: 'Recommendable', 3: 'Highly Recommendable', 4: 'Must-See', 5: 'Essential' };
 const X_AXIS = 'Film Condition', Y_AXIS = 'Viewing Recommendation';
 const X_LV = [5, 4, 3, 2, 1, 0], Y_LV = [5, 4, 3, 2, 1];
-const X_TAG = { 5: 'Not just unscathed, triumphant', 4: 'It holds in its aim', 3: 'The first qualification · now material', 2: 'Failure that defeats demonstrated capacity', 1: 'Fundamental incapacity', 0: 'An unworthy proposal' };
-const Y_TAG = { 5: 'Profundity · alters what an experience can be', 4: 'An exceptional defining caliber', 3: 'Its realization of appeal is a reward', 2: 'Appeal not lacking in a positive form', 1: 'Appeal lacking in a positive form' };
+const X_TAG = { 5: 'Not just unscathed, triumphant', 4: 'It achieves its aim', 3: 'The first qualification', 2: 'The attempt failed outright', 1: 'It never proved it could', 0: 'An unworthy proposal' };
+const Y_TAG = { 5: 'Breaks the cup', 4: 'An exceptional defining caliber', 3: 'A stellar reward', 2: 'Positive engagement', 1: 'Insufficient engagement' };
 const X_TESTS = [
-  { q: 'Is the film triumphant in its approach toward what it wanted to accomplish for itself?', to: 5,
+  { q: 'Did the film triumph over what it was trying to accomplish for itself?', to: 5,
     opts: [{ k: 'yes', label: 'Yes', to: 5, end: true }, { k: 'no', label: 'No', to: 4 }] },
-  { q: 'Do you see the film in a qualified light, whereby the presumed weakening hits a core aspect of what it wanted to accomplish for itself?', to: 3,
-    opts: [{ k: 'yes', label: 'Yes', to: 3 }, { k: 'no', label: 'No', to: 4, end: true }] },
-  { q: 'Did what it wanted to accomplish at its core just merely fail outright, or did it fail to prove it could even achieve it in the first place?', to: 2,
-    opts: [{ k: 'outright', label: 'It failed outright', to: 2, end: true }, { k: 'never', label: 'It never proved it could', to: 1 }, { k: 'neither', label: 'Neither', to: 3, end: true }] },
+  { q: 'Did the film still achieve its aim?', to: 4,
+    opts: [{ k: 'yes', label: 'Yes', to: 4, end: true }, { k: 'no', label: 'No', to: 3 }] },
+  { q: 'Did the film’s attempt fail outright, or did it fail to prove it could even achieve it in the first place?', to: 2,
+    opts: [{ k: 'outright', label: 'The attempt failed outright', to: 2, end: true }, { k: 'never', label: 'It never proved it could', to: 1 }, { k: 'neither', label: 'Neither', to: 3, end: true }] },
   { q: 'In addition to being defective, is the underlying proposal itself unworthy of credit?', to: 0,
     opts: [{ k: 'yes', label: 'Yes', to: 0, end: true }, { k: 'no', label: 'No', to: 1, end: true }] },
 ];
 const Y_TESTS = [
   { to: 2, q: 'Does the film offer a form of positive engagement that makes it worth considering for viewing?' },
-  { to: 3, q: 'Does that positive engagement, from having experienced it, manifest itself through a superlative-like appreciation?' },
+  { to: 3, q: 'Did that engagement result in a stellar reward: an impact on the experience I had?' },
   { to: 4, q: 'Is that realization of appeal, itself, one of exceptional caliber that becomes the defining quality of the experience?' },
   { to: 5, q: 'Is that defining quality so extraordinary that it profoundly alters my broader conception of what its sub-genre experience can be?' },
 ];
 // a Y question climbs on yes and stops on no; an X question carries its own answers
 const optsOf = (t, i, n, level) => t.opts || [{ k: 'yes', label: 'Yes', to: t.to, end: i === n - 1 }, { k: 'no', label: 'No', to: level, end: true }];
-const COMPASS = {
-  3: { name: 'Highly Recommendable', tag: 'Superlative-like appreciation', check: true,
-       q: 'Does that positive engagement, from having experienced it, manifest itself through a superlative-like appreciation?',
-       body: 'Appeal + superlative = appreciation. The appeal is how the film delivers engagement experientially. The superlative is tied back to that delivery, not to its reputation, its hype or what you expected; it doesn’t have to be something new, only tied to the film. The appreciation is the lens that dominates how you see the film. A Y2 can have superlative moments; at Y3, that appreciation dominates.',
-       ex: 'Larceny, Inc.: its escalation farce and comic trio (appeal) were highly entertaining (superlative), and the chain-like reaction, watching what would happen next, became the lens I see it through (appreciation).',
-       checks: [
-         ['Engaged or superlative', 'Think of what stood out most. Was it a positive form of engagement, or does it call for a superlative: thrilling, hilarious, gripping, moving, astonishing?'],
-         ['Tie it', 'Can you tie that superlative back to what in the film produced it? It doesn’t need to be new. It needs to come from the film, not its reputation, its hype or what you expected.'],
-         ['Does it dominate?', 'Does that superlative-like appreciation dominate how you appreciate its appeal? A Y2 can have moments like it; Y3 is when they dominate.'],
-         ['Rewarding or defining', 'If that appreciation is of such exceptional caliber that it becomes the defining quality of the experience you had, that’s the next question, Y4.'],
-       ],
-       below: 'Y2 is a positive form of engagement, in any form: interest, curiosity, tension, fascination, being challenged or moved. Y3 goes further: a superlative, tied to the film, dominates your appreciation of its appeal.',
-       above: 'Y4 is a different domain of appreciation: not the reward, but the caliber of realization. Stopping at Y3 is a successful classification, not a failed attempt at Y4.' },
-  4: { name: 'Must-See', tag: 'An exceptional defining caliber',
-       q: 'Is that realization of appeal, itself, one of exceptional caliber that becomes the defining quality of the experience?',
-       body: 'A different domain of appreciation. At Y3 the appreciation runs through the reward; at Y4 it runs through the caliber of realization. The appeal, how engagement is delivered experientially, comes with an exceptional caliber of realization that becomes the defining quality of the experience itself: the experience you had, not the whole film. It may be one performance, sequence, relationship, progression, perceptual effect or overarching method, or several together. The exceptional caliber must be experienced, not inferred from the film’s construction or its reputation.',
-       ex: 'The Lady Vanishes: it’s precisely how the encounters unfold on the train, through the manipulation of perception and the epistemic vertigo over the Lady’s whereabouts, that makes the experience exceptionally high-caliber. That caliber of realization is what dominates my appreciation.',
-       below: 'Being able to explain how something was made, or loving a film deeply, does not by itself establish Y4. At Y3 the appreciation is dominated by a superlative reward; Y4 is reached when the caliber of realization is what dominates. Once Y4 accurately describes the experience, Y3 is superseded.',
-       above: 'Y5 requires that defining quality to be so extraordinary that it profoundly alters your broader conception of what that kind of experience can be. Exceptional realization alone does not establish that.' },
-  5: { name: 'Essential', tag: 'Profundity · alters what an experience can be',
-       q: 'Is that defining quality so extraordinary that it profoundly alters my broader conception of what its sub-genre experience can be?',
-       body: 'This is not a stronger version of enthusiasm, excitement, admiration or astonishment; its significance reaches beyond the film into how you understand the possibilities of that kind of experience. An illustration, not an extra test: did this film fill my current viewing framework through the caliber of its realization, or did it break the cup, forcing me to build a new scale to process what I experienced? Y5 must be affirmatively supported by what you genuinely experienced, never assigned because Y4 is established, because the film is celebrated, or because the experience was unusually powerful. “An” experience means an experience of the kind the film strives for, not experience in general.',
-       below: 'At Y4 the experience fills the existing vessel to an exceptional degree. At Y5 the vessel itself no longer seems adequate. If the experience supports exceptional realization but not that broader significance, it naturally remains Y4.',
-       above: 'There is no higher Y classification. Strong emotion, intensity and important themes alone do not substitute for genuinely experienced profundity.' },
-};
 // the showdown question for each level (from the previous site)
 // the showdown has no question: you pick the statement you'd make. Each statement takes what that level conceded,
 // a verb for how it bears on the film's aim (X) or on viewing (Y), and each film's own sub-genre.
@@ -2292,8 +2302,8 @@ function boothQ(q, f) {
   return q.replace('what its sub-genre experience can be', g ? `what ${aOrAn(g)} ${g} experience can be` : 'what an experience can be');
 }
 const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
-  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), comp: f.comp || {}, pos: null });
-const levelLine = f => `${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}`;
+  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), aim: f.aim || '', eng: f.eng || '', comp: f.comp || {}, pos: null });
+const levelLine = f => `${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}`;
 
 /* ---------- the reel's memory: records, entry, peak, reign — replayed from the log ---------- */
 function blankStat() { return { w: 0, l: 0, n: 0, entry: null, peak: null, low: null, reign: 0, form: [], hold: 0 }; }
@@ -2835,29 +2845,24 @@ function renderLobby() {
       <select class="placard" id="lLevel"><option value="">Every recommendation</option>${levels.map(l => `<option value="${l}" ${String(l) === String(lobbyLevel) ? 'selected' : ''}>${Y_NAMES[l]} · ${ranked.filter(f => f.Y === l).length}</option>`).join('')}</select>
       ${canEdit() ? '<button class="btn-gold" data-goto="boxoffice">＋ Admit a film</button>' : ''}
     </div>
-    <div class="lview"><div class="seg"><button data-lview="list" class="${lobbyView === 'list' ? 'on' : ''}">The reel</button><button data-lview="lanes" class="${lobbyView === 'lanes' ? 'on' : ''}">The lanes</button></div>
-      ${canEdit() && N >= 3 ? '<button class="linkish" data-spot>Spot-check a pair</button>' : ''}</div>
+    ${canEdit() && N >= 3 ? '<div class="lview"><button class="linkish" data-spot>Spot-check a pair</button></div>' : ''}
     <div id="bill"></div>
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
       ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} films</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
-      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
+      ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
   renderBill();
-  $('#lSearch').addEventListener('input', e => { lobbyQuery = e.target.value; lobbyPage = 1; if (lobbyView === 'lanes') { lobbyView = 'list'; renderLobby(); return; } renderBill(); });
+  $('#lSearch').addEventListener('input', e => { lobbyQuery = e.target.value; lobbyPage = 1; renderBill(); });
   $('#lLevel').addEventListener('change', e => { lobbyLevel = e.target.value; lobbyPage = 1; renderBill(); });
 }
 function rowHTML(f, rank, stars) {
   const st = standing(f), mv = moveOf(st, rank);
   return `<div class="row ${f.id === justPlaced ? 'mine' : ''}" data-film="${f.id}" role="button" tabindex="0"><span class="rk">${rank}</span>${posterHTML(f)}
-    <span class="t">${esc(f.title)}${strikeBadge(f)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
+    <span class="t">${esc(f.title)}${strikeBadge(f)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="tk-btn" data-ticket="${esc(f.id)}">Buy another ticket</button>` : ''}</span>
     <span class="gp">${infOf(f) != null ? `<em class="infb" title="Influence: the share of the reel’s strength below it">◆ ${infOf(f)}</em>` : ''}${st.n ? `${st.w}–${st.l}` : 'Unmatched'}${mv ? ' · ' + moveText(mv) : ''}${st.form.length ? formHTML(st.form) : ''}</span><span class="st">${stars != null ? starText(stars) + ' ' + stars.toFixed(1) : ''}</span></div>`;
 }
 document.addEventListener('click', e => {
-  const v = e.target.closest('#lobbyIn [data-lview]');
-  if (v) { lobbyView = v.dataset.lview; try { localStorage.setItem('cman_lview', lobbyView); } catch (err) {} return renderLobby(); }
-  const ln = e.target.closest('#lobbyIn [data-lane]');
-  if (ln) { laneHL = laneHL === ln.dataset.lane ? null : ln.dataset.lane; return renderBill(); }
   if (e.target.closest('#lobbyIn [data-spot]')) return openSpot();
 });
 /* ---------- the lanes: each film's claim-lane spot linked to its case-lane spot ---------- */
@@ -2874,7 +2879,6 @@ function lanesHTML() {
       <div class="ln-col r"><div class="ln-k">The recommendation lane</div>${R.map(e => item(e, 'r')).join('')}</div></div>`;
 }
 function renderBill() {
-  if (lobbyView === 'lanes') { $('#bill').innerHTML = lanesHTML(); return; }
   const { ranked } = board(), N = ranked.length, q = lobbyQuery.trim().toLowerCase();
   const rows = ranked.map((f, i) => ({ f, rank: i + 1 })).filter(({ f }) => (lobbyLevel === '' || String(f.Y) === String(lobbyLevel)) && (!q || f.title.toLowerCase().includes(q) || f.year.includes(q)));
   const pages = Math.max(1, Math.ceil(rows.length / LOBBY_PAGE));
@@ -2928,7 +2932,7 @@ function openProfile(id, show) {
     <div class="pgrid"><div>${posterHTML(f)}</div><div>
       <div class="k">Film profile · ${st.overall ? `#${st.overall} of ${st.of} on the reel` : 'Waiting in the queue'}</div>
       <h3>${esc(f.title)}</h3>
-      <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge vd">X${f.X} · Y${f.Y}</span>${Y_NAMES[f.Y]} · ${X_NAMES[f.X]}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
+      <div class="sub">${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''} · <span class="cbadge vd">X${f.X} · Y${f.Y}</span>${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}${st.stars != null ? ` · ★ ${st.stars.toFixed(1)}` : ''}</div>
       <div class="pstats">
         <div><b>${st.overall ? '#' + st.overall : '—'}</b><span>On the reel</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
         <div><b>${st.w}–${st.l}</b><span>Record</span></div><div><b>${moveText(mv)}</b><span>Since entry</span></div>
@@ -2941,7 +2945,9 @@ function openProfile(id, show) {
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Condition lane <b>${laneText(f, 'X')}</b></span><span>Recommendation lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane points <b>${r1(LANES[f.id].Xp)} + ${r1(LANES[f.id].Yp)} = ${r1(LANES[f.id].Xp + LANES[f.id].Yp)}</b></span>` : ''}</div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
-      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
+      <div class="paim"><span class="dc-k">The Aim · what X judges against</span>${f.aim ? `<p>${esc(f.aim)}</p>` : '<p class="none">No aim attached yet.</p>'}</div>
+      <div class="paim"><span class="dc-k">Engagement · what Y judges against</span>${f.eng ? `<p>${esc(f.eng)}</p>` : '<p class="none">No engagement written yet.</p>'}</div>
+      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit>${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-engedit>${f.eng ? 'Edit Engagement' : 'Add Engagement'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
       ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
@@ -2963,6 +2969,41 @@ $('#sheet').addEventListener('click', e => {
   if (!f) return closeSheet();
   if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
   if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
+  if (e.target.closest('[data-aimedit]')) {
+    if (!canEdit()) return;
+    const q = encodeURIComponent(`${f.title}${f.year ? ' - ' + f.year : ''} - what is this film trying to accomplish for itself`);
+    $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The Aim · ${esc(f.title)}</b>
+      <div class="pst-in" style="margin-top:12px"><a class="dvd-btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
+        <textarea id="aimEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.aim || '')}</textarea></div>
+      <div class="btns"><button class="btn-gold" data-aimsave>Save the Aim</button><button class="btn-line" data-no>Cancel</button></div></div>`;
+    $('#aimEdit').focus();
+    return;
+  }
+  if (e.target.closest('[data-engedit]')) {
+    if (!canEdit()) return;
+    $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Engagement · ${esc(f.title)}</b>
+      <div class="pst-in" style="margin-top:12px"><p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p>
+        <textarea id="engEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.eng || '')}</textarea></div>
+      <div class="btns"><button class="btn-gold" data-engsave>Save Engagement</button><button class="btn-line" data-no>Cancel</button></div></div>`;
+    $('#engEdit').focus();
+    return;
+  }
+  if (e.target.closest('[data-engsave]')) {
+    if (!canEdit()) return;
+    const r = raw(id); if (!r) return;
+    r.eng = ($('#engEdit')?.value || '').trim();
+    rebuild(); openProfile(id);
+    persist().then(ok => { if (ok) toast(r.eng ? `${f.title} · engagement saved` : `${f.title} · engagement cleared`); });
+    return;
+  }
+  if (e.target.closest('[data-aimsave]')) {
+    if (!canEdit()) return;
+    const r = raw(id); if (!r) return;
+    r.aim = ($('#aimEdit')?.value || '').trim();
+    rebuild(); openProfile(id);
+    persist().then(ok => { if (ok) toast(r.aim ? `${f.title} · aim saved` : `${f.title} · aim cleared`); });
+    return;
+  }
   if (e.target.closest('[data-poster]')) {
     if (!canEdit()) return;
     const q = encodeURIComponent(`${f.title} ${f.year || ''} DVD`);
@@ -3010,12 +3051,15 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#c
 /* =====================================================================
    BOX OFFICE
    ===================================================================== */
-const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2');
+const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2'), fAim = $('#fAim'), fEng = $('#fEng');
 const capWord = w => w.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])\S/g, m => m.toUpperCase());
 function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
-  $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' film sub-genre');
+  const fy = `${t || 'classic movie'}${y ? ' - ' + y : ''}`;
+  $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single specific sub-genre specific to it if you had to name`);
+  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is this film trying to accomplish for itself`);
+  $('#wikiBtn').href = 'https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(`${t || 'film'}${y ? ' ' + y : ''} film`);
   $('#pvPoster').outerHTML = posterHTML({ title: t || 'Your film', year: y, poster: fPoster.value.trim(), style: 2 }, 170).replace('class="poster', 'id="pvPoster" class="poster');
 }
 function renderBoxOffice() {
@@ -3045,7 +3089,7 @@ function printTicket() {
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
-  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
+  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], aim: fAim.value.trim(), eng: fEng.value.trim(), watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
       <div class="t-main">${posterHTML(pending, 62)}<div><div class="admit">Admit one</div><div class="t-title">${esc(t)}</div><div class="t-meta">${esc(y || 'Year unknown')} · ${esc(g1 + ' ' + g2)} · Ticket Nº ${no}</div></div></div>
       <div class="t-stub"><img src="${LOGO_S}" alt=""><b>Nº ${no}</b><span>CmanCinema</span></div></div>`;
@@ -3057,7 +3101,7 @@ $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
   mfOpen({ src: 'new', film: pending });
 });
-function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = ''; boUpdate(); }
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fAim.value = fEng.value = ''; boUpdate(); }
 function admitPending() {
   if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
@@ -3132,21 +3176,29 @@ function renderLadder() {
   const cur = bt.phase === 'done' ? bt.y : bt.level;
   const past = l => x ? l > cur : l < cur;
   $('#ladder').innerHTML = `<div class="ax">${ax}</div><div class="axn">${x ? X_AXIS : Y_AXIS}</div>
-    <div class="axd">${x ? 'A state of weakening is already presumed, so you don’t have to identify one. Did the film triumph in what it wanted to accomplish for itself, or not?' : 'Some appeal is presumed. Take a global stance on viewing recommendation, given the experiential effects it delivered.'}</div>
+    <div class="axd">${x ? 'A state of weakening is already presumed, so you don’t have to identify one. Did the film triumph over what it was trying to accomplish for itself, or not?' : 'Some appeal is presumed. Take a global stance on viewing recommendation: how the film delivered its appeal, and the experience I had.'}</div>
     ${levels.map(l => `<div class="rung ${l === cur ? 'cur' : past(l) ? 'past' : ''}"><b>${l}</b><div><strong>${(x ? X_NAMES : Y_NAMES)[l]}</strong><small>${(x ? X_TAG : Y_TAG)[l]}</small></div></div>`).join('')}
     ${bt.x != null && ax === 'Y' ? `<div class="sealed">X sealed · ${bt.x} ${X_NAMES[bt.x]}</div>` : ''}`;
 }
 function cancelLabel() { return active.mode === 'new' ? 'Withdraw this ticket' : 'Cancel the rewrite'; }
+let aimTimer = null;
+document.addEventListener('input', e => {
+  if ((e.target.id !== 'aimIn' && e.target.id !== 'engIn') || !active || !canEdit()) return;
+  const r = raw(active.film.id); if (!r) return;
+  r[e.target.id === 'aimIn' ? 'aim' : 'eng'] = e.target.value; clearTimeout(aimTimer);
+  aimTimer = setTimeout(() => { rebuild(); persist(); }, 700);
+});
 function renderPane() {
   const p = $('#pane');
   const cancel = `<button class="linkish" data-cancelwf>${cancelLabel()}</button>`;
   if (bt.phase === 'ask') {
     const t = tests()[bt.qi], n = tests().length, x = bt.axis === 'X';
     const stay = nameOf(bt.axis, bt.level);
-    const compass = !x && COMPASS[t.to] ? `<button class="compass-btn" data-compass="${t.to}">${COMPASS[t.to].check ? '✦ Superlative check' : `✦ Consult the Compass · Y${t.to}`}</button>` : '';
+    const compass = `<button class="compass-btn" data-compasspb>✦ The Compass · Definitions</button>`;
     p.innerHTML = `<div class="qk">${bt.axis} · Question ${bt.qi + 1} of ${n} · currently ${bt.level} ${stay}</div>
+      ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : `<div class="aim-bx"><label for="engIn">Engagement · how the film delivered its appeal</label><p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p><textarea id="engIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.eng || '')}</textarea></div>`}
       <div class="q">${esc(boothQ(t.q, active?.film))}</div>
-      ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0">Superlative-like appreciation: appeal + superlative = appreciation. A superlative tied back to how the film delivered engagement, dominating how you see it.</div>` : ''}
+      ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0"><b>Stellar reward check</b> · High effect alone isn’t enough; a Y2 can be high in effect too. Did it make an impact on the experience I had? Where does it land?</div>` : ''}
       <span class="orn"></span>
       <div class="yn">${optsOf(t, bt.qi, n, bt.level).map((o, k) => `<button class="${k === 0 ? 'yes' : 'no'}" data-ans="${o.k}">${o.label}<small>${o.end ? `${o.to === bt.level ? 'stays at' : 'lands at'} ${o.to} · ${nameOf(bt.axis, o.to)}` : `${o.to === bt.level ? 'at' : 'to'} ${o.to} · ${nameOf(bt.axis, o.to)}, next question`}</small></button>`).join('')}</div>
       <div class="under">${compass}${bt.history.length ? '<button class="linkish" data-back>← Previous question</button>' : ''}${cancel}</div>`;
@@ -3284,7 +3336,7 @@ $('#pane').addEventListener('click', e => {
     saveWriting();
     if (bt.axis === 'X') { bt.x = bt.level; bt.axis = 'Y'; bt.level = 1; bt.qi = 0; bt.phase = 'ask'; }
     else { bt.y = bt.level; bt.phase = 'done'; }
-  } else if (b.dataset.compass) { return openCompass(+b.dataset.compass); }
+  } else if (b.dataset.compasspb !== undefined) { pbTab = 'C'; renderPlaybill(); $('#playbill').classList.add('show'); $('#pbBody').scrollTop = 0; return; }
   else if (b.dataset.restart !== undefined) { startBooth(true); }
   else if (b.dataset.leave !== undefined) { return leaveBooth(b.dataset.leave); }
   else if (b.dataset.cancelwf !== undefined) { return cancelWorkflow(); }
@@ -3330,24 +3382,6 @@ function leaveBooth(choice) {
   rebuild(); syncActive(); persist();
   goTo('auditorium');
 }
-function openCompass(l) {
-  const c = COMPASS[l];
-  $('#cmp').innerHTML = `<button class="x" aria-label="Close">✕</button>
-    <div class="k">✦ CmanCinema · Y evaluation · threshold guidance ✦</div>
-    <h3>${c.check ? 'The Superlative Check' : 'The Recommendation Compass'}</h3>
-    <div class="lvl">Y${l}</div>
-    <div class="nm">${c.name}</div>
-    <div class="tag">${c.tag}</div>
-    <div class="cq">${esc(boothQ(c.q, active?.film))}</div>
-    <div class="body">${esc(c.body)}</div>
-    ${c.ex ? `<div class="body" style="font-style:italic;margin-top:10px">For example, ${esc(c.ex)}</div>` : ''}
-    ${c.checks ? `<div class="sc-list">${c.checks.map(([h, t], i) => `<div class="sc-it"><b>${i + 1} · ${esc(h)}</b>${esc(t)}</div>`).join('')}</div>` : ''}
-    <div class="why"><div><b>Why not the level below?</b>${esc(c.below)}</div><div><b>Why not the level above?</b>${esc(c.above)}</div></div>
-    <div class="foot">This guidance helps you answer the existing threshold question; it does not replace that question or decide the classification.</div>`;
-  $('#compass').classList.add('show');
-  $('#cmp .x').focus();
-}
-$('#compass').addEventListener('click', e => { if (e.target.id === 'compass' || e.target.closest('.x')) $('#compass').classList.remove('show'); });
 
 /* =====================================================================
    THE AUDITORIUM · THE SHOW
@@ -3534,7 +3568,10 @@ function showCard(f, o) {
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        ${o.call ? `<button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>` : ''}
+        ${o.call ? (() => { const ax = showFocus() === 'Y' ? 'Y' : 'X', v = ax === 'X' ? f.aim : f.eng, nm = ax === 'X' ? 'the Aim' : 'Engagement';
+          return `<div class="cta-flip"><button class="cta-turn" data-ctaflip aria-label="Flip to ${nm}">↻</button><div class="cta-card">
+          <button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>
+          <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No ${ax === 'X' ? 'aim' : 'engagement'} yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
         <div class="fc-stats inf5"><div><b>${rank}</b><span>Reel</span></div><div><b>${infOf(f) ?? '—'}</b><span>Influence</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
           <div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div><div><b>${formHTML(st.form)}</b><span>Form</span></div></div>
         <div class="fc-eq"><span class="ax-x"><em class="lbl">Condition </em><b>${laneText(f, 'X')}</b></span><span class="ax-y"><em class="lbl">Recommendation </em><b>${laneText(f, 'Y')}</b></span></div>
@@ -3867,6 +3904,7 @@ $('#auditorium').addEventListener('click', e => {
   }
   if (SHOW) {
     if (e.target.closest('[data-pause]')) { SHOW.paused = !SHOW.paused; $('#tape').innerHTML = tapeHTML(); if (!SHOW.paused) nextBattle(); else clearTimeout(SHOW.timer); return; }
+    const fl = e.target.closest('[data-ctaflip]'); if (fl) { e.stopPropagation(); const w = fl.closest('.cta-flip'); if (w) w.classList.toggle('flipped'); return; }
     const cl = e.target.closest('[data-call]'); if (cl) return makeCall(cl.dataset.call);
     if (e.target.closest('[data-undo]') && SHOW.P && canEdit() && !SHOW.replay) { const was = !!SHOW.P.committed; if (undoAnswer(SHOW.P)) { clearTimeout(SHOW.timer); $('#results').classList.remove('show'); $('#desk').hidden = true; SHOW.pos = null; SHOW.pid = null; SHOW.step = SHOW.battles.length; SHOW.phase = 'ask'; if (was) persist(); return renderShowFrame(); } }
     if (e.target.closest('[data-tocase]') && SHOW.P) { SHOW.P.turned = false; return renderShowFrame(); }
@@ -4268,6 +4306,7 @@ function renderGame() {
     <div class="gr-grid">
       ${tiles}
       ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump))}
+      ${grCard(12, 'The lanes · condition and recommendation', 'Each film’s spot in the condition lane linked to its spot in the recommendation lane. Tap a film to light up its two spots.', `<div id="grLanes">${lanesHTML()}</div>`)}
       ${grCard(4, 'Where your films sit', 'Condition down, recommendation across. Brighter means more films.', `<div id="grCoord">${coordHTML(all)}</div>`)}
       ${grCard(6, 'How influence is earned', 'The top ten, split into its four parts (each already weighted).', influenceHTML(ranked))}
       ${grCard(6, 'The lineups', 'Films at each level, condition to the left, recommendation to the right, with the showdowns asked there.', lineupsHTML(ms))}
@@ -4282,6 +4321,8 @@ function renderGame() {
   const mh = [...$('#gameIn').querySelectorAll('.gr-card h3')].find(h => h.textContent.startsWith('Who’s actually met')); if (mh) mh.textContent = `Who’s actually met · the ${grMet} lineup`;
 }
 $('#gameroom').addEventListener('click', e => {
+  const ln = e.target.closest('[data-lane]');
+  if (ln) { laneHL = laneHL === ln.dataset.lane ? null : ln.dataset.lane; $('#grLanes').innerHTML = lanesHTML(); return; }
   const t = e.target.closest('[data-gtab]');
   if (t) { const [k, v] = t.dataset.gtab.split(':'); if (k === 'hs') hsBoard = v; if (k === 'bump') grBump = v; if (k === 'met') grMet = v; return renderGame(); }
   const c = e.target.closest('[data-cell]'); if (c) { grCell = grCell === c.dataset.cell ? '' : c.dataset.cell; $('#grCoord').innerHTML = coordHTML(COLL); return; }
@@ -4323,7 +4364,7 @@ function briefOpen(id, mode) {
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
   const t = encodeURIComponent((r.title || '') + ' ' + (r.year || '') + ' film sub-genre');
   $('#bfIn').innerHTML = `
-    <div class="k">${mode === 'reel' ? 'Before the reel' : 'Film profile'} · ${Y_NAMES[y]} · ${X_NAMES[x]}</div>
+    <div class="k">${mode === 'reel' ? 'Before the reel' : 'Film profile'} · ${X_NAMES[x]} · ${Y_NAMES[y]}</div>
     <h2>Sub-genre</h2>
     <div class="film">${posterHTML(v, 40)}<span>${esc(r.title)}${r.year ? ' · ' + esc(r.year) : ''}</span></div>
     <p class="intro">${mode === 'reel' ? 'This film needs a sub-genre before it goes on the reel.' : 'The showdowns measure each film against its own sub-genre.'}</p>
@@ -4354,8 +4395,8 @@ $('#brief').addEventListener('click', async e => {
    X: "I think [A]'s claim is less [case word] to viewing its [sub-genre] than [B]'s claim is to its [sub-genre]."
    Y: "I think [A]'s case [verb]s viewing its [sub-genre] more than [B]'s case [verb]s viewing its [sub-genre]." */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
-const X_APP = { 5: 'actively triumphing in what it is trying to accomplish', 4: 'with any presumed weakening immaterial to its aim', 3: 'with the presumed weakening hitting a core aspect of what it wanted to accomplish for itself',
-  2: 'failing its core aim despite showing it could achieve it', 1: 'fundamentally incapable of fulfilling its aim', 0: 'with its proposal unworthy of credit' };
+const X_APP = { 5: 'actively triumphing over what it is trying to accomplish for itself', 4: 'with any presumed weakening immaterial to its aim', 3: 'with the presumed weakening material to why it didn’t achieve its aim, though its attempt didn’t fail outright',
+  2: 'its attempt failing outright despite showing it could achieve its aim', 1: 'fundamentally incapable of fulfilling its aim', 0: 'with its proposal unworthy of credit' };
 const X_BASE = { 5: 'master', 4: 'preserve', 3: 'compromise', 2: 'defeat', 1: 'debilitate', 0: 'discredit' };
 function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
@@ -4369,8 +4410,8 @@ function argueCase(A, B, ax) {
   const l = A.Y, ga = gn(A), gb = gn(B), art = A.genre ? aOrAn(genreOf(A).trim()) : 'a';
   if (l === 5) return `${lead}${pa} defining quality, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} defining quality does (redefine) for its ${gb}.`;
   if (l === 4) return `${lead}${pa} exceptionally high-caliber realization of appeal, which defines its ${ga} experience, <b>obligates</b> viewing its ${ga} beyond what ${pb} exceptionally high-caliber realization of appeal does (obligate) for its ${gb}.`;
-  if (l === 3) return `${lead}${pa} highly rewarding appeal, the superlative-like experiential effects received from that delivery, <b>influences</b> viewing its ${ga} more than ${pb} highly rewarding appeal does (influence) for its ${gb}.`;
-  if (l === 2) return `${lead}${pa} sufficient appeal, how its positive engagement is delivered experientially, <b>invites</b> viewing its ${ga} more than ${pb} sufficient appeal does (invite) for its ${gb}.`;
+  if (l === 3) return `${lead}${pa} highly rewarding appeal, the impact its engagement made on the experience I had, <b>influences</b> viewing its ${ga} more than ${pb} highly rewarding appeal does (influence) for its ${gb}.`;
+  if (l === 2) return `${lead}${pa} sufficient appeal, delivered through positive engagement, <b>invites</b> viewing its ${ga} more than ${pb} sufficient appeal does (invite) for its ${gb}.`;
   return `${lead}${pa} insufficient appeal, a lack of delivered positive engagement, still <b>incentivizes</b> viewing its ${ga} more than ${pb} insufficient appeal does (incentivize) for its ${gb}.`;
 }
 
@@ -4443,7 +4484,7 @@ $('#mf').addEventListener('click', async e => {
 async function fileNew(cat) {
   if (!pending || !canEdit()) return;
   const f = pending; pending = null;
-  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, cat, at: Date.now(), history: [] });
+  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, aim: f.aim || '', eng: f.eng || '', cat, at: Date.now(), history: [] });
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
   lfShelf = ''; lfPage = 1; lfQuery = '';
   const ok = await persist();
@@ -4460,7 +4501,7 @@ async function promoteLF(id) {
   const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
   if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film up.`);
   db.lostfound = db.lostfound.filter(f => f.id !== id);
-  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
+  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, aim: e.aim || '', eng: e.eng || '', watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
                   lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
   rebuild();
   await beginWorkflow(e.id, 'new');
@@ -4572,23 +4613,54 @@ document.addEventListener('visibilitychange', () => document.body.classList.togg
    THE PLAYBILL · the framework on a card, one tap away in every room
    ===================================================================== */
 const PB = {
-  X: { 5: 'The film not just comes out unscathed, it’s triumphant.',
-       4: 'Anything you can possibly think of against the film, it holds in its aim.',
-       3: 'The first qualification on the film. It’s now material.',
-       2: 'The film fails to achieve its core aim altogether, despite showing it could.',
+  X: { 5: 'The film triumphs over its aim.',
+       4: 'Anything you can think of against the film, it still achieves its aim.',
+       3: 'The film didn’t achieve its aim, but its attempt didn’t fail outright.',
+       2: 'The film’s attempt failed outright, despite showing it could achieve its aim.',
        1: 'The film is fundamentally incapable of fulfilling its aim.',
        0: 'The film’s proposal is not worthy of being credited.' },
   Y: { 5: 'The defining quality of the film’s realization is so extraordinary that it profoundly alters my broader conception of what an experience can be.<br><i style="color:#7a1a22">“An” experience means an experience of the kind the film strives for, not experience in general.</i>',
-       4: 'The film’s exceptionally high-caliber realization of appeal becomes the defining quality of the experience.<br><i style="color:#7a1a22">A different domain of appreciation from Y3: the caliber of realization, not the reward. For example, The Lady Vanishes: it’s precisely how the encounters unfold on the train, through the manipulation of perception and the epistemic vertigo over the Lady’s whereabouts, that makes the experience exceptionally high-caliber. That caliber of realization is what dominates my appreciation.</i>',
-       3: 'The film’s realization of appeal is a reward.<br><i style="color:#7a1a22">Superlative-like appreciation: Appeal + superlative = appreciation. The appeal is how the film delivers engagement experientially. The superlative is tied back to that delivery, not to its reputation, its hype or what you expected; it doesn’t have to be something new, only tied to the film. The appreciation is the lens that dominates how you see the film. A Y2 can have superlative moments; at Y3, that appreciation dominates. For example, Larceny, Inc.: its escalation farce and comic trio (appeal) were highly entertaining (superlative), and the chain-like reaction, watching what would happen next, became the lens I see it through (appreciation).</i>',
-       2: 'Its appeal is not lacking in a positive form.',
-       1: 'Its appeal is lacking in a positive form.' },
-  compass: [
-    [3, 'The Superlative Check.', 'Appeal + superlative = appreciation. The superlative is tied back to how the film delivered engagement, not its reputation or hype, and that appreciation dominates how you see the film. A Y2 can have superlative moments; at Y3 they dominate. Stopping at Y3 is a successful classification, not a failed attempt at Y4.'],
-    [4, 'A different domain of appreciation.', 'Not the reward but the caliber of realization: the appeal comes with an exceptional caliber that becomes the defining quality of the experience you had. It must be experienced, not inferred from construction or reputation; loving a film deeply doesn’t by itself make it Y4.'],
-    [5, 'Breaking the cup.', 'Did it fill your current viewing framework, or break the cup and force a new scale? Never assigned because Y4 is established, the film is celebrated, or the experience was unusually powerful.'],
+       4: 'The film’s exceptionally high-caliber realization of appeal becomes the defining quality of the experience.',
+       3: 'The film’s engagement is a stellar reward. It made an impact on the experience I had.',
+       2: 'The film delivers positive engagement, but no stellar reward.',
+       1: 'The film lacks sufficient positive engagement.' },
+  xTerms: [
+    ['Aim', 'What the film is trying to accomplish for itself.'],
+    ['Presumed weakening', 'Every film is assumed to have one, so you never have to identify it.'],
+    ['Triumph over', 'The film doesn’t just survive its aim, it conquers it.'],
+    ['Achieve its aim', 'The film accomplishes what it was trying to accomplish for itself.'],
+    ['Attempt', 'The key word below Unscathed. Did the attempt itself fail, or just fall short?'],
+    ['Material', 'The presumed weakening becomes the source of why the film didn’t achieve its aim. Partial success is not achieving.'],
+    ['Thresholds', 'Levels are not degrees of severity. Every film goes through the same wringer, and each level is a threshold it breaks or doesn’t.'],
+    ['Conquered vs Unscathed', 'Both take the hits. Unscathed is a “but” situation: there’s this to consider, but it still achieves its aim. Conquered overcomes the hits.'],
   ],
-  compassNote: 'Y3 and Y4 are different domains of appreciation. At Y3 the appreciation runs through the reward (appeal + superlative); at Y4 it runs through the caliber of realization, which becomes the defining quality of the experience. Y stays about the experience you had, never the whole film; that is what keeps X and Y separate.',
+  xLacks: [[4, 'It doesn’t triumph over its aim.'], [3, 'It doesn’t achieve its aim.'], [2, 'Its attempt failed outright.'], [1, 'It never proved it could.'], [0, 'Even the proposal isn’t worth credit.']],
+  yTerms: [
+    ['Presumed appeal', 'Every film is assumed to have some, like the weakening.'],
+    ['Engagement', 'How the film delivered its appeal. This is the anchor, the way aim is for X.'],
+    ['Positive engagement', 'Engagement that works in the film’s favor in the experience I had. It can take any form: interest, curiosity, tension, fascination, laughter, being challenged or being moved. It doesn’t have to be strong. It just has to be positive.'],
+    ['Sufficient', 'The positive engagement carries the experience enough that the film is worth considering for viewing. It’s not a count. A few moments can be enough if they’re strong enough to carry it.'],
+    ['Insufficient', 'The positive engagement doesn’t hold up against what works against it. That’s one type of Y1, not the only one.'],
+    ['The gate is generous', 'If there’s genuine positive engagement that carries the experience, it passes. The showdowns sort out the rest.'],
+    ['Effect and affect', 'Baked into the levels. Y1–Y4 weigh the effect the engagement had on the experience I had. At Y5 it becomes affect, because it alters my broader conception of what its sub-genre experience can be.'],
+    ['Stellar reward', 'The type of effect that meets the Y3 threshold: an impact on the experience I had. High effect alone isn’t enough, since a Y2 can be high in effect too.'],
+    ['Realization', 'The execution of the engagement, meaning how the appeal was made real.'],
+    ['Caliber', 'The quality of that realization. At Y4 it becomes the defining quality of the experience.'],
+    ['Breaking the cup', 'It alters my broader conception of what its sub-genre experience can be.'],
+  ],
+  yLacks: [[1, 'Sufficient positive engagement.'], [2, 'A stellar reward.'], [3, 'The caliber of realization that defines the experience.'], [4, 'It doesn’t break the cup.']],
+  examples: [
+    ['Y1', 'China Passage', 'It had moments of positive engagement, but they were too far apart given how sleepy the film made me. They didn’t carry the experience.'],
+    ['Y2', 'M', 'Its moments were also few and far between, but they were so good that they carried the experience, so it passes the sufficiency test.'],
+    ['Y3', 'Larceny, Inc.', 'The farce is the stellar reward. It’s what happens, and it made an impact on the experience I had. Nothing about its realization defines the experience, so it stays at Y3.'],
+    ['Y4', 'The Maltese Falcon', 'It has a stellar reward too, but the MacGuffin is the caliber of realization, because it’s why everything happens. That caliber defines the experience, so its Y3 is set aside for Y4.'],
+    ['X5·Y5', 'Masters vs breaking the cup', 'Where X5 masters within the film’s own aim, the frame stays the same and the film commands what it set out to do. Y5 redefines the frame itself: what that kind of experience can be no longer fits the cup you came in with. One is about what the film commanded, the other about what happened to your experience.'],
+  ],
+  sTerms: [
+    ['Measured against its opponent', 'Each film is judged against its opponent, each tied to its own sub-genre.'],
+    ['Statement', 'Pick the one you’d make. The screen blurs the other axis.'],
+    ['Lineup, lane, reel', 'A lineup is everyone at a level; a lane runs the lineups top to bottom; the reel is where the films land after both showdowns.'],
+  ],
 };
 let pbTab = 'F';
 /* where you are decides what lights up: the film on the reel, or the one in the booth */
@@ -4607,17 +4679,36 @@ function renderPlaybill() {
     ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
       <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
     <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
-  if (pbTab === 'X') body = `<div class="pb-sec">Act I · X = ${X_AXIS}<small>A global stance on its condition: did the film triumph in what it wanted to accomplish for itself? · starts at 5 and steps down</small></div>
-    <p class="pb-note" style="margin:0 0 10px">A state of weakening is already presumed, so you don’t have to identify one. What you’re deciding is whether the film triumphed in what it wanted to accomplish for itself, or not. Conquered and Unscathed carry no condition. Qualified is the first point where you put a qualification on the film. Nothing to write: your answers are your stance.</p>
-    ${X_LV.map(l => lv('X', l, X_NAMES[l], '', PB.X[l])).join('')}
-    <p class="pb-note" style="margin:10px 0 0">Conquered doesn’t mean nothing could be thrown at the film. Things were thrown, and it conquered them. Unscathed took the hits and still held in its aim; Conquered overcame them. In a showdown, mastering happens within the film’s own aim: the frame stays the same, and the film commands what it set out to do.</p>`;
-  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · Y = ${Y_AXIS}<small>A global stance on viewing recommendation, given the experiential effects it delivered · starts at 1, each yes climbs a level</small></div>
-    <p class="pb-note" style="margin:0 0 10px">Appeal: how engagement is delivered experientially, the way aim is what the film is trying to accomplish. In the showdowns, each film is measured against its opponent. Some state of appeal is presumed; you don’t pick the effects apart. Completely separate from its condition.</p>
-    ${Y_LV.map(l => lv('Y', l, Y_NAMES[l], '', PB.Y[l])).join('')}
-    <p class="pb-note" style="margin:10px 0 0">Essential comes from breaking the cup, right from having experienced it. Where X5 masters within the film’s own aim, Y5 redefines the frame itself: what that kind of experience can be no longer fits the cup you came in with. One is about what the film commanded, the other about what happened to your experience.</p>`;
-  if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Recommendation Compass<small>For the top of the Y axis</small></div>
-    ${PB.compass.map(([l, head, txt]) => lv('Y', l, head, Y_NAMES[l], txt)).join('')}
-    <p class="pb-note">${PB.compassNote}</p>`;
+  if (pbTab === 'X') body = `<div class="pb-sec">Act I · X = ${X_AXIS}<small>A global stance on its condition: did the film triumph over its aim? · starts at 5 and steps down</small></div>
+    ${X_LV.map(l => lv('X', l, X_NAMES[l], X_TAG[l], PB.X[l])).join('')}
+    <p class="pb-note">Terms and examples are on the Compass.</p>`;
+  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · Y = ${Y_AXIS}<small>A global stance on viewing recommendation, given the experience I had · starts at 1, each yes climbs a level</small></div>
+    ${Y_LV.map(l => lv('Y', l, Y_NAMES[l], Y_TAG[l], PB.Y[l])).join('')}
+    <p class="pb-note">Terms and examples are on the Compass.</p>`;
+  if (pbTab === 'C') {
+    const term = ([t, d]) => `<p style="margin:7px 0;font:500 16px/1.42 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">${t}:</b> ${d}</p>`;
+    const lack = ax => ([l, d]) => `<div class="pb-it"><span class="n">${ax}${l}</span><div class="t">${ax === 'X' ? X_NAMES[l] : Y_NAMES[l]}<em>lacks</em></div><p>${d}</p></div>`;
+    const cell = 'padding:6px 8px;border-bottom:1px dotted rgba(90,15,34,.35);text-align:left;vertical-align:top';
+    const rows = [['Presumed', 'a weakening', 'an appeal'], ['Anchor', 'aim', 'engagement'], ['Result', 'a stance on condition', 'a stance on recommendation'], ['About', 'the film', 'the experience I had']];
+    body = `<div class="pb-sec">Interlude · The Compass<small>Definitions and examples · one place for every term</small></div>
+      <div class="pb-axis"><span>The two axes</span></div>
+      <table style="width:100%;border-collapse:collapse;font:500 15px/1.35 var(--body);color:#3a2418;margin:0 0 12px">
+        <tr><th style="${cell}"></th><th style="${cell};font:800 12px var(--serif);color:#5a0f22;letter-spacing:.08em;text-transform:uppercase">X · ${X_AXIS}</th><th style="${cell};font:800 12px var(--serif);color:#5a0f22;letter-spacing:.08em;text-transform:uppercase">Y · ${Y_AXIS}</th></tr>
+        ${rows.map(([h, a, b]) => `<tr><th style="${cell};font:800 13px var(--serif);color:#7a1a22">${h}</th><td style="${cell}">${a}</td><td style="${cell}">${b}</td></tr>`).join('')}
+      </table>
+      <div class="pb-axis"><span>X terms</span></div>
+      ${PB.xTerms.map(term).join('')}
+      <div class="pb-axis" style="margin-top:12px"><span>X · what each level lacks</span></div>
+      ${PB.xLacks.map(lack('X')).join('')}
+      <div class="pb-axis" style="margin-top:14px"><span>Y terms</span></div>
+      ${PB.yTerms.map(term).join('')}
+      <div class="pb-axis" style="margin-top:12px"><span>Y · what each level lacks</span></div>
+      ${PB.yLacks.map(lack('Y')).join('')}
+      <div class="pb-axis" style="margin-top:14px"><span>Examples</span></div>
+      ${PB.examples.map(([n, t, d]) => `<div class="pb-it"><span class="n" style="font-size:12px">${n}</span><div class="t"><i>${t}</i></div><p>${d}</p></div>`).join('')}
+      <div class="pb-axis" style="margin-top:14px"><span>Showdowns</span></div>
+      ${PB.sTerms.map(term).join('')}`;
+  }
   if (pbTab === 'E') {
     const it = (n, t, tag, p) => `<div class="pb-it"><span class="n">${n}</span><div class="t">${t}${tag ? `<em>${tag}</em>` : ''}</div><p>${p}</p></div>`;
     body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a film once it’s on the reel</small></div>
@@ -4644,7 +4735,7 @@ function renderPlaybill() {
       ${it('✎', 'The decisive consideration', 'optional', 'The one line you can write. Each answer has a line for your decisive consideration; it’s filed with that matchup, shown when the battle plays back, and editable in the Film Vault.')}
       ${it('🎞', 'The Double Bill', 'the screen', 'Both posters fill the auditorium, new film on the left, and the Double Bill sets the two side by side, fight-card style. Under it, each film’s poster card carries its stats and its statement. Tap the statement you’d make.')}
       ${it('↶', 'Undo', 'misclicks', 'Take back your last answer, even the one that finished the show; the placement is unsaved and the statements come back.')}
-      ${it('⇄', 'The lanes', 'the lobby', 'Switch the lobby to The lanes: the condition lane on the left, the recommendation lane on the right, each film’s two spots linked by a line.')}
+      ${it('⇄', 'The lanes', 'the Game Room', 'The Game Room shows the lanes in their own box: the condition lane on the left, the recommendation lane on the right, each film’s two spots linked by a line.')}
       ${it('?', 'Spot-check', 'the lobby', 'Asks you about a pair your reel ranked but never showed you. If you disagree with the order, rerun either film and it meets its lineups again.')}
       ${it('🥫', 'The Film Vault', 'one can per film', 'Every film on the reel has a can on the vault shelves: a reel for each show it played and a reel of the newer films that challenged it in its lineups. Re-screen it from the can and it meets its current lineups again.')}
       ${it('⟳', 'Spin them all', 'marathon', 'Places every queued film. A film with no lineup to meet is placed at once; the rest open their shows one after another.')}
