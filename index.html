@@ -154,8 +154,6 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .paim{margin-top:12px;padding:10px 12px;border-left:3px solid var(--gold-hi,#f3d48a);background:rgba(255,240,210,.05);border-radius:4px}
 .paim p{margin:4px 0 0;font:500 16px/1.5 var(--body);white-space:pre-line}
 .paim .none{opacity:.6;font-style:italic}
-.eng-guide{margin:2px 0 6px;font:italic 500 14.5px/1.4 var(--body);opacity:.8}
-.aim-bx .eng-guide{color:#f3e6c8}
 .cta-flip{position:relative;perspective:1200px;margin:2px 0 10px}
 .fc-body .cta-flip{margin:0 0 10px}
 .cta-flip .duel-cta{margin:0}
@@ -2071,9 +2069,6 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
             <label for="fAim">The Aim <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· what X judges against</span></label>
             <a class="dvd-btn" id="aimBtn" href="#" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
             <textarea id="fAim" class="aim-in" rows="4" maxlength="2000"></textarea>
-            <label for="fEng">Engagement <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· how the film delivered its appeal · what Y judges against</span></label>
-            <p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p>
-            <textarea id="fEng" class="aim-in" rows="4" maxlength="2000"></textarea>
           </form>
           <div class="preview-poster">
             <div class="poster" id="pvPoster" style="width:170px"></div>
@@ -2946,8 +2941,7 @@ function openProfile(id, show) {
       <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Condition lane <b>${laneText(f, 'X')}</b></span><span>Recommendation lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane points <b>${r1(LANES[f.id].Xp)} + ${r1(LANES[f.id].Yp)} = ${r1(LANES[f.id].Xp + LANES[f.id].Yp)}</b></span>` : ''}</div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
       <div class="paim"><span class="dc-k">The Aim · what X judges against</span>${f.aim ? `<p>${esc(f.aim)}</p>` : '<p class="none">No aim attached yet.</p>'}</div>
-      <div class="paim"><span class="dc-k">Engagement · what Y judges against</span>${f.eng ? `<p>${esc(f.eng)}</p>` : '<p class="none">No engagement written yet.</p>'}</div>
-      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit>${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-engedit>${f.eng ? 'Edit Engagement' : 'Add Engagement'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
+      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit>${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
       ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
@@ -2977,23 +2971,6 @@ $('#sheet').addEventListener('click', e => {
         <textarea id="aimEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.aim || '')}</textarea></div>
       <div class="btns"><button class="btn-gold" data-aimsave>Save the Aim</button><button class="btn-line" data-no>Cancel</button></div></div>`;
     $('#aimEdit').focus();
-    return;
-  }
-  if (e.target.closest('[data-engedit]')) {
-    if (!canEdit()) return;
-    $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Engagement · ${esc(f.title)}</b>
-      <div class="pst-in" style="margin-top:12px"><p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p>
-        <textarea id="engEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.eng || '')}</textarea></div>
-      <div class="btns"><button class="btn-gold" data-engsave>Save Engagement</button><button class="btn-line" data-no>Cancel</button></div></div>`;
-    $('#engEdit').focus();
-    return;
-  }
-  if (e.target.closest('[data-engsave]')) {
-    if (!canEdit()) return;
-    const r = raw(id); if (!r) return;
-    r.eng = ($('#engEdit')?.value || '').trim();
-    rebuild(); openProfile(id);
-    persist().then(ok => { if (ok) toast(r.eng ? `${f.title} · engagement saved` : `${f.title} · engagement cleared`); });
     return;
   }
   if (e.target.closest('[data-aimsave]')) {
@@ -3051,7 +3028,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#c
 /* =====================================================================
    BOX OFFICE
    ===================================================================== */
-const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2'), fAim = $('#fAim'), fEng = $('#fEng');
+const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2'), fAim = $('#fAim');
 const capWord = w => w.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])\S/g, m => m.toUpperCase());
 function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
@@ -3089,7 +3066,7 @@ function printTicket() {
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
-  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], aim: fAim.value.trim(), eng: fEng.value.trim(), watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
+  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], aim: fAim.value.trim(), watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
       <div class="t-main">${posterHTML(pending, 62)}<div><div class="admit">Admit one</div><div class="t-title">${esc(t)}</div><div class="t-meta">${esc(y || 'Year unknown')} · ${esc(g1 + ' ' + g2)} · Ticket Nº ${no}</div></div></div>
       <div class="t-stub"><img src="${LOGO_S}" alt=""><b>Nº ${no}</b><span>CmanCinema</span></div></div>`;
@@ -3101,7 +3078,7 @@ $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
   mfOpen({ src: 'new', film: pending });
 });
-function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fAim.value = fEng.value = ''; boUpdate(); }
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fAim.value = ''; boUpdate(); }
 function admitPending() {
   if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
@@ -3183,9 +3160,9 @@ function renderLadder() {
 function cancelLabel() { return active.mode === 'new' ? 'Withdraw this ticket' : 'Cancel the rewrite'; }
 let aimTimer = null;
 document.addEventListener('input', e => {
-  if ((e.target.id !== 'aimIn' && e.target.id !== 'engIn') || !active || !canEdit()) return;
+  if (e.target.id !== 'aimIn' || !active || !canEdit()) return;
   const r = raw(active.film.id); if (!r) return;
-  r[e.target.id === 'aimIn' ? 'aim' : 'eng'] = e.target.value; clearTimeout(aimTimer);
+  r.aim = e.target.value; clearTimeout(aimTimer);
   aimTimer = setTimeout(() => { rebuild(); persist(); }, 700);
 });
 function renderPane() {
@@ -3196,7 +3173,7 @@ function renderPane() {
     const stay = nameOf(bt.axis, bt.level);
     const compass = `<button class="compass-btn" data-compasspb>✦ The Compass · Definitions</button>`;
     p.innerHTML = `<div class="qk">${bt.axis} · Question ${bt.qi + 1} of ${n} · currently ${bt.level} ${stay}</div>
-      ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : `<div class="aim-bx"><label for="engIn">Engagement · how the film delivered its appeal</label><p class="eng-guide">How did the film deliver its appeal in the experience you had? Name the forms it took (interest, curiosity, tension, laughter, being moved), where it carried the experience, and what worked against it.</p><textarea id="engIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.eng || '')}</textarea></div>`}
+      ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : ''}
       <div class="q">${esc(boothQ(t.q, active?.film))}</div>
       ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0"><b>Stellar reward check</b> · High effect alone isn’t enough; a Y2 can be high in effect too. Did it make an impact on the experience I had? Where does it land?</div>` : ''}
       <span class="orn"></span>
@@ -3568,10 +3545,12 @@ function showCard(f, o) {
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        ${o.call ? (() => { const ax = showFocus() === 'Y' ? 'Y' : 'X', v = ax === 'X' ? f.aim : f.eng, nm = ax === 'X' ? 'the Aim' : 'Engagement';
+        ${o.call ? (() => { const cta = `<button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>`;
+          if (showFocus() === 'Y') return cta;
+          const ax = 'X', v = f.aim, nm = 'the Aim';
           return `<div class="cta-flip"><button class="cta-turn" data-ctaflip aria-label="Flip to ${nm}">↻</button><div class="cta-card">
           <button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>
-          <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No ${ax === 'X' ? 'aim' : 'engagement'} yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
+          <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No aim yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
         <div class="fc-stats inf5"><div><b>${rank}</b><span>Reel</span></div><div><b>${infOf(f) ?? '—'}</b><span>Influence</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
           <div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div><div><b>${formHTML(st.form)}</b><span>Form</span></div></div>
         <div class="fc-eq"><span class="ax-x"><em class="lbl">Condition </em><b>${laneText(f, 'X')}</b></span><span class="ax-y"><em class="lbl">Recommendation </em><b>${laneText(f, 'Y')}</b></span></div>
