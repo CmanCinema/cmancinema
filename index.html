@@ -657,13 +657,6 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
   .ev-left .note,.ev-right .note{flex:1;min-height:0}
 }
 /* booth word counter */
-.nomem{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:8px 0 2px}
-.nomem a{font:600 12px var(--serif);letter-spacing:.08em;color:#7a1a22}
-.nomem span{flex-basis:100%;font:italic 500 13px/1.35 var(--body);color:#8a6a3a}
-.tplhint{font:italic 500 13px/1.4 var(--body);color:#8a6a3a;margin:6px 0 0}
-.wc{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font:600 12px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:#7a4a2a}
-.wc.full{color:#8a1414}
-.wc i{font:italic 500 14px var(--body);letter-spacing:0;text-transform:none}
 .hs-screens{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .crt{position:relative;border-radius:20px;padding:12px;background:linear-gradient(135deg,#f6d58c,#a8782e 30%,#f0cf86 50%,#8a6026 75%,#e9c47a);box-shadow:0 0 0 3px #1a0509,0 18px 40px rgba(0,0,0,.6)}
 .crt-in{position:relative;border-radius:14px;overflow:hidden;padding:12px 12px 10px;background:radial-gradient(ellipse 90% 80% at 50% 45%,#1e0d06,#070302 80%);box-shadow:inset 0 0 40px rgba(0,0,0,.95),inset 0 0 0 2px #2a1806;min-height:100%}
@@ -2179,37 +2172,35 @@ const uid = () => String(Date.now()) + Math.random().toString(36).slice(2, 8);
 /* =====================================================================
    THE FRAMEWORK
    ===================================================================== */
-const X_NAMES = { 5: 'Conquered', 4: 'Unscathed', 3: 'Qualified', 2: 'Invalidated', 1: 'Defective', 0: 'Uncreditable' };
-const Y_NAMES = { 1: 'Not Recommendable', 2: 'Recommendable', 3: 'Highly Recommendable', 4: 'Must-See', 5: 'Essential' };
+const X_NAMES = { 5: 'Conquered', 4: 'Unscathed', 3: 'Compromised', 2: 'Invalidated', 1: 'Defective', 0: 'Uncreditable' };
+const Y_NAMES = { 1: 'Why-See?', 2: 'Could Certainly-See', 3: 'Should-See', 4: 'Must-See', 5: 'Can’t Afford Not to See' };
 const X_AXIS = 'Film Condition', Y_AXIS = 'Viewing Recommendation';
 const X_LV = [5, 4, 3, 2, 1, 0], Y_LV = [5, 4, 3, 2, 1];
-const X_TAG = { 5: 'Not just unscathed, triumphant', 4: 'It achieves its aim', 3: 'The first qualification', 2: 'The attempt failed outright', 1: 'It never proved it could', 0: 'An unworthy proposal' };
-const Y_TAG = { 5: 'Breaks the cup', 4: 'An exceptional caliber of realization', 3: 'A stellar reward', 2: 'Positive engagement', 1: 'Insufficient engagement' };
+const X_TAG = { 5: 'In the wake of any weakening', 4: 'Despite weakening', 3: 'Fails because of weakening', 2: 'The weakening is the attempt itself', 1: 'Could have never achieved it', 0: 'Aimed at the proposal itself' };
+const Y_TAG = { 5: 'Alters the kind of experience', 4: 'The defining strength', 3: 'Highly rewarding', 2: 'Worth considering', 1: 'Not worth considering' };
 const X_TESTS = [
-  { q: 'Did the film triumph over what it was trying to accomplish for itself?', to: 5,
+  { q: 'Does the film achieve its aim in the wake of any weakening?', to: 5,
     opts: [{ k: 'yes', label: 'Yes', to: 5, end: true }, { k: 'no', label: 'No', to: 4 }] },
-  { q: 'Did the film still achieve its aim?', to: 4,
-    opts: [{ k: 'yes', label: 'Yes', to: 4, end: true }, { k: 'no', label: 'No', to: 3 }] },
-  { q: 'Did the film’s attempt fail outright, or did it fail to prove it could even achieve it in the first place?', to: 2,
-    opts: [{ k: 'outright', label: 'The attempt failed outright', to: 2, end: true }, { k: 'never', label: 'It never proved it could', to: 1 }, { k: 'neither', label: 'Neither', to: 3, end: true }] },
-  { q: 'In addition to being defective, is the underlying proposal itself unworthy of credit?', to: 0,
+  { q: 'Does the film fail to achieve its aim because of weakening?', to: 3,
+    opts: [{ k: 'yes', label: 'Yes', to: 3 }, { k: 'no', label: 'No', to: 4, end: true }] },
+  { q: 'Does the film fail to achieve its aim because the weakening is the attempt itself, even though it showed in places that it could?', to: 2,
+    opts: [{ k: 'yes', label: 'Yes: the attempt failed, though it showed it could', to: 2, end: true }, { k: 'no', label: 'No: the attempt failed, and it never showed it could', to: 1 }, { k: 'neither', label: 'Neither: the attempt holds', to: 3, end: true }] },
+  { q: 'Is the weakening directed at the film’s proposal itself?', to: 0,
     opts: [{ k: 'yes', label: 'Yes', to: 0, end: true }, { k: 'no', label: 'No', to: 1, end: true }] },
 ];
 const Y_TESTS = [
-  { to: 2, q: 'Does the film offer a form of positive engagement that makes it worth considering for viewing?' },
-  { to: 3, q: 'Did that engagement result in a stellar reward, an impact on the experience I had that dominates my appreciation?' },
-  { to: 4, q: 'Is that realization of appeal, itself, of exceptional caliber, so that its caliber of realization is what dominates my appreciation?' },
-  { to: 5, q: 'Is that dominance of appreciation of the film’s realization so extraordinary that it profoundly alters my broader conception of what its sub-genre experience can be?' },
+  { to: 2, q: 'Is the film’s strengthening sufficient to the degree that sitting through the movie is worth considering?' },
+  { to: 3, q: 'Does the film’s appeal make the over-arching experience highly rewarding?' },
+  { to: 4, q: 'Is the film’s realization of its appeal the defining strength that makes the watch exceptionally high-caliber?' },
+  { to: 5, q: 'Is the film’s realization of its appeal so extraordinary in effect that it profoundly alters my broader conception to the kind of experience it’s striving for?' },
 ];
 // a Y question climbs on yes and stops on no; an X question carries its own answers
 const optsOf = (t, i, n, level) => t.opts || [{ k: 'yes', label: 'Yes', to: t.to, end: i === n - 1 }, { k: 'no', label: 'No', to: level, end: true }];
 // the showdown question for each level (from the previous site)
 // the showdown has no question: you pick the statement you'd make. Each statement takes what that level conceded,
 // a verb for how it bears on the film's aim (X) or on viewing (Y), and each film's own sub-genre.
-const X_SUBJ = { 5: 'triumph over the presumed weakening', 4: 'intact condition', 3: 'qualifying weakening', 2: 'failure despite demonstrated capacity', 1: 'fundamental incapacity', 0: 'unworthy proposal' };
 const X_VERB = { 5: 'masters', 4: 'preserves', 3: 'compromises', 2: 'defeats', 1: 'debilitates', 0: 'discredits' };
-const X_MORE = l => l >= 4;   // Conquered and Unscathed: more ranks higher · from Qualified down: less ranks higher
-const Y_SUBJ = { 5: 'dominance of appreciation that profoundly alters what an experience can be', 4: 'exceptional caliber that defines the experience', 3: 'highly rewarding appeal', 2: 'sufficient appeal', 1: 'insufficient appeal' };
+const X_MORE = l => l >= 4;   // Conquered and Unscathed: more ranks higher · from Compromised down: less ranks higher
 const Y_VERB = { 5: 'redefines', 4: 'obligates', 3: 'influences', 2: 'invites', 1: 'incentivizes' };
 const SHOW_Q = {
   X: Object.fromEntries(X_LV.map(l => [l, `Both ${X_NAMES[l]}: the one that ${X_MORE(l) ? 'more' : 'less'} ${X_VERB[l]} its aim ranks higher.`])),
@@ -2226,12 +2217,6 @@ const names = c => { const [x, y] = c.split('/'); return `${X_NAMES[x]} · ${Y_N
    rebuilt from it after every change.
    ===================================================================== */
 function fresh() { return { films: [], lists: [{ id: 'watchlist', name: 'Watchlist', ids: [] }, { id: 'favorites', name: 'Favorites', ids: [] }], showdowns: [], settings: { tmdb: '' }, wheel: [], matches: [], wheelLog: [], archives: [], v: 3 }; }
-// components already settled in conversation (2026-11-14) for the Recommendable films: which of the two Y2 ingredients each has
-const SEED_COMP = {
-  'the 39 steps': { consistent: false, jnsq: true }, 'blonde crazy': { consistent: false, jnsq: true },
-  'm': { consistent: false, jnsq: true }, 'the magnificent ambersons': { consistent: false, jnsq: true },
-  'journey into fear': { consistent: true, jnsq: false }, 'the big shot': { consistent: true, jnsq: false }, 'tornado': { consistent: true, jnsq: false },
-};
 function normalize(d) {
   d = d && Array.isArray(d.films) ? d : fresh();
   d.lists ||= []; d.showdowns ||= []; d.settings ||= { tmdb: '' };
@@ -2245,7 +2230,6 @@ function normalize(d) {
     d.showdowns = []; d.placements = []; d.wheel = [];
     if (d.workflow && (d.workflow.stage === 'reel' || d.workflow.mode === 'reconsider')) d.workflow = null;
     if (d.workflow && d.workflow.mode === 'reeval') d.workflow.mode = 'rewrite';
-    d.films.forEach(f => { const s = SEED_COMP[String(f.title || '').trim().toLowerCase()]; if (s && f.y === 1 && !f.comp) f.comp = { ...s }; });
   }
   d.matches ||= []; d.wheelLog ||= []; d.archives ||= [];
   if ((d.v || 0) < 3) {
@@ -2290,14 +2274,9 @@ const raw = id => db.films.find(f => f.id === id);
 const evaluated = f => Number.isInteger(f.x) && Number.isInteger(f.y) && f.x >= 0 && f.x <= 5 && f.y >= 1 && f.y <= 5;
 function styleFor(id) { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6; }
 const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
-// the booth's questions name the film's own sub-genre, as entered at the box office
 const aOrAn = w => /^[aeiou]/i.test(w) ? 'an' : 'a';
-function boothQ(q, f) {
-  const g = f ? genreOf(f).trim().toLowerCase() : '';
-  return q.replace('what its sub-genre experience can be', g ? `what ${aOrAn(g)} ${g} experience can be` : 'what an experience can be');
-}
 const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
-  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), aim: f.aim || '', eng: f.eng || '', comp: f.comp || {}, pos: null });
+  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), aim: f.aim || '', eng: f.eng || '', pos: null });
 const levelLine = f => `${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}`;
 
 /* ---------- the reel's memory: records, entry, peak, reign — replayed from the log ---------- */
@@ -2846,7 +2825,7 @@ function renderLobby() {
     ${canEdit() && N >= 3 ? '<div class="lview"><button class="linkish" data-spot>Spot-check a pair</button></div>' : ''}
     <div id="bill"></div>
     ${QUEUE.length ? `<div class="waiting"><h3>Awaiting the reel</h3><p>${!N && (db.archives || []).length ? 'The reel now places itself. Your old reel and its considerations are filed in the Film Vault. ' : ''}Reviewed and ready. Send one to the auditorium to watch its show, or spin them all at once.</p>
-      ${canTicket() && QUEUE.filter(f => !needsCheck(f)).length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.filter(f => !needsCheck(f)).length} films</button>${QUEUE.some(needsCheck) ? `<span style="margin-left:10px;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)">${QUEUE.filter(needsCheck).length} Recommendable film${QUEUE.filter(needsCheck).length === 1 ? '' : 's'} need the ingredients check first: send ${QUEUE.filter(needsCheck).length === 1 ? 'it' : 'those'} one at a time.</span>` : ''}</div>` : ''}
+      ${canTicket() && QUEUE.length > 1 ? `<div style="margin:0 0 12px"><button class="btn-gold" data-spinall>Spin them all · ${QUEUE.length} films</button></div>` : ''}
       ${QUEUE.map(f => `<div class="row" data-film="${f.id}" role="button" tabindex="0"><span class="rk">—</span>${posterHTML(f)}<span class="t">${esc(f.title)}<small><span class="cbadge vd">X${f.X} · Y${f.Y}</span>${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}${f.year ? ' · ' + esc(f.year) : ''}</small>${canTicket() ? `<button class="btn-gold ev-btn" data-queue="${esc(f.id)}">Send to the reel</button>` : ''}</span></div>`).join('')}</div>` : ''}
     ${UNEVALUATED.length ? `<div class="waiting"><h3>Awaiting evaluation</h3><p>Admitted, but not yet through the projection booth.</p>
       ${UNEVALUATED.map(f => `<div class="row" style="cursor:default"><span class="rk">—</span>${posterHTML({ ...f, year: String(f.year || '') })}<span class="t">${esc(f.title)}<small>${esc(f.year || '')}</small>${canTicket() ? `<button class="btn-line ev-btn" data-evaluate="${esc(f.id)}">Evaluate</button>` : ''}</span></div>`).join('')}</div>` : ''}`;
@@ -2968,7 +2947,7 @@ $('#sheet').addEventListener('click', e => {
   if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
   if (e.target.closest('[data-aimedit]')) {
     if (!canEdit()) return;
-    const q = encodeURIComponent(`${f.title}${f.year ? ' - ' + f.year : ''} - what is this film trying to accomplish for itself`);
+    const q = encodeURIComponent(`${f.title}${f.year ? ' - ' + f.year : ''} - what is the single labeled aim (what the film is trying to accomplish for itself) specific to the film if you had to name the best one?`);
     $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The Aim · ${esc(f.title)}</b>
       <div class="pst-in" style="margin-top:12px"><a class="dvd-btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
         <textarea id="aimEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.aim || '')}</textarea></div>
@@ -3037,8 +3016,8 @@ function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
   const fy = `${t || 'classic movie'}${y ? ' - ' + y : ''}`;
-  $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single specific sub-genre specific to it if you had to name`);
-  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is this film trying to accomplish for itself`);
+  $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single labeled sub-genre specific to the film itself if you had to name the best one?`);
+  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single labeled aim (what the film is trying to accomplish for itself) specific to the film if you had to name the best one?`);
   $('#wikiBtn').href = 'https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(`${t || 'film'}${y ? ' ' + y : ''} film`);
   $('#pvPoster').outerHTML = posterHTML({ title: t || 'Your film', year: y, poster: fPoster.value.trim(), style: 2 }, 170).replace('class="poster', 'id="pvPoster" class="poster');
 }
@@ -3156,7 +3135,7 @@ function renderLadder() {
   const cur = bt.phase === 'done' ? bt.y : bt.level;
   const past = l => x ? l > cur : l < cur;
   $('#ladder').innerHTML = `<div class="ax">${ax}</div><div class="axn">${x ? X_AXIS : Y_AXIS}</div>
-    <div class="axd">${x ? 'A state of weakening is already presumed, so you don’t have to identify one. Did the film triumph over what it was trying to accomplish for itself, or not?' : 'Some appeal is presumed. Take a global stance on viewing recommendation: how the film delivered its appeal, and the experience I had.'}</div>
+    <div class="axd">${x ? 'A weakening is presumed. The anchor is the aim: what the film is trying to accomplish for itself.' : 'A strengthening is presumed. The anchor is the appeal: how the film delivers its effects experientially.'}</div>
     ${levels.map(l => `<div class="rung ${l === cur ? 'cur' : past(l) ? 'past' : ''}"><b>${l}</b><div><strong>${(x ? X_NAMES : Y_NAMES)[l]}</strong><small>${(x ? X_TAG : Y_TAG)[l]}</small></div></div>`).join('')}
     ${bt.x != null && ax === 'Y' ? `<div class="sealed">X sealed · ${bt.x} ${X_NAMES[bt.x]}</div>` : ''}`;
 }
@@ -3177,23 +3156,10 @@ function renderPane() {
     const compass = `<button class="compass-btn" data-compasspb>✦ The Compass · Definitions</button>`;
     p.innerHTML = `<div class="qk">${bt.axis} · Question ${bt.qi + 1} of ${n} · currently ${bt.level} ${stay}</div>
       ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : ''}
-      <div class="q">${esc(boothQ(t.q, active?.film))}</div>
-      ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0"><b>Stellar reward check</b> · High effect alone isn’t enough; a Y2 can be high in effect too. Did it make an impact on the experience I had? Does it dominate how I see most of the film? Where does it land?</div>` : ''}
+      <div class="q">${esc(t.q)}</div>
       <span class="orn"></span>
       <div class="yn">${optsOf(t, bt.qi, n, bt.level).map((o, k) => `<button class="${k === 0 ? 'yes' : 'no'}" data-ans="${o.k}">${o.label}<small>${o.end ? `${o.to === bt.level ? 'stays at' : 'lands at'} ${o.to} · ${nameOf(bt.axis, o.to)}` : `${o.to === bt.level ? 'at' : 'to'} ${o.to} · ${nameOf(bt.axis, o.to)}, next question`}</small></button>`).join('')}</div>
       <div class="under">${compass}${bt.history.length ? '<button class="linkish" data-back>← Previous question</button>' : ''}${cancel}</div>`;
-  } else if (bt.phase === 'write') {
-    const x = bt.axis === 'X';
-    p.innerHTML = `<div class="log">
-        <div class="verd">${bt.axis} ${bt.level} · ${nameOf(bt.axis, bt.level)}<small>${x ? 'Record why the film’s condition stands here.' : 'Record why it earns this recommendation — and not more.'}</small></div>
-        <label for="raIn">${x ? 'Claim · the film’s condition' : 'Case · the stance of viewing recommendation'}</label><textarea id="raIn" maxlength="8000" placeholder="${x ? 'Your claim about the film’s condition' : 'Your case for this recommendation'}… up to ${WORD_LIMIT} words">${esc(isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && !(x && bt.level === 5 && fromPlot(bt.xNote)) && templateFor(bt.axis, bt.level, active && active.film) ? templateFor(bt.axis, bt.level, active && active.film) : (x ? bt.xNote : bt.yNote))}</textarea>
-        ${templateFor(bt.axis, bt.level, active && active.film) && isSeed(bt.axis, x ? bt.xNote : bt.yNote, active && active.film) && !(x && fromPlot(bt.xNote)) ? '<div class="tplhint">The ' + bt.axis + bt.level + ' blueprint is filled in · replace each [bracketed part] · click a bracket to select it, Tab jumps to the next</div>' : ''}
-        ${x && bt.level === 5 ? `<div class="nomem"><button class="btn-ink" type="button" data-nomem>${fromPlot(bt.xNote) ? 'Use the X5 blueprint' : 'Nothing comes to mind'}</button><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent((active.film.title || '') + ' ' + (active.film.year || '') + ' film')}" target="_blank" rel="noopener">Open its Wikipedia page ↗</a><span>For a film where no weakening registered: the claim comes from the plot, says so, and ranks above remembered X5 claims.</span></div>` : ''}
-        <div class="wc" id="wc"></div>
-      </div>
-      <button class="seal" data-seal>Seal the ${bt.axis} evaluation</button>
-      <div class="under"><button class="linkish" data-back>← Back to the questions</button>${cancel}</div>`;
-    updateWordCount();
   } else {
     const r0 = raw(active.film.id) || {}, rewrite = active.mode === 'rewrite', changed = rewrite && reviewChanged(r0), n = db.wheel.filter(id => id !== active.film.id).length;
     p.innerHTML = `<div class="qk">${rewrite ? 'The rewrite is in' : 'The booth has spoken'}</div>
@@ -3209,81 +3175,6 @@ function renderPane() {
       <div class="sealnote">Once you leave, the booth seals for this film. Another ticket from the lobby reopens it.</div>`;
   }
 }
-function saveWriting() {
-  const ra = $('#raIn');
-  if (!ra) return;
-  // one box per axis: X is the claim, Y is the case (the old header fields are no longer used)
-  if (bt.axis === 'X') { bt.xEv = ''; bt.xNote = ra.value.trim(); }
-  else { bt.yEv = ''; bt.yNote = ra.value.trim(); }
-}
-// ---------- Booth templates: each level's Claim / Case frame (claude/booth-templates.md) ----------
-// Bracketed parts are slots to fill; everything else is the level's preset. X2 / X1 have none yet.
-// first half of every X claim: dictation — the experience as it was (claude/coordinate-blueprints.md)
-const DICT = '[My reaction] [the weakening], especially [where / when], because [why + how], [what that produced].';
-const TEMPLATES = {
-  X: { 5: DICT + ' Measured against the core aim, this claim is immaterial to its being [failure word], because while [concession], [the intended plan] [isn’t affected the same way].',
-       4: DICT + ' Measured against the core aim, this claim is material to why [the outcome] feels [failure word], because [the intended plan] [is affected]. It doesn’t fail the core aim altogether, though, because [what still achieves it] [still holds], so [it] isn’t invalidated.',
-       3: '[My reaction] [the weakening], [where / when], because [why + how], [what that produced]. Despite failing the core aim altogether, the film is not fundamentally incapable of fulfilling its aim, as [where it showed it could] shows.' },
-  Y: { 5: 'The film’s [dominance of appreciation of its realization] is so extraordinary that it profoundly alters my broader conception of what a [kind of experience it strives for] experience can be.',
-       4: 'I appreciate how the film delivers [the rewarding effects], because the way it [realizes / builds] them through [how it’s executed] makes the experience exceptionally high-caliber. It’s this caliber of execution that dominates my appreciation. Still, this dominance of appreciation is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
-       3: 'I appreciate how the film [delivers what], because [what those rewards give you]. The film also offers [further rewards — optional, delete this sentence if unused]. It’s these rewards that dominate my appreciation.',
-       2: '[The appeal] is dependable enough, because it’s driven by [what makes it dependable]. This justifies actively recommending it. It doesn’t justify “ought to be seen” status, though, because that level requires its realization to deliver superlatively rewarding experiential effects, and its forms of positive engagement don’t reach that degree.',
-       1: '[The appeal]. This justifies considering it; however, its effectiveness isn’t dependable enough to justify active recommendation, because [while concession — optional,] [what breaks the dependability].',
-       0: '[The residual appeal]; however, because [what outweighs it], that appeal falls short, and the film isn’t recommendable.' },
-};
-function templateFor(ax, lvl, film) {
-  const t = TEMPLATES[ax][lvl]; if (!t) return '';
-  const g = film && film.genre ? String(film.genre).toLowerCase() : '';
-  return t.replace('{genre}', g || '[sub-genre]');
-}
-// an untouched template (of any level) counts as empty, so moving between levels swaps the frame
-// X5 "nothing from memory" variant: the weakening is found in the plot, said so on the record; it ranks above remembered X5 claims
-const NOMEM_LEAD = 'Since nothing stands out in my memory as a weakness, I consulted the Wikipedia page.';
-const NOMEM = NOMEM_LEAD + ' Looking at the plot, what strikes me is that [its angle, or where] could seem [failure word], because [why, or how specifically].';
-const fromPlot = t => /^since nothing (stands out in my memory|from memory sticks out)/i.test(String(t || '').trim());
-const isSeed = (ax, txt, film) => { const v = String(txt || '').trim(); return !v || (ax === 'X' && v === NOMEM) || Object.keys(TEMPLATES[ax]).some(l => templateFor(ax, +l, film) === v); };
-const SLOT = /\[[^\]\n]{1,120}\]/;
-const WORD_LIMIT = 150;
-const wordCount = t => (String(t || '').trim().match(/\S+/g) || []).length;
-let lastRa = '';
-function updateWordCount() {
-  const ra = $('#raIn'), wc = $('#wc'), seal = document.querySelector('[data-seal]'); if (!ra || !wc) return;
-  const n = wordCount(ra.value), over = n > WORD_LIMIT;
-  wc.className = 'wc' + (n >= WORD_LIMIT ? ' full' : '');
-  wc.innerHTML = `<span>${n} / ${WORD_LIMIT} words</span>${over ? `<i>Trim ${n - WORD_LIMIT} word${n - WORD_LIMIT === 1 ? '' : 's'} to seal</i>` : n === WORD_LIMIT ? '<i>At the limit</i>' : ''}`;
-  if (seal) seal.disabled = over;
-  lastRa = ra.value;
-}
-function selectSlot(ra, from, forward) {
-  const v = ra.value, re = /\[[^\]\n]{1,120}\]/g; let m, hit = null, first = null;
-  while ((m = re.exec(v))) { if (!first) first = m; if (forward ? m.index >= from : (m.index <= from && from <= m.index + m[0].length)) { hit = m; break; } }
-  if (!hit && forward) hit = first;
-  if (hit) { ra.setSelectionRange(hit.index, hit.index + hit[0].length); return true; }
-  return false;
-}
-// click (or tap) inside a [bracketed part] selects it, so typing replaces it; after the browser places the caret
-$('#pane').addEventListener('mouseup', e => {
-  const ra = e.target.id === 'raIn' ? e.target : null; if (!ra) return;
-  setTimeout(() => { if (ra.selectionStart === ra.selectionEnd) selectSlot(ra, ra.selectionStart, false); }, 0);
-});
-$('#pane').addEventListener('keydown', e => {
-  if (e.target.id === 'raIn' && e.key === 'Tab' && !e.shiftKey && SLOT.test(e.target.value)) {
-    e.preventDefault(); selectSlot(e.target, e.target.selectionEnd, true);
-  }
-});
-$('#pane').addEventListener('input', e => {
-  if (e.target.id === 'raIn') {
-    const n = wordCount(e.target.value);
-    // past the limit, new words are refused; deleting always works (older, longer rationales can be trimmed down)
-    if (n > WORD_LIMIT && n > wordCount(lastRa)) {
-      const words = e.target.value.match(/\S+\s*/g) || [];
-      e.target.value = wordCount(lastRa) >= WORD_LIMIT ? lastRa : words.slice(0, WORD_LIMIT).join('').trimEnd();   // at the limit: refuse the new word; a long paste: keep the first 150
-      toast(`${bt.axis === 'X' ? 'Claims' : 'Cases'} are limited to ${WORD_LIMIT} words`);
-    }
-    updateWordCount();
-  }
-  saveWriting(); saveDraft();
-});
 $('#pane').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || !bt || !active) return;
   if (b.dataset.ans) {
@@ -3296,26 +3187,9 @@ $('#pane').addEventListener('click', e => {
     if (end && bt.axis === 'X') { bt.x = bt.level; bt.axis = 'Y'; bt.level = 1; bt.qi = 0; bt.phase = 'ask'; }
     else if (end) { bt.y = bt.level; bt.phase = 'done'; }
   } else if (b.dataset.back !== undefined) {
-    if (bt.phase === 'write') saveWriting();
     const h = bt.history.pop(); if (!h) return;
     bt.axis = h.axis; bt.level = h.level; bt.qi = h.qi; bt.phase = 'ask';
     if (h.axis === 'X') bt.x = null; bt.y = null;
-  } else if (b.dataset.nomem !== undefined) {
-    const ra = $('#raIn'); if (!ra) return;
-    const v = ra.value.trim(), seed = isSeed('X', v, active.film);
-    if (!seed && !confirm(fromPlot(v) ? 'Replace the plot-based claim with the X5 blueprint?' : 'Replace what you have written with the plot template?')) return;
-    ra.value = fromPlot(v) ? templateFor('X', 5, active.film) : NOMEM;
-    b.textContent = fromPlot(ra.value) ? 'Use the X5 blueprint' : 'Nothing comes to mind';
-    ra.dispatchEvent(new Event('input', { bubbles: true })); ra.focus(); selectSlot(ra, 0, true);
-  } else if (b.dataset.seal !== undefined) {
-    const ra = $('#raIn');
-    if (ra && SLOT.test(ra.value)) {
-      const m = ra.value.match(SLOT); ra.focus(); ra.setSelectionRange(m.index, m.index + m[0].length);
-      return toast('Fill in the bracketed parts of the template before sealing');
-    }
-    saveWriting();
-    if (bt.axis === 'X') { bt.x = bt.level; bt.axis = 'Y'; bt.level = 1; bt.qi = 0; bt.phase = 'ask'; }
-    else { bt.y = bt.level; bt.phase = 'done'; }
   } else if (b.dataset.compasspb !== undefined) { pbTab = 'C'; renderPlaybill(); $('#playbill').classList.add('show'); $('#pbBody').scrollTop = 0; return; }
   else if (b.dataset.restart !== undefined) { startBooth(true); }
   else if (b.dataset.leave !== undefined) { return leaveBooth(b.dataset.leave); }
@@ -3441,7 +3315,6 @@ async function launchPlacement(P, marathon) {
   info.marathon = !!marathon;
   startShow(info);
 }
-const needsCheck = () => false;
 // every queued review: a film with no lineup to meet is placed at once; the first one with a showdown opens its show
 function spinAll() {
   if (!canEdit() || active || !QUEUE.length) return;
@@ -4344,7 +4217,7 @@ function briefOpen(id, mode) {
   const x = r.x, y = r.y, c = x + '/' + y, g = Array.isArray(r.genre) ? r.genre : String(r.genre || '').split(' ').filter(Boolean);
   bf = { id, mode };
   const v = byId(id) || { ...r, year: String(r.year || ''), style: styleFor(r.id) };
-  const t = encodeURIComponent(`${r.title || 'classic movie'}${r.year ? ' - ' + r.year : ''} - what is the single specific sub-genre specific to it if you had to name`);
+  const t = encodeURIComponent(`${r.title || 'classic movie'}${r.year ? ' - ' + r.year : ''} - what is the single labeled sub-genre specific to the film itself if you had to name the best one?`);
   $('#bfIn').innerHTML = `
     <div class="k">${mode === 'reel' ? 'Before the reel' : 'Film profile'} · ${X_NAMES[x]} · ${Y_NAMES[y]}</div>
     <h2>Sub-genre</h2>
@@ -4372,13 +4245,10 @@ $('#brief').addEventListener('click', async e => {
   else { if (ok) toast('Sub-genre saved'); openProfile(r.id); }
 });
 
-/* the argument card, built both ways; X and Y mirror each other
-   One entry per axis: X is the claim (the film's condition), Y is the case (the stance of viewing recommendation).
-   X: "I think [A]'s claim is less [case word] to viewing its [sub-genre] than [B]'s claim is to its [sub-genre]."
-   Y: "I think [A]'s case [verb]s viewing its [sub-genre] more than [B]'s case [verb]s viewing its [sub-genre]." */
+/* the argument card: each film measured against its opponent, each tied to its own sub-genre */
 const poss = t => /s$/i.test(t) ? t + '’' : t + '’s';
-const X_APP = { 5: 'actively triumphing over what it is trying to accomplish for itself', 4: 'with any presumed weakening immaterial to its aim', 3: 'with the presumed weakening material to why it didn’t achieve its aim, though its attempt didn’t fail outright',
-  2: 'its attempt failing outright despite showing it could achieve its aim', 1: 'fundamentally incapable of fulfilling its aim', 0: 'with its proposal unworthy of credit' };
+const X_APP = { 5: 'actively triumphing over any weakening', 4: 'with weakening immaterial to its achieving of aim', 3: 'with weakening material to why it didn’t achieve its aim, though its attempt holds',
+  2: 'with the weakening being its attempt itself despite showing in places it could achieve its aim', 1: 'fundamentally incapable of fulfilling its aim', 0: 'with its proposal unworthy of credit' };
 const X_BASE = { 5: 'master', 4: 'preserve', 3: 'compromise', 2: 'defeat', 1: 'debilitate', 0: 'discredit' };
 function argueCase(A, B, ax) {
   const miss = w => `<span class="miss">${w}</span>`;
@@ -4390,11 +4260,11 @@ function argueCase(A, B, ax) {
     return `${lead}${ta}, ${X_APP[l]}, <b>${X_VERB[l]}</b> the aim of its ${gn(A)} ${X_MORE(l) ? 'more' : 'less'} than ${tb} does (${X_BASE[l]}) for its ${gn(B)}.`;
   }
   const l = A.Y, ga = gn(A), gb = gn(B), art = A.genre ? aOrAn(genreOf(A).trim()) : 'a';
-  if (l === 5) return `${lead}${pa} dominance of appreciation, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} dominance of appreciation does (redefine) for its ${gb}.`;
-  if (l === 4) return `${lead}${pa} exceptionally high-caliber realization of appeal, which defines its ${ga} experience, <b>obligates</b> viewing its ${ga} beyond what ${pb} exceptionally high-caliber realization of appeal does (obligate) for its ${gb}.`;
-  if (l === 3) return `${lead}${pa} highly rewarding appeal, the impact its engagement made on the experience I had, <b>influences</b> viewing its ${ga} more than ${pb} highly rewarding appeal does (influence) for its ${gb}.`;
-  if (l === 2) return `${lead}${pa} sufficient appeal, delivered through positive engagement, <b>invites</b> viewing its ${ga} more than ${pb} sufficient appeal does (invite) for its ${gb}.`;
-  return `${lead}${pa} insufficient appeal, a lack of delivered positive engagement, still <b>incentivizes</b> viewing its ${ga} more than ${pb} insufficient appeal does (incentivize) for its ${gb}.`;
+  if (l === 5) return `${lead}${pa} extraordinary delivery of effects, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} extraordinary delivery of effects does (redefine) for its ${gb}.`;
+  if (l === 4) return `${lead}${pa} realization of appeal, which is the defining strength that makes the watch exceptionally high-caliber, <b>obligates</b> viewing its ${ga} more than ${pb} realization of appeal does (obligate) for its ${gb}.`;
+  if (l === 3) return `${lead}${pa} appeal, which makes the over-arching experience highly rewarding, <b>influences</b> viewing its ${ga} more than ${pb} appeal does (influence) for its ${gb}.`;
+  if (l === 2) return `${lead}${pa} sufficient strengthening, realized through appeal, <b>invites</b> viewing its ${ga} more than ${pb} sufficient strengthening does (invite) for its ${gb}.`;
+  return `${lead}${pa} insufficient strengthening, a lack of realized appeal, still <b>incentivizes</b> viewing its ${ga} more than ${pb} insufficient strengthening does (incentivize) for its ${gb}.`;
 }
 
 /* =====================================================================
@@ -4595,50 +4465,35 @@ document.addEventListener('visibilitychange', () => document.body.classList.togg
    THE PLAYBILL · the framework on a card, one tap away in every room
    ===================================================================== */
 const PB = {
-  X: { 5: 'The film triumphs over its aim.',
-       4: 'Anything you can think of against the film, it still achieves its aim.',
-       3: 'The film didn’t achieve its aim, but its attempt didn’t fail outright.',
-       2: 'The film’s attempt failed outright, despite showing it could achieve its aim.',
-       1: 'The film is fundamentally incapable of fulfilling its aim.',
-       0: 'The film’s proposal is not worthy of being credited.' },
-  Y: { 5: 'The dominance of appreciation of the film’s realization is so extraordinary that it profoundly alters my broader conception of what an experience can be.<br><i style="color:#7a1a22">“An” experience means an experience of the kind the film strives for, not experience in general.</i>',
-       4: 'The film’s realization of appeal is of exceptionally high caliber. This caliber of realization is what dominates my appreciation.',
-       3: 'The film’s engagement is a stellar reward. This reward is what dominates my appreciation.',
-       2: 'The film delivers positive engagement, but no stellar reward.',
-       1: 'The film lacks sufficient positive engagement.' },
+  X: { 5: 'The film achieves its aim in the wake of any weakening.',
+       4: 'The film still achieves its aim despite weakening.',
+       3: 'The film fails to achieve its aim because of weakening.',
+       2: 'The film fails to achieve its aim because the weakening is the attempt itself, even though it showed in places that it could.',
+       1: 'The weakening proves the film could have never achieved its aim.',
+       0: 'The weakening is directed at the film’s proposal itself.' },
+  Y: { 5: 'The film’s realization of its appeal is so extraordinary in effect that it profoundly alters my broader conception to the kind of experience it’s striving for.',
+       4: 'The film’s realization of its appeal is the defining strength that makes the watch exceptionally high-caliber.',
+       3: 'The film’s appeal makes the over-arching experience highly rewarding.',
+       2: 'The strengthening is sufficient to the degree that sitting through the movie is worth considering.',
+       1: 'The strengthening is insufficient to the degree that sitting through the movie is not worth considering.' },
   xTerms: [
-    ['Aim', 'What the film is trying to accomplish for itself.'],
-    ['Presumed weakening', 'Every film is assumed to have one, so you never have to identify it.'],
-    ['Triumph over', 'The film doesn’t just survive its aim, it conquers it.'],
-    ['Achieve its aim', 'The film accomplishes what it was trying to accomplish for itself.'],
-    ['Attempt', 'The key word below Unscathed. Did the attempt itself fail, or just fall short?'],
-    ['Material', 'The presumed weakening becomes the source of why the film didn’t achieve its aim. Partial success is not achieving.'],
-    ['Thresholds', 'Levels are not degrees of severity. Every film goes through the same wringer, and each level is a threshold it breaks or doesn’t.'],
-    ['Conquered vs Unscathed', 'Both take the hits. Unscathed is a “but” situation: there’s this to consider, but it still achieves its aim. Conquered overcomes the hits.'],
+    ['Weakening', 'Presumed for every film, so you never have to identify one.'],
+    ['Aim', 'The anchor: what the film is trying to accomplish for itself.'],
+    ['In the wake of (X5)', 'A statement in the light of aftermath: the weakening has come and gone, and the aim stands achieved.'],
+    ['Despite (X4)', 'A statement of resistance: the film achieves its aim while the weakening pushes against it.'],
+    ['Because of weakening (X3)', 'The weakening is why the film fails to achieve its aim, but its attempt holds.'],
+    ['The attempt itself (X2)', 'The weakening is the attempt, even though the film showed in places that it could.'],
+    ['Could have never (X1)', 'The weakening proves the film could have never achieved its aim.'],
+    ['The proposal (X0)', 'The weakening is directed at the film’s proposal itself.'],
   ],
-  xLacks: [[4, 'It doesn’t triumph over its aim.'], [3, 'It doesn’t achieve its aim.'], [2, 'Its attempt failed outright.'], [1, 'It never proved it could.'], [0, 'Even the proposal isn’t worth credit.']],
   yTerms: [
-    ['Presumed appeal', 'Every film is assumed to have some, like the weakening.'],
-    ['Engagement', 'How the film delivered its appeal. This is the anchor, the way aim is for X.'],
-    ['Positive engagement', 'Engagement that works in the film’s favor in the experience I had. It can take any form: interest, curiosity, tension, fascination, laughter, being challenged or being moved. It doesn’t have to be strong. It just has to be positive.'],
-    ['Sufficient', 'The positive engagement carries the experience enough that the film is worth considering for viewing. It’s not a count. A few moments can be enough if they’re strong enough to carry it.'],
-    ['Insufficient', 'The positive engagement doesn’t hold up against what works against it. That’s one type of Y1, not the only one.'],
-    ['The gate is generous', 'If there’s genuine positive engagement that carries the experience, it passes. The showdowns sort out the rest.'],
-    ['Effect and affect', 'Baked into the levels. Y1–Y4 weigh the effect the engagement had on the experience I had. At Y5 it becomes affect, because it alters my broader conception of what its sub-genre experience can be.'],
-    ['Stellar reward', 'The type of effect that meets the Y3 threshold: an impact on the experience I had. High effect alone isn’t enough, since a Y2 can be high in effect too.'],
-    ['Realization', 'The execution of the engagement, meaning how the appeal was made real.'],
-    ['Caliber', 'The quality of that realization. At Y4 it’s exceptional, and it’s what dominates my appreciation.'],
-    ['Appreciation', 'How I see the film, built over the span of the engagement across the experience.'],
-    ['Dominates my appreciation', 'The reward (Y3) or the caliber of realization (Y4) shapes how I see most of the film, over most of the engagement. Not every moment, but most of it. A reward that lands in only a few moments doesn’t dominate.'],
-    ['Breaking the cup', 'It alters my broader conception of what its sub-genre experience can be.'],
-  ],
-  yLacks: [[1, 'Sufficient positive engagement.'], [2, 'A stellar reward that dominates my appreciation.'], [3, 'A caliber of realization that dominates my appreciation.'], [4, 'It doesn’t break the cup.']],
-  examples: [
-    ['Y1', 'China Passage', 'It had moments of positive engagement, but they were too far apart given how sleepy the film made me. They didn’t carry the experience.'],
-    ['Y2', 'M', 'Its moments were also few and far between, but they were so good that they carried the experience, so it passes the sufficiency test.'],
-    ['Y3', 'Larceny, Inc.', 'The farce is the stellar reward. It’s what happens, and it runs through the whole film, so the reward is what dominates my appreciation. Its realization isn’t, so it stays at Y3.'],
-    ['Y4', 'The Maltese Falcon', 'It has a stellar reward too, but the MacGuffin is the caliber of realization, because it’s why everything happens. It drives everything, so its caliber of realization is what dominates my appreciation. Its Y3 is set aside for Y4.'],
-    ['X5·Y5', 'Masters vs breaking the cup', 'Where X5 masters within the film’s own aim, the frame stays the same and the film commands what it set out to do. Y5 redefines the frame itself: what that kind of experience can be no longer fits the cup you came in with. One is about what the film commanded, the other about what happened to your experience.'],
+    ['Strengthening', 'Presumed for every film, the way weakening is for X.'],
+    ['Appeal', 'The anchor: how the film delivers its effects experientially.'],
+    ['Sufficient (Y2)', 'The strengthening reaches the degree that sitting through the movie is worth considering.'],
+    ['Insufficient (Y1)', 'The strengthening falls short of that degree, so sitting through the movie is not worth considering.'],
+    ['Highly rewarding (Y3)', 'The appeal makes the over-arching experience highly rewarding.'],
+    ['Defining strength (Y4)', 'The realization of the appeal is what makes the watch exceptionally high-caliber.'],
+    ['Profoundly alters (Y5)', 'The realization of the appeal is so extraordinary in effect that it changes my broader conception of the kind of experience the film is striving for.'],
   ],
   sTerms: [
     ['Measured against its opponent', 'Each film is judged against its opponent, each tied to its own sub-genre.'],
@@ -4663,18 +4518,17 @@ function renderPlaybill() {
     ${[1, 2, 3].map(d => `<div class="pb-it"><span class="n">${d}</span><div class="t">${DOORS[d].name}</div><p>${DOORS[d].q}</p></div>
       <div style="margin:0 0 6px 56px">${LF.filter(c => c.door === d).map(c => `<p style="margin:6px 0;font:500 15px/1.4 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">No → ${c.name}:</b> ${c.d}</p>`).join('')}</div>`).join('')}
     <p class="pb-note">Pass all three doors and the film is rating eligible. Stopped at any door, it is seen for Letterboxd but not rated, and goes to Lost &amp; Found.</p>`;
-  if (pbTab === 'X') body = `<div class="pb-sec">Act I · X = ${X_AXIS}<small>A global stance on its condition: did the film triumph over its aim? · starts at 5 and steps down</small></div>
+  if (pbTab === 'X') body = `<div class="pb-sec">Act I · X = ${X_AXIS}<small>Presumed: a weakening · anchored to the aim · starts at 5 and steps down</small></div>
     ${X_LV.map(l => lv('X', l, X_NAMES[l], X_TAG[l], PB.X[l])).join('')}
-    <p class="pb-note">Terms and examples are on the Compass.</p>`;
-  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · Y = ${Y_AXIS}<small>A global stance on viewing recommendation, given the experience I had · starts at 1, each yes climbs a level</small></div>
+    <p class="pb-note">Terms are on the Compass.</p>`;
+  if (pbTab === 'Y') body = `<div class="pb-sec">Act II · Y = ${Y_AXIS}<small>Presumed: a strengthening · anchored to the appeal · starts at 1, each yes climbs a level</small></div>
     ${Y_LV.map(l => lv('Y', l, Y_NAMES[l], Y_TAG[l], PB.Y[l])).join('')}
-    <p class="pb-note">Terms and examples are on the Compass.</p>`;
+    <p class="pb-note">Terms are on the Compass.</p>`;
   if (pbTab === 'C') {
     const term = ([t, d]) => `<p style="margin:7px 0;font:500 16px/1.42 var(--body);color:#3a2418"><b style="font:800 14px var(--serif);color:#7a1a22">${t}:</b> ${d}</p>`;
-    const lack = ax => ([l, d]) => `<div class="pb-it"><span class="n">${ax}${l}</span><div class="t">${ax === 'X' ? X_NAMES[l] : Y_NAMES[l]}<em>lacks</em></div><p>${d}</p></div>`;
     const cell = 'padding:6px 8px;border-bottom:1px dotted rgba(90,15,34,.35);text-align:left;vertical-align:top';
-    const rows = [['Presumed', 'a weakening', 'an appeal'], ['Anchor', 'aim', 'engagement'], ['Result', 'a stance on condition', 'a stance on recommendation'], ['About', 'the film', 'the experience I had']];
-    body = `<div class="pb-sec">Interlude · The Compass<small>Definitions and examples · one place for every term</small></div>
+    const rows = [['Presumed state', 'weakening', 'strengthening'], ['Anchor', 'aim', 'appeal'], ['The anchor’s measurement', 'What the film is trying to accomplish for itself.', 'How the film delivers its effects experientially.'], ['Result', 'Stance on Film Condition', 'Stance on Viewing Recommendation']];
+    body = `<div class="pb-sec">Interlude · The Compass<small>Definitions · one place for every term</small></div>
       <div class="pb-axis"><span>The two axes</span></div>
       <table style="width:100%;border-collapse:collapse;font:500 15px/1.35 var(--body);color:#3a2418;margin:0 0 12px">
         <tr><th style="${cell}"></th><th style="${cell};font:800 12px var(--serif);color:#5a0f22;letter-spacing:.08em;text-transform:uppercase">X · ${X_AXIS}</th><th style="${cell};font:800 12px var(--serif);color:#5a0f22;letter-spacing:.08em;text-transform:uppercase">Y · ${Y_AXIS}</th></tr>
@@ -4682,14 +4536,8 @@ function renderPlaybill() {
       </table>
       <div class="pb-axis"><span>X terms</span></div>
       ${PB.xTerms.map(term).join('')}
-      <div class="pb-axis" style="margin-top:12px"><span>X · what each level lacks</span></div>
-      ${PB.xLacks.map(lack('X')).join('')}
       <div class="pb-axis" style="margin-top:14px"><span>Y terms</span></div>
       ${PB.yTerms.map(term).join('')}
-      <div class="pb-axis" style="margin-top:12px"><span>Y · what each level lacks</span></div>
-      ${PB.yLacks.map(lack('Y')).join('')}
-      <div class="pb-axis" style="margin-top:14px"><span>Examples</span></div>
-      ${PB.examples.map(([n, t, d]) => `<div class="pb-it"><span class="n" style="font-size:12px">${n}</span><div class="t"><i>${t}</i></div><p>${d}</p></div>`).join('')}
       <div class="pb-axis" style="margin-top:14px"><span>Showdowns</span></div>
       ${PB.sTerms.map(term).join('')}`;
   }
@@ -4707,8 +4555,8 @@ function renderPlaybill() {
     body = `<div class="pb-sec">Act III · The Reel<small>Two lanes, two showdowns · condition and viewing recommendation</small></div>
       <p class="pb-note" style="margin:0 0 10px">Condition and viewing recommendation stay their own judgments. A new film meets two lineups: first everyone at its X level, then everyone at its Y level, whatever their other level. There’s no question to answer: you pick the statement you’d make. The reel follows from where the film lands in both lanes.</p>
       <div class="pb-axis"><span>The two showdowns</span></div>
-      ${it('1', 'Condition', 'X lineup', 'Each statement takes what that X level conceded, a verb for how it bears on the film’s aim, and each film’s own sub-genre. At Conquered and Unscathed, the one that more masters or preserves its aim ranks higher. From Qualified down, the one that less compromises, defeats, debilitates or discredits its aim ranks higher.')}
-      ${it('2', 'Viewing recommendation', 'Y lineup', 'Each statement takes what that Y level conceded and a verb for how strongly it pulls toward viewing: Y1 incentivizes, Y2 invites, Y3 influences, Y4 obligates, Y5 redefines. The one that does it more ranks higher, even at Y1, where the film whose insufficient appeal still pulls harder wins. What’s compared is the effects each film delivered in the experience itself.')}
+      ${it('1', 'Condition', 'X lineup', 'Each statement takes what that X level conceded, a verb for how it bears on the film’s aim, and each film’s own sub-genre. At Conquered and Unscathed, the one that more masters or preserves its aim ranks higher. From Compromised down, the one that less compromises, defeats, debilitates or discredits its aim ranks higher.')}
+      ${it('2', 'Viewing recommendation', 'Y lineup', 'Each statement takes what that Y level conceded and a verb for how strongly it pulls toward viewing: Y1 incentivizes, Y2 invites, Y3 influences, Y4 obligates, Y5 redefines. The one that does it more ranks higher, even at Y1, where the film whose insufficient strengthening still pulls harder wins. What’s compared is the effects each film delivered in the experience itself.')}
       <div class="pb-axis"><span>The lanes and the reel</span></div>
       ${it('⇅', 'Two lanes', 'condition · recommendation', 'The condition lane runs the X5 lineup down to X0’s. The recommendation lane runs the Y5 lineup down to Y1’s. Every film on the reel has a spot in each.')}
       ${it('◎', 'The seamless pair', 'the reel', 'A film’s reel spot comes from its points on both lanes added together: the more points, the higher it sits. A tie goes to the film with more recommendation points (the harder lane), then more condition points, then whoever arrived first.')}
