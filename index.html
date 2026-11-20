@@ -2059,9 +2059,12 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
             <a class="dvd-btn" id="dvdBtn" href="#" target="_blank" rel="noopener">Find the DVD on Google ↗</a>
             <input id="fPoster" placeholder="Paste the picture address here" inputmode="url">
             <p class="hint">On Google Images, right-click the DVD cover and choose “Copy image address”, then paste it above.</p>
-            <label for="fAim">The Aim <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· what X judges against</span></label>
+            <label for="fAim">The Aim Box <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· the X anchor</span></label>
             <a class="dvd-btn" id="aimBtn" href="#" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
             <textarea id="fAim" class="aim-in" rows="4" maxlength="2000"></textarea>
+            <label for="fAppeal">The Appeal Box <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· the Y anchor</span></label>
+            <a class="dvd-btn" id="appealBtn" href="#" target="_blank" rel="noopener">How does this film deliver its effects experientially? ↗</a>
+            <textarea id="fAppeal" class="aim-in" rows="4" maxlength="2000"></textarea>
           </form>
           <div class="preview-poster">
             <div class="poster" id="pvPoster" style="width:170px"></div>
@@ -2276,7 +2279,7 @@ function styleFor(id) { let h = 0; for (const ch of String(id)) h = (h * 31 + ch
 const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
 const aOrAn = w => /^[aeiou]/i.test(w) ? 'an' : 'a';
 const viewOf = f => ({ id: f.id, title: f.title || 'Untitled', year: String(f.year || ''), poster: f.poster || '', style: styleFor(f.id),
-  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), aim: f.aim || '', eng: f.eng || '', pos: null });
+  X: f.x, Y: f.y, xEv: f.xEv || '', xNote: f.xNote || '', yEv: f.yEv || '', yNote: f.yNote || '', added: +f.added || 0, genre: genreOf(f), aim: f.aim || '', appeal: f.appeal || '', eng: f.eng || '', pos: null });
 const levelLine = f => `${X_NAMES[f.X]} · ${Y_NAMES[f.Y]}`;
 
 /* ---------- the reel's memory: records, entry, peak, reign — replayed from the log ---------- */
@@ -2922,8 +2925,9 @@ function openProfile(id, show) {
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pscore"><div class="lab">The lanes <b>X${f.X} · Y${f.Y}</b></div><div class="fc-eq"><span>Condition lane <b>${laneText(f, 'X')}</b></span><span>Recommendation lane <b>${laneText(f, 'Y')}</b></span>${LANES[f.id] ? `<span class="v">Lane points <b>${r1(LANES[f.id].Xp)} + ${r1(LANES[f.id].Yp)} = ${r1(LANES[f.id].Xp + LANES[f.id].Yp)}</b></span>` : ''}</div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
-      <div class="paim"><span class="dc-k">The Aim · what X judges against</span>${f.aim ? `<p>${esc(f.aim)}</p>` : '<p class="none">No aim attached yet.</p>'}</div>
-      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit>${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
+      <div class="paim"><span class="dc-k">The Aim Box · the X anchor</span>${f.aim ? `<p>${esc(f.aim)}</p>` : '<p class="none">No aim attached yet.</p>'}</div>
+      <div class="paim"><span class="dc-k">The Appeal Box · the Y anchor</span>${f.appeal ? `<p>${esc(f.appeal)}</p>` : '<p class="none">No appeal attached yet.</p>'}</div>
+      ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit="aim">${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-aimedit="appeal">${f.appeal ? 'Edit the Appeal' : 'Add the Appeal'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
       ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
@@ -2945,22 +2949,27 @@ $('#sheet').addEventListener('click', e => {
   if (!f) return closeSheet();
   if (e.target.closest('[data-brief]')) { if (!canEdit()) return; closeSheet(); return briefOpen(id, 'edit'); }
   if (e.target.closest('[data-ticketopen]')) { $('#confirmBox').innerHTML = ticketChoice(f); return; }
-  if (e.target.closest('[data-aimedit]')) {
+  const ae = e.target.closest('[data-aimedit]');
+  if (ae) {
     if (!canEdit()) return;
-    const q = encodeURIComponent(`${f.title}${f.year ? ' - ' + f.year : ''} - what is the single labeled aim (what the film is trying to accomplish for itself) specific to the film if you had to name the best one?`);
-    $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The Aim · ${esc(f.title)}</b>
-      <div class="pst-in" style="margin-top:12px"><a class="dvd-btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
-        <textarea id="aimEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.aim || '')}</textarea></div>
-      <div class="btns"><button class="btn-gold" data-aimsave>Save the Aim</button><button class="btn-line" data-no>Cancel</button></div></div>`;
+    const k = ae.dataset.aimedit === 'appeal' ? 'appeal' : 'aim', nm = k === 'aim' ? 'Aim' : 'Appeal';
+    const ask = k === 'aim' ? 'What is this film trying to accomplish for itself?' : 'How does this film deliver its effects experientially?';
+    const q = encodeURIComponent(`${f.title}${f.year ? ' - ' + f.year : ''} - ${ask.toLowerCase()}`);
+    $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The ${nm} Box · ${esc(f.title)}</b>
+      <div class="pst-in" style="margin-top:12px"><a class="dvd-btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">${ask} ↗</a>
+        <textarea id="aimEdit" class="aim-in" rows="5" maxlength="2000">${esc(raw(id)?.[k] || '')}</textarea></div>
+      <div class="btns"><button class="btn-gold" data-aimsave="${k}">Save the ${nm}</button><button class="btn-line" data-no>Cancel</button></div></div>`;
     $('#aimEdit').focus();
     return;
   }
-  if (e.target.closest('[data-aimsave]')) {
+  const as = e.target.closest('[data-aimsave]');
+  if (as) {
     if (!canEdit()) return;
     const r = raw(id); if (!r) return;
-    r.aim = ($('#aimEdit')?.value || '').trim();
+    const k = as.dataset.aimsave === 'appeal' ? 'appeal' : 'aim';
+    r[k] = ($('#aimEdit')?.value || '').trim();
     rebuild(); openProfile(id);
-    persist().then(ok => { if (ok) toast(r.aim ? `${f.title} · aim saved` : `${f.title} · aim cleared`); });
+    persist().then(ok => { if (ok) toast(r[k] ? `${f.title} · ${k} saved` : `${f.title} · ${k} cleared`); });
     return;
   }
   if (e.target.closest('[data-poster]')) {
@@ -3010,14 +3019,15 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { closeSheet(); $('#c
 /* =====================================================================
    BOX OFFICE
    ===================================================================== */
-const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2'), fAim = $('#fAim');
+const fTitle = $('#fTitle'), fYear = $('#fYear'), fPoster = $('#fPoster'), fG1 = $('#fG1'), fG2 = $('#fG2'), fAim = $('#fAim'), fAppeal = $('#fAppeal');
 const capWord = w => w.trim().replace(/\s+/g, ' ').replace(/(^|[\s-])\S/g, m => m.toUpperCase());
 function boUpdate() {
   const t = fTitle.value.trim(), y = fYear.value.trim();
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
   const fy = `${t || 'classic movie'}${y ? ' - ' + y : ''}`;
   $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single labeled sub-genre specific to the film itself if you had to name the best one?`);
-  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single labeled aim (what the film is trying to accomplish for itself) specific to the film if you had to name the best one?`);
+  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is this film trying to accomplish for itself?`);
+  $('#appealBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - how does this film deliver its effects experientially?`);
   $('#wikiBtn').href = 'https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(`${t || 'film'}${y ? ' ' + y : ''} film`);
   $('#pvPoster').outerHTML = posterHTML({ title: t || 'Your film', year: y, poster: fPoster.value.trim(), style: 2 }, 170).replace('class="poster', 'id="pvPoster" class="poster');
 }
@@ -3048,7 +3058,7 @@ function printTicket() {
   const lost = db.lostfound.find(f => String(f.title).trim().toLowerCase() === t.toLowerCase() && String(f.year || '') === y);
   if (lost) { $('#boErr').textContent = 'That film is in Lost & Found — if you’ve rewatched it, use “Rewatched it” there.'; return; }
   const no = db.films.length + 1;
-  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], aim: fAim.value.trim(), watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
+  pending = { id: 'manual:' + uid(), title: t, year: y, poster: p, genre: [g1, g2], aim: fAim.value.trim(), appeal: fAppeal.value.trim(), watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now() };
   $('#ticketZone').innerHTML = `<div class="ticket" id="ticket">
       <div class="t-main">${posterHTML(pending, 62)}<div><div class="admit">Admit one</div><div class="t-title">${esc(t)}</div><div class="t-meta">${esc(y || 'Year unknown')} · ${esc(g1 + ' ' + g2)} · Ticket Nº ${no}</div></div></div>
       <div class="t-stub"><img src="${LOGO_S}" alt=""><b>Nº ${no}</b><span>CmanCinema</span></div></div>`;
@@ -3060,10 +3070,11 @@ $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
   mfOpen({ src: 'new', film: pending });
 });
-function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fAim.value = ''; boUpdate(); }
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fAim.value = fAppeal.value = ''; boUpdate(); }
 function admitPending() {
   if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
+  pending.aim = fAim.value.trim(); pending.appeal = fAppeal.value.trim();
   db.films.push(pending);
   const id = pending.id; pending = null;
   rebuild();
@@ -3142,9 +3153,9 @@ function renderLadder() {
 function cancelLabel() { return active.mode === 'new' ? 'Withdraw this ticket' : 'Cancel the rewrite'; }
 let aimTimer = null;
 document.addEventListener('input', e => {
-  if (e.target.id !== 'aimIn' || !active || !canEdit()) return;
+  if ((e.target.id !== 'aimIn' && e.target.id !== 'appealIn') || !active || !canEdit()) return;
   const r = raw(active.film.id); if (!r) return;
-  r.aim = e.target.value; clearTimeout(aimTimer);
+  r[e.target.id === 'aimIn' ? 'aim' : 'appeal'] = e.target.value; clearTimeout(aimTimer);
   aimTimer = setTimeout(() => { rebuild(); persist(); }, 700);
 });
 function renderPane() {
@@ -3155,7 +3166,8 @@ function renderPane() {
     const stay = nameOf(bt.axis, bt.level);
     const compass = `<button class="compass-btn" data-compasspb>✦ The Compass · Definitions</button>`;
     p.innerHTML = `<div class="qk">${bt.axis} · Question ${bt.qi + 1} of ${n} · currently ${bt.level} ${stay}</div>
-      ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : ''}
+      ${x ? `<div class="aim-bx"><label for="aimIn">The Aim Box · what is this film trying to accomplish for itself?</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>`
+        : `<div class="aim-bx"><label for="appealIn">The Appeal Box · how does this film deliver its effects experientially?</label><textarea id="appealIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.appeal || '')}</textarea></div>`}
       <div class="q">${esc(t.q)}</div>
       <span class="orn"></span>
       <div class="yn">${optsOf(t, bt.qi, n, bt.level).map((o, k) => `<button class="${k === 0 ? 'yes' : 'no'}" data-ans="${o.k}">${o.label}<small>${o.end ? `${o.to === bt.level ? 'stays at' : 'lands at'} ${o.to} · ${nameOf(bt.axis, o.to)}` : `${o.to === bt.level ? 'at' : 'to'} ${o.to} · ${nameOf(bt.axis, o.to)}, next question`}</small></button>`).join('')}</div>
@@ -3421,10 +3433,10 @@ function showCard(f, o) {
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        ${o.call ? (() => { const v = f.aim, nm = 'the Aim';   // both showdowns flip to the Aim
+        ${o.call ? (() => { const y = showFocus() === 'Y', v = y ? f.appeal : f.aim, nm = y ? 'the Appeal' : 'the Aim';   // X flips to the Aim, Y to the Appeal
           return `<div class="cta-flip"><button class="cta-turn" data-ctaflip aria-label="Flip to ${nm}">↻</button><div class="cta-card">
           <button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>
-          <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No aim yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
+          <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No ${y ? 'appeal' : 'aim'} yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
         <div class="fc-stats inf5"><div><b>${rank}</b><span>Reel</span></div><div><b>${infOf(f) ?? '—'}</b><span>Influence</span></div><div><b>${st.peak ? '#' + st.peak : '—'}</b><span>Peak</span></div>
           <div><b>${st.n ? `${st.w}–${st.l}` : '—'}</b><span>Record</span></div><div><b>${formHTML(st.form)}</b><span>Form</span></div></div>
         <div class="fc-eq"><span class="ax-x"><em class="lbl">Condition </em><b>${laneText(f, 'X')}</b></span><span class="ax-y"><em class="lbl">Recommendation </em><b>${laneText(f, 'Y')}</b></span></div>
@@ -4334,7 +4346,7 @@ $('#mf').addEventListener('click', async e => {
 async function fileNew(cat) {
   if (!pending || !canEdit()) return;
   const f = pending; pending = null;
-  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, aim: f.aim || '', eng: f.eng || '', cat, at: Date.now(), history: [] });
+  db.lostfound.push({ id: f.id, title: f.title, year: f.year, poster: f.poster, genre: f.genre || null, aim: f.aim || '', appeal: f.appeal || '', eng: f.eng || '', cat, at: Date.now(), history: [] });
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
   lfShelf = ''; lfPage = 1; lfQuery = '';
   const ok = await persist();
@@ -4351,7 +4363,7 @@ async function promoteLF(id) {
   const e = db.lostfound.find(f => f.id === id); if (!e || !canEdit()) return;
   if (active) return alertBox('The booth is busy', `${workflowLabel()}. Finish it before sending another film up.`);
   db.lostfound = db.lostfound.filter(f => f.id !== id);
-  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, aim: e.aim || '', eng: e.eng || '', watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
+  db.films.push({ id: e.id, title: e.title, year: e.year || '', poster: e.poster || '', genre: e.genre || null, aim: e.aim || '', appeal: e.appeal || '', eng: e.eng || '', watched: false, x: null, y: null, xNote: '', yNote: '', added: Date.now(),
                   lostFound: [...(e.history || []), { cat: e.cat, at: e.at }] });
   rebuild();
   await beginWorkflow(e.id, 'new');
