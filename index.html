@@ -2184,7 +2184,7 @@ const Y_NAMES = { 1: 'Not Recommendable', 2: 'Recommendable', 3: 'Highly Recomme
 const X_AXIS = 'Film Condition', Y_AXIS = 'Viewing Recommendation';
 const X_LV = [5, 4, 3, 2, 1, 0], Y_LV = [5, 4, 3, 2, 1];
 const X_TAG = { 5: 'Not just unscathed, triumphant', 4: 'It achieves its aim', 3: 'The first qualification', 2: 'The attempt failed outright', 1: 'It never proved it could', 0: 'An unworthy proposal' };
-const Y_TAG = { 5: 'Breaks the cup', 4: 'An exceptional defining caliber', 3: 'A stellar reward', 2: 'Positive engagement', 1: 'Insufficient engagement' };
+const Y_TAG = { 5: 'Breaks the cup', 4: 'An exceptional caliber of realization', 3: 'A stellar reward', 2: 'Positive engagement', 1: 'Insufficient engagement' };
 const X_TESTS = [
   { q: 'Did the film triumph over what it was trying to accomplish for itself?', to: 5,
     opts: [{ k: 'yes', label: 'Yes', to: 5, end: true }, { k: 'no', label: 'No', to: 4 }] },
@@ -2197,9 +2197,9 @@ const X_TESTS = [
 ];
 const Y_TESTS = [
   { to: 2, q: 'Does the film offer a form of positive engagement that makes it worth considering for viewing?' },
-  { to: 3, q: 'Did that engagement result in a stellar reward: an impact on the experience I had?' },
-  { to: 4, q: 'Is that realization of appeal, itself, one of exceptional caliber that becomes the defining quality of the experience?' },
-  { to: 5, q: 'Is that defining quality so extraordinary that it profoundly alters my broader conception of what its sub-genre experience can be?' },
+  { to: 3, q: 'Did that engagement result in a stellar reward, an impact on the experience I had that dominates my appreciation?' },
+  { to: 4, q: 'Is that realization of appeal, itself, of exceptional caliber, so that its caliber of realization is what dominates my appreciation?' },
+  { to: 5, q: 'Is that dominance of appreciation of the film’s realization so extraordinary that it profoundly alters my broader conception of what its sub-genre experience can be?' },
 ];
 // a Y question climbs on yes and stops on no; an X question carries its own answers
 const optsOf = (t, i, n, level) => t.opts || [{ k: 'yes', label: 'Yes', to: t.to, end: i === n - 1 }, { k: 'no', label: 'No', to: level, end: true }];
@@ -2209,7 +2209,7 @@ const optsOf = (t, i, n, level) => t.opts || [{ k: 'yes', label: 'Yes', to: t.to
 const X_SUBJ = { 5: 'triumph over the presumed weakening', 4: 'intact condition', 3: 'qualifying weakening', 2: 'failure despite demonstrated capacity', 1: 'fundamental incapacity', 0: 'unworthy proposal' };
 const X_VERB = { 5: 'masters', 4: 'preserves', 3: 'compromises', 2: 'defeats', 1: 'debilitates', 0: 'discredits' };
 const X_MORE = l => l >= 4;   // Conquered and Unscathed: more ranks higher · from Qualified down: less ranks higher
-const Y_SUBJ = { 5: 'defining quality that profoundly alters what an experience can be', 4: 'exceptional caliber that defines the experience', 3: 'highly rewarding appeal', 2: 'sufficient appeal', 1: 'insufficient appeal' };
+const Y_SUBJ = { 5: 'dominance of appreciation that profoundly alters what an experience can be', 4: 'exceptional caliber that defines the experience', 3: 'highly rewarding appeal', 2: 'sufficient appeal', 1: 'insufficient appeal' };
 const Y_VERB = { 5: 'redefines', 4: 'obligates', 3: 'influences', 2: 'invites', 1: 'incentivizes' };
 const SHOW_Q = {
   X: Object.fromEntries(X_LV.map(l => [l, `Both ${X_NAMES[l]}: the one that ${X_MORE(l) ? 'more' : 'less'} ${X_VERB[l]} its aim ranks higher.`])),
@@ -3178,7 +3178,7 @@ function renderPane() {
     p.innerHTML = `<div class="qk">${bt.axis} · Question ${bt.qi + 1} of ${n} · currently ${bt.level} ${stay}</div>
       ${x ? `<div class="aim-bx"><label for="aimIn">The Aim · what it was trying to accomplish for itself</label><textarea id="aimIn" rows="3" maxlength="2000">${esc(raw(active.film.id)?.aim || '')}</textarea></div>` : ''}
       <div class="q">${esc(boothQ(t.q, active?.film))}</div>
-      ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0"><b>Stellar reward check</b> · High effect alone isn’t enough; a Y2 can be high in effect too. Did it make an impact on the experience I had? Where does it land?</div>` : ''}
+      ${!x && t.to === 3 ? `<div class="gain" style="max-width:640px;margin:6px auto 0"><b>Stellar reward check</b> · High effect alone isn’t enough; a Y2 can be high in effect too. Did it make an impact on the experience I had? Does it dominate how I see most of the film? Where does it land?</div>` : ''}
       <span class="orn"></span>
       <div class="yn">${optsOf(t, bt.qi, n, bt.level).map((o, k) => `<button class="${k === 0 ? 'yes' : 'no'}" data-ans="${o.k}">${o.label}<small>${o.end ? `${o.to === bt.level ? 'stays at' : 'lands at'} ${o.to} · ${nameOf(bt.axis, o.to)}` : `${o.to === bt.level ? 'at' : 'to'} ${o.to} · ${nameOf(bt.axis, o.to)}, next question`}</small></button>`).join('')}</div>
       <div class="under">${compass}${bt.history.length ? '<button class="linkish" data-back>← Previous question</button>' : ''}${cancel}</div>`;
@@ -3224,8 +3224,8 @@ const TEMPLATES = {
   X: { 5: DICT + ' Measured against the core aim, this claim is immaterial to its being [failure word], because while [concession], [the intended plan] [isn’t affected the same way].',
        4: DICT + ' Measured against the core aim, this claim is material to why [the outcome] feels [failure word], because [the intended plan] [is affected]. It doesn’t fail the core aim altogether, though, because [what still achieves it] [still holds], so [it] isn’t invalidated.',
        3: '[My reaction] [the weakening], [where / when], because [why + how], [what that produced]. Despite failing the core aim altogether, the film is not fundamentally incapable of fulfilling its aim, as [where it showed it could] shows.' },
-  Y: { 5: 'The film’s [defining quality] is so extraordinary that it profoundly alters my broader conception of what a [kind of experience it strives for] experience can be.',
-       4: 'I appreciate how the film delivers [the rewarding effects], because the way it [realizes / builds] them through [how it’s executed] makes the experience exceptionally high-caliber. It’s this caliber of execution that dominates my appreciation. Still, this defining quality is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
+  Y: { 5: 'The film’s [dominance of appreciation of its realization] is so extraordinary that it profoundly alters my broader conception of what a [kind of experience it strives for] experience can be.',
+       4: 'I appreciate how the film delivers [the rewarding effects], because the way it [realizes / builds] them through [how it’s executed] makes the experience exceptionally high-caliber. It’s this caliber of execution that dominates my appreciation. Still, this dominance of appreciation is not so extraordinary that it profoundly alters my broader conception of what a {genre} experience can be.',
        3: 'I appreciate how the film [delivers what], because [what those rewards give you]. The film also offers [further rewards — optional, delete this sentence if unused]. It’s these rewards that dominate my appreciation.',
        2: '[The appeal] is dependable enough, because it’s driven by [what makes it dependable]. This justifies actively recommending it. It doesn’t justify “ought to be seen” status, though, because that level requires its realization to deliver superlatively rewarding experiential effects, and its forms of positive engagement don’t reach that degree.',
        1: '[The appeal]. This justifies considering it; however, its effectiveness isn’t dependable enough to justify active recommendation, because [while concession — optional,] [what breaks the dependability].',
@@ -4390,7 +4390,7 @@ function argueCase(A, B, ax) {
     return `${lead}${ta}, ${X_APP[l]}, <b>${X_VERB[l]}</b> the aim of its ${gn(A)} ${X_MORE(l) ? 'more' : 'less'} than ${tb} does (${X_BASE[l]}) for its ${gn(B)}.`;
   }
   const l = A.Y, ga = gn(A), gb = gn(B), art = A.genre ? aOrAn(genreOf(A).trim()) : 'a';
-  if (l === 5) return `${lead}${pa} defining quality, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} defining quality does (redefine) for its ${gb}.`;
+  if (l === 5) return `${lead}${pa} dominance of appreciation, which profoundly alters what ${art} ${ga} experience can be, <b>redefines</b> its ${ga} beyond what ${pb} dominance of appreciation does (redefine) for its ${gb}.`;
   if (l === 4) return `${lead}${pa} exceptionally high-caliber realization of appeal, which defines its ${ga} experience, <b>obligates</b> viewing its ${ga} beyond what ${pb} exceptionally high-caliber realization of appeal does (obligate) for its ${gb}.`;
   if (l === 3) return `${lead}${pa} highly rewarding appeal, the impact its engagement made on the experience I had, <b>influences</b> viewing its ${ga} more than ${pb} highly rewarding appeal does (influence) for its ${gb}.`;
   if (l === 2) return `${lead}${pa} sufficient appeal, delivered through positive engagement, <b>invites</b> viewing its ${ga} more than ${pb} sufficient appeal does (invite) for its ${gb}.`;
@@ -4601,9 +4601,9 @@ const PB = {
        2: 'The film’s attempt failed outright, despite showing it could achieve its aim.',
        1: 'The film is fundamentally incapable of fulfilling its aim.',
        0: 'The film’s proposal is not worthy of being credited.' },
-  Y: { 5: 'The defining quality of the film’s realization is so extraordinary that it profoundly alters my broader conception of what an experience can be.<br><i style="color:#7a1a22">“An” experience means an experience of the kind the film strives for, not experience in general.</i>',
-       4: 'The film’s exceptionally high-caliber realization of appeal becomes the defining quality of the experience.',
-       3: 'The film’s engagement is a stellar reward. It made an impact on the experience I had.',
+  Y: { 5: 'The dominance of appreciation of the film’s realization is so extraordinary that it profoundly alters my broader conception of what an experience can be.<br><i style="color:#7a1a22">“An” experience means an experience of the kind the film strives for, not experience in general.</i>',
+       4: 'The film’s realization of appeal is of exceptionally high caliber. This caliber of realization is what dominates my appreciation.',
+       3: 'The film’s engagement is a stellar reward. This reward is what dominates my appreciation.',
        2: 'The film delivers positive engagement, but no stellar reward.',
        1: 'The film lacks sufficient positive engagement.' },
   xTerms: [
@@ -4627,15 +4627,17 @@ const PB = {
     ['Effect and affect', 'Baked into the levels. Y1–Y4 weigh the effect the engagement had on the experience I had. At Y5 it becomes affect, because it alters my broader conception of what its sub-genre experience can be.'],
     ['Stellar reward', 'The type of effect that meets the Y3 threshold: an impact on the experience I had. High effect alone isn’t enough, since a Y2 can be high in effect too.'],
     ['Realization', 'The execution of the engagement, meaning how the appeal was made real.'],
-    ['Caliber', 'The quality of that realization. At Y4 it becomes the defining quality of the experience.'],
+    ['Caliber', 'The quality of that realization. At Y4 it’s exceptional, and it’s what dominates my appreciation.'],
+    ['Appreciation', 'How I see the film, built over the span of the engagement across the experience.'],
+    ['Dominates my appreciation', 'The reward (Y3) or the caliber of realization (Y4) shapes how I see most of the film, over most of the engagement. Not every moment, but most of it. A reward that lands in only a few moments doesn’t dominate.'],
     ['Breaking the cup', 'It alters my broader conception of what its sub-genre experience can be.'],
   ],
-  yLacks: [[1, 'Sufficient positive engagement.'], [2, 'A stellar reward.'], [3, 'The caliber of realization that defines the experience.'], [4, 'It doesn’t break the cup.']],
+  yLacks: [[1, 'Sufficient positive engagement.'], [2, 'A stellar reward that dominates my appreciation.'], [3, 'A caliber of realization that dominates my appreciation.'], [4, 'It doesn’t break the cup.']],
   examples: [
     ['Y1', 'China Passage', 'It had moments of positive engagement, but they were too far apart given how sleepy the film made me. They didn’t carry the experience.'],
     ['Y2', 'M', 'Its moments were also few and far between, but they were so good that they carried the experience, so it passes the sufficiency test.'],
-    ['Y3', 'Larceny, Inc.', 'The farce is the stellar reward. It’s what happens, and it made an impact on the experience I had. Nothing about its realization defines the experience, so it stays at Y3.'],
-    ['Y4', 'The Maltese Falcon', 'It has a stellar reward too, but the MacGuffin is the caliber of realization, because it’s why everything happens. That caliber defines the experience, so its Y3 is set aside for Y4.'],
+    ['Y3', 'Larceny, Inc.', 'The farce is the stellar reward. It’s what happens, and it runs through the whole film, so the reward is what dominates my appreciation. Its realization isn’t, so it stays at Y3.'],
+    ['Y4', 'The Maltese Falcon', 'It has a stellar reward too, but the MacGuffin is the caliber of realization, because it’s why everything happens. It drives everything, so its caliber of realization is what dominates my appreciation. Its Y3 is set aside for Y4.'],
     ['X5·Y5', 'Masters vs breaking the cup', 'Where X5 masters within the film’s own aim, the frame stays the same and the film commands what it set out to do. Y5 redefines the frame itself: what that kind of experience can be no longer fits the cup you came in with. One is about what the film commanded, the other about what happened to your experience.'],
   ],
   sTerms: [
