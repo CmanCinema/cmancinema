@@ -3421,9 +3421,7 @@ function showCard(f, o) {
         ${o.stamp ? `<div class="stamp-big ${o.stamp.cls}">${o.stamp.text}</div>` : ''}
       </div>
       <div class="fc-body">
-        ${o.call ? (() => { const cta = `<button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>`;
-          if (showFocus() === 'Y') return cta;
-          const ax = 'X', v = f.aim, nm = 'the Aim';
+        ${o.call ? (() => { const v = f.aim, nm = 'the Aim';   // both showdowns flip to the Aim
           return `<div class="cta-flip"><button class="cta-turn" data-ctaflip aria-label="Flip to ${nm}">↻</button><div class="cta-card">
           <button class="duel-cta" data-call="${esc(f.id)}"><span class="cta-t">${o.call}</span><small><span>Make this call</span><span>Ranks higher ›</span></small></button>
           <div class="cta-back" data-ctaflip><span class="k">${esc(f.title)} · ${nm}</span>${v ? `<p>${esc(v)}</p>` : `<p class="none">No aim yet · add it from the film’s profile.</p>`}</div></div></div>`; })() : ''}
