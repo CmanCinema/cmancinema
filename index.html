@@ -2179,6 +2179,31 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .bp-arena b{display:block;font:700 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
 .gr-note{margin:4px 0 8px;font:italic 500 14px var(--body);color:rgba(243,230,200,.55)}
 .gr-axis{font:700 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:rgba(232,190,106,.7);margin:4px 0 6px}
+.bx-def{grid-column:1/-1;margin-top:2px;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.7)}
+.bx-def b{font:700 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;font-style:normal;color:var(--gold)}
+.bx-cnt{display:block;margin-top:2px;font:italic 500 12px var(--body);color:rgba(243,230,200,.45)}
+.bx-goog{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.bx-goog a{text-decoration:none}
+.bx-goog span{font:italic 500 15px var(--body);color:rgba(243,230,200,.6)}
+.bx-cent{margin-top:8px}
+.bx-cbtns{display:flex;flex-wrap:wrap;gap:6px}
+.bx-cbtns button{font:700 10px var(--serif);letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border-radius:20px;border:1px solid rgba(232,190,106,.4);background:none;color:rgba(232,190,106,.7);cursor:pointer}
+.bx-cbtns button.on{background:var(--c);border-color:var(--c);color:#1a0d08}
+.bx-cbtns button.out{border-style:dashed}
+.bx-strs{margin-top:10px}
+.bx-str{padding:8px 10px;margin-top:6px;border-radius:4px;background:rgba(0,0,0,.2);border-left:3px solid var(--c)}
+.bx-strq{font:italic 500 15px/1.35 var(--body);color:rgba(243,230,200,.75)}
+.bx-aim.isout{opacity:.55}
+.bx-aim.isout .bx-cbtns button.on{background:rgba(232,190,106,.35);border-color:rgba(232,190,106,.6);color:#f3e6c8}
+.bx-plot mark.am.w1{background:color-mix(in srgb,var(--c) 14%,transparent)}
+.bx-plot mark.am.w2{background:color-mix(in srgb,var(--c) 26%,transparent)}
+.bx-plot mark.am.w3{background:color-mix(in srgb,var(--c) 40%,transparent)}
+.bx-plot mark.am.w4{background:color-mix(in srgb,var(--c) 58%,transparent)}
+.bx-meter{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.bx-meter span{font:600 11px var(--serif);letter-spacing:.12em;text-transform:uppercase;font-style:normal;color:rgba(232,190,106,.75);padding:5px 10px;border:1px solid rgba(232,190,106,.3);border-radius:4px}
+.bx-meter b{color:var(--gold-hi);font-size:14px;margin-left:4px}
+.bx-notes{display:grid;gap:5px;margin-top:10px}
+.bx-notes span{display:block;font:italic 500 15px/1.35 var(--body);color:#f6ead0;padding:6px 10px;border-left:3px solid var(--gold);background:rgba(232,190,106,.07)}
 </style>
 </head>
 <body>
@@ -2539,6 +2564,8 @@ function normalize(d) {
     if (d.workflow && d.workflow.stage === 'check') d.workflow = null;
   }
   d.ladders ||= {}; d.ladders.M ||= {};
+  // each film's plot is rebuilt from its Footprint Box (it isn't stored twice)
+  d.films.forEach(f => { if (typeof f.footprint === 'string') { f.plot = splitPlot(f.footprint); f.plotSrc = f.footprint; } else { delete f.plot; delete f.plotSrc; } });
   d.v = 8;
   return d;
 }
@@ -2860,11 +2887,9 @@ async function cloudFetch() {
 }
 function cloudApply(data) {
   db = normalize(data);
-  const resort = db._resort; delete db._resort; const lanes0 = db._lanes; delete db._lanes;
-  cloud.snapshot = JSON.stringify(db);
+  delete db._resort; delete db._lanes;
+  cloud.snapshot = serialize();
   rebuild();
-  if (resort && db.wheel.length) { sortWheel(true); rebuild(); }
-  if (lanes0) { if (db.wheel.length) db.wheelLog.push({ id: 'wl:' + uid(), type: 'order', order: db.wheel.slice(), at: Date.now() }); rebuild(); }
   syncActive(); refreshScene();
 }
 async function cloudRefresh() {
@@ -2908,6 +2933,8 @@ async function cloudSeed() {
   if (!r.ok) throw Error('The database refused (' + r.status + '): ' + (await r.text()).slice(0, 160));
   await cloudRefresh();
 }
+// what gets saved: the plot is rebuilt from the Footprint Box on load, so its two derived copies never travel
+const serialize = () => JSON.stringify(db, (k, v) => (k === 'plot' || k === 'plotSrc') ? undefined : v);
 // every change goes through here
 function persist() {
   rebuild();
@@ -2916,10 +2943,13 @@ function persist() {
     toast('Only the signed-in editor can change the collection');
     return Promise.resolve(false);
   }
-  const next = JSON.stringify(db);
+  // a save already waiting its turn will carry this change too: one upload, not two
+  if (cloud.queued) return cloud.queued;
   cloud.pending++;
   showSaving(true);
-  cloud.saving = cloud.saving.then(async () => {
+  let next;
+  cloud.saving = cloud.queued = cloud.saving.then(async () => {
+    cloud.queued = null; next = serialize();
     if (!await cloudEnsureAuth()) throw Error('The editor connection lapsed. Sign in again from the Office.');
     const r = await fetch(CLOUD_URL + '/rest/v1/cinema_collection?id=eq.1&updated_at=eq.' + encodeURIComponent(cloud.version),
       { method: 'PATCH', headers: cloudHeaders(cloud.session.access_token, { 'Content-Type': 'application/json', 'Prefer': 'return=representation' }),
@@ -2930,6 +2960,7 @@ function persist() {
     cloud.version = rows[0].updated_at; cloud.snapshot = next;
     return true;
   }).catch(e => {
+    cloud.queued = null;
     cloud.status = 'Last change not saved: ' + e.message;
     alertBox('Your last change was not saved', e.message);
     return false;
@@ -3107,18 +3138,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('#lobbyIn [data-spot]')) return openSpot();
 });
 /* ---------- the lanes: each film's claim-lane spot linked to its case-lane spot ---------- */
-function lanesHTML() {
-  const ROW = 30, side = ax => { const out = []; LV[ax].forEach(l => { const a = ladderOf(ax, l).filter(id => byId(id)); if (!a.length) return; out.push({ h: `${ax}${l} · ${ax === 'X' ? X_NAMES[l] : Y_NAMES[l]} · ${a.length}` }); a.forEach(id => out.push({ id })); }); return out; };
-  const L = side('X'), R = side('Y'), H = Math.max(L.length, R.length) * ROW, yOf = (arr, id) => arr.findIndex(e => e.id === id) * ROW + ROW / 2, N = db.wheel.length;
-  if (!N) return '<p class="ns" style="font:italic 500 19px var(--body)">The lanes fill as films reach the reel.</p>';
-  const item = (e, side) => e.h ? `<div class="ln-h">${e.h}</div>` : (() => { const f = byId(e.id), w = db.wheel.indexOf(e.id) + 1; return `<button class="ln-i ${laneHL === e.id ? 'hl' : ''}" data-lane="${esc(e.id)}"><span class="ln-w">#${w}</span><span class="ln-t">${esc(f.title)}</span></button>`; })();
-  const lines = db.wheel.map((id, i) => { const y1 = yOf(L, id), y2 = yOf(R, id), t = N > 1 ? i / (N - 1) : 0; return `<line class="${laneHL === id ? 'hl' : ''}" data-lane="${esc(id)}" x1="0" y1="${y1}" x2="100" y2="${y2}" style="stroke:hsl(${42 - 30 * t},${70 - 30 * t}%,${68 - 34 * t}%)"/>`; }).join('');
-  const hf = laneHL && byId(laneHL), hr = hf && LANES[laneHL];
-  return `<div class="lanes-cap">${hf ? `<b>${esc(hf.title)}</b> · reel #${db.wheel.indexOf(laneHL) + 1} · condition lane #${hr.X} · recommendation lane #${hr.Y} · lane points ${r1(hr.Xp)} + ${r1(hr.Yp)} = ${r1(hr.Xp + hr.Yp)} <button class="linkish" data-film="${esc(laneHL)}">Profile ›</button>` : 'Tap a film to light up its two spots. The reel ranks films by how their condition spot and recommendation spot pair up.'}</div>
-    <div class="lanes"><div class="ln-col l"><div class="ln-k">The condition lane</div>${L.map(e => item(e, 'l')).join('')}</div>
-      <div class="ln-mid"><div class="ln-k">&nbsp;</div><svg viewBox="0 0 100 ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${lines}</svg></div>
-      <div class="ln-col r"><div class="ln-k">The recommendation lane</div>${R.map(e => item(e, 'r')).join('')}</div></div>`;
-}
+
 function renderBill() {
   const { ranked } = board(), N = ranked.length, q = lobbyQuery.trim().toLowerCase();
   const rows = ranked.map((f, i) => ({ f, rank: i + 1 })).filter(({ f }) => (lobbyLevel === '' || String(f.M) === String(lobbyLevel)) && (!q || f.title.toLowerCase().includes(q) || f.year.includes(q)));
@@ -3365,14 +3385,22 @@ function admitPending() {
 
 /* =====================================================================
    THE PROJECTION BOOTH · Magnitude
-   Both ports work off the plot, the runtime's blueprint. Port A: your
-   detections, highlighted where they land. Port B: the aim, part by part,
-   highlighted where each part plays out. Where they overlap is where a
-   detection hits the aim. Your marks give a lean; you lock the gate.
-   Everything you type saves straight onto the film.
+   Both ports work off the plot, the runtime's blueprint.
+   Port A: my detections, highlighted where they land, each rated by how I mean it.
+   Port B: the aim, part by part. Google decides how central each part is to what the film
+   is trying to accomplish; I tag where it plays out and rate how well it worked in each stretch.
+   The lean weighs both ports equally. I lock the gate.
+   Everything typed saves straight onto the film.
    ===================================================================== */
-const WEIGHTS = ['Petty Nitpick', 'Minor Gripe', 'Major Drawback', 'Severe Problem'];   // detections · four stops: 0–25 · 25–50 · 50–75 · 75–100
-const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // aim parts · the same four stops
+const WEIGHTS = ['Petty Nitpick', 'Minor Gripe', 'Major Drawback', 'Severe Problem'];   // Port A · how I mean a detection
+const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // Port B · how well the aim worked in a stretch
+const DEF_DET = ['I noticed it, but it didn’t change my experience.', 'It took a little away, briefly.', 'It noticeably took away from that part of my View.', 'It damaged my View of the film.'];
+const DEF_AIM = ['The aim didn’t work for me here at all.', 'It worked a little: I registered it, but it didn’t carry the stretch.', 'It worked and held the stretch up, but it wasn’t the peak.', 'It fully worked. This is where the film achieved this aim for me.'];
+const CENT_NAMES = { 0: 'Outside the film', 1: 'Minor', 2: 'Secondary', 3: 'Major', 4: 'Central' };   // from Google: how central the aim is to the film
+const CENT_SIG = { 0: 0, 1: .25, 2: .5, 3: .75, 4: 1 };
+const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating: Zilch still counts a little
+const SEV_SIG = [0, .25, .5, .75, 1];    // by detection rating
+const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, near: 5, other: .5 };
 const AIM_COLORS = ['#e8be6a', '#5ad1c8', '#c58fe6', '#9fd18b', '#f08fb0', '#8fb0e6', '#e6a05a', '#d1d15a'];
 const DET_COLORS = ['#e07a5a', '#8fb0e6', '#9fd18b', '#e6c25a', '#c58fe6', '#5ad1c8', '#f08fb0', '#b9a37a'];
 
@@ -3393,8 +3421,139 @@ function lockedNotice(where) {
     <div class="yn" style="margin-top:6px">${visitor ? '' : '<button class="btn-gold" data-goto="boxoffice">Admit a film</button>'}${where === 'The Screening Room' && VAULT.length ? '<button class="btn-line" data-goto="vault">The Film Vault</button>' : ''}<button class="btn-line" data-goto="lobby">Back to the lobby</button></div></div>`;
 }
 
+
 /* ---------- the film's booth data ---------- */
 const bxFilm = () => (active && raw(active.film.id)) || null;
+/* every stretch carries its own rating; older marks take the part's old rating */
+const normStretches = (rs, w0) => (Array.isArray(rs) ? rs : []).filter(x => x && x.e > x.s).map(x => ({ s: x.s, e: x.e, w: x.w || w0 || 2 })).sort((a, b) => a.s - b.s);
+function bxData() {
+  const r = bxFilm(); if (!r) return null;
+  if (!Array.isArray(r.dets)) r.dets = [];
+  const src = r.footprint || '';
+  if (r.plotSrc !== src) {
+    if (r.plotSrc != null) { r.dets.forEach(d => { d.ranges = []; }); (r.aims || []).forEach(a => { a.ranges = []; }); }   // a new plot: highlights tied to the old text are cleared
+    r.plot = splitPlot(src); r.plotSrc = src;
+  }
+  const parsed = splitAim(r.aim), old = Array.isArray(r.aims) ? r.aims : [];
+  r.aims = parsed.map((x, i) => { const o = old[i] || {}; return { how: o.how || '', central: o.central ?? null, ranges: normStretches(o.ranges, o.weight), id: 'a' + i, kind: x.kind, text: x.text }; });
+  return r;
+}
+let bxTimer = null;
+function bxSave() { clearTimeout(bxTimer); bxTimer = setTimeout(() => { rebuild(); persist(); }, 1200); }
+const plotText = r => (r.plot || []).join('');
+const detNum = (r, d) => r.dets.indexOf(d) + 1;
+const detColor = (r, d) => DET_COLORS[(d.color ?? r.dets.indexOf(d)) % DET_COLORS.length];
+const aimLabel = (r, a) => 'Aim ' + (r.aims.indexOf(a) + 1);
+/* the aim's own name, short: the words before a colon, or its first few words */
+function aimShort(a) {
+  const t = String(a.text || '').trim(), c = t.indexOf(':');
+  if (!t) return 'Untitled aim';
+  if (c > 0 && c <= 48) return t.slice(0, c);
+  const w = t.split(/\s+/); return w.length > 5 ? w.slice(0, 5).join(' ') + '…' : t;
+}
+function mergeRanges(rs) {
+  const s = (rs || []).filter(x => x.e > x.s).sort((a, b) => a.s - b.s), out = [];
+  s.forEach(x => { const l = out[out.length - 1]; if (l && x.s <= l.e) l.e = Math.max(l.e, x.e); else out.push({ s: x.s, e: x.e }); });
+  return out;
+}
+const rangeLen = rs => mergeRanges(rs).reduce((n, x) => n + x.e - x.s, 0);
+function overlapLen(A, B) { let n = 0; for (const x of mergeRanges(A)) for (const y of mergeRanges(B)) { const s = Math.max(x.s, y.s), e = Math.min(x.e, y.e); if (e > s) n += e - s; } return n; }
+function coverage(r, d) { const total = plotText(r).length; return total ? rangeLen(d.ranges) / total : 0; }
+const mainDet = r => r.dets.find(d => d.main) || r.dets[0] || null;
+const aimColor = (r, a) => AIM_COLORS[r.aims.indexOf(a) % AIM_COLORS.length];
+const stretches = a => normStretches(a.ranges, a.weight);
+const isCore = a => a.central === 4;                                   // Central, per Google
+const counts = a => a.central != null && a.central > 0;                // set and not outside the film
+const stretchWt = (a, x) => (CENT_SIG[a.central] ?? 0) * DEL_SIG[x.w || 2];
+const overlap = (A, B) => { for (const x of A || []) for (const y of B || []) if (x.s < y.e && y.s < x.e) return true; return false; };
+/* a detection hits every aim part whose stretch of the plot it overlaps */
+const detHits = (r, d) => r.aims.filter(a => a.central !== 0 && overlap(d.ranges, stretches(a)));
+/* the stretches of an aim that a detection overlaps */
+const hitStretches = (d, a) => stretches(a).filter(x => overlap(d.ranges, [x]));
+const aimTotal = r => r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + stretchWt(a, x) * (x.e - x.s), 0) : t, 0);
+/* one detection's bite: the aim weight it overlaps, out of the aim's whole weight */
+function footShare(r, d) {
+  const T = aimTotal(r); if (!T) return null;
+  return r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + stretchWt(a, x) * overlapLen(d.ranges, [x]), 0) : t, 0) / T;
+}
+
+/* ---------- the lean: both ports, equally, never a verdict ----------
+   Footprint (Port A): how much of the blueprint my detections cover, weighted by how I mean them
+     (Petty Nitpick .25 · Minor Gripe .5 · Major Drawback .75 · Severe Problem 1). The largest detection counts in full,
+     the others at half; overlapping highlights count once.
+   Aim bite (Port B): how much of the aim's weight those detections overlap. Each tagged stretch weighs
+     how central the aim is (Google: Central 1 · Major .75 · Secondary .5 · Minor .25 · Outside the film 0)
+     × how well it worked there (Core 1 · Supporting .65 · Edge .35 · Zilch .15).
+   The lean = the two averaged. Place: if the largest detection reaches a stretch weighing at least half, it is at the
+   center of the View (Defining, Pervasive at 35, All-encompassing at 60); otherwise at the edge (Incidental, Peripheral at 20). */
+function leanParts(r) {
+  const L = plotText(r).length, m = mainDet(r);
+  const live = r.aims.filter(a => a.central !== 0);
+  const unset = live.filter(a => a.central == null), untagged = live.filter(a => !stretches(a).length);
+  const base = { m, unset, untagged };
+  if (!L || !m || !rangeLen(m.ranges)) return base;
+  const B = new Float32Array(L);
+  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { const w = stretchWt(a, x); for (let i = x.s; i < Math.min(L, x.e); i++) B[i] += w; }); });
+  let T = 0; for (let i = 0; i < L; i++) T += B[i];
+  const S = new Float32Array(L), P = new Float32Array(L);
+  r.dets.forEach(d => { const f = d === m ? 1 : LEAN_CUT.other, sv = SEV_SIG[d.weight || 2] * f;
+    mergeRanges(d.ranges).forEach(x => { for (let i = Math.max(0, x.s); i < Math.min(L, x.e); i++) { if (sv > S[i]) S[i] = sv; if (f > P[i]) P[i] = f; } }); });
+  let fs = 0, bite = 0; for (let i = 0; i < L; i++) { fs += S[i]; bite += P[i] * B[i]; }
+  let heart = false, inAim = 0;
+  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { if (stretchWt(a, x) >= LEAN_CUT.heart && overlap(m.ranges, [x])) heart = true; }); });
+  for (const x of mergeRanges(m.ranges)) for (let i = x.s; i < Math.min(L, x.e); i++) if (B[i] > 0) inAim++;
+  return { ...base, L, T, F: 100 * fs / L, B: T ? 100 * bite / T : null, heart, outside: rangeLen(m.ranges) - inAim };
+}
+function bxLean(r) {
+  const p = leanParts(r); if (!p.m || p.B == null || p.F == null) return null;
+  const score = (p.F + p.B) / 2;
+  const t = p.heart ? (score >= LEAN_CUT.whole ? 1 : score >= LEAN_CUT.spread ? 2 : 3) : (score >= LEAN_CUT.edge ? 4 : 5);
+  // margin of error: the nearest line, and which way it would tip
+  const cuts = p.heart ? [[LEAN_CUT.spread, 3, 2], [LEAN_CUT.whole, 2, 1]] : [[LEAN_CUT.edge, 5, 4]];
+  const [cut, light, heavy] = cuts.slice().sort((a, b) => Math.abs(score - a[0]) - Math.abs(score - b[0]))[0], dist = Math.abs(score - cut);
+  const near = dist <= LEAN_CUT.near ? { cut, dist: Math.round(dist * 10) / 10, toward: score < cut ? heavy : light } : null;
+  const hits = detHits(r, p.m), names = hits.map(a => `${aimShort(a)} (${CENT_NAMES[a.central] ?? 'centrality not set'})`);
+  const where = hits.length ? `lands on ${names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names.slice(-1) : names[0]}` : 'doesn’t overlap any stretch of the aim';
+  const why = `D${detNum(r, p.m)}, your ${r.dets.length > 1 ? 'largest ' : ''}detection, ${where}${p.heart ? ', reaching the heart of what worked' : ''}. Footprint ${Math.round(p.F)} (Port A) · aim bite ${Math.round(p.B)} (Port B).`;
+  return { t, score: Math.round(score), F: Math.round(p.F), B: Math.round(p.B), heart: p.heart, near, share: p.B / 100, why, parts: p };
+}
+const bxWeightPct = r => { const L = bxLean(r); return L ? L.score : null; };
+/* what to check: unfinished marks, and what could tip a lean that sits near a line */
+function leanNotes(r) {
+  const p = leanParts(r), out = [], L = bxLean(r), nm = as => as.map(a => `${aimLabel(r, a)} · ${aimShort(a)}`).join(', ');
+  if (p.unset.length) out.push(`Set how central ${nm(p.unset)} ${p.unset.length === 1 ? 'is' : 'are'}: ask Google with the button in Port B.`);
+  if (p.untagged.length) out.push(`${nm(p.untagged)} ${p.untagged.length === 1 ? 'isn’t' : 'aren’t'} tagged on Port B’s plot yet. Tag ${p.untagged.length === 1 ? 'it' : 'them'}, or mark ${p.untagged.length === 1 ? 'it' : 'them'} Outside the film.`);
+  if (p.m && p.outside > 20 && L) out.push(`D${detNum(r, p.m)} runs into ${Math.round(p.outside / p.L * 100)}% of the blueprint that no aim stretch covers. That part adds to the footprint but not to the aim bite.`);
+  if (L && L.near) out.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away. A slightly ${L.near.toward < L.t ? 'larger or heavier' : 'smaller or lighter'} detection, or a ${L.near.toward < L.t ? 'stronger' : 'weaker'} rating where it lands, would tip it.`);
+  else if (L) out.push(`Comfortably clear of the nearest line.`);
+  return out;
+}
+/* the film's own map: drawn from where my detections land on the aim */
+function bxMapSVG(r) {
+  let s = MAG_SVG.ring, k = 0;
+  r.dets.forEach((d, i) => {
+    const cov = coverage(r, d); if (!cov) return;
+    const sh = footShare(r, d) ?? cov, hits = detHits(r, d);
+    const onHeart = hits.some(a => counts(a) && hitStretches(d, a).some(x => stretchWt(a, x) >= LEAN_CUT.heart)), others = hits.filter(a => !isCore(a)).length;
+    const w = SEV_SIG[d.weight || 2], op = (.35 + .65 * w).toFixed(2);
+    if (onHeart) {
+      const rad = Math.min(40, 9 + 31 * Math.min(1, sh / .6) * (.5 + w / 2));
+      s += `<defs><radialGradient id="bxM${i}"><stop offset="0" stop-color="#2a160e"/><stop offset="${others ? .55 : .9}" stop-color="#2a160e"/><stop offset="1" stop-color="#2a160e" stop-opacity="${others ? 0 : 1}"/></radialGradient></defs><circle cx="44" cy="44" r="${rad.toFixed(1)}" fill="url(#bxM${i})" opacity="${op}"/>`;
+    } else {
+      const ang = Math.max(18, Math.min(340, 360 * Math.max(cov, .05))), a0 = (k++ * 97 - 90) * Math.PI / 180, a1 = a0 + ang * Math.PI / 180;
+      const R = 40, ri = 40 - (6 + 12 * w) * (hits.length ? 1 : .5), p = (rr, a) => `${(44 + rr * Math.cos(a)).toFixed(1)} ${(44 + rr * Math.sin(a)).toFixed(1)}`, big = ang > 180 ? 1 : 0;
+      s += `<path d="M${p(R, a0)} A${R} ${R} 0 ${big} 1 ${p(R, a1)} L${p(ri, a1)} A${ri} ${ri} 0 ${big} 0 ${p(ri, a0)} Z" fill="#2a160e" opacity="${op}"/>`;
+    }
+  });
+  return `<div class="bx-disc"><svg viewBox="0 0 88 88">${s}</svg></div>`;
+}
+/* Google decides how central each aim is: the film's own aims, sent as they were pasted */
+function centralityQuery(f, aims) {
+  let q = `${f.title}${f.year ? ' - ' + f.year : ''} - how central is each of these to what the film is trying to accomplish for itself? Rate each one Central, Major, Secondary or Minor, or Outside the film if it isn't about the film itself:`;
+  const per = Math.max(40, Math.floor((1700 - q.length) / Math.max(1, aims.length)) - 6);
+  aims.forEach((a, i) => { const t = String(a.text).replace(/\s+/g, ' ').trim(); q += ` ${i + 1}. ${t.length > per ? t.slice(0, per - 1).replace(/\s+\S*$/, '') + '…' : t}`; });
+  return 'https://www.google.com/search?q=' + encodeURIComponent(q);
+}
 function splitPlot(t) { return String(t || '').replace(/\r/g, '').split(/\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean).map((x, i, a) => i < a.length - 1 ? x + ' ' : x); }
 /* the Aim Box: Google's intro is skipped; each bullet is read as its own part */
 function splitAim(t) {
@@ -3418,82 +3577,6 @@ function splitAim(t) {
   }
   return out.filter(x => x.kind !== 'intro').map(x => ({ ...x, text: x.text.replace(/\s+/g, ' ').trim() })).filter(x => x.text);   // the intro is left out: only the parts
 }
-function bxData() {
-  const r = bxFilm(); if (!r) return null;
-  if (!Array.isArray(r.dets)) r.dets = [];
-  const src = r.footprint || '';
-  if (r.plotSrc !== src) {
-    if (r.plotSrc != null) { r.dets.forEach(d => { d.ranges = []; }); (r.aims || []).forEach(a => { a.ranges = []; }); }   // a new plot: highlights tied to the old text are cleared
-    r.plot = splitPlot(src); r.plotSrc = src;
-  }
-  const parsed = splitAim(r.aim), old = Array.isArray(r.aims) ? r.aims : [];
-  r.aims = parsed.map((x, i) => { const o = old[i] || {}; return { how: o.how || '', weight: o.weight || 2, ranges: Array.isArray(o.ranges) ? o.ranges : [], id: 'a' + i, kind: x.kind, text: x.text }; });
-  return r;
-}
-let bxTimer = null;
-function bxSave() { clearTimeout(bxTimer); bxTimer = setTimeout(() => { rebuild(); persist(); }, 700); }
-const plotText = r => (r.plot || []).join('');
-const detNum = (r, d) => r.dets.indexOf(d) + 1;
-const detColor = (r, d) => DET_COLORS[(d.color ?? r.dets.indexOf(d)) % DET_COLORS.length];
-const aimLabel = (r, a) => a.kind === 'intro' ? 'Intro' : 'Aim ' + (r.aims.filter(x => x.kind !== 'intro').indexOf(a) + 1);
-function mergeRanges(rs) {
-  const s = rs.filter(x => x.e > x.s).sort((a, b) => a.s - b.s), out = [];
-  s.forEach(x => { const l = out[out.length - 1]; if (l && x.s <= l.e) l.e = Math.max(l.e, x.e); else out.push({ s: x.s, e: x.e }); });
-  return out;
-}
-function coverage(r, d) {
-  const total = plotText(r).length; if (!total) return 0;
-  return mergeRanges(d.ranges || []).reduce((n, x) => n + x.e - x.s, 0) / total;
-}
-const mainDet = r => r.dets.find(d => d.main) || r.dets[0] || null;
-const aimColor = (r, a) => AIM_COLORS[r.aims.indexOf(a) % AIM_COLORS.length];
-const isCore = a => (a.weight || 2) === 4;
-const overlap = (A, B) => { for (const x of A || []) for (const y of B || []) if (x.s < y.e && y.s < x.e) return true; return false; };
-/* a detection hits every aim part whose stretch of the plot it overlaps */
-const detHits = (r, d) => r.aims.filter(a => overlap(d.ranges, a.ranges));
-
-/* ---------- the lean: read off the blueprint, never a verdict ---------- */
-function bxLean(r) {
-  const m = mainDet(r);
-  if (!m || !(m.ranges || []).length || !r.aims.some(a => (a.ranges || []).length)) return null;
-  const hits = detHits(r, m), live = hits.filter(a => (a.weight || 2) > 1);   // Zilch parts don't count
-  const core = live.filter(isCore), supp = live.filter(a => a.weight === 3), edge = live.filter(a => a.weight === 2);
-  const liveAll = r.aims.filter(a => (a.weight || 2) > 1), c = coverage(r, m);
-  let t;
-  if (core.length) t = (live.length === liveAll.length && c >= .6) ? 1 : (live.length > core.length || c >= .35) ? 2 : 3;
-  else t = (supp.length || edge.length >= 2 || c >= .25) ? 4 : 5;
-  if ((m.weight || 2) === 4) t = Math.max(1, t - 1); else if ((m.weight || 2) === 1) t = Math.min(5, t + 1);
-  const names = hits.map(a => `${aimLabel(r, a)} (${AIM_WEIGHTS[(a.weight || 2) - 1]})`);
-  const where = hits.length ? `lands on ${names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names.slice(-1) : names[0]}` : 'doesn’t overlap any stretch of the aim';
-  const why = `D${detNum(r, m)}, your ${r.dets.length > 1 ? 'largest ' : ''}detection, ${where}${c ? `, across ${Math.max(1, Math.round(c * 100))}% of the blueprint` : ''}, rated a ${WEIGHTS[(m.weight || 2) - 1].toLowerCase()}.`;
-  return { t, why };
-}
-/* the lean percentage: how heavy the largest detection's footprint is, 0 (lightest) to 100 (heaviest):
-   the most significant aim part it lands on 45% · how much of the blueprint it covers 30% · its severity 25% */
-const AIM_SIG = [0, 0, .35, .65, 1];   // by weight: Zilch, Edge, Supporting, Core
-function bxWeightPct(r) {
-  const m = mainDet(r); if (!m || !(m.ranges || []).length) return null;
-  const hits = detHits(r, m), aw = hits.length ? Math.max(...hits.map(a => AIM_SIG[a.weight || 2])) : 0;
-  return Math.round(100 * (.45 * aw + .3 * Math.min(1, coverage(r, m) * 2) + .25 * (((m.weight || 2) - 1) / 3)));
-}
-/* the film's own map: drawn from where your detections land on the aim */
-function bxMapSVG(r) {
-  let s = MAG_SVG.ring, k = 0;
-  r.dets.forEach((d, i) => {
-    const c = coverage(r, d); if (!c) return;
-    const hits = detHits(r, d).filter(a => (a.weight || 2) > 1), onCore = hits.some(isCore), others = hits.filter(a => !isCore(a)).length;
-    const w = (d.weight || 2) / 4, op = (.35 + .65 * w).toFixed(2);
-    if (onCore) {
-      const rad = Math.min(40, 9 + 31 * Math.max(c, others ? .35 : 0) * (.5 + w / 2));
-      s += `<defs><radialGradient id="bxM${i}"><stop offset="0" stop-color="#2a160e"/><stop offset="${others ? .55 : .9}" stop-color="#2a160e"/><stop offset="1" stop-color="#2a160e" stop-opacity="${others ? 0 : 1}"/></radialGradient></defs><circle cx="44" cy="44" r="${rad.toFixed(1)}" fill="url(#bxM${i})" opacity="${op}"/>`;
-    } else {
-      const ang = Math.max(18, Math.min(340, 360 * Math.max(c, .05))), a0 = (k++ * 97 - 90) * Math.PI / 180, a1 = a0 + ang * Math.PI / 180;
-      const R = 40, ri = 40 - (6 + 12 * w) * (hits.length ? 1 : .5), p = (rr, a) => `${(44 + rr * Math.cos(a)).toFixed(1)} ${(44 + rr * Math.sin(a)).toFixed(1)}`, big = ang > 180 ? 1 : 0;
-      s += `<path d="M${p(R, a0)} A${R} ${R} 0 ${big} 1 ${p(R, a1)} L${p(ri, a1)} A${ri} ${ri} 0 ${big} 0 ${p(ri, a0)} Z" fill="#2a160e" opacity="${op}"/>`;
-    }
-  });
-  return `<div class="bx-disc"><svg viewBox="0 0 88 88">${s}</svg></div>`;
-}
 
 /* ---------- render ---------- */
 function renderBooth() {
@@ -3506,12 +3589,12 @@ function renderBooth() {
     <div class="bx-status"><span class="bx-lamp"><i></i>Lamp lit</span><small>Highlight the blueprint · tag the aim · choose the aperture</small></div>`;
   renderPlot(); renderDets(); renderAims(); renderFull(); renderConsole();
 }
-/* mode 'det': detections filled · 'aim': aim parts filled · 'both': detections filled, aim parts underlined */
+/* mode 'det': detections filled · 'aim': aim stretches filled (stronger rating, stronger fill) · 'both': detections filled, aim underlined */
 function plotHTML(r, mode = 'det') {
   const P = r.plot || [], total = plotText(r).length;
   const D = [], A = [];
-  if (mode !== 'aim') r.dets.forEach(d => (d.ranges || []).forEach(x => D.push({ s: x.s, e: x.e, d })));
-  if (mode !== 'det') r.aims.forEach(a => (a.ranges || []).forEach(x => A.push({ s: x.s, e: x.e, a })));
+  if (mode !== 'aim') r.dets.forEach(d => mergeRanges(d.ranges).forEach(x => D.push({ s: x.s, e: x.e, d })));
+  if (mode !== 'det') r.aims.forEach(a => { if (a.central === 0) return; stretches(a).forEach(x => A.push({ s: x.s, e: x.e, a, w: x.w })); });
   let off = 0; const acts = { Middle: false, End: false }, m = mainDet(r);
   const html = P.map((para, pi) => {
     const start = off, end = off + para.length; off = end;
@@ -3527,17 +3610,17 @@ function plotHTML(r, mode = 'det') {
       const cd = D.filter(g => g.s <= a && g.e >= b), ca = A.filter(g => g.s <= a && g.e >= b);
       if (!cd.length && !ca.length) { h += txt; continue; }
       const td = cd.find(g => g.d === m) || cd[cd.length - 1];
-      const ta = ca.slice().sort((x, y) => (y.a.weight || 2) - (x.a.weight || 2))[0];
-      const tags = [...new Set([...cd.filter(g => g.e === b).map(g => 'D' + detNum(r, g.d) + (g.d === m ? ' ★' : '')), ...ca.filter(g => g.e === b).map(g => aimLabel(r, g.a).replace('Aim ', 'A'))])].join(' ');
-      if (mode === 'aim') h += `<mark class="am" style="--c:${aimColor(r, ta.a)}" data-aim="${esc(ta.a.id)}"${tags ? ` data-tag="${tags}"` : ''}>${txt}</mark>`;
+      const ta = ca.slice().sort((x, y) => stretchWt(y.a, y) - stretchWt(x.a, x))[0];
+      const tags = [...new Set([...cd.filter(g => g.e === b).map(g => 'D' + detNum(r, g.d) + (g.d === m ? ' ★' : '')), ...ca.filter(g => g.e === b).map(g => 'A' + (r.aims.indexOf(g.a) + 1))])].join(' ');
+      if (mode === 'aim') h += `<mark class="am w${ta.w}" style="--c:${aimColor(r, ta.a)}" data-aim="${esc(ta.a.id)}" title="${esc(aimShort(ta.a))} · ${AIM_WEIGHTS[ta.w - 1]}"${tags ? ` data-tag="${tags}"` : ''}>${txt}</mark>`;
       else if (mode === 'det') h += `<mark style="--c:${detColor(r, td.d)}" data-det="${esc(td.d.id)}"${tags ? ` data-tag="${tags}"` : ''}>${txt}</mark>`;
       else h += `<mark class="${td ? '' : 'onlyaim'} ${ta ? 'ua' : ''}" style="--c:${td ? detColor(r, td.d) : 'transparent'};--u:${ta ? aimColor(r, ta.a) : 'transparent'}"${tags ? ` data-tag="${tags}"` : ''}>${txt}</mark>`;
     }
     return `<p${label ? ` data-act="${label}"` : ''}>${h}</p>`;
   }).join('');
-  const bar = (G, col) => G.map(g => `<i style="left:${(g.s / total * 100).toFixed(2)}%;width:${Math.max(.6, (g.e - g.s) / total * 100).toFixed(2)}%;background:${col(g)}"></i>`).join('');
+  const bar = (G, col, op) => G.map(g => `<i style="left:${(g.s / total * 100).toFixed(2)}%;width:${Math.max(.6, (g.e - g.s) / total * 100).toFixed(2)}%;background:${col(g)}${op ? `;opacity:${op(g)}` : ''}"></i>`).join('');
   const strip = (mode !== 'aim' ? `<div class="bx-blue"><b>${mode === 'both' ? 'Detections' : 'Blueprint'}</b><div class="bx-strip">${bar(D, g => detColor(r, g.d))}</div></div>` : '')
-    + (mode !== 'det' ? `<div class="bx-blue"${mode === 'both' ? ' style="margin-top:6px"' : ''}><b>${mode === 'both' ? 'The aim' : 'Blueprint'}</b><div class="bx-strip">${bar(A, g => aimColor(r, g.a))}</div></div>` : '');
+    + (mode !== 'det' ? `<div class="bx-blue"${mode === 'both' ? ' style="margin-top:6px"' : ''}><b>${mode === 'both' ? 'The aim' : 'Blueprint'}</b><div class="bx-strip">${bar(A, g => aimColor(r, g.a), g => (.35 + .65 * DEL_SIG[g.w]).toFixed(2))}</div></div>` : '');
   return { html, strip };
 }
 function renderPlot() {
@@ -3560,24 +3643,28 @@ function renderPlotB() {
   const r = bxData(), box = $('#bxPlotBSec'); if (!box) return;
   if (!r.plot || !r.plot.length) { box.innerHTML = `<span class="bx-k">The plot<em>a fresh slate for the aim</em></span><div class="bx-hint">The plot shows here once it’s in Port A.</div>`; $('#bxBlueB').innerHTML = ''; return; }
   const { html, strip } = plotHTML(r, 'aim');
-  box.innerHTML = `<span class="bx-k">The plot<em>a fresh slate · select where each aim part plays out</em></span><div class="bx-plot" id="bxPlotB">${html}</div>`;
+  box.innerHTML = `<span class="bx-k">The plot<em>a fresh slate · select where each aim part plays out, then rate how well it worked there</em></span><div class="bx-plot" id="bxPlotB">${html}</div>`;
   $('#bxBlueB').innerHTML = r.aims.length ? strip : '';
 }
-function weightRail(kind, id, w, color, L = WEIGHTS) {
+/* a four-stop slider, with the stop's fixed meaning underneath */
+function weightRail(kind, id, w, color, L = WEIGHTS, defs = DEF_DET, label = 'How I mean it') {
   const pos = [0, 100 / 3, 200 / 3, 100], i = Math.min(3, Math.max(0, (w || 2) - 1));
-  return `<div class="bx-wt"><span class="k">How I mean it</span><div class="bx-st"><div class="tr"><i class="fill" style="width:${pos[i].toFixed(2)}%;background:${color}"></i>${pos.map((p, j) => `<button class="stop" style="left:${p.toFixed(2)}%" data-bx="wt" data-kind="${kind}" data-id="${esc(id)}" data-w="${j + 1}" aria-label="${L[j]}"></button>`).join('')}<i class="knob" style="left:${pos[i].toFixed(2)}%"></i></div>
-    <div class="lb">${L.map((n, j) => `<button class="${j === i ? 'on' : ''}" style="left:${pos[j].toFixed(2)}%" data-bx="wt" data-kind="${kind}" data-id="${esc(id)}" data-w="${j + 1}">${n}</button>`).join('')}</div></div></div>`;
+  return `<div class="bx-wt"><span class="k">${label}</span><div class="bx-st"><div class="tr"><i class="fill" style="width:${pos[i].toFixed(2)}%;background:${color}"></i>${pos.map((p, j) => `<button class="stop" style="left:${p.toFixed(2)}%" data-bx="wt" data-kind="${kind}" data-id="${esc(id)}" data-w="${j + 1}" aria-label="${L[j]}" title="${esc(defs[j])}"></button>`).join('')}<i class="knob" style="left:${pos[i].toFixed(2)}%"></i></div>
+    <div class="lb">${L.map((n, j) => `<button class="${j === i ? 'on' : ''}" style="left:${pos[j].toFixed(2)}%" data-bx="wt" data-kind="${kind}" data-id="${esc(id)}" data-w="${j + 1}" title="${esc(defs[j])}">${n}</button>`).join('')}</div></div>
+    <div class="bx-def"><b>${L[i]}:</b> ${defs[i]}</div></div>`;
 }
+const landsChips = (r, d) => detHits(r, d).map(a => { const ws = hitStretches(d, a).map(x => x.w), best = ws.length ? Math.max(...ws) : 0;
+  return `<span class="bx-tagchip ${isCore(a) ? 'core' : ''}" style="--c:${aimColor(r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${a.central == null ? 'centrality not set' : CENT_NAMES[a.central]}${best ? ' · ' + AIM_WEIGHTS[best - 1] : ''}</span>`; }).join('');
 function renderDets() {
   const r = bxData(), m = mainDet(r);
   $('#bxDets').innerHTML = r.dets.length ? r.dets.map(d => {
-    const n = detNum(r, d), c = detColor(r, d), cov = coverage(r, d);
-    return `<div class="bx-det" data-detrow="${esc(d.id)}"><div class="id"><b>D${n}</b><button class="${d === m ? 'on' : ''}" data-bx="main" data-id="${esc(d.id)}">★ ${d === m ? 'Largest' : 'Make largest'}</button></div>
+    const n = detNum(r, d), c = detColor(r, d), cov = coverage(r, d), chips = landsChips(r, d);
+    return `<div class="bx-det" data-detrow="${esc(d.id)}"><div class="id"><b>D${n}</b><button class="${d === m ? 'on' : ''}" data-bx="main" data-id="${esc(d.id)}">★ ${d === m ? 'Largest' : 'Make largest'}</button><small class="bx-cnt">${d === m ? 'counts in full' : 'counts half'}</small></div>
       <div><textarea class="bx-ta" rows="2" data-detnote="${esc(d.id)}" placeholder="What you say about this detection, in your own words…">${esc(d.note || '')}</textarea>
         <div class="bx-row" style="margin-top:6px"><span class="sw" style="background:${c}"></span><span class="cov">${cov ? `Covers ${Math.max(1, Math.round(cov * 100))}% of the blueprint` : 'No highlight yet · select plot text to add one'}</span>
           <button class="bx-link" data-bx="whole" data-id="${esc(d.id)}">${cov >= .999 ? 'Clear the highlights' : 'Covers the whole blueprint'}</button>
           <button class="bx-x" data-bx="deldet" data-id="${esc(d.id)}">Remove</button></div>
-        <div class="bx-chips">${(() => { const h = detHits(r, d); return h.length ? '<span class="bx-on">Lands on</span>' + h.map(a => `<span class="bx-tagchip ${isCore(a) ? 'core' : ''}" style="--c:${aimColor(r, a)}">${aimLabel(r, a)} · ${AIM_WEIGHTS[(a.weight || 2) - 1]}</span>`).join('') : `<span class="bx-on">${(d.ranges || []).length ? 'Doesn’t overlap any aim stretch yet' : 'Highlight it on the plot to see what it lands on'}</span>`; })()}</div>
+        <div class="bx-chips">${chips ? '<span class="bx-on">Lands on</span>' + chips : `<span class="bx-on">${(d.ranges || []).length ? 'Doesn’t overlap any aim stretch yet' : 'Highlight it on the plot to see what it lands on'}</span>`}</div>
         ${weightRail('det', d.id, d.weight, c)}</div></div>`;
   }).join('') : `<div class="bx-empty">No detections yet. Select a stretch of the plot to mark one, or add one that isn’t tied to a passage yet.</div>`;
   $('#bxDets').insertAdjacentHTML('beforeend', `<button class="bx-add" data-bx="adddet">+ Add a detection</button>`);
@@ -3590,15 +3677,23 @@ function renderAims() {
       <div class="bx-row"><button class="bx-btn solid" data-bx="useaim">Use this aim</button></div>`;
     return;
   }
-  $('#bxAims').innerHTML = r.aims.map(a => {
-    const lab = aimLabel(r, a), col = aimColor(r, a), cov = coverage(r, a), hitBy = r.dets.filter(d => overlap(d.ranges, a.ranges));
-    return `<div class="bx-aim ${isCore(a) ? 'iscore' : ''} ${a.kind === 'intro' ? 'intro' : ''}" style="--c:${col}"><div class="top"><b><span class="sw" style="background:${col}"></span>${lab}</b><span class="bx-wtag">${AIM_WEIGHTS[(a.weight || 2) - 1]}</span></div>
+  const plot = plotText(r), unset = r.aims.filter(a => a.central == null).length;
+  const google = `<div class="bx-goog"><a class="bx-btn solid" href="${centralityQuery(active.film, r.aims)}" target="_blank" rel="noopener">Ask Google how central each aim is ↗</a>
+    <span>${unset ? `${unset} of ${r.aims.length} still to set from Google’s answer` : 'Every aim’s centrality is set'}</span></div>`;
+  $('#bxAims').innerHTML = google + r.aims.map(a => {
+    const lab = aimLabel(r, a), col = aimColor(r, a), out = a.central === 0, st = stretches(a), cov = rangeLen(st) / Math.max(1, plot.length), hitBy = r.dets.filter(d => overlap(d.ranges, st));
+    const cent = `<div class="bx-cent"><span class="bx-k">How central to the film<em>from Google’s answer</em></span><div class="bx-cbtns">${[4, 3, 2, 1, 0].map(c => `<button class="${a.central === c ? 'on' : ''} ${c === 0 ? 'out' : ''}" data-bx="cent" data-id="${esc(a.id)}" data-c="${c}">${CENT_NAMES[c]}</button>`).join('')}</div></div>`;
+    if (out) return `<div class="bx-aim isout" style="--c:${col}"><div class="top"><b><span class="sw" style="background:${col}"></span>${lab} · ${esc(aimShort(a))}</b><span class="bx-wtag">Outside the film</span></div>
+      <div class="bx-aimtext">${esc(a.text)}</div>${cent}<div class="bx-hint">Set aside: it isn’t about the film itself, so it never counts.</div></div>`;
+    const rows = st.map((x, k) => `<div class="bx-str"><div class="bx-strq">“${esc(trimTo(plot.slice(x.s, x.e).trim(), 90))}”</div>${weightRail('str', a.id + '|' + k, x.w, col, AIM_WEIGHTS, DEF_AIM, 'How well it worked')}</div>`).join('');
+    return `<div class="bx-aim ${isCore(a) ? 'iscore' : ''}" style="--c:${col}"><div class="top"><b><span class="sw" style="background:${col}"></span>${lab} · ${esc(aimShort(a))}</b><span class="bx-wtag">${a.central == null ? 'Centrality not set' : CENT_NAMES[a.central]}</span></div>
       <div class="bx-aimtext">${esc(a.text)}</div>
+      ${cent}
       <div class="bx-how"><span class="bx-k">How it delivered<em>from you, experientially</em></span><textarea class="bx-ta" rows="2" data-aimhow="${esc(a.id)}" placeholder="How it delivered its effects to you…">${esc(a.how || '')}</textarea></div>
-      ${weightRail('aim', a.id, a.weight, col, AIM_WEIGHTS)}
-      <div class="bx-row" style="margin-top:8px"><span class="cov">${cov ? `Plays out across ${Math.max(1, Math.round(cov * 100))}% of the blueprint` : 'Not on the plot yet · select plot text above to tag it'}</span>
-        <button class="bx-link" data-bx="awhole" data-id="${esc(a.id)}">${cov >= .999 ? 'Clear its highlights' : 'Covers the whole blueprint'}</button>
-        ${(a.ranges || []).length ? `<button class="bx-link" data-bx="agoto" data-id="${esc(a.id)}">Show on the plot ↑</button>` : ''}</div>
+      <div class="bx-strs"><span class="bx-k">Each stretch<em>how well it worked there · Zilch to Core</em></span>${rows || '<div class="bx-hint">Not on the plot yet. Select plot text above to tag a stretch.</div>'}</div>
+      <div class="bx-row" style="margin-top:8px"><span class="cov">${cov ? `Plays out across ${Math.max(1, Math.round(cov * 100))}% of the blueprint` : ''}</span>
+        <button class="bx-link" data-bx="awhole" data-id="${esc(a.id)}">${cov >= .999 ? 'Clear its stretches' : 'Covers the whole blueprint'}</button>
+        ${st.length ? `<button class="bx-link" data-bx="agoto" data-id="${esc(a.id)}">Show on the plot ↑</button>` : ''}</div>
       <div class="bx-hits"><span class="lbl">Hit by</span>${hitBy.length ? hitBy.map(d => `<span style="background:${detColor(r, d)}">D${detNum(r, d)}</span>`).join('') : '<em>no detection overlaps it</em>'}</div></div>`;
   }).join('') + `<div class="bx-row"><button class="bx-link" data-bx="replaceaim">Replace the aim</button></div>`;
 }
@@ -3612,22 +3707,27 @@ function renderFull() {
     const hits = detHits(r, d), cov = coverage(r, d);
     return `<div class="bx-fcard" style="--c:${detColor(r, d)}"><div class="fh"><b>D${detNum(r, d)}${d === m ? ' ★' : ''}</b><span>${WEIGHTS[(d.weight || 2) - 1]}</span><span>${cov ? Math.max(1, Math.round(cov * 100)) + '% of the blueprint' : 'no highlight'}</span>${(d.ranges || []).length ? `<button class="bx-link" data-bx="goto" data-id="${esc(d.id)}">Show in Port A ↑</button>` : ''}</div>
       <div class="fw">${d.note ? esc(d.note) : '<em>No words yet.</em>'}</div>
-      ${hits.length ? hits.map(a => `<div class="fa ${isCore(a) ? 'heart' : ''}" style="--u:${aimColor(r, a)}"><div class="fal">${aimLabel(r, a)} · <span>${AIM_WEIGHTS[(a.weight || 2) - 1]}</span></div><div class="fat">${esc(a.text)}</div>${a.how ? `<div class="fah">How it delivered: ${esc(a.how)}</div>` : ''}</div>`).join('') : `<div class="fa none">${(d.ranges || []).length ? 'Doesn’t overlap any stretch of the aim.' : 'Not on the plot yet.'}</div>`}</div>`;
+      ${hits.length ? hits.map(a => { const ws = [...new Set(hitStretches(d, a).map(x => AIM_WEIGHTS[x.w - 1]))];
+        return `<div class="fa ${isCore(a) ? 'heart' : ''}" style="--u:${aimColor(r, a)}"><div class="fal">${esc(aimShort(a))} · <span>${a.central == null ? 'centrality not set' : CENT_NAMES[a.central]} · worked: ${ws.join(', ')}</span></div><div class="fat">${esc(a.text)}</div>${a.how ? `<div class="fah">How it delivered: ${esc(a.how)}</div>` : ''}</div>`; }).join('')
+        : `<div class="fa none">${(d.ranges || []).length ? 'Doesn’t overlap any stretch of the aim.' : 'Not on the plot yet.'}</div>`}</div>`;
   }).join('');
-  const free = r.aims.filter(a => !r.dets.some(d => overlap(d.ranges, a.ranges)));
+  const free = r.aims.filter(a => a.central !== 0 && !r.dets.some(d => overlap(d.ranges, stretches(a))));
   box.innerHTML = `<h3>THE FULL PICTURE</h3><div class="sub">A live mirror of both ports · detections filled, the aim underlined</div>
     <div class="bx-fgrid"><div class="bx-fplot"><div class="bx-plot">${html}</div>${strip}</div>
-    <div class="bx-fcards">${cards || '<div class="bx-empty">No detections yet.</div>'}${free.length ? `<div class="bx-free"><b>No detection lands on</b>${free.map(a => `<span style="border-color:${aimColor(r, a)}">${aimLabel(r, a)} · ${AIM_WEIGHTS[(a.weight || 2) - 1]}</span>`).join('')}</div>` : ''}</div></div>`;
+    <div class="bx-fcards">${cards || '<div class="bx-empty">No detections yet.</div>'}${free.length ? `<div class="bx-free"><b>No detection lands on</b>${free.map(a => `<span style="border-color:${aimColor(r, a)}">${esc(aimShort(a))} · ${a.central == null ? 'not set' : CENT_NAMES[a.central]}</span>`).join('')}</div>` : ''}</div></div>`;
 }
 function renderConsole() {
-  const r = bxData(), L = bxLean(r), lean = L ? L.t : null;
+  const r = bxData(), L = bxLean(r), lean = L ? L.t : null, notes = leanNotes(r);
   $('#bxPlates').innerHTML = MAG_LV.map(l => {
     const isLean = l === lean, reach = lean && Math.abs(l - lean) === 1;
-    return `<button class="bx-ap ${bt.mag === l ? "bx-pick" : ""} ${isLean ? 'lean' : reach ? 'reach' : ''}" data-bx="mag" data-l="${l}">${magDisc(l)}<span class="n">${l}</span><strong>${MAG_NAMES[l]}</strong><small>${MAG_TAG[l]}</small>${isLean ? '<span class="lt">The lean</span>' : reach ? '<span class="lt">Within reach</span>' : ''}</button>`;
+    return `<button class="bx-ap ${bt.mag === l ? 'bx-pick' : ''} ${isLean ? 'lean' : reach ? 'reach' : ''}" data-bx="mag" data-l="${l}">${magDisc(l)}<span class="n">${l}</span><strong>${MAG_NAMES[l]}</strong><small>${MAG_TAG[l]}</small>${isLean ? '<span class="lt">The lean</span>' : reach ? '<span class="lt">Within reach</span>' : ''}</button>`;
   }).join('');
   const pick = bt.mag;
   $('#bxCall').innerHTML = `<div class="bx-map">${bxMapSVG(r)}<small>${esc(active.film.title)}’s map</small></div>
-    <div class="bx-q">${L ? `<b>The marks lean ${L.t} · ${MAG_NAMES[L.t]} · ${bxWeightPct(r)}%.</b> ${esc(L.why)}` : '<b>No lean yet.</b> Highlight a detection in Port A and where the aim plays out in Port B.'}
+    <div class="bx-q">${L ? `<b>The marks lean ${L.t} · ${MAG_NAMES[L.t]} · ${L.score}.</b> ${esc(L.why)}
+        <span class="bx-meter"><span>Footprint · Port A <b>${L.F}</b></span><span>Aim bite · Port B <b>${L.B}</b></span><span>Lean <b>${L.score}</b></span></span>`
+      : '<b>No lean yet.</b> Highlight a detection in Port A, tag where the aim plays out in Port B, and set its centrality from Google.'}
+      ${notes.length ? `<span class="bx-notes">${notes.map(n => `<span>${esc(n)}</span>`).join('')}</span>` : ''}
       <span class="sm">${pick ? `You chose ${pick} · ${MAG_NAMES[pick]}: ${MAG_TAG[pick].toLowerCase()}.` : 'It’s a lean, not a verdict. Your words and your read of the aim decide. Choose a plate.'}</span></div>
     <div class="bx-lockwrap"><button class="bx-seal" data-bx="lock" ${pick ? '' : 'disabled'}>${pick ? `Lock the gate at ${pick}` : 'Lock the gate'}<small>${pick ? `${MAG_NAMES[pick]} · down to the showdown` : 'choose a plate first'}</small></button>
       ${pick ? '<button class="bx-link" data-bx="lockq">or lock it and leave it in the queue</button>' : ''}</div>`;
@@ -3660,28 +3760,35 @@ function onPlotSelect(which = 'A') {
   if (current !== 'booth' || !bt) return;
   const box = which === 'B' ? $('#bxPlotB') : $('#bxPlot');
   const sr = selRange(box); if (!sr) return;
-  const r = bxData(); bxPending = { s: sr.s, e: sr.e };
-  const x = sr.rect.left + sr.rect.width / 2, y = sr.rect.top;
+  const r = bxData(); bxPending = { s: sr.s, e: sr.e, x: sr.rect.left + sr.rect.width / 2, y: sr.rect.top };
   if (which === 'B') {
-    if (!r.aims.length) { hidePop(); return toast('Paste the aim first'); }
-    showPop(x, y, `<span class="bx-poph">Tag this stretch to</span>${r.aims.map(a => `<button class="bx-btn" data-bx="addato" data-id="${esc(a.id)}" style="border-color:${aimColor(r, a)}">${aimLabel(r, a)}</button>`).join('')}`);
-  } else showPop(x, y, `<button class="bx-btn solid" data-bx="newdet">New detection</button>${r.dets.map(d => `<button class="bx-btn" data-bx="adddto" data-id="${esc(d.id)}" style="border-color:${detColor(r, d)}">Add to D${detNum(r, d)}</button>`).join('')}`);
+    const live = r.aims.filter(a => a.central !== 0);
+    if (!live.length) { hidePop(); return toast(r.aims.length ? 'Every aim is set Outside the film' : 'Paste the aim first'); }
+    showPop(bxPending.x, bxPending.y, `<span class="bx-poph">Tag this stretch to</span>${live.map(a => `<button class="bx-btn" data-bx="pickaim" data-id="${esc(a.id)}" style="border-color:${aimColor(r, a)}" title="${esc(a.text)}">${aimLabel(r, a)} · ${esc(aimShort(a))}</button>`).join('')}`);
+  } else showPop(bxPending.x, bxPending.y, `<button class="bx-btn solid" data-bx="newdet">New detection</button>${r.dets.map(d => `<button class="bx-btn" data-bx="adddto" data-id="${esc(d.id)}" style="border-color:${detColor(r, d)}">Add to D${detNum(r, d)}</button>`).join('')}`);
 }
+const delivPop = (r, a, extra) => `<span class="bx-poph">${esc(aimShort(a))} · how well did it work here?</span>${AIM_WEIGHTS.map((n, j) => `<button class="bx-btn" ${extra(j + 1)} title="${esc(DEF_AIM[j])}" style="border-color:${aimColor(r, a)}">${n}</button>`).join('')}`;
 document.addEventListener('mouseup', e => { const pb = e.target.closest && e.target.closest('#bxPlot, #bxPlotB'); if (pb) setTimeout(() => onPlotSelect(pb.id === 'bxPlotB' ? 'B' : 'A'), 10); });
 document.addEventListener('touchend', e => { const pb = e.target.closest && e.target.closest('#bxPlot, #bxPlotB'); if (pb) setTimeout(() => onPlotSelect(pb.id === 'bxPlotB' ? 'B' : 'A'), 350); });
 document.addEventListener('mousedown', e => { if (!e.target.closest('#bxPop') && !e.target.closest('#bxPlot, #bxPlotB')) hidePop(); });
+/* a new stretch replaces whatever part of the aim's earlier stretches it covers */
+function putStretch(a, s, e, w) {
+  const out = [];
+  stretches(a).forEach(x => { if (x.e <= s || x.s >= e) out.push(x); else { if (x.s < s) out.push({ ...x, e: s }); if (x.e > e) out.push({ ...x, s: e }); } });
+  a.ranges = out.concat({ s, e, w }).sort((p, q) => p.s - q.s);
+}
 function newDet(r) {
   const used = new Set(r.dets.map(d => d.color)); let c = 0; while (used.has(c) && c < DET_COLORS.length) c++;
   const d = { id: 'd:' + uid(), note: '', ranges: [], weight: 2, main: !r.dets.length, color: c % DET_COLORS.length };
   r.dets.push(d); return d;
 }
 
+
 /* ---------- typing saves straight to the film ---------- */
 document.addEventListener('input', e => {
   if (!active || !canEdit() || current !== 'booth') return;
   const r = bxData(); if (!r) return; const t = e.target;
   if (t.dataset.detnote) { const d = r.dets.find(x => x.id === t.dataset.detnote); if (d) d.note = t.value; }
-  else if (t.dataset.aimtext) { const a = r.aims.find(x => x.id === t.dataset.aimtext); if (a) a.text = t.value; }
   else if (t.dataset.aimhow) { const a = r.aims.find(x => x.id === t.dataset.aimhow); if (a) a.how = t.value; }
   else return;
   bxSave(); clearTimeout(bxFullT); bxFullT = setTimeout(() => { renderFull(); renderConsole(); }, 400);
@@ -3697,7 +3804,7 @@ document.addEventListener('click', e => {
     const s = window.getSelection(); if (s && !s.isCollapsed) return;
     const a = r.aims.find(x => x.id === b.dataset.aim); if (!a) return;
     const at = plotOffset(b.firstChild || b, 0, $('#bxPlotB')), rc = b.getBoundingClientRect();
-    showPop(rc.left + rc.width / 2, rc.top, `<button class="bx-btn" data-bx="aunmark" data-id="${esc(a.id)}" data-at="${at}">Remove this stretch from ${aimLabel(r, a)}</button>`);
+    showPop(rc.left + rc.width / 2, rc.top, delivPop(r, a, w => `data-bx="setw" data-id="${esc(a.id)}" data-at="${at}" data-w="${w}"`) + `<button class="bx-btn" data-bx="aunmark" data-id="${esc(a.id)}" data-at="${at}">Remove this stretch</button>`);
     return;
   }
   if (b.matches('#bxPlot mark')) {
@@ -3709,6 +3816,7 @@ document.addEventListener('click', e => {
   }
   const k = b.dataset.bx, id = b.dataset.id;
   const det = id && r.dets.find(x => x.id === id), aim = id && r.aims.find(x => x.id === id);
+  const stretchAt = (a, at) => a.ranges.find(x => at >= x.s && at < x.e);
   switch (k) {
     case 'useplot': { const t = $('#bxPlotPaste')?.value || ''; if (!t.trim()) return toast('Paste the plot first'); r.footprint = t; break; }
     case 'replaceplot':
@@ -3716,22 +3824,28 @@ document.addEventListener('click', e => {
       r.footprint = ''; break;
     case 'useaim': { const t = $('#bxAimPaste')?.value || ''; if (!t.trim()) return toast('Paste the aim first'); r.aim = t; break; }
     case 'replaceaim':
-      if (!confirm('Replace the aim? Your tags, ratings and highlights are matched to the parts by their order.')) return;
+      if (!confirm('Replace the aim? Centrality, stretches and ratings are matched to the parts by their order.')) return;
       r.aim = ''; break;
-    case 'addato': if (!bxPending || !aim) return; aim.ranges = mergeRanges([...(aim.ranges || []), bxPending]); window.getSelection()?.removeAllRanges(); hidePop(); break;
-    case 'aunmark': if (!aim) return; { const at = +b.dataset.at; aim.ranges = (aim.ranges || []).filter(x => !(at >= x.s && at < x.e)); } hidePop(); break;
-    case 'awhole': if (!aim) return; { const n = plotText(r).length; if (!n) return toast('Add the plot first'); aim.ranges = coverage(r, aim) >= .999 ? [] : [{ s: 0, e: n }]; } break;
+    case 'pickaim': if (!bxPending || !aim) return; showPop(bxPending.x, bxPending.y, delivPop(r, aim, w => `data-bx="addato" data-id="${esc(aim.id)}" data-w="${w}"`)); return;
+    case 'addato': if (!bxPending || !aim) return; putStretch(aim, bxPending.s, bxPending.e, +b.dataset.w || 3); window.getSelection()?.removeAllRanges(); hidePop(); break;
+    case 'setw': if (!aim) return; { const x = stretchAt(aim, +b.dataset.at); if (x) x.w = +b.dataset.w; } hidePop(); break;
+    case 'aunmark': if (!aim) return; { const at = +b.dataset.at; aim.ranges = aim.ranges.filter(x => !(at >= x.s && at < x.e)); } hidePop(); break;
+    case 'awhole': if (!aim) return; { const n = plotText(r).length; if (!n) return toast('Add the plot first'); aim.ranges = rangeLen(aim.ranges) >= n * .999 ? [] : [{ s: 0, e: n, w: 3 }]; } break;
+    case 'cent': if (!aim) return; { const c = +b.dataset.c; aim.central = aim.central === c ? null : c; } break;
     case 'agoto': { if (!aim) return; const mk = $(`#bxPlotB mark[data-aim="${CSS.escape(aim.id)}"]`); if (mk) { mk.scrollIntoView({ behavior: 'smooth', block: 'center' }); mk.classList.add('flash'); setTimeout(() => mk.classList.remove('flash'), 1600); } return; }
     case 'goto': { if (!det || !(det.ranges || []).length) return; const mk = $(`#bxPlot mark[data-det="${CSS.escape(det.id)}"]`); if (mk) { mk.scrollIntoView({ behavior: 'smooth', block: 'center' }); mk.classList.add('flash'); setTimeout(() => mk.classList.remove('flash'), 1600); } return; }
-    case 'newdet': if (!bxPending) return; { const d = newDet(r); d.ranges.push(bxPending); } window.getSelection()?.removeAllRanges(); hidePop(); break;
-    case 'adddto': if (!bxPending || !det) return; det.ranges = mergeRanges([...(det.ranges || []), bxPending]); window.getSelection()?.removeAllRanges(); hidePop(); break;
+    case 'newdet': if (!bxPending) return; { const d = newDet(r); d.ranges.push({ s: bxPending.s, e: bxPending.e }); } window.getSelection()?.removeAllRanges(); hidePop(); break;
+    case 'adddto': if (!bxPending || !det) return; det.ranges = mergeRanges([...(det.ranges || []), { s: bxPending.s, e: bxPending.e }]); window.getSelection()?.removeAllRanges(); hidePop(); break;
     case 'unmark': if (!det) return; { const at = +b.dataset.at; det.ranges = (det.ranges || []).filter(x => !(at >= x.s && at < x.e)); } hidePop(); break;
     case 'adddet': newDet(r); break;
     case 'deldet': if (!det) return; if ((det.note || '').trim() && !confirm(`Remove D${detNum(r, det)} and its highlights?`)) return;
       r.dets = r.dets.filter(x => x !== det); if (det.main && r.dets[0]) r.dets[0].main = true; break;
     case 'main': if (!det) return; r.dets.forEach(x => { x.main = x === det; }); break;
     case 'whole': if (!det) return; { const n = plotText(r).length; if (!n) return toast('Add the plot first'); det.ranges = coverage(r, det) >= .999 ? [] : [{ s: 0, e: n }]; } break;
-    case 'wt': { const w = +b.dataset.w, it = b.dataset.kind === 'det' ? r.dets.find(x => x.id === id) : r.aims.find(x => x.id === id); if (!it) return; it.weight = w; } break;
+    case 'wt': { const w = +b.dataset.w, kind = b.dataset.kind;
+      if (kind === 'det') { const d = r.dets.find(x => x.id === id); if (!d) return; d.weight = w; }
+      else if (kind === 'str') { const [aid, ix] = id.split('|'), a = r.aims.find(x => x.id === aid), x = a && a.ranges[+ix]; if (!x) return; x.w = w; }
+      else return; } break;
     case 'mag': bt.mag = +b.dataset.l; renderConsole(); return;
     case 'lock': return lockGate(false);
     case 'lockq': return lockGate(true);
@@ -3812,35 +3926,6 @@ function startPlacementShow(f) {
 }
 
 /* ---------- before the show: the two lineups it will meet ---------- */
-function renderCheck() {
-  setFocus(null); setScreenBg(null, null); renderDcBar();
-  ['#stage', '#tape', '#desk'].forEach(s => { $(s).hidden = true; }); $('#stage').classList.remove('showing');
-  const f = active.film, n = spinOrder().length;
-  const nx = ladderOf('X', f.X).filter(id => id !== f.id && byId(id)).length, ny = ladderOf('Y', f.Y).filter(id => id !== f.id && byId(id)).length;
-  const qs = estMatchups(nx) + estMatchups(ny);
-  $('#screenCard').innerHTML = `<div class="k">The Screening Room · Before the show</div><h2>${esc(f.title)}</h2>
-    <p>${levelLine(f)}${f.genre ? ' · ' + esc(f.genre) : ''}</p>`;
-  $('#checkIn').innerHTML = `<div class="bs">
-      <header class="bs-top">
-        <div class="bs-film">${posterHTML(f, 58)}<div><span class="bs-k">Before the show</span><h3>${esc(f.title)}</h3><p>${esc(f.year || '')}${f.genre ? ' · ' + esc(f.genre) : ''}</p></div></div>
-        <div class="bs-dial"><b>${f.X}/${f.Y}</b><span>Condition · rec.</span></div>
-      </header>
-      <section class="bs-sec vd-sum">
-        <div class="vd-eq">
-          <div><b>X${f.X}</b><span>1 · Condition</span><em>${nx ? `vs ${nx} other X${f.X}${nx === 1 ? '' : 's'}` : `first X${f.X}`}</em></div><i>→</i>
-          <div><b>Y${f.Y}</b><span>2 · Recommendation</span><em>${ny ? `vs ${ny} other Y${f.Y}${ny === 1 ? '' : 's'}` : `first Y${f.Y}`}</em></div><i>=</i>
-          <div class="vd-w"><b>The reel</b><span>Where the two lanes pair up</span><em>its two lane spots</em></div>
-        </div>
-        <p class="vd-note">Two showdowns. First its condition: every X${f.X} on the reel, whatever its recommendation. ${esc(SHOW_Q.X[f.X])} Then its viewing recommendation: every Y${f.Y}, whatever its condition. ${esc(SHOW_Q.Y[f.Y])} Its reel spot follows from where it lands in both lanes.</p>
-      </section>
-      <footer class="bs-foot">
-        <div class="bs-bd"><div class="ck-err" id="ckErr"></div></div>
-        <div class="bs-go"><button class="bs-leave" data-cancelspin>Leave it in the queue</button>
-          <button class="bs-start" data-ckgo>${n ? 'Start the show' : 'Take its place'}<small>${n ? (qs ? `up to ${qs} question${qs === 1 ? '' : 's'} · a reel of ${n}` : `no showdowns needed · a reel of ${n}`) : 'first on the reel'}</small></button></div>
-      </footer>
-    </div>`;
-  $('#checkIn').hidden = false;
-}
 $('#checkIn').addEventListener('click', e => {
   if (!active || !canEdit() || !e.target.closest('[data-ckgo]')) return;
   const f = byId(active.film.id); if (!f) return;
@@ -3989,20 +4074,20 @@ function boothStats(id) {
   const f0 = raw(id); if (!f0) return null;
   const r = { ...f0, dets: f0.dets || [], aims: f0.aims || [], plot: f0.plot || [] };
   const m = mainDet(r); if (!m) return { r, m: null, lean: null, pct: null };
-  const hits = detHits(r, m);
-  return { r, m, hits, cov: coverage(r, m), sev: WEIGHTS[(m.weight || 2) - 1], lean: bxLean(r), pct: bxWeightPct(r),
-           coreHit: hits.filter(isCore).length, coreAll: r.aims.filter(isCore).length };
+  const lean = bxLean(r);
+  return { r, m, hits: detHits(r, m), cov: coverage(r, m), sev: WEIGHTS[(m.weight || 2) - 1], lean, pct: lean ? lean.score : null,
+           F: lean ? lean.F : null, B: lean ? lean.B : null, heart: lean ? lean.heart : false };
 }
-const pctTxt = v => v == null ? '—' : v + '%';
+const pctTxt = v => v == null ? '—' : String(v);
 function boothPanelHTML(f) {
   const b = boothStats(f.id); if (!b) return '';
-  const chips = (b.hits || []).map(a => `<span class="bp-chip ${isCore(a) ? 'core' : ''}" style="--c:${aimColor(b.r, a)}">${aimLabel(b.r, a)} · ${AIM_WEIGHTS[(a.weight || 2) - 1]}</span>`).join('');
+  const chips = (b.hits || []).map(a => `<span class="bp-chip ${isCore(a) ? 'core' : ''}" style="--c:${aimColor(b.r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}</span>`).join('');
   const arena = String(f.arena || '').replace(/\s+/g, ' ').trim();
   return `<div class="bpanel"><div class="bp-map">${bxMapSVG(b.r)}<small>Lean ${pctTxt(b.pct)}</small></div><div class="bp-body">
     <div class="bp-k">From the booth · the full picture</div>
     ${b.m ? `<div class="bp-det">D${detNum(b.r, b.m)} ★ ${b.m.note ? `“${esc(trimTo(b.m.note, 140))}”` : '<em>No words written</em>'}</div>
-    <div class="bp-row"><span class="bp-sev">${b.sev}</span><span class="bp-meta">· ${Math.max(0, Math.round(b.cov * 100))}% of the blueprint · lands on</span>${chips || '<span class="bp-meta">no aim stretch</span>'}</div>` : '<div class="bp-det"><em>No detections marked in the booth</em></div>'}
-    <div class="bp-lean">${b.lean ? `The marks leaned ${b.lean.t} · ${MAG_NAMES[b.lean.t]}` : 'No lean from the marks'} · you locked it at ${f.M} · ${MAG_NAMES[f.M]}</div>
+    <div class="bp-row"><span class="bp-sev">${b.sev}</span><span class="bp-meta">· footprint ${pctTxt(b.F)} · aim bite ${pctTxt(b.B)} · lands on</span>${chips || '<span class="bp-meta">no aim stretch</span>'}</div>` : '<div class="bp-det"><em>No detections marked in the booth</em></div>'}
+    <div class="bp-lean">${b.lean ? `The marks leaned ${b.lean.t} · ${MAG_NAMES[b.lean.t]}${b.heart ? ', at the heart of what worked' : ''}` : 'No lean from the marks'} · you locked it at ${f.M} · ${MAG_NAMES[f.M]}</div>
     ${arena ? `<div class="bp-arena"><b>The arena · ${esc(f.genre || '')}</b>${esc(trimTo(arena, 220))}</div>` : ''}
   </div></div>`;
 }
@@ -4031,14 +4116,15 @@ function doubleBillHTML(A, B, o) {
   if (ax) rows += row(lineupName(ax, l), spot(A, ax, true), spot(B, ax, true), '', 'ax-x');
   // carried from the booth: lighter footprint gets the edge
   const ba = boothStats(A.id), bb = boothStats(B.id), lowEdge = (x, y) => x == null || y == null || x === y ? '' : x < y ? 'a' : 'b';
-  const sevN = b => b && b.m ? (b.m.weight || 2) : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null;
-  const lands = b => b && b.hits && b.hits.length ? b.hits.map(a => `${aimLabel(b.r, a)} · ${AIM_WEIGHTS[(a.weight || 2) - 1]}`).join(' · ') : '—';
-  const leanTxt = b => b && b.lean ? `${b.lean.t} · ${MAG_NAMES[b.lean.t]}${b.pct != null ? ` · ${b.pct}%` : ''}` : '—';
+  const sevN = b => b && b.m ? (b.m.weight || 2) : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null, num = (b, k) => b && b[k] != null ? b[k] : null;
+  const lands = b => b && b.hits && b.hits.length ? b.hits.map(a => `${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}`).join(' · ') : '—';
+  const leanTxt = b => b && b.lean ? `${b.lean.t} · ${MAG_NAMES[b.lean.t]} · ${b.lean.score}` : '—';
   rows += row('Arena', esc(A.genre || '—'), esc(B.genre || '—'), '')
     + row('Largest detection', ba && ba.m ? ba.sev : '—', bb && bb.m ? bb.sev : '—', lowEdge(sevN(ba), sevN(bb)))
-    + row('Lands on', lands(ba), lands(bb), lowEdge(ba ? ba.coreHit : null, bb ? bb.coreHit : null))
-    + row('Blueprint covered', covN(ba) != null ? covN(ba) + '%' : '—', covN(bb) != null ? covN(bb) + '%' : '—', lowEdge(covN(ba), covN(bb)))
-    + row('Core stretches hit', ba && ba.m ? `${ba.coreHit} of ${ba.coreAll}` : '—', bb && bb.m ? `${bb.coreHit} of ${bb.coreAll}` : '—', '')
+    + row('Lands on', lands(ba), lands(bb), lowEdge(ba && ba.m ? +ba.heart : null, bb && bb.m ? +bb.heart : null))
+    + row('Footprint · Port A', pctTxt(num(ba, 'F')), pctTxt(num(bb, 'F')), lowEdge(num(ba, 'F'), num(bb, 'F')))
+    + row('Aim bite · Port B', pctTxt(num(ba, 'B')), pctTxt(num(bb, 'B')), lowEdge(num(ba, 'B'), num(bb, 'B')))
+    + row('Blueprint covered', covN(ba) != null ? covN(ba) + '%' : '—', covN(bb) != null ? covN(bb) + '%' : '—', '')
     + row('The lean', leanTxt(ba), leanTxt(bb), lowEdge(ba ? ba.pct : null, bb ? bb.pct : null));
   const met = db.matches.filter(m => ((m.a === A.id && m.b === B.id) || (m.a === B.id && m.b === A.id)) && (!o.pid || m.place !== o.pid)).sort((x, y) => x.at - y.at), last = met[met.length - 1];
   const h2h = !met.length ? 'Never met before' : `Met ${met.length === 1 ? 'once' : met.length + ' times'} · ${esc(titleOf(last.winner))} took the ${last.ax === 'M' ? `${MAG_NAMES[last.level]} showdown` : 'last one'}`;
@@ -4519,7 +4605,7 @@ $('#vault').addEventListener('click', e => {
    ===================================================================== */
 const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'TH' : ['TH', 'ST', 'ND', 'RD'][n % 10] || 'TH');
 const span = ms => { const h = Math.floor(ms / 3600000), d = Math.floor(h / 24); return d ? `${d}d ${h % 24}h` : h ? `${h}h` : `${Math.max(1, Math.round(ms / 60000))}m`; };
-let hsBoard = 'top', grBump = 'all', grCell = '', grMet = '';
+let hsBoard = 'top', grBump = 'auto', grCell = '', grMet = '';
 const HS_BOARDS = [['top', 'Top'], ['climb', 'Climbers'], ['calls', 'Wins'], ['influence', 'Influence'], ['reign', 'Reign']];
 const callsWon = id => db.matches.filter(m => m.ax && m.winner === id).length;
 const GR = { claim: '#b3263a', case: '#bc8628', place: '#9085e9', seam: '#199e70' };
@@ -4549,7 +4635,7 @@ function bumpHTML(H, ranked) {
   const N = ranked.length; if (H.length < 2) return '<p class="gr-empty">The chart starts with the second show.</p>';
   const W = 800, Hh = 380, L = 54, R = 168, T = 14, B = 30, n = H.length;
   const x = i => L + i / (n - 1) * (W - L - R), y = (r, of) => T + (of > 1 ? (r - 1) / (of - 1) : 0) * (Hh - T - B);
-  let films = ranked; if (grBump === 'top') films = ranked.slice(0, 10);
+  let films = ranked; if (grBump === 'top' || (grBump === 'auto' && ranked.length > 60)) films = ranked.slice(0, 10);
   const series = films.map(f => ({ f, pts: H.map((h, i) => { const r = h.order.indexOf(f.id); return r >= 0 ? [i, r + 1, h.order.length] : null; }).filter(Boolean) })).filter(s => s.pts.length);
   const pc = p => (p[1] - 1) / Math.max(1, p[2] - 1);
   const pick = series.filter(s => s.pts.length > 2).map(s => ({ s, d: Math.max(...s.pts.map(pc)) - pc(s.pts[s.pts.length - 1]) })).sort((a, b) => b.d - a.d)[0];
@@ -4569,26 +4655,7 @@ function bumpHTML(H, ranked) {
   return `<svg class="gr-svg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Each film's standing on the reel after every show">${svg}</svg>`;
 }
 // ---- where your reviews sit: claim down, case across
-function coordHTML(all) {
-  const cnt = {}; all.forEach(f => { (cnt[f.X + '|' + f.Y] ||= []).push(f); });
-  const max = Math.max(1, ...Object.values(cnt).map(a => a.length));
-  const ramp = ['#2a221f', '#4a3f38', '#6f6255', '#9a8b78', '#c8b79c', '#efe3c4'];
-  const cs = 54, L = 40, T = 26; let svg = '';
-  [1, 2, 3, 4, 5].forEach((y, j) => { svg += svgEl('text', { x: L + j * cs + cs / 2, y: 16, 'text-anchor': 'middle', class: 'gr-ax' }, 'Y' + y); });
-  X_LV.forEach((xl, i) => {
-    svg += svgEl('text', { x: L - 8, y: T + i * cs + cs / 2 + 4, 'text-anchor': 'end', class: 'gr-ax' }, 'X' + xl);
-    [1, 2, 3, 4, 5].forEach((yl, j) => {
-      const a = cnt[xl + '|' + yl] || [], k = a.length ? Math.max(1, Math.round(a.length / max * 5)) : 0, key = xl + '|' + yl;
-      svg += `<g class="gr-cell ${a.length ? 'on' : ''} ${grCell === key ? 'sel' : ''}" ${a.length ? `data-cell="${key}" ${tipAttr([`X${xl} ${X_NAMES[xl]} · Y${yl} ${Y_NAMES[yl]}`, `${a.length} film${a.length === 1 ? '' : 's'}`])}` : ''}>`
-        + svgEl('rect', { x: L + j * cs + 1, y: T + i * cs + 1, width: cs - 2, height: cs - 2, rx: 6, fill: k ? ramp[k] : '#1d1614' })
-        + (a.length ? svgEl('text', { x: L + j * cs + cs / 2, y: T + i * cs + cs / 2 + 5, 'text-anchor': 'middle', class: k >= 4 ? 'gr-cn dark' : 'gr-cn' }, a.length) : '') + '</g>';
-    });
-  });
-  const sel = cnt[grCell] || [];
-  return `<svg class="gr-svg" viewBox="0 0 ${L + 5 * cs + 4} ${T + 6 * cs + 4}" style="max-width:380px" role="img" aria-label="Films by condition and recommendation level">${svg}</svg>
-    <div class="gr-cellfilms">${sel.length ? `<b>X${grCell.split('|')[0]} · Y${grCell.split('|')[1]}</b> · ${sel.map(f => `<button class="gr-link" data-film="${esc(f.id)}">${esc(f.title)}</button>`).join(', ')}` : 'Tap a square to list its films.'}</div>`;
-}
-// ---- how influence is earned: each part already weighted
+
 function influenceHTML(ranked) {
   const top = ranked.filter(f => LANES[f.id]).slice().sort((a, b) => (infOf(b) ?? 0) - (infOf(a) ?? 0)).slice(0, 10);
   if (!top.length) return '<p class="gr-empty">Influence appears once films are on the reel.</p>';
@@ -4687,21 +4754,21 @@ function leanStripHTML(rows) {
   MAG_LV.forEach((l, i) => {
     const yy = i * rh + rh / 2;
     svg += svgEl('text', { x: L - 10, y: yy + 4, 'text-anchor': 'end', class: 'gr-lv' }, `${l} · ${MAG_NAMES[l]}`);
-    x.filter(r => r.f.M === l).forEach(r => { svg += svgEl('circle', { cx: sx(r.b.pct).toFixed(1), cy: yy, r: 6, fill: GR.case, stroke: '#1a0d08', 'stroke-width': 1.5, 'data-film': r.f.id, 'data-tip': `${r.f.title}|${MAG_NAMES[l]} · lean ${r.b.pct}%${r.b.lean ? ' · the marks leaned ' + MAG_NAMES[r.b.lean.t] : ''}` }); });
+    x.filter(r => r.f.M === l).forEach(r => { svg += svgEl('circle', { cx: sx(r.b.pct).toFixed(1), cy: yy, r: 6, fill: GR.case, stroke: '#1a0d08', 'stroke-width': 1.5, 'data-film': r.f.id, 'data-tip': `${r.f.title}|${MAG_NAMES[l]} · lean ${r.b.pct}${r.b.lean ? ' · the marks leaned ' + MAG_NAMES[r.b.lean.t] : ''}` }); });
   });
-  return `<div class="gr-leg"><span><i style="background:${GR.case}"></i>Each film’s lean %, in the tier you locked</span></div>
+  return `<div class="gr-leg"><span><i style="background:${GR.case}"></i>Each film’s lean, in the tier you locked</span></div>
     <svg class="gr-svg" viewBox="0 0 ${W} ${MAG_LV.length * rh + 24}" role="img" aria-label="Lean percentage of each film by magnitude tier">${svg}</svg>`;
 }
 function landsHTML(rows) {
   const x = rows.filter(r => r.b.m); if (!x.length) return '<p class="gr-empty">Shows up once detections are marked.</p>';
-  const top = r => r.b.hits && r.b.hits.length ? Math.max(...r.b.hits.map(a => a.weight || 2)) : 0;
-  const land = [[4, 'Core'], [3, 'Supporting'], [2, 'Edge'], [1, 'Zilch'], [0, 'No aim stretch']].map(([w, n]) => [n, x.filter(r => top(r) === w).length]);
+  const best = r => { let w = 0; detHits(r.b.r, r.b.m).forEach(a => hitStretches(r.b.m, a).forEach(s => { w = Math.max(w, stretchWt(a, s)); })); return w; };
+  const land = [['The heart of what worked', v => v >= .5], ['Middling', v => v >= .25 && v < .5], ['Light', v => v > 0 && v < .25], ['No aim stretch', v => v === 0]].map(([n, f]) => [n, x.filter(r => f(best(r))).length]);
   const sev = WEIGHTS.map((n, i) => [n, x.filter(r => (r.b.m.weight || 2) === i + 1).length]);
   const mx = Math.max(1, ...land.map(a => a[1]), ...sev.map(a => a[1]));
   const rowsH = (arr, col) => arr.map(([n, k]) => `<div class="gr-mrow"><span>${n}</span><span class="gr-meter"><i style="width:${k / mx * 100}%;background:${col}"></i></span><b>${k}</b></div>`).join('');
-  const avgCov = Math.round(x.reduce((t, r) => t + r.b.cov, 0) / x.length * 100);
-  return `<p class="gr-note" style="margin-top:0">The largest detection of each film · on average it covers ${avgCov}% of the blueprint</p>
-    <div class="gr-axis">Lands on · the most significant part</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
+  const lx = x.filter(r => r.b.lean), avg = k => lx.length ? Math.round(lx.reduce((t, r) => t + r.b.lean[k], 0) / lx.length) : '—';
+  return `<p class="gr-note" style="margin-top:0">The largest detection of each film · average footprint ${avg('F')} (Port A) · average aim bite ${avg('B')} (Port B)</p>
+    <div class="gr-axis">Lands on · its strongest stretch (centrality × how well it worked)</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
     <div class="gr-axis" style="margin-top:10px">How I meant it</div><div class="gr-meters">${rowsH(sev, GR.claim)}</div>`;
 }
 function arenasHTML(ranked) {
@@ -4745,10 +4812,10 @@ function renderGame() {
     <div class="gr-hd"><div><div class="k">The Game Room · CmanCinema</div><h2>By the Numbers</h2></div><p>Every number comes from the reel. Nothing here edits anything.</p></div>
     <div class="gr-grid">
       ${tiles}
-      ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump))}
+      ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump === 'auto' ? (ranked.length > 60 ? 'top' : 'all') : grBump))}
       ${(() => { const br = boothRows(); return grCard(6, 'The lean and your call', 'How often you locked a film where its marks leaned, and which way you went when you didn’t.', leanCallHTML(br))
-        + grCard(6, 'Lean % by tier', 'Every film’s lean percentage, in the tier you locked it. Left is a lighter footprint, right a heavier one.', leanStripHTML(br))
-        + grCard(6, 'What detections land on', 'Where each film’s largest detection lands on the aim, and how you meant it.', landsHTML(br))
+        + grCard(6, 'The lean by tier', 'Every film’s lean, 0 to 100, in the tier you locked it. Left is lighter, right heavier.', leanStripHTML(br))
+        + grCard(6, 'What detections land on', 'Where each film’s largest detection lands on the aim, the two halves of the lean, and how you meant it.', landsHTML(br))
         + grCard(6, 'Arenas', 'Sub-genres on the reel, split by magnitude.', arenasHTML(ranked)); })()}
       ${grCard(6, 'How influence is earned', 'The top ten, split into its two parts (each already weighted).', influenceHTML(ranked))}
       ${grCard(6, 'The lineups', 'Films in each magnitude tier, top down, with the showdowns asked there.', lineupsHTML(ms))}
@@ -4764,10 +4831,8 @@ function renderGame() {
 }
 $('#gameroom').addEventListener('click', e => {
   const ln = e.target.closest('[data-lane]');
-  if (ln) { laneHL = laneHL === ln.dataset.lane ? null : ln.dataset.lane; $('#grLanes').innerHTML = lanesHTML(); return; }
   const t = e.target.closest('[data-gtab]');
   if (t) { const [k, v] = t.dataset.gtab.split(':'); if (k === 'hs') hsBoard = v; if (k === 'bump') grBump = v; if (k === 'met') grMet = v; return renderGame(); }
-  const c = e.target.closest('[data-cell]'); if (c) { grCell = grCell === c.dataset.cell ? '' : c.dataset.cell; $('#grCoord').innerHTML = coordHTML(COLL); return; }
   const sp = e.target.closest('[data-spotpair]');
   if (sp) { if (!canEdit() || active || SHOW) return toast(active || SHOW ? 'Finish the current show first.' : 'Sign in to spot-check.'); const [ax, l, hi, lo] = sp.dataset.spotpair.split('|'); SPOT = { ax, l: +l, hi, lo, flip: Math.random() < 0.5 }; return renderSpot(); }
   const b = e.target.closest('[data-film]'); if (b) openProfile(b.dataset.film);
@@ -5095,20 +5160,29 @@ function renderPlaybill() {
     ${it('◇', 'The Aim Box', 'its bullets', 'What the film is trying to accomplish for itself, from Google. Google’s intro is skipped; each bullet becomes its own aim part. In the booth I tag each part to the plot, and how it delivered its effects to get there shows in how I rate it: Zilch, Edge, Supporting or Core.')}
     <p class="pb-note">Everything entered here fills the booth. Nothing has to be typed twice.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>Two ports on one blueprint · then the magnitude</small></div>
-    ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers and write it in my own words. The starred detection is the largest: it is the footprint. A detection that runs through the whole film covers the whole blueprint.')}
-    ${it('B', 'Port B · the aim', 'a fresh copy of the plot', 'Highlight where each aim part plays out, tag how it delivered its effects experientially, and say how I mean it.')}
-    ${it('⇄', 'Overlap', 'the link', 'Where a detection’s highlight overlaps an aim part’s highlight, the detection lands on that part. Nothing is linked by hand.')}
-    <div class="pb-axis"><span>How I mean it · four stops</span></div>
-    ${it('A', 'Detections', 'Port A', `${WEIGHTS.join(' · ')}.`)}
-    ${it('B', 'Aim parts', 'Port B', `${AIM_WEIGHTS.join(' · ')}. Core is the heart of the aim; more than one part can be Core. Zilch parts don’t count toward the lean.`)}
+    ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers and write it in my own words. The starred detection is the largest: it decides where the footprint sits. Every detection adds to its size; the largest counts in full, the others at half.')}
+    ${it('B', 'Port B · the aim', 'a fresh copy of the plot', 'Google decides how central each aim part is to what the film is trying to accomplish for itself: Central, Major, Secondary, Minor, or Outside the film (set aside, never counts). I tag where each part plays out and rate how well it worked in each stretch.')}
+    ${it('⇄', 'Overlap', 'the link', 'Where a detection’s highlight overlaps an aim stretch, the detection lands on that part. Nothing is linked by hand.')}
+    <div class="pb-axis"><span>Port A · how I mean a detection</span></div>
+    ${WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_DET[j])).join('')}
+    <div class="pb-axis"><span>Port B · how well the aim worked in a stretch</span></div>
+    ${AIM_WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_AIM[j])).join('')}
     <div class="pb-axis"><span>Magnitude · top down</span></div>
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
-    <div class="pb-axis"><span>The lean</span></div>
-    ${it('↗', 'A lean, not a verdict', 'read off the blueprint', 'The marks suggest a tier from where the largest detection lands. On a Core part it leans Defining, Pervasive if it also spreads into other parts, All-encompassing if it hits every part across most of the plot. Off the Core it leans Peripheral or Incidental. A Severe Problem pushes one tier heavier; a Petty Nitpick one tier lighter. The tiers on either side are within reach.')}
-    ${it('%', 'The lean percentage', '0 lightest · 100 heaviest', 'How heavy the footprint is: the most significant aim part it lands on 45% · how much of the blueprint it covers 30% · its severity 25%. It tells two films in the same tier apart.')}
+    <div class="pb-axis"><span>The lean · both ports, equally</span></div>
+    ${it('A', 'Footprint', 'Port A · 0 to 100', 'How much of the blueprint my detections cover, weighted by how I mean them: Petty Nitpick a quarter, Minor Gripe a half, Major Drawback three quarters, Severe Problem in full. The largest detection counts in full, the others at half; overlapping highlights count once.')}
+    ${it('B', 'Aim bite', 'Port B · 0 to 100', 'How much of the aim’s weight my detections overlap. Each tagged stretch weighs how central the aim is (Central 1, Major .75, Secondary .5, Minor .25) times how well it worked there (Core 1, Supporting .65, Edge .35, Zilch .15). Zilch still counts a little: a flaw where the aim fell flat registers, just far less.')}
+    ${it('↗', 'A lean, not a verdict', 'the two averaged', 'If the largest detection reaches a stretch weighing at least half, it sits at the center of my View: Defining, Pervasive at 35, All-encompassing at 60. Otherwise it borders the View: Incidental, Peripheral at 20. The tiers on either side are within reach.')}
+    ${it('±', 'Margin of error', 'within 5 points', 'When the lean sits within 5 points of a line, the booth says which way it could tip and what to check: an aim with no centrality yet, an untagged part, or a detection running into text no aim covers. Otherwise it says the lean is comfortably clear.')}
     ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdown, or waits in the queue.')}`;
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Compass<small>Definitions · in my own words</small></div>
     ${PB.terms.map(term).join('')}
+    <div class="pb-axis" style="margin-top:14px"><span>How I mean a detection</span></div>
+    ${WEIGHTS.map((n, j) => term([n, DEF_DET[j]])).join('')}
+    <div class="pb-axis" style="margin-top:14px"><span>How well the aim worked</span></div>
+    ${AIM_WEIGHTS.map((n, j) => term([n, DEF_AIM[j]])).join('')}
+    <div class="pb-axis" style="margin-top:14px"><span>How central an aim is · from Google</span></div>
+    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Google ranks it.'])}${term(['Outside the film', 'Not about the film itself, like its place in history. Set aside; it never counts.'])}
     <div class="pb-axis" style="margin-top:14px"><span>Magnitude</span></div>
     ${MAG_LV.map(l => term([`${l} · ${MAG_NAMES[l]}`, PB.tiers[l]])).join('')}
     <p class="pb-note">Incidental heads the rankings; All-encompassing sits at the bottom.</p>`;
@@ -5119,8 +5193,8 @@ function renderPlaybill() {
       ${it('▤', 'Lineups', 'one per tier', 'A film only meets the films in its own magnitude tier. Each answer narrows its spot (a binary search) until it lands.')}
       ${it('◎', 'Its own arena', 'not a shared one', 'Each film is judged on how it does its own sub-genre, even when the two arenas differ, given the footprint to aim it earned to get in.')}
       ${it('⇅', 'The reel', 'top down', 'The tiers stack from Incidental down to All-encompassing, each in my showdown order.')}
-      ${it('🎞', 'The Double Bill', 'the screen', 'Reel numbers, then the booth’s: arena, largest detection, what it lands on, blueprint covered, Core stretches hit and the lean with its percentage. On booth rows the arrow marks the lighter footprint.')}
-      ${it('◐', 'From the booth', 'each poster', 'The film’s footprint map, its largest detection in my words, what it lands on, the lean against where I locked it, and its arena. Flip the call card (↻) for the full arena.')}
+      ${it('🎞', 'The Double Bill', 'the screen', 'Reel numbers, then the booth’s: arena, largest detection, what it lands on, the footprint (Port A), the aim bite (Port B), blueprint covered and the lean. On booth rows the arrow marks the lighter footprint.')}
+      ${it('◐', 'From the booth', 'each poster', 'The film’s footprint map and lean, its largest detection in my words, its footprint and aim bite, what it lands on by name, the lean against where I locked it, and its arena. Flip the call card (↻) for the full arena.')}
       ${it('✎', 'The decisive consideration', 'optional', 'One line on what decides the matchup, filed with the battle and editable in the Film Vault.')}
       ${it('↶', 'Undo', 'misclicks', 'Take back my last answer, even the one that finished the show.')}
       ${it('◆', 'Influence', 'beside the record', '70% placement on the whole reel · 30% standing in its own tier. It never moves a film; my showdowns do that.')}
@@ -5238,7 +5312,7 @@ function renderHits() {
   const q = officeQuery.trim().toLowerCase();
   if (!q) { $('#oHits').innerHTML = '<p class="tiny" style="margin:0">Start typing a title.</p>'; return; }
   const list = db.films.filter(f => String(f.title).toLowerCase().includes(q) || String(f.year || '').includes(q)).slice(0, 20);
-  $('#oHits').innerHTML = list.length ? list.map(f => `<div class="hit">${posterHTML({ ...f, year: String(f.year || '') })}<div><strong>${esc(f.title)}</strong><small>${esc(f.year || '')} · ${evaluated(f) ? f.x + '/' + f.y : 'not yet evaluated'}</small></div>
+  $('#oHits').innerHTML = list.length ? list.map(f => `<div class="hit">${posterHTML({ ...f, year: String(f.year || '') })}<div><strong>${esc(f.title)}</strong><small>${esc(f.year || '')} · ${evaluated(f) ? f.mag + ' · ' + MAG_NAMES[f.mag] : 'not yet evaluated'}</small></div>
       ${askRemove === f.id ? `<div class="btnrow2"><button class="btn-ink red solid" data-o="removeyes" data-id="${esc(f.id)}">Remove</button><button class="btn-ink" data-o="removeno">Keep</button></div>`
         : `<button class="btn-ink red" data-o="remove" data-id="${esc(f.id)}">Remove</button>`}</div>`).join('')
     : '<p class="tiny" style="margin:0">No films match.</p>';
