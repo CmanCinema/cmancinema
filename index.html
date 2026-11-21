@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CmanCinema</title>
-<meta name="description" content="CmanCinema — condition, recommendation, and a reel that decides.">
+<meta name="description" content="CmanCinema — footprint, aim and magnitude, and a showdown that decides.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Special+Elite&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -2218,11 +2218,11 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
       <div class="sign">
         <div class="bulbs" id="signBulbs"></div>
         <h1>CmanCinema</h1>
-        <div class="sub">Condition. Recommendation. The reel decides.</div>
+        <div class="sub">Footprint. Aim. Magnitude. The showdown decides.</div>
       </div>
       <div class="letterboard">
         <div id="nowShowing">NOW SHOWING</div>
-        <div>JUDGED · RANKED · REMEMBERED</div>
+        <div id="marqueeTop">MEASURED · CLASSIFIED · RANKED</div>
       </div>
       <div class="doors" id="doors"><div class="door"></div><div class="door"></div></div>
       <button class="enter" id="enterBtn">Step inside</button>
@@ -2288,7 +2288,7 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
             <a class="dvd-btn" id="wikiBtn" href="#" target="_blank" rel="noopener">The plot on Wikipedia ↗</a>
             <textarea id="fFoot" class="aim-in" rows="4" placeholder="Paste the plot from Wikipedia"></textarea>
             <label for="fAim">The Aim Box</label>
-            <a class="dvd-btn" id="aimBtn" href="#" target="_blank" rel="noopener">What is this film trying to accomplish specifically for itself? ↗</a>
+            <a class="dvd-btn" id="aimBtn" href="#" target="_blank" rel="noopener">What is this film trying to accomplish for itself? ↗</a>
             <textarea id="fAim" class="aim-in" rows="4" placeholder="Paste Google’s answer · each bullet becomes its own aim part"></textarea>
           </form>
           <div class="preview-poster">
@@ -3017,7 +3017,9 @@ bulbs($('#crestBulbs'), 36);
 bulbs($('#machineLights'), 40);
 $('.crest').addEventListener('click', e => { const c = e.currentTarget; c.classList.add('three-d'); clearTimeout(c.t); c.t = setTimeout(() => c.classList.remove('three-d'), 1400); });
 function renderMarquee() {
-  $('#nowShowing').textContent = cloud.ready ? `NOW SHOWING · ${board().ranked.length} FILMS` : cloud.failed ? 'THE PROJECTOR IS WARMING UP' : 'NOW SHOWING · …';
+  const R = board().ranked, top = R[0];
+  $('#nowShowing').textContent = cloud.ready ? `NOW SHOWING · ${R.length} FILM${R.length === 1 ? '' : 'S'}` : cloud.failed ? 'THE PROJECTOR IS WARMING UP' : 'NOW SHOWING · …';
+  $('#marqueeTop').textContent = cloud.ready && top ? `TOP OF THE REEL · ${top.title.toUpperCase()} · ${(MAG_NAMES[top.M] || '').toUpperCase()}` : 'MEASURED · CLASSIFIED · RANKED';
 }
 $('#enterBtn').addEventListener('click', () => {
   $('#doors').classList.add('opening');
@@ -3212,8 +3214,8 @@ $('#sheet').addEventListener('click', e => {
   if (ae) {
     if (!canEdit()) return;
     const k = ae.dataset.aimedit === 'arena' ? 'arena' : 'aim', nm = k === 'aim' ? 'Aim' : 'Arena', sg = f.genre || '[sub-genre]';
-    const ask = k === 'aim' ? 'What is this film trying to accomplish specifically for itself?' : 'What does this sub-genre set out to do?';
-    const q = encodeURIComponent(k === 'aim' ? `${f.title}${f.year ? ' - ' + f.year : ''} - what are all the main things the film is trying to accomplish specifically for itself, absent or regardless of how it delivers its effects in order to achieve it` : `${sg} film - what are the main things a ${sg} film is trying to accomplish as a genre, and what does doing them well look like, regardless of any specific film?`);
+    const ask = k === 'aim' ? 'What is this film trying to accomplish for itself?' : 'What does this sub-genre set out to do?';
+    const q = encodeURIComponent(k === 'aim' ? `${f.title}${f.year ? ' - ' + f.year : ''} - what is this film trying to accomplish for itself` : `${sg} film - what are the main things a ${sg} film is trying to accomplish as a genre, and what does doing them well look like, regardless of any specific film?`);
     $('#confirmBox').innerHTML = `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">The ${nm} Box · ${esc(f.title)}</b>
       <div class="pst-in" style="margin-top:12px"><a class="dvd-btn" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">${ask} ↗</a>
         <textarea id="aimEdit" class="aim-in" rows="5">${esc(raw(id)?.[k] || '')}</textarea></div>
@@ -3287,7 +3289,7 @@ function boUpdate() {
   $('#dvdBtn').href = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent((t || 'classic movie') + ' ' + y + ' DVD');
   const fy = `${t || 'classic movie'}${y ? ' - ' + y : ''}`;
   $('#genreBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is the single labeled sub-genre specific to the film itself if you had to name the best one?`);
-  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what are all the main things the film is trying to accomplish specifically for itself, absent or regardless of how it delivers its effects in order to achieve it`);
+  $('#aimBtn').href = 'https://www.google.com/search?q=' + encodeURIComponent(`${fy} - what is this film trying to accomplish for itself`);
   const ty = `${t || 'film'}${y ? ' ' + y : ''}`;
   $('#wikiBtn').href = 'https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(`${ty} film`);
   $('#pvPoster').outerHTML = posterHTML({ title: t || 'Your film', year: y, poster: fPoster.value.trim(), style: 2 }, 170).replace('class="poster', 'id="pvPoster" class="poster');
@@ -5090,7 +5092,7 @@ function renderPlaybill() {
     ${it('◐', 'Sub-genre', 'always two parts', 'The film’s single labeled sub-genre, asked of Google. It is the film’s arena.')}
     ${it('◎', 'The Arena Box', 'from the sub-genre', 'What that sub-genre sets out to do as a genre, and what doing it well looks like, regardless of any specific film. It sits beside the magnitude at the showdown.')}
     ${it('▤', 'The Footprint Box', 'the plot', 'The plot from Wikipedia, start to finish. It is the blueprint of the runtime: every detection lands somewhere on it. It guides my memory of the View.')}
-    ${it('◇', 'The Aim Box', 'its bullets', 'What the film is trying to accomplish specifically for itself, absent how it delivers its effects. Google’s intro is skipped; each bullet becomes its own aim part. How it delivered comes from me, in the booth.')}
+    ${it('◇', 'The Aim Box', 'its bullets', 'What the film is trying to accomplish for itself, from Google. Google’s intro is skipped; each bullet becomes its own aim part. In the booth I tag each part to the plot, and how it delivered its effects to get there shows in how I rate it: Zilch, Edge, Supporting or Core.')}
     <p class="pb-note">Everything entered here fills the booth. Nothing has to be typed twice.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>Two ports on one blueprint · then the magnitude</small></div>
     ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers and write it in my own words. The starred detection is the largest: it is the footprint. A detection that runs through the whole film covers the whole blueprint.')}
