@@ -3430,6 +3430,7 @@ const normStretches = (rs, w0) => (Array.isArray(rs) ? rs : []).filter(x => x &&
 function bxData() {
   const r = bxFilm(); if (!r) return null;
   if (!Array.isArray(r.dets)) r.dets = [];
+  r.dets.forEach(d => { d.ranges = detStretches(d); });
   const src = r.footprint || '';
   if (r.plotSrc !== src) {
     if (r.plotSrc != null) { r.dets.forEach(d => { d.ranges = []; }); (r.aims || []).forEach(a => { a.ranges = []; }); }   // a new plot: highlights tied to the old text are cleared
@@ -3465,8 +3466,24 @@ const aimColor = (r, a) => AIM_COLORS[r.aims.indexOf(a) % AIM_COLORS.length];
 const stretches = a => normStretches(a.ranges, a.weight);
 const isCore = a => a.central === 4;                                   // Central, per Google
 const counts = a => a.central != null && a.central > 0;                // set and not outside the film
-const sevName = d => d.weight ? WEIGHTS[d.weight - 1] : 'Not rated yet';
-const rated = d => Number.isInteger(d.weight) && d.weight >= 1 && d.weight <= 4;
+const detStretches = d => (Array.isArray(d.ranges) ? d.ranges : []).filter(x => x && x.e > x.s).map(x => ({ s: x.s, e: x.e, w: Number.isInteger(x.w) ? x.w : (Number.isInteger(d.weight) ? d.weight : null) })).sort((a, b) => a.s - b.s);
+const rated = d => detStretches(d).every(x => Number.isInteger(x.w));
+/* a detection's grade, summed up: one name, or its range when its stretches differ */
+function sevName(d) {
+  const ws = detStretches(d).map(x => x.w).filter(Number.isInteger);
+  if (!ws.length) return detStretches(d).length ? 'Not rated yet' : (Number.isInteger(d.weight) ? WEIGHTS[d.weight - 1] : 'Not rated yet');
+  const lo = Math.min(...ws), hi = Math.max(...ws);
+  return lo === hi ? WEIGHTS[lo - 1] : `${WEIGHTS[lo - 1]} to ${WEIGHTS[hi - 1]}`;
+}
+/* a detection's average grade, weighted by how much plot each stretch covers (0 to 1) */
+function sevAvg(d) { let n = 0, t = 0; detStretches(d).forEach(x => { if (Number.isInteger(x.w)) { n += x.e - x.s; t += SEV_SIG[x.w] * (x.e - x.s); } }); return n ? t / n : null; }
+const heaviest = d => { const ws = detStretches(d).map(x => x.w).filter(Number.isInteger); return ws.length ? Math.max(...ws) : null; };
+/* a new stretch replaces whatever part of the detection's earlier stretches it covers */
+function putDetStretch(d, s, e, w) {
+  const out = [];
+  detStretches(d).forEach(x => { if (x.e <= s || x.s >= e) out.push(x); else { if (x.s < s) out.push({ ...x, e: s }); if (x.e > e) out.push({ ...x, s: e }); } });
+  d.ranges = out.concat({ s, e, w }).sort((p, q) => p.s - q.s);
+}
 const stretchWt = (a, x) => (CENT_SIG[a.central] ?? 0) * DEL_SIG[x.w || 2];
 const overlap = (A, B) => { for (const x of A || []) for (const y of B || []) if (x.s < y.e && y.s < x.e) return true; return false; };
 /* a detection hits every aim part whose stretch of the plot it overlaps */
@@ -3500,15 +3517,15 @@ function leanParts(r) {
   const L = plotText(r).length, m = mainDet(r);
   const live = r.aims.filter(a => a.central !== 0);
   const unset = live.filter(a => a.central == null), untagged = live.filter(a => !stretches(a).length);
-  const unrated = r.dets.filter(d => rangeLen(d.ranges) && !rated(d));
+  const unrated = r.dets.filter(d => detStretches(d).length && !rated(d));
   const base = { m, unset, untagged, unrated };
   if (!L || !m || !rangeLen(m.ranges) || unset.length || unrated.length) return base;
   const B = new Float32Array(L), C = new Float32Array(L);   // damage if a flaw sits here · the aim's presence
   r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { const dm = dmgWt(a, x), c = CENT_SIG[a.central]; for (let i = x.s; i < Math.min(L, x.e); i++) { B[i] += dm; C[i] += c; } }); });
   let T = 0; for (let i = 0; i < L; i++) T += C[i];
   const S = new Float32Array(L), P = new Float32Array(L);
-  r.dets.forEach(d => { const f = d === m ? 1 : LEAN_CUT.other, sv = SEV_SIG[d.weight] * f;
-    mergeRanges(d.ranges).forEach(x => { for (let i = Math.max(0, x.s); i < Math.min(L, x.e); i++) { if (sv > S[i]) S[i] = sv; if (f > P[i]) P[i] = f; } }); });
+  r.dets.forEach(d => { const f = d === m ? 1 : LEAN_CUT.other;
+    detStretches(d).forEach(x => { const sv = SEV_SIG[x.w] * f; for (let i = Math.max(0, x.s); i < Math.min(L, x.e); i++) { if (sv > S[i]) S[i] = sv; if (f > P[i]) P[i] = f; } }); });
   let fs = 0, bite = 0; for (let i = 0; i < L; i++) { fs += S[i]; bite += P[i] * B[i]; }
   let inAim = 0; const heart = reachesHeart(r, m);
   for (const x of mergeRanges(m.ranges)) for (let i = x.s; i < Math.min(L, x.e); i++) if (C[i] > 0) inAim++;
@@ -3531,7 +3548,7 @@ const bxWeightPct = r => { const L = bxLean(r); return L ? L.score : null; };
 /* what to check: unfinished marks, and what could tip a lean that sits near a line */
 function leanNotes(r) {
   const p = leanParts(r), out = [], L = bxLean(r), nm = as => as.map(a => `${aimLabel(r, a)} · ${aimShort(a)}`).join(', ');
-  if (p.unrated.length) out.push(`Rate how you mean ${p.unrated.map(d => 'D' + detNum(r, d)).join(', ')} before the lean can run.`);
+  if (p.unrated.length) out.push(`Grade every stretch of ${p.unrated.map(d => 'D' + detNum(r, d)).join(', ')} before the lean can run.`);
   if (p.unset.length) out.push(`Set how central ${nm(p.unset)} ${p.unset.length === 1 ? 'is' : 'are'}: ask Google with the button in Port B. The lean waits until every part is set.`);
   if (p.untagged.length) out.push(`${nm(p.untagged)} ${p.untagged.length === 1 ? 'isn’t' : 'aren’t'} tagged on Port B’s plot yet. Tag ${p.untagged.length === 1 ? 'it' : 'them'}, or mark ${p.untagged.length === 1 ? 'it' : 'them'} Outside the film.`);
   const weak = [];
@@ -3549,7 +3566,7 @@ function bxMapSVG(r) {
     const cov = coverage(r, d); if (!cov) return;
     const sh = footShare(r, d) ?? cov, hits = detHits(r, d);
     const onHeart = reachesHeart(r, d), others = hits.filter(a => !isCore(a)).length;
-    const w = SEV_SIG[d.weight] || .5, op = (.35 + .65 * w).toFixed(2);
+    const w = sevAvg(d) ?? .5, op = (.35 + .65 * w).toFixed(2);
     if (onHeart) {
       const rad = Math.min(40, 9 + 31 * Math.min(1, sh / .6) * (.5 + w / 2));
       s += `<defs><radialGradient id="bxM${i}"><stop offset="0" stop-color="#2a160e"/><stop offset="${others ? .55 : .9}" stop-color="#2a160e"/><stop offset="1" stop-color="#2a160e" stop-opacity="${others ? 0 : 1}"/></radialGradient></defs><circle cx="44" cy="44" r="${rad.toFixed(1)}" fill="url(#bxM${i})" opacity="${op}"/>`;
@@ -3679,7 +3696,7 @@ function renderDets() {
           <button class="bx-link" data-bx="whole" data-id="${esc(d.id)}">${cov >= .999 ? 'Clear the highlights' : 'Covers the whole blueprint'}</button>
           <button class="bx-x" data-bx="deldet" data-id="${esc(d.id)}">Remove</button></div>
         <div class="bx-chips">${chips ? '<span class="bx-on">Lands on</span>' + chips : `<span class="bx-on">${(d.ranges || []).length ? 'Doesn’t overlap any aim stretch yet' : 'Highlight it on the plot to see what it lands on'}</span>`}</div>
-        ${weightRail('det', d.id, d.weight, c)}</div></div>`;
+        <div class="bx-strs"><span class="bx-k">Each stretch<em>how you mean it there · Petty Nitpick to Severe Problem</em></span>${detStretches(d).map((x, k) => `<div class="bx-str" style="--c:${c}"><div class="bx-strq">“${esc(trimTo(plotText(r).slice(x.s, x.e).trim(), 90))}”</div>${weightRail('dstr', d.id + '|' + k, x.w, c)}</div>`).join('') || '<div class="bx-hint">Not on the plot yet. Select plot text above to add a stretch.</div>'}</div></div></div>`;
   }).join('') : `<div class="bx-empty">No detections yet. Select a stretch of the plot to mark one, or add one that isn’t tied to a passage yet.</div>`;
   $('#bxDets').insertAdjacentHTML('beforeend', `<button class="bx-add" data-bx="adddet">+ Add a detection</button>`);
 }
@@ -3779,8 +3796,9 @@ function onPlotSelect(which = 'A') {
     const live = r.aims.filter(a => a.central !== 0);
     if (!live.length) { hidePop(); return toast(r.aims.length ? 'Every aim is set Outside the film' : 'Paste the aim first'); }
     showPop(bxPending.x, bxPending.y, `<span class="bx-poph">Tag this stretch to</span>${live.map(a => `<button class="bx-btn" data-bx="pickaim" data-id="${esc(a.id)}" style="border-color:${aimColor(r, a)}" title="${esc(a.text)}">${aimLabel(r, a)} · ${esc(aimShort(a))}</button>`).join('')}`);
-  } else showPop(bxPending.x, bxPending.y, `<button class="bx-btn solid" data-bx="newdet">New detection</button>${r.dets.map(d => `<button class="bx-btn" data-bx="adddto" data-id="${esc(d.id)}" style="border-color:${detColor(r, d)}">Add to D${detNum(r, d)}</button>`).join('')}`);
+  } else showPop(bxPending.x, bxPending.y, `<button class="bx-btn solid" data-bx="pickdet" data-id="new">New detection</button>${r.dets.map(d => `<button class="bx-btn" data-bx="pickdet" data-id="${esc(d.id)}" style="border-color:${detColor(r, d)}">Add to D${detNum(r, d)}</button>`).join('')}`);
 }
+const sevPop = (label, extra) => `<span class="bx-poph">${label} · how do you mean it here?</span>${WEIGHTS.map((n, j) => `<button class="bx-btn" ${extra(j + 1)} title="${esc(DEF_DET[j])}">${n}</button>`).join('')}`;
 const delivPop = (r, a, extra) => `<span class="bx-poph">${esc(aimShort(a))} · how well did it work here?</span>${AIM_WEIGHTS.map((n, j) => `<button class="bx-btn" ${extra(j + 1)} title="${esc(DEF_AIM[j])}" style="border-color:${aimColor(r, a)}">${n}</button>`).join('')}`;
 document.addEventListener('mouseup', e => { const pb = e.target.closest && e.target.closest('#bxPlot, #bxPlotB'); if (pb) setTimeout(() => onPlotSelect(pb.id === 'bxPlotB' ? 'B' : 'A'), 10); });
 document.addEventListener('touchend', e => { const pb = e.target.closest && e.target.closest('#bxPlot, #bxPlotB'); if (pb) setTimeout(() => onPlotSelect(pb.id === 'bxPlotB' ? 'B' : 'A'), 350); });
@@ -3825,7 +3843,7 @@ document.addEventListener('click', e => {
     const s = window.getSelection(); if (s && !s.isCollapsed) return;
     const d = r.dets.find(x => x.id === b.dataset.det); if (!d) return;
     const at = plotOffset(b.firstChild || b, 0), rc = b.getBoundingClientRect();
-    showPop(rc.left + rc.width / 2, rc.top, `<button class="bx-btn" data-bx="unmark" data-id="${esc(d.id)}" data-at="${at}">Remove this highlight from D${detNum(r, d)}</button>`);
+    showPop(rc.left + rc.width / 2, rc.top, sevPop(`D${detNum(r, d)}`, w => `data-bx="setdw" data-id="${esc(d.id)}" data-at="${at}" data-w="${w}"`) + `<button class="bx-btn" data-bx="unmark" data-id="${esc(d.id)}" data-at="${at}">Remove this stretch from D${detNum(r, d)}</button>`);
     return;
   }
   const k = b.dataset.bx, id = b.dataset.id;
@@ -3851,16 +3869,20 @@ document.addEventListener('click', e => {
     case 'cent': if (!aim) return; { const c = +b.dataset.c; aim.central = aim.central === c ? null : c; } break;
     case 'agoto': { if (!aim) return; const mk = $(`#bxPlotB mark[data-aim="${CSS.escape(aim.id)}"]`); if (mk) { mk.scrollIntoView({ behavior: 'smooth', block: 'center' }); mk.classList.add('flash'); setTimeout(() => mk.classList.remove('flash'), 1600); } return; }
     case 'goto': { if (!det || !(det.ranges || []).length) return; const mk = $(`#bxPlot mark[data-det="${CSS.escape(det.id)}"]`); if (mk) { mk.scrollIntoView({ behavior: 'smooth', block: 'center' }); mk.classList.add('flash'); setTimeout(() => mk.classList.remove('flash'), 1600); } return; }
-    case 'newdet': if (!bxPending) return; { const d = newDet(r); d.ranges.push({ s: bxPending.s, e: bxPending.e }); } window.getSelection()?.removeAllRanges(); hidePop(); break;
-    case 'adddto': if (!bxPending || !det) return; det.ranges = mergeRanges([...(det.ranges || []), { s: bxPending.s, e: bxPending.e }]); window.getSelection()?.removeAllRanges(); hidePop(); break;
-    case 'unmark': if (!det) return; { const at = +b.dataset.at; det.ranges = (det.ranges || []).filter(x => !(at >= x.s && at < x.e)); } hidePop(); break;
+    case 'pickdet': if (!bxPending) return; showPop(bxPending.x, bxPending.y, sevPop(id === 'new' ? 'New detection' : `D${detNum(r, det)}`, w => `data-bx="putdet" data-id="${esc(id)}" data-w="${w}"`)); return;
+    case 'putdet': if (!bxPending) return; { const d = id === 'new' ? newDet(r) : det; if (!d) return; putDetStretch(d, bxPending.s, bxPending.e, +b.dataset.w); } window.getSelection()?.removeAllRanges(); hidePop(); break;
+    case 'setdw': if (!det) return; { const at = +b.dataset.at, x = det.ranges.find(y => at >= y.s && at < y.e); if (x) x.w = +b.dataset.w; } hidePop(); break;
+    case 'unmark': if (!det) return; { const at = +b.dataset.at; det.ranges = det.ranges.filter(x => !(at >= x.s && at < x.e)); } hidePop(); break;
     case 'adddet': newDet(r); break;
     case 'deldet': if (!det) return; if ((det.note || '').trim() && !confirm(`Remove D${detNum(r, det)} and its highlights?`)) return;
       r.dets = r.dets.filter(x => x !== det); if (det.main && r.dets[0]) r.dets[0].main = true; break;
     case 'main': if (!det) return; r.dets.forEach(x => { x.main = x === det; }); break;
-    case 'whole': if (!det) return; { const n = plotText(r).length; if (!n) return toast('Add the plot first'); det.ranges = coverage(r, det) >= .999 ? [] : [{ s: 0, e: n }]; } break;
+    case 'whole': if (!det) return; { const n = plotText(r).length; if (!n) return toast('Add the plot first');
+      if (coverage(r, det) >= .999) { det.ranges = []; break; }
+      const rc = b.getBoundingClientRect(); bxPending = { s: 0, e: n, x: rc.left + rc.width / 2, y: rc.top };
+      showPop(bxPending.x, bxPending.y, sevPop(`D${detNum(r, det)}`, w => `data-bx="putdet" data-id="${esc(det.id)}" data-w="${w}"`)); return; }
     case 'wt': { const w = +b.dataset.w, kind = b.dataset.kind;
-      if (kind === 'det') { const d = r.dets.find(x => x.id === id); if (!d) return; d.weight = w; }
+      if (kind === 'dstr') { const [did, ix] = id.split('|'), d = r.dets.find(x => x.id === did), x = d && d.ranges[+ix]; if (!x) return; x.w = w; }
       else if (kind === 'str') { const [aid, ix] = id.split('|'), a = r.aims.find(x => x.id === aid), x = a && a.ranges[+ix]; if (!x) return; x.w = w; }
       else return; } break;
     case 'mag': bt.mag = +b.dataset.l; renderConsole(); return;
@@ -4133,7 +4155,7 @@ function doubleBillHTML(A, B, o) {
   if (ax) rows += row(lineupName(ax, l), spot(A, ax, true), spot(B, ax, true), '', 'ax-x');
   // carried from the booth: lighter footprint gets the edge
   const ba = boothStats(A.id), bb = boothStats(B.id), lowEdge = (x, y) => x == null || y == null || x === y ? '' : x < y ? 'a' : 'b';
-  const sevN = b => b && b.m && rated(b.m) ? b.m.weight : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null, num = (b, k) => b && b[k] != null ? b[k] : null;
+  const sevN = b => b && b.m && rated(b.m) ? sevAvg(b.m) : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null, num = (b, k) => b && b[k] != null ? b[k] : null;
   const lands = b => b && b.hits && b.hits.length ? b.hits.map(a => `${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}`).join(' · ') : '—';
   const leanTxt = b => b && b.lean ? `${b.lean.t} · ${MAG_NAMES[b.lean.t]} · ${b.lean.score}` : '—';
   rows += row('Arena', esc(A.genre || '—'), esc(B.genre || '—'), '')
@@ -4780,13 +4802,13 @@ function landsHTML(rows) {
   const x = rows.filter(r => r.b.m); if (!x.length) return '<p class="gr-empty">Shows up once detections are marked.</p>';
   const best = r => { let w = 0; detHits(r.b.r, r.b.m).forEach(a => { if (counts(a)) w = Math.max(w, CENT_SIG[a.central] * aimDamage(r.b.m, a)); }); return w; };
   const land = [['Undermined most of a central aim', v => v >= .5], ['Undermined a good part', v => v >= .25 && v < .5], ['Light damage', v => v > 0 && v < .25], ['No damage to the aim', v => v === 0]].map(([n, f]) => [n, x.filter(r => f(best(r))).length]);
-  const sev = WEIGHTS.map((n, i) => [n, x.filter(r => r.b.m.weight === i + 1).length]);
+  const sev = WEIGHTS.map((n, i) => [n, x.filter(r => heaviest(r.b.m) === i + 1).length]);
   const mx = Math.max(1, ...land.map(a => a[1]), ...sev.map(a => a[1]));
   const rowsH = (arr, col) => arr.map(([n, k]) => `<div class="gr-mrow"><span>${n}</span><span class="gr-meter"><i style="width:${k / mx * 100}%;background:${col}"></i></span><b>${k}</b></div>`).join('');
   const lx = x.filter(r => r.b.lean), avg = k => lx.length ? Math.round(lx.reduce((t, r) => t + r.b.lean[k], 0) / lx.length) : '—';
   return `<p class="gr-note" style="margin-top:0">The largest detection of each film · average footprint ${avg('F')} (Port A) · average aim bite ${avg('B')} (Port B)</p>
     <div class="gr-axis">Damage to the aim · its worst (centrality × share of that aim undermined)</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
-    <div class="gr-axis" style="margin-top:10px">How I meant it</div><div class="gr-meters">${rowsH(sev, GR.claim)}</div>`;
+    <div class="gr-axis" style="margin-top:10px">How I meant it · its heaviest stretch</div><div class="gr-meters">${rowsH(sev, GR.claim)}</div>`;
 }
 function arenasHTML(ranked) {
   const by = {}; ranked.forEach(f => { const g = f.genre || 'No sub-genre'; (by[g] ||= []).push(f); });
@@ -5177,7 +5199,7 @@ function renderPlaybill() {
     ${it('◇', 'The Aim Box', 'its bullets', 'What the film is trying to accomplish for itself, from Google. Google’s intro is skipped; each bullet becomes its own aim part. In the booth I tag each part to the plot, and how it delivered its effects to get there shows in how I rate it: Zilch, Edge, Supporting or Core.')}
     <p class="pb-note">Everything entered here fills the booth. Nothing has to be typed twice.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>Two ports on one blueprint · then the magnitude</small></div>
-    ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers and write it in my own words. The starred detection is the largest: it decides where the footprint sits. Every detection adds to its size; the largest counts in full, the others at half.')}
+    ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers, grade each stretch, and write the detection in my own words. One detection can span several parts of the plot with a different grade in each. The starred detection is the largest: it decides where the footprint sits. Every detection adds to its size; the largest counts in full, the others at half.')}
     ${it('B', 'Port B · the aim', 'a fresh copy of the plot', 'Google decides how central each aim part is to what the film is trying to accomplish for itself: Central, Major, Secondary, Minor, or Outside the film (set aside, never counts). I tag every stretch where each part plays out, where it worked as well as where it didn’t, and rate how well it worked in each.')}
     ${it('⇄', 'Overlap', 'the link', 'Where a detection’s highlight overlaps an aim stretch, the detection lands on that part. Nothing is linked by hand.')}
     <div class="pb-axis"><span>Port A · how I mean a detection</span></div>
