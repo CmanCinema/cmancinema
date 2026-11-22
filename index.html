@@ -1833,7 +1833,6 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 #vault .vcan:hover,#vault .vcan:focus-visible{transform:translateY(-6px);outline:0}
 #vault .vcan.pulled{transform:translateY(-14px)}
 #vault .tin{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%,#2b2f34 0 18%,#9aa1a8 19% 21%,#5c636a 22% 60%,#878e95 61% 63%,#4e555c 64% 92%,#2a2e33 93%);box-shadow:inset 0 0 0 3px #1e2125,inset -8px -10px 18px rgba(0,0,0,.45),inset 8px 8px 14px rgba(255,255,255,.12),0 10px 16px rgba(0,0,0,.55)}
-#vault .tin.rust{background:radial-gradient(circle at 50% 50%,#2b2f34 0 18%,#a88a6a 19% 21%,#7a5a3c 22% 60%,#a07a54 61% 63%,#6a4a30 64% 92%,#2a2018 93%)}
 #vault .vcan.pulled .tin,#vault .vcan:focus-visible .tin{box-shadow:inset 0 0 0 3px #1e2125,inset -8px -10px 18px rgba(0,0,0,.45),0 0 0 3px var(--amber),0 0 30px rgba(255,190,90,.5)}
 #vault .lbl{position:absolute;left:50%;top:50%;width:82%;transform:translate(-50%,-50%) rotate(-3deg);background:var(--label);color:var(--lab-ink);border-radius:2px;padding:6px 7px 5px;box-shadow:0 2px 4px rgba(0,0,0,.4);text-align:left;display:block}
 #vault .lbl .no{display:flex;justify-content:space-between;gap:4px;font:700 8.5px var(--mono);color:#6a5a40}
@@ -2563,16 +2562,27 @@ function normalize(d) {
     d.wheel = []; d.matches = []; d.wheelLog = []; d.ties = {}; d.ladders = { M: {} };
     if (d.workflow && d.workflow.stage === 'check') d.workflow = null;
   }
+  if ((d.v || 0) < 9) {
+    const log = d.wheelLog.slice().sort((a, b) => (a.at || 0) - (b.at || 0)), drop = new Set();
+    log.forEach((e, i) => {
+      const nx = log[i + 1];
+      if (e.type === 'remove' && nx && nx.type === 'place' && nx.film === e.film && (nx.at || 0) - (e.at || 0) < 15000) {
+        const prev = log.slice(0, i).reverse().find(x => x.type === 'place' && x.film === e.film && !drop.has(x.id));
+        drop.add(e.id); if (prev) drop.add(prev.id);
+      }
+    });
+    if (drop.size) { d.matches = d.matches.filter(m => !drop.has(m.place)); d.wheelLog = d.wheelLog.filter(e => !drop.has(e.id)); }
+  }
   d.ladders ||= {}; d.ladders.M ||= {};
   // each film's plot is rebuilt from its Footprint Box (it isn't stored twice)
   d.films.forEach(f => { if (typeof f.footprint === 'string') { f.plot = splitPlot(f.footprint); f.plotSrc = f.footprint; } else { delete f.plot; delete f.plotSrc; } });
-  d.v = 8;
+  d.v = 9;
   return d;
 }
 let db = normalize(null);
 let COLL = [], VAULT = [], UNEVALUATED = [], QUEUE = [], WSTAT = new Map();
 const raw = id => db.films.find(f => f.id === id);
-const evaluated = f => Number.isInteger(f.mag) && f.mag >= 1 && f.mag <= 5;   // classified in the booth
+const evaluated = f => { const m = f ? (f.mag ?? f.M) : null; return Number.isInteger(m) && m >= 1 && m <= 5; };   // classified in the booth
 function styleFor(id) { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 6; }
 const genreOf = f => Array.isArray(f.genre) ? f.genre.filter(Boolean).join(' ') : (f.genre || '');
 const aOrAn = w => /^[aeiou]/i.test(w) ? 'an' : 'a';
@@ -3075,7 +3085,7 @@ function syncActive() {
 }
 function beginWorkflow(filmId, mode) {
   const f = byId(filmId);
-  db.workflow = { film: filmId, mode, stage: mode === 'new' || mode === 'rewrite' ? 'booth' : 'check', from: f && f.pos != null ? f.pos : null, at: Date.now() };
+  db.workflow = { film: filmId, mode, stage: mode === 'new' || mode === 'rewrite' || mode === 'edit' ? 'booth' : 'check', from: f && f.pos != null ? f.pos : null, at: Date.now() };
   syncActive();
   return persist();
 }
@@ -3180,7 +3190,7 @@ let confirming = null;
 function ticketChoice(f) {
   return `<div class="confirm"><b style="font:800 14px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi)">Buy another ticket · ${esc(f.title)}</b>
     <div class="tk-opts">
-      <button class="tk-opt" data-tk="rewrite"><b>Take a new stance</b><span>Back to the booth, as if you rewatched it. Mark it again and choose its magnitude. Locking the gate takes it off the reel and reruns its showdown.</span></button>
+      <button class="tk-opt" data-tk="rewrite"><b>I rewatched it · take a new stance</b><span>A true rewatch. Back to the booth to mark it again. Locking the gate takes it off the reel and reruns its showdown, filed as a new screening.</span></button>
     </div>
     <div class="btns"><button class="btn-line" data-no>Not now</button></div></div>`;
 }
@@ -3212,7 +3222,7 @@ function openProfile(id, show) {
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
       ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
       ${editor ? `<div class="pacts">${busy ? `<span class="why">${esc(workflowLabel())}. Finish it before opening another film.</span>` : active && active.film.id === id ? `<span class="why">This film is in the workflow now.</span><button class="btn-line" data-goto="${active.stage === 'booth' ? 'booth' : 'auditorium'}">Return to it</button>` : `
-        ${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the reel</button><button class="btn-line" data-tk="rewrite" title="Off the reel, so no strikes">Rewrite the review</button>'}
+        ${evaluated(f) ? '<button class="btn-line" data-tk="edit" title="No rewatch: refine the booth marks">Update its marks</button>' : ''}${st.overall ? '<button class="btn-gold" data-ticketopen>Buy another ticket</button>' : '<button class="btn-gold" data-queuego>Send to the reel</button>'}
         ${entries.length ? '<button class="btn-line" data-watchlast>▶ Watch its show</button>' : ''}
         <button class="linkish" data-remove style="margin-left:auto">Remove from collection</button>`}</div>` : ''}
       <div id="confirmBox">${show === 'ticket' && editor && !active && st.overall ? ticketChoice(f) : ''}</div>
@@ -3283,7 +3293,7 @@ $('#sheet').addEventListener('click', e => {
   const tk = e.target.closest('[data-tk]');
   if (tk) {
     if (!canEdit() || active) return;
-    beginWorkflow(id, 'rewrite'); closeSheet(); startBooth(); goTo('booth');
+    beginWorkflow(id, tk.dataset.tk === 'edit' ? 'edit' : 'rewrite'); closeSheet(); startBooth(); goTo('booth');
     return;
   }
   if (e.target.closest('[data-remove]')) {
@@ -3616,7 +3626,7 @@ function renderBooth() {
   if (!open) { $('#boothDark').innerHTML = lockedNotice('The Projection Booth'); return; }
   const r = bxData(), f = active.film;
   $('#bxHead').innerHTML = `<div class="bx-can" aria-hidden="true"></div>
-    <div class="bx-label"><div class="k">Projection Booth · Reel in hand</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${f.year ? ' · ' : ''}${active.mode === 'rewrite' ? 'A new stance' : 'Evaluation'}</div></div>
+    <div class="bx-label"><div class="k">Projection Booth · Reel in hand</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${f.year ? ' · ' : ''}${active.mode === 'rewrite' ? 'A new stance' : active.mode === 'edit' ? 'Updating its marks' : 'Evaluation'}</div></div>
     <div class="bx-status"><span class="bx-lamp"><i></i>Lamp lit</span><small>Highlight the blueprint · tag the aim · choose the aperture</small></div>`;
   renderPlot(); renderDets(); renderAims(); renderFull(); renderConsole();
 }
@@ -3760,8 +3770,10 @@ function renderConsole() {
       : '<b>No lean yet.</b> It runs once your largest detection is highlighted, every highlighted detection is rated, and every aim part has its centrality from Google.'}
       ${notes.length ? `<span class="bx-notes">${notes.map(n => `<span>${esc(n)}</span>`).join('')}</span>` : ''}
       <span class="sm">${pick ? `You chose ${pick} · ${MAG_NAMES[pick]}: ${MAG_TAG[pick].toLowerCase()}.` : 'It’s a lean, not a verdict. Your words and your read of the aim decide. Choose a plate.'}</span></div>
-    <div class="bx-lockwrap"><button class="bx-seal" data-bx="lock" ${pick ? '' : 'disabled'}>${pick ? `Lock the gate at ${pick}` : 'Lock the gate'}<small>${pick ? `${MAG_NAMES[pick]} · down to the showdown` : 'choose a plate first'}</small></button>
-      ${pick ? '<button class="bx-link" data-bx="lockq">or lock it and leave it in the queue</button>' : ''}</div>`;
+    ${(() => { const was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id);
+      if (active.mode === 'edit') return `<div class="bx-lockwrap"><button class="bx-seal" data-bx="lock" ${pick ? '' : 'disabled'}>${!pick ? 'Save the marks' : pick === was ? 'Save the marks' : `Save at ${pick}`}<small>${!pick ? 'choose a plate first' : pick === was ? `stays ${MAG_NAMES[pick]}${onReel ? ' · nothing moves, nothing new is recorded' : ''}` : onReel ? `moves to ${MAG_NAMES[pick]} · its showdown there replaces the last one` : `now ${MAG_NAMES[pick]}`}</small></button></div>`;
+      return `<div class="bx-lockwrap"><button class="bx-seal" data-bx="lock" ${pick ? '' : 'disabled'}>${pick ? `Lock the gate at ${pick}` : 'Lock the gate'}<small>${pick ? `${MAG_NAMES[pick]} · down to the showdown` : 'choose a plate first'}</small></button>
+      ${pick ? '<button class="bx-link" data-bx="lockq">or lock it and leave it in the queue</button>' : ''}</div>`; })()}`;
   $('#bxFoot').innerHTML = `<button class="bx-link" data-cancelwf>${active.mode === 'new' && !raw(active.film.id)?.mag ? 'Withdraw this ticket' : 'Cancel · put everything back'}</button>`;
 }
 const bxRefresh = () => { renderPlot(); renderDets(); renderAims(); renderFull(); renderConsole(); };
@@ -3892,8 +3904,34 @@ document.addEventListener('click', e => {
   }
   bxRefresh(); bxSave();
 });
+/* updating marks is not a rewatch: nothing new is recorded unless the tier changes, and then its new showdown replaces its last one */
+function forgetLastScreening(id) {
+  const places = db.wheelLog.filter(e => e.type === 'place' && e.film === id); if (!places.length) return;
+  const last = places.reduce((a, b) => (b.at || 0) > (a.at || 0) ? b : a);
+  db.matches = db.matches.filter(m => m.place !== last.id);
+  db.wheelLog = db.wheelLog.filter(e => e !== last && !(e.type === 'shift' && e.cause && e.cause.film === id && (e.at || 0) >= (last.at || 0)));
+}
+function saveUpdate(r, l) {
+  const id = r.id, was = r.mag, onReel = db.wheel.includes(id);
+  r.mag = l;
+  clearTimeout(bxTimer); hidePop();
+  if (!onReel || was === l) {
+    endWorkflow(); rebuild(); persist();
+    toast(`${r.title} · marks updated · ${MAG_NAMES[l]}${onReel ? ' · nothing new recorded' : ''}`);
+    return goTo('lobby');
+  }
+  // the tier changed: off the reel without a removal on record, its last screening forgotten, then a showdown in the new tier
+  forgetLastScreening(id);
+  db.wheel = db.wheel.filter(x => x !== id);
+  Object.values(ladders().M).forEach(a => { const i = a.indexOf(id); if (i >= 0) a.splice(i, 1); });
+  clearCalls(id);
+  db.workflow.stage = 'check'; db.workflow.spin = null; db.workflow.from = null; clearDraft(); bt = null;
+  rebuild(); syncActive(); persist();
+  goTo('auditorium');
+}
 function lockGate(stay) {
   const r = bxFilm(); if (!r || !bt.mag) return;
+  if (active.mode === 'edit') return saveUpdate(r, bt.mag);   // before the tier is written, so a change can be seen
   r.mag = bt.mag; r.watched = true;
   const t = r.title, l = bt.mag;
   // a new stance: it comes off the reel and meets its tier again
@@ -4106,7 +4144,7 @@ function setScreenBg(A, B) {
   const key = (A ? A.id : '') + '|' + (B ? B.id : ''); h.dataset.pair = key;
 }
 // the Double Bill: both films' numbers, fight-card style, on the posters
-const VIA_SHOW = { rewrite: 'Rerun · ', spot: 'Rerun · ', rescreen: 'Re-screening · ', strike: 'Strike · ' };
+const VIA_SHOW = { edit: 'Update · ', rewrite: 'Rerun · ', spot: 'Rerun · ', rescreen: 'Re-screening · ', strike: 'Strike · ' };
 
 /* ---------- the full picture, carried from the booth into the auditorium ---------- */
 function boothStats(id) {
@@ -4510,7 +4548,7 @@ function vaultPerShelf() { const w = innerWidth; return w >= 1100 ? 6 : w >= 860
 function canHTML(c) {
   const f = c.f, open = vaultCan === f.id, dots = c.ms.slice(-10).map(m => `<i class="${m.winner === f.id ? 'w' : 'l'}"></i>`).join('');
   return `<button class="vcan ${open ? 'pulled' : ''}" data-can="${esc(f.id)}" aria-expanded="${open}" aria-label="${esc(f.title)}: open its can">
-    <span class="tin ${c.rerun ? 'rust' : ''}"></span>
+    <span class="tin"></span>
     <span class="lbl"><span class="no"><span>${f.pos != null ? 'REEL #' + (f.pos + 1) : 'OFF THE REEL'}</span><span>${f.M} · ${MAG_NAMES[f.M] || ''}</span></span>
       <span class="t">${esc(f.title)}</span>
       <span class="s">${c.ms.length} SHOWDOWN${c.ms.length === 1 ? '' : 'S'} · ${c.w}–${c.l}</span>
