@@ -3473,7 +3473,7 @@ const WILD_WEIGHTS = ['Minor', 'Secondary', 'Major', 'Central'];
 const DEF_WILDW = ['A small part of my View.', 'A noticeable part of my View.', 'A big part of my View.', 'At the heart of my View.'];
 const WILD_COLOR = '#cfc6b4', WILD_POS = '#9fd18b';
 const WILD_TONES = { pos: 'Positive', neu: 'Neutral' };
-const DEF_TONE = { pos: 'It worked for me, like Supporting: a flaw in the same stretch barely touches it.', neu: 'Just something I remember, neither positive nor negative, like Edge: a flaw in the same stretch mostly bites it.' };
+const DEF_TONE = { pos: 'Not detection-worthy: it stood out to me in a good way. Nothing counts against it, so it can only help. Bonus points only.', neu: 'Just something I remember, neither good nor bad. A flaw in the same stretch mostly bites it, like Edge.' };
 const wildCol = x => x && x.t === 'pos' ? WILD_POS : WILD_COLOR;
 const wildName = x => `Wild card · ${WILD_TONES[x.t] || 'Neutral'} · ${x.c ? WILD_WEIGHTS[x.c - 1] : 'weight not set'}`;
 const DEF_SHUTTER = 'I went through it line by line and nothing rings a bell. Counts toward nothing.';
@@ -3481,7 +3481,7 @@ const CENT_NAMES = { 0: 'Outside the film', 1: 'Minor', 2: 'Secondary', 3: 'Majo
 const CENT_SIG = { 0: 0, 1: .25, 2: .5, 3: .75, 4: 1 };
 const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating, for drawing: stronger rating, stronger fill
 const DMG_SIG = [0, 1, .65, .15, 0];     // under a detection: how much the flaw undermined the aim there (Zilch fully · Core not at all)
-const WILD_DMG = { pos: DMG_SIG[3], neu: DMG_SIG[2] };   // the aim scale: Positive takes what Supporting takes, Neutral what Edge takes
+const WILD_DMG = { pos: 0, neu: DMG_SIG[2] };   // Positive is bonus only: nothing counts against it. Neutral takes what Edge takes
 const SEV_SIG = [0, .25, .5, .75, 1];    // by detection rating
 const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, heartCent: 3, near: 5, other: .5 };
 const AIM_COLORS = ['#e8be6a', '#5ad1c8', '#c58fe6', '#9fd18b', '#f08fb0', '#8fb0e6', '#e6a05a', '#d1d15a'];
@@ -3613,7 +3613,7 @@ function leanParts(r) {
   if (!L || !m || !rangeLen(m.ranges) || unset.length || unrated.length || wildUnset.length) return base;
   const B = new Float32Array(L), C = new Float32Array(L);   // damage if a flaw sits here · the aim's presence
   r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { const dm = dmgWt(a, x), c = CENT_SIG[a.central]; for (let i = x.s; i < Math.min(L, x.e); i++) { B[i] += dm; C[i] += c; } }); });
-  // a wild card counts at the weight I give it, and takes damage on the aim scale: Positive like Supporting, Neutral like Edge
+  // a wild card counts at the weight I give it. Positive is bonus only (never bitten); Neutral takes damage like Edge
   (r.wild || []).forEach(x => { const c = CENT_SIG[x.c] || 0, dm = c * WILD_DMG[x.t === 'pos' ? 'pos' : 'neu']; for (let i = x.s; i < Math.min(L, x.e); i++) { B[i] += dm; C[i] += c; } });
   let T = 0; for (let i = 0; i < L; i++) T += C[i];
   const S = new Float32Array(L), P = new Float32Array(L);
@@ -5589,7 +5589,7 @@ function renderPlaybill() {
     <div class="pb-axis" style="margin-top:14px"><span>How well the aim worked</span></div>
     ${AIM_WEIGHTS.map((n, j) => term([n, DEF_AIM[j]])).join('')}
     <div class="pb-axis" style="margin-top:14px"><span>How central an aim is · from Google</span></div>
-    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Google ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Under a detection it takes damage on the same scale as an aim stretch: Positive worked for me, so it takes what Supporting takes (15%); Neutral is just remembered, in between, so it takes what Edge takes (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A detection sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
+    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Google ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Positive means it isn’t detection-worthy: it stood out in a good way, nothing counts against it, and it only adds to the whole weight, so it can only help (bonus points only). Neutral is just remembered, neither good nor bad, so a detection in the same stretch bites it like Edge (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A detection sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
     <div class="pb-axis" style="margin-top:14px"><span>Magnitude</span></div>
     ${MAG_LV.map(l => term([`${l} · ${MAG_NAMES[l]}`, PB.tiers[l]])).join('')}
     <p class="pb-note">Incidental heads the rankings; All-encompassing sits at the bottom.</p>`;
