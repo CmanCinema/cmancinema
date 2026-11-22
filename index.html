@@ -3398,9 +3398,10 @@ const DEF_DET = ['I noticed it, but it didn’t change my experience.', 'It took
 const DEF_AIM = ['The aim didn’t work for me here at all.', 'It worked a little: I registered it, but it didn’t carry the stretch.', 'It worked and held the stretch up, but it wasn’t the peak.', 'It fully worked. This is where the film achieved this aim for me.'];
 const CENT_NAMES = { 0: 'Outside the film', 1: 'Minor', 2: 'Secondary', 3: 'Major', 4: 'Central' };   // from Google: how central the aim is to the film
 const CENT_SIG = { 0: 0, 1: .25, 2: .5, 3: .75, 4: 1 };
-const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating: Zilch still counts a little
+const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating, for drawing: stronger rating, stronger fill
+const DMG_SIG = [0, 1, .65, .35, 0];     // under a detection: how much the flaw undermined the aim there (Zilch fully · Core not at all)
 const SEV_SIG = [0, .25, .5, .75, 1];    // by detection rating
-const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, near: 5, other: .5 };
+const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, heartCent: 3, near: 5, other: .5 };
 const AIM_COLORS = ['#e8be6a', '#5ad1c8', '#c58fe6', '#9fd18b', '#f08fb0', '#8fb0e6', '#e6a05a', '#d1d15a'];
 const DET_COLORS = ['#e07a5a', '#8fb0e6', '#9fd18b', '#e6c25a', '#c58fe6', '#5ad1c8', '#f08fb0', '#b9a37a'];
 
@@ -3470,38 +3471,44 @@ const overlap = (A, B) => { for (const x of A || []) for (const y of B || []) if
 const detHits = (r, d) => r.aims.filter(a => a.central !== 0 && overlap(d.ranges, stretches(a)));
 /* the stretches of an aim that a detection overlaps */
 const hitStretches = (d, a) => stretches(a).filter(x => overlap(d.ranges, [x]));
-const aimTotal = r => r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + stretchWt(a, x) * (x.e - x.s), 0) : t, 0);
-/* one detection's bite: the aim weight it overlaps, out of the aim's whole weight */
+/* the aim's whole weight: everything the film was trying to accomplish across my View (centrality × presence) */
+const aimTotal = r => r.aims.reduce((t, a) => counts(a) ? t + CENT_SIG[a.central] * rangeLen(stretches(a)) : t, 0);
+const dmgWt = (a, x) => (CENT_SIG[a.central] ?? 0) * DMG_SIG[x.w || 2];
+/* one detection's bite: the damage it did to the aim, out of the aim's whole weight */
 function footShare(r, d) {
   const T = aimTotal(r); if (!T) return null;
-  return r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + stretchWt(a, x) * overlapLen(d.ranges, [x]), 0) : t, 0) / T;
+  return r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + dmgWt(a, x) * overlapLen(d.ranges, [x]), 0) : t, 0) / T;
 }
+/* how much of one aim's own presence a detection undermined (damage-weighted) */
+function aimDamage(d, a) { const n = rangeLen(stretches(a)); return n ? stretches(a).reduce((u, x) => u + DMG_SIG[x.w || 2] * overlapLen(d.ranges, [x]), 0) / n : 0; }
+const reachesHeart = (r, d) => r.aims.some(a => counts(a) && a.central >= LEAN_CUT.heartCent && aimDamage(d, a) >= LEAN_CUT.heart);
 
 /* ---------- the lean: both ports, equally, never a verdict ----------
    Footprint (Port A): how much of the blueprint my detections cover, weighted by how I mean them
      (Petty Nitpick .25 · Minor Gripe .5 · Major Drawback .75 · Severe Problem 1). The largest detection counts in full,
      the others at half; overlapping highlights count once.
-   Aim bite (Port B): how much of the aim's weight those detections overlap. Each tagged stretch weighs
-     how central the aim is (Google: Central 1 · Major .75 · Secondary .5 · Minor .25 · Outside the film 0)
-     × how well it worked there (Core 1 · Supporting .65 · Edge .35 · Zilch .15).
-   The lean = the two averaged. Place: if the largest detection reaches a stretch weighing at least half, it is at the
-   center of the View (Defining, Pervasive at 35, All-encompassing at 60); otherwise at the edge (Incidental, Peripheral at 20). */
+   Aim bite (Port B): the damage my detections did to what the film was trying to accomplish. Under a detection, the
+     stretch's rating says how much the flaw undermined the aim there (Zilch fully · Edge .65 · Supporting .35 · Core not at all),
+     weighted by how central the aim is (Google: Central 1 · Major .75 · Secondary .5 · Minor .25 · Outside the film 0),
+     out of the aim's whole weight (centrality × presence across the View).
+   The lean = the two averaged. Place: if the largest detection undermined at least half of a Major or Central aim's
+   presence, it is at the center of the View (Defining, Pervasive at 35, All-encompassing at 60); otherwise at the edge
+   (Incidental, Peripheral at 20). */
 function leanParts(r) {
   const L = plotText(r).length, m = mainDet(r);
   const live = r.aims.filter(a => a.central !== 0);
   const unset = live.filter(a => a.central == null), untagged = live.filter(a => !stretches(a).length);
   const base = { m, unset, untagged };
   if (!L || !m || !rangeLen(m.ranges)) return base;
-  const B = new Float32Array(L);
-  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { const w = stretchWt(a, x); for (let i = x.s; i < Math.min(L, x.e); i++) B[i] += w; }); });
-  let T = 0; for (let i = 0; i < L; i++) T += B[i];
+  const B = new Float32Array(L), C = new Float32Array(L);   // damage if a flaw sits here · the aim's presence
+  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { const dm = dmgWt(a, x), c = CENT_SIG[a.central]; for (let i = x.s; i < Math.min(L, x.e); i++) { B[i] += dm; C[i] += c; } }); });
+  let T = 0; for (let i = 0; i < L; i++) T += C[i];
   const S = new Float32Array(L), P = new Float32Array(L);
   r.dets.forEach(d => { const f = d === m ? 1 : LEAN_CUT.other, sv = SEV_SIG[d.weight || 2] * f;
     mergeRanges(d.ranges).forEach(x => { for (let i = Math.max(0, x.s); i < Math.min(L, x.e); i++) { if (sv > S[i]) S[i] = sv; if (f > P[i]) P[i] = f; } }); });
   let fs = 0, bite = 0; for (let i = 0; i < L; i++) { fs += S[i]; bite += P[i] * B[i]; }
-  let heart = false, inAim = 0;
-  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { if (stretchWt(a, x) >= LEAN_CUT.heart && overlap(m.ranges, [x])) heart = true; }); });
-  for (const x of mergeRanges(m.ranges)) for (let i = x.s; i < Math.min(L, x.e); i++) if (B[i] > 0) inAim++;
+  let inAim = 0; const heart = reachesHeart(r, m);
+  for (const x of mergeRanges(m.ranges)) for (let i = x.s; i < Math.min(L, x.e); i++) if (C[i] > 0) inAim++;
   return { ...base, L, T, F: 100 * fs / L, B: T ? 100 * bite / T : null, heart, outside: rangeLen(m.ranges) - inAim };
 }
 function bxLean(r) {
@@ -3514,7 +3521,7 @@ function bxLean(r) {
   const near = dist <= LEAN_CUT.near ? { cut, dist: Math.round(dist * 10) / 10, toward: score < cut ? heavy : light } : null;
   const hits = detHits(r, p.m), names = hits.map(a => `${aimShort(a)} (${CENT_NAMES[a.central] ?? 'centrality not set'})`);
   const where = hits.length ? `lands on ${names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names.slice(-1) : names[0]}` : 'doesn’t overlap any stretch of the aim';
-  const why = `D${detNum(r, p.m)}, your ${r.dets.length > 1 ? 'largest ' : ''}detection, ${where}${p.heart ? ', reaching the heart of what worked' : ''}. Footprint ${Math.round(p.F)} (Port A) · aim bite ${Math.round(p.B)} (Port B).`;
+  const why = `D${detNum(r, p.m)}, your ${r.dets.length > 1 ? 'largest ' : ''}detection, ${where}${p.heart ? ', undermining most of a central aim' : ''}. Footprint ${Math.round(p.F)} (Port A) · aim bite ${Math.round(p.B)} (Port B).`;
   return { t, score: Math.round(score), F: Math.round(p.F), B: Math.round(p.B), heart: p.heart, near, share: p.B / 100, why, parts: p };
 }
 const bxWeightPct = r => { const L = bxLean(r); return L ? L.score : null; };
@@ -3523,8 +3530,11 @@ function leanNotes(r) {
   const p = leanParts(r), out = [], L = bxLean(r), nm = as => as.map(a => `${aimLabel(r, a)} · ${aimShort(a)}`).join(', ');
   if (p.unset.length) out.push(`Set how central ${nm(p.unset)} ${p.unset.length === 1 ? 'is' : 'are'}: ask Google with the button in Port B.`);
   if (p.untagged.length) out.push(`${nm(p.untagged)} ${p.untagged.length === 1 ? 'isn’t' : 'aren’t'} tagged on Port B’s plot yet. Tag ${p.untagged.length === 1 ? 'it' : 'them'}, or mark ${p.untagged.length === 1 ? 'it' : 'them'} Outside the film.`);
+  const weak = [];
+  r.aims.forEach(a => { if (!counts(a)) return; stretches(a).forEach(x => { if ((x.w || 2) <= 2 && !r.dets.some(d => overlap(d.ranges, [x]))) weak.push(`${aimShort(a)} (${AIM_WEIGHTS[(x.w || 2) - 1]})`); }); });
+  if (weak.length) out.push(`The aim falls flat with no detection to explain it: ${[...new Set(weak)].join(', ')}. If something in your experience pulled it down, mark it in Port A.`);
   if (p.m && p.outside > 20 && L) out.push(`D${detNum(r, p.m)} runs into ${Math.round(p.outside / p.L * 100)}% of the blueprint that no aim stretch covers. That part adds to the footprint but not to the aim bite.`);
-  if (L && L.near) out.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away. A slightly ${L.near.toward < L.t ? 'larger or heavier' : 'smaller or lighter'} detection, or a ${L.near.toward < L.t ? 'stronger' : 'weaker'} rating where it lands, would tip it.`);
+  if (L && L.near) out.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away. A slightly ${L.near.toward < L.t ? 'larger or heavier' : 'smaller or lighter'} detection, or a ${L.near.toward < L.t ? 'weaker' : 'stronger'} rating where it lands, would tip it.`);
   else if (L) out.push(`Comfortably clear of the nearest line.`);
   return out;
 }
@@ -3534,7 +3544,7 @@ function bxMapSVG(r) {
   r.dets.forEach((d, i) => {
     const cov = coverage(r, d); if (!cov) return;
     const sh = footShare(r, d) ?? cov, hits = detHits(r, d);
-    const onHeart = hits.some(a => counts(a) && hitStretches(d, a).some(x => stretchWt(a, x) >= LEAN_CUT.heart)), others = hits.filter(a => !isCore(a)).length;
+    const onHeart = reachesHeart(r, d), others = hits.filter(a => !isCore(a)).length;
     const w = SEV_SIG[d.weight || 2], op = (.35 + .65 * w).toFixed(2);
     if (onHeart) {
       const rad = Math.min(40, 9 + 31 * Math.min(1, sh / .6) * (.5 + w / 2));
@@ -4087,7 +4097,7 @@ function boothPanelHTML(f) {
     <div class="bp-k">From the booth · the full picture</div>
     ${b.m ? `<div class="bp-det">D${detNum(b.r, b.m)} ★ ${b.m.note ? `“${esc(trimTo(b.m.note, 140))}”` : '<em>No words written</em>'}</div>
     <div class="bp-row"><span class="bp-sev">${b.sev}</span><span class="bp-meta">· footprint ${pctTxt(b.F)} · aim bite ${pctTxt(b.B)} · lands on</span>${chips || '<span class="bp-meta">no aim stretch</span>'}</div>` : '<div class="bp-det"><em>No detections marked in the booth</em></div>'}
-    <div class="bp-lean">${b.lean ? `The marks leaned ${b.lean.t} · ${MAG_NAMES[b.lean.t]}${b.heart ? ', at the heart of what worked' : ''}` : 'No lean from the marks'} · you locked it at ${f.M} · ${MAG_NAMES[f.M]}</div>
+    <div class="bp-lean">${b.lean ? `The marks leaned ${b.lean.t} · ${MAG_NAMES[b.lean.t]}${b.heart ? ', undermining most of a central aim' : ''}` : 'No lean from the marks'} · you locked it at ${f.M} · ${MAG_NAMES[f.M]}</div>
     ${arena ? `<div class="bp-arena"><b>The arena · ${esc(f.genre || '')}</b>${esc(trimTo(arena, 220))}</div>` : ''}
   </div></div>`;
 }
@@ -4761,14 +4771,14 @@ function leanStripHTML(rows) {
 }
 function landsHTML(rows) {
   const x = rows.filter(r => r.b.m); if (!x.length) return '<p class="gr-empty">Shows up once detections are marked.</p>';
-  const best = r => { let w = 0; detHits(r.b.r, r.b.m).forEach(a => hitStretches(r.b.m, a).forEach(s => { w = Math.max(w, stretchWt(a, s)); })); return w; };
-  const land = [['The heart of what worked', v => v >= .5], ['Middling', v => v >= .25 && v < .5], ['Light', v => v > 0 && v < .25], ['No aim stretch', v => v === 0]].map(([n, f]) => [n, x.filter(r => f(best(r))).length]);
+  const best = r => { let w = 0; detHits(r.b.r, r.b.m).forEach(a => { if (counts(a)) w = Math.max(w, CENT_SIG[a.central] * aimDamage(r.b.m, a)); }); return w; };
+  const land = [['Undermined most of a central aim', v => v >= .5], ['Undermined a good part', v => v >= .25 && v < .5], ['Light damage', v => v > 0 && v < .25], ['No damage to the aim', v => v === 0]].map(([n, f]) => [n, x.filter(r => f(best(r))).length]);
   const sev = WEIGHTS.map((n, i) => [n, x.filter(r => (r.b.m.weight || 2) === i + 1).length]);
   const mx = Math.max(1, ...land.map(a => a[1]), ...sev.map(a => a[1]));
   const rowsH = (arr, col) => arr.map(([n, k]) => `<div class="gr-mrow"><span>${n}</span><span class="gr-meter"><i style="width:${k / mx * 100}%;background:${col}"></i></span><b>${k}</b></div>`).join('');
   const lx = x.filter(r => r.b.lean), avg = k => lx.length ? Math.round(lx.reduce((t, r) => t + r.b.lean[k], 0) / lx.length) : '—';
   return `<p class="gr-note" style="margin-top:0">The largest detection of each film · average footprint ${avg('F')} (Port A) · average aim bite ${avg('B')} (Port B)</p>
-    <div class="gr-axis">Lands on · its strongest stretch (centrality × how well it worked)</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
+    <div class="gr-axis">Damage to the aim · its worst (centrality × share of that aim undermined)</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
     <div class="gr-axis" style="margin-top:10px">How I meant it</div><div class="gr-meters">${rowsH(sev, GR.claim)}</div>`;
 }
 function arenasHTML(ranked) {
@@ -5161,7 +5171,7 @@ function renderPlaybill() {
     <p class="pb-note">Everything entered here fills the booth. Nothing has to be typed twice.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>Two ports on one blueprint · then the magnitude</small></div>
     ${it('A', 'Port A · the footprint', 'the plot', 'Highlight every stretch of the plot a detection covers and write it in my own words. The starred detection is the largest: it decides where the footprint sits. Every detection adds to its size; the largest counts in full, the others at half.')}
-    ${it('B', 'Port B · the aim', 'a fresh copy of the plot', 'Google decides how central each aim part is to what the film is trying to accomplish for itself: Central, Major, Secondary, Minor, or Outside the film (set aside, never counts). I tag where each part plays out and rate how well it worked in each stretch.')}
+    ${it('B', 'Port B · the aim', 'a fresh copy of the plot', 'Google decides how central each aim part is to what the film is trying to accomplish for itself: Central, Major, Secondary, Minor, or Outside the film (set aside, never counts). I tag every stretch where each part plays out, where it worked as well as where it didn’t, and rate how well it worked in each.')}
     ${it('⇄', 'Overlap', 'the link', 'Where a detection’s highlight overlaps an aim stretch, the detection lands on that part. Nothing is linked by hand.')}
     <div class="pb-axis"><span>Port A · how I mean a detection</span></div>
     ${WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_DET[j])).join('')}
@@ -5171,9 +5181,9 @@ function renderPlaybill() {
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
     <div class="pb-axis"><span>The lean · both ports, equally</span></div>
     ${it('A', 'Footprint', 'Port A · 0 to 100', 'How much of the blueprint my detections cover, weighted by how I mean them: Petty Nitpick a quarter, Minor Gripe a half, Major Drawback three quarters, Severe Problem in full. The largest detection counts in full, the others at half; overlapping highlights count once.')}
-    ${it('B', 'Aim bite', 'Port B · 0 to 100', 'How much of the aim’s weight my detections overlap. Each tagged stretch weighs how central the aim is (Central 1, Major .75, Secondary .5, Minor .25) times how well it worked there (Core 1, Supporting .65, Edge .35, Zilch .15). Zilch still counts a little: a flaw where the aim fell flat registers, just far less.')}
-    ${it('↗', 'A lean, not a verdict', 'the two averaged', 'If the largest detection reaches a stretch weighing at least half, it sits at the center of my View: Defining, Pervasive at 35, All-encompassing at 60. Otherwise it borders the View: Incidental, Peripheral at 20. The tiers on either side are within reach.')}
-    ${it('±', 'Margin of error', 'within 5 points', 'When the lean sits within 5 points of a line, the booth says which way it could tip and what to check: an aim with no centrality yet, an untagged part, or a detection running into text no aim covers. Otherwise it says the lean is comfortably clear.')}
+    ${it('B', 'Aim bite', 'Port B · 0 to 100', 'The damage my detections did to what the film was trying to accomplish. Under a detection, the stretch’s rating says how much the flaw undermined the aim there: Zilch fully, Edge mostly, Supporting slightly, Core not at all. That damage is weighted by how central the aim is (Central 1, Major .75, Secondary .5, Minor .25), out of everything the film was trying to accomplish across my View.')}
+    ${it('↗', 'A lean, not a verdict', 'the two averaged', 'If the largest detection undermined at least half of a Major or Central aim’s presence, it sits at the center of my View: Defining, Pervasive at 35, All-encompassing at 60. Otherwise it borders the View: Incidental, Peripheral at 20. The tiers on either side are within reach.')}
+    ${it('±', 'Margin of error', 'within 5 points', 'When the lean sits within 5 points of a line, the booth says which way it could tip. It also flags what to check: an aim with no centrality yet, an untagged part, a stretch where the aim falls flat with no detection to explain it, or a detection running into text no aim covers. Otherwise it says the lean is comfortably clear.')}
     ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdown, or waits in the queue.')}`;
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Compass<small>Definitions · in my own words</small></div>
     ${PB.terms.map(term).join('')}
