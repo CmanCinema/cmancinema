@@ -2135,6 +2135,12 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .db-lean{margin:10px auto 0!important;max-width:720px;text-align:center;font:500 15.5px/1.45 var(--body)!important;color:#fff4d8!important;text-shadow:0 2px 8px #000}
 .db-lean b{color:var(--gold-hi,#f3d48a)}
 .inkta{width:100%;border:1.5px solid #a8834a;border-radius:3px;background:rgba(255,255,255,.35);font:500 16px/1.45 var(--body);color:var(--ink);padding:8px 10px;resize:vertical;outline:none;margin-top:8px}
+.b2-why{margin:8px 0;padding:8px 12px;border-left:3px solid var(--c,var(--gold));background:rgba(0,0,0,.16);border-radius:0 6px 6px 0}
+.b2-why.det{border-left-color:rgba(230,120,90,.8)}
+.b2-why b{display:block;font:700 13.5px var(--serif);color:#f6ead0}
+.b2-why .sm{display:block;font:500 12.5px var(--body);color:rgba(243,230,200,.55);margin:2px 0 4px}
+.b2-why p{margin:0;font:500 15px/1.45 var(--body);color:rgba(243,230,200,.86)}
+.b2-why-r{margin:6px 0 10px;font:italic 500 15.5px/1.5 var(--body);color:rgba(243,230,200,.86)}
 .b2-tier{margin:2px 0 8px;font:500 13.5px var(--body);color:rgba(243,230,200,.6)}
 .b2-tier .bx-link{font-size:13.5px}
 .b2-tier .bx-link.on{color:var(--gold-hi,#f3d48a);font-weight:700;text-decoration:none}
@@ -2733,6 +2739,14 @@ const insertBefore = (arr, before, id) => { const i = before ? arr.indexOf(befor
 // a finished placement goes into both lineups, then onto the reel, into the log and the vault
 function commitPlacement(P) {
   const f = P.f, id = f.id, t = Date.now(), pid = 'wl:' + uid();
+  if (P.mode === 'reorder') {
+    // a reorder: the film takes its new spot, but no battle, record, form or Vault show is filed; only the reel's new order
+    insertBefore(ladderOf('M', f.M), P.pools.M[P.done.M], id);
+    db.wheel = P.order.concat(id); rebuild();
+    db.wheelLog.push({ id: pid, type: 'order', order: db.wheel.slice(), via: 'reorder', film: id, at: t });
+    P.committed = { pid, sid: null }; rebuild();
+    return { film: id, pos: db.wheel.indexOf(id), of: db.wheel.length, battles: P.battles, order: P.order, via: P.mode, pid, lanes: { M: P.done.M + 1, mOf: P.pools.M.length + 1, ml: f.M } };
+  }
   P.battles.forEach((b, i) => db.matches.push({ id: 'match:' + uid(), place: pid, a: id, b: b.opp, winner: b.newWins ? id : b.opp, margin: 0, chance: 1, key: b.key, ax: b.ax, level: b.level, ...(b.even ? { even: true } : {}), ...(b.note ? { note: b.note } : {}), ...(b.sd ? { sd: b.sd } : {}), sa: b.sa, sb: b.sb, oppRank: b.oppRank, at: t + i }));
   insertBefore(ladderOf('M', f.M), P.pools.M[P.done.M], id);
   db.wheel = P.order.concat(id);
@@ -3358,7 +3372,7 @@ function startBooth() {
   const f = active?.film || {}, r = raw(f.id) || {};
   bt = { film: f.id, mode: active?.mode, mag: Number.isInteger(r.mag) ? r.mag : null,
          snap: JSON.stringify({ plot: r.plot || null, plotSrc: r.plotSrc ?? null, dets: r.dets || [], aims: r.aims || [], cuts: r.cuts ?? null, cutsOk: !!r.cutsOk, wild: r.wild || [], footprint: r.footprint || '', aim: r.aim || '',
-           __map: Object.fromEntries(['carry', 'scenes', 'mapKey', 'mapMode', 'mapSources', 'mapEngine', 'mapCut', 'aimSrc'].map(k => [k, r[k] === undefined ? null : r[k]])) }) };
+           __map: Object.fromEntries(['carry', 'scenes', 'mapKey', 'mapMode', 'mapSources', 'mapEngine', 'mapCut', 'aimSrc', 'mapWhy'].map(k => [k, r[k] === undefined ? null : r[k]])) }) };
 }
 function lockedNotice(where) {
   const visitor = !canEdit();
@@ -3740,8 +3754,9 @@ const B2_INSTR = `You are the reader for the Projection Booth of my film-rating 
 2. Break the whole film into its consecutive scenes or sequences, start to finish, covering the full runtime with no gaps (usually 25 to 60). Give each its approximate start and end in minutes and a short title saying what happens.
 3. For each aim, list the scenes where it clearly plays out on screen. Be strict: a scene counts only if what happens in it directly carries that aim, not just because the same characters appear. An aim about mood, music, camerawork or performance that isn't tied to specific events gets only the few scenes that most clearly embody it, or none.
 4. For each detection, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it hurts: the aims whose scenes it overlaps, or that it is plainly about.
-5. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims and detections first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
-{"film":"<title>","runtime":102,"aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9]}],"detections":[{"d":1,"whole":false,"moment":false,"scenes":[12,13],"aims":[2]}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
+5. Explain your decisions. Give each aim a "why": one or two sentences (at most 40 words) on what in the film shows this is what it's going for, why it belongs in that tier, and why those scenes carry it. Give each detection a "why": one or two sentences (at most 40 words) on why it points to those scenes (or the whole film, or a moment) and why it hurts those aims. Add a "reading" of two or three sentences (at most 60 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
+6. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary outside the "why" and "reading" fields. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims and detections first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
+{"film":"<title>","runtime":102,"reading":"<how you read the film>","aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9],"why":"<your reasoning>"}],"detections":[{"d":1,"whole":false,"moment":false,"scenes":[12,13],"aims":[2],"why":"<your reasoning>"}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
 If you can't identify the film with confidence, reply {"error":"<why>"} instead of guessing.`;
 /* more than one aim per tier is from before the four-aim rule: Claude works them out again */
 const b2OldAims = r => r.aims.length > 4;
@@ -3795,7 +3810,7 @@ function b2Close(t) {
 }
 function b2Parse(x) { try { return JSON.parse(x); } catch (e) {} try { return JSON.parse(b2Repair(x)); } catch (e) {} return null; }
 function b2Blocks(txt) {
-  const t = String(txt || '').replace(/```(?:json)?/gi, ''), out = [];
+  const t = String(txt || '').replace(/```(?:json)?/gi, '').replace(/[\u00A0\u2007\u202F\u2028\u2029]/g, ' ').replace(/[\u200B-\u200D\u2060\uFEFF]/g, ''), out = [];
   { const a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a >= 0 && b > a) { const v = b2Parse(t.slice(a, b + 1)); if (v && typeof v === 'object') return [v]; } }
   { const a = t.indexOf('{'); if (a >= 0) { const c = b2Close(b2Repair(t.slice(a))); const v = c && b2Parse(c); if (v && typeof v === 'object' && !Array.isArray(v)) { v.__cut = true; return [v]; } } }
   (t.match(/```(?:json)?\s*([\s\S]*?)```/gi) || []).forEach(m => out.push(m.replace(/```(?:json)?/gi, '')));
@@ -3844,7 +3859,7 @@ function b2Entries(v, idRe) {
   if (v && typeof v === 'object') return Object.entries(v).map(([k, x]) => ({ id: b2Num(k), val: x }));
   return [];
 }
-function b2ApplyClaude(r, txt) {
+function b2ApplyClaude(r, txt, allowCut) {
   const raw0 = String(txt || ''), opens = (raw0.match(/[{[]/g) || []).length, closes = (raw0.match(/[}\]]/g) || []).length;
   const objs = b2Blocks(txt);
   if (!objs.length) throw Error('I couldn’t find the results block in that. Copy Claude’s whole reply and paste it here.');
@@ -3863,6 +3878,11 @@ function b2ApplyClaude(r, txt) {
   const scenes = sc.sort((p, q) => (p.id || 0) - (q.id || 0)).map(x => { let st = num(x.val, /^(start|from|begin|in)/i), en = num(x.val, /^(end|to|until|out)/i);
     if (!Number.isFinite(st)) st = clock; if (!Number.isFinite(en) || en <= st) en = st + 2; clock = en;
     return { s: st, e: en, t: String(b2Find(x.val, /^(title|name|summary|desc|what|event)/i) || '').slice(0, 140) }; });
+  if (j.__cut && !allowCut) {
+    const last = scenes[scenes.length - 1], tail = raw0.trim().slice(-60).replace(/\s+/g, ' '), noSrc = b2Pick(j, /^sources?$/i, /source/i) === undefined;
+    const e = Error(`This reply looks cut off: it stops after scene ${scenes.length} (at ${b2Clock(last.e)})${noSrc ? ' and has no sources' : ''}. The box received ${raw0.length.toLocaleString()} characters, ending in “…${tail}”. If Claude’s reply goes further than that, paste the whole thing again with the copy button on its code block. If that really is the end of what Claude sent, you can use it anyway: the rest of the film becomes one final stretch.`);
+    e.cut = true; throw e;
+  }
   if (j.__cut && scenes.length) {   // the scenes after the cut become one final stretch, so the runtime still adds up
     const rt = num(j, /^(runtime|length|minutes|duration)$/i), last = scenes[scenes.length - 1];
     if (Number.isFinite(rt) && rt > last.e + 1) scenes.push({ s: last.e, e: rt, t: 'The rest of the film (Claude’s reply was cut off here)' });
@@ -3890,6 +3910,10 @@ function b2ApplyClaude(r, txt) {
     aims.splice(0, aims.length, ...got.map((x, k) => ({ id: k + 1, val: aims.find(y => y.id === x.id).val })));
   }
   const carry = r.aims.map((x, i) => { const m = aims.find(y => y.id === i + 1); return x.central === 0 || !m ? [] : [...new Set(sent(m.val))].sort((p, q) => p - q); });
+  // Claude's reasons: why each aim, its tier and its scenes; why each detection lands where it does; how it read the film
+  const whyOf = v => { if (!v || typeof v !== 'object' || Array.isArray(v)) return ''; const e = Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(why|reason|reasons|reasoning|because|rationale|explanation|justification)$/i.test(k)); return e ? e[1].trim().slice(0, 600) : ''; };
+  const rd = Object.entries(j).find(([k, y]) => typeof y === 'string' && /^(reading|overview|approach|interpretation|notes?)$/i.test(k));
+  r.mapWhy = { reading: rd ? rd[1].trim().slice(0, 900) : '', aims: r.aims.map((x, i) => { const m = aims.find(y => y.id === i + 1); return m ? whyOf(m.val) : ''; }), dets: {} };
   if (!carry.some(c => c.length)) throw Error('Claude didn’t say where each aim plays out in the plot, so the stats can’t run. Tap “Copy it again and open Claude”, start a fresh chat, and paste: the message carries the instructions every time.');
   r.carry = carry; r.scenes = scenes; r.mapMode = 'scenes';
   const src = b2Find(j, /^sources?$/i); r.mapSources = Array.isArray(src) ? src.map(String).slice(0, 12) : src ? [String(src)] : [];
@@ -3904,6 +3928,8 @@ function b2ApplyClaude(r, txt) {
     const sset = new Set(d.sents), over = live.filter(i => d.whole || (r.carry[i] || []).some(x => sset.has(x)));
     d.add = hit.filter(i => !over.includes(i)); d.drop = []; d.moment = !d.whole && !!(typeof v === 'object' && !Array.isArray(v) && b2Find(v, /^(moment|brief|instant)/i));
     d.placed = true; d.conf = 'solid'; delete d.q; delete d.where;
+    const w = typeof v === 'object' && !Array.isArray(v) ? Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(why|reason|reasons|reasoning|because|rationale|explanation|justification)$/i.test(k)) : null;
+    if (w) r.mapWhy.dets[d.id] = w[1].trim().slice(0, 600);
   });
 }
 function b2ClaudeHTML(r, L) {
@@ -3913,9 +3939,9 @@ function b2ClaudeHTML(r, L) {
     <div class="b2-opts"><button class="bx-btn solid" data-b2="copyc">${back ? 'Copy it again and open Claude' : 'Copy everything and open Claude'}</button><button class="bx-link" data-b2="showmsg">${bt.showMsg ? 'Hide the message' : 'Show the message'}</button>${r.aims.length ? '<button class="bx-link" data-b2="freshaims">Ask Claude for fresh aims</button>' : ''}</div>
     ${bt.showMsg ? `<textarea class="bx-ta" rows="6" readonly onclick="this.select()">${esc(b2ClaudeMsg(r))}</textarea>` : ''}
     <p class="b2-s" style="margin-top:14px">Then paste Claude’s reply here.</p>
-    <textarea class="bx-ta" id="b2Reply" rows="4" placeholder='{"film": …}'></textarea>
+    <textarea class="bx-ta" id="b2Reply" rows="4" placeholder='{"film": …}'>${esc(bt.lastReply || '')}</textarea>
     <div class="b2-opts"><button class="bx-btn solid" data-b2="applyc">Bring it back</button></div>
-    ${bt.cErr ? `<div class="pst-err">${esc(bt.cErr)}</div>` : ''}
+    ${bt.cErr ? `<div class="pst-err">${esc(bt.cErr)}</div>${bt.cutAsk ? `<div class="b2-opts"><button class="bx-btn" data-b2="applycut">Use it anyway</button></div>` : ''}` : ''}
     <div class="b2-nav"><button class="bx-link" data-b2="go" data-v="dets">← What bugged you</button>${back ? '<button class="bx-btn solid" data-b2="afterc">On to the aims →</button>' : '<span></span>'}</div>`;
 }
 function b2LargestHTML(r, L) {
@@ -3959,7 +3985,21 @@ function b2PictureHTML(r, L) {
     <div class="b2-k" style="margin-top:14px">${scenesMode ? `The film, scene by scene${r.scenes.length ? ` · ${b2Clock(r.scenes[r.scenes.length - 1].e)}` : ''}` : 'The plot'}</div>
     <p class="b2-s sm">Underlines show which aims each ${scenesMode ? 'scene' : 'sentence'} carries (strongest centrality on top); shading shows where a detection lands. Hover for the details.${whole.length ? ` ${whole.map(dn).join(', ')} cover${whole.length === 1 ? 's' : ''} the whole film.` : ''}</p>
     <div class="b2-plot">${body}</div>
-    ${scenesMode ? `<p class="b2-s sm" style="margin-top:10px">${src.length ? 'Claude checked: ' + src.map(x => esc(trimTo(x, 80))).join(' · ') : 'Claude listed no sources, so it may have worked from memory alone. Turn on web search in Claude for a researched reading.'}</p>` : ''}</details>`;
+    ${scenesMode ? `<p class="b2-s sm" style="margin-top:10px">${src.length ? 'Claude checked: ' + src.map(x => esc(trimTo(x, 80))).join(' · ') : 'Claude listed no sources, so it may have worked from memory alone. Turn on web search in Claude for a researched reading.'}</p>` : ''}
+    ${b2WhyHTML(r)}</details>`;
+}
+/* why Claude read the film the way it did: its own reasons, as it gave them */
+function b2WhyHTML(r) {
+  const W = r.mapWhy; if (!W || r.mapMode !== 'scenes') return '';
+  const sl = list => { const k = [...new Set(list || [])].sort((p, q) => p - q); return k.length ? k.map(s => `${s + 1}`).join(', ') : 'none'; };
+  const aimRows = b2Live(r).map(({ a, i }) => `<div class="b2-why" style="--c:${aimColor(r, a)}"><b>${CENT_NAMES[a.central] || 'Aim'} · ${esc(a.text || aimShort(a))}</b><span class="sm">Scenes ${sl((r.carry || [])[i])}</span><p>${W.aims && W.aims[i] ? esc(W.aims[i]) : '<i>Claude didn’t give a reason for this one.</i>'}</p></div>`).join('');
+  const detRows = (r.dets || []).map((d, k) => { const hits = b2Hits(r, d); return `<div class="b2-why det"><b>D${k + 1}${d.main ? ' ★' : ''} · ${esc(trimTo(d.note || '', 80))}</b><span class="sm">${d.whole ? 'The whole film' : `${d.moment ? 'A moment in scene' : 'Scenes'} ${sl(d.sents)}`} · ${hits.length ? 'hurts ' + hits.map(i => esc(aimShort(r.aims[i]))).join(', ') : 'hurts no aim'}</span><p>${W.dets && W.dets[d.id] ? esc(W.dets[d.id]) : '<i>Claude didn’t give a reason for this one.</i>'}</p></div>`; }).join('');
+  const any = W.reading || (W.aims || []).some(Boolean) || Object.keys(W.dets || {}).length;
+  return `<div class="b2-k" style="margin-top:16px">Why Claude read it this way</div>
+    ${any ? '' : '<p class="b2-s sm">This reading came back before the booth asked Claude for its reasons. Send the film again for them.</p>'}
+    ${W.reading ? `<p class="b2-why-r">${esc(W.reading)}</p>` : ''}
+    ${aimRows}${detRows}
+    <p class="b2-s sm">These are Claude’s own reasons for where it put things. They don’t touch the stats: only the scenes it chose do.</p>`;
 }
 function b2LockHTML(r, L) {
   const notes = [];
@@ -4109,8 +4149,13 @@ document.addEventListener('click', async e => {
       r.aim = ''; delete r.carry; delete r.mapKey; delete r.scenes; delete r.aimSrc; bt.ai = null; return done();
     case 'showmsg': bt.showMsg = !bt.showMsg; return renderBooth();
     case 'applyc': {
-      try { b2ApplyClaude(r, $('#b2Reply')?.value); } catch (err) { bt.cErr = err.message; return renderBooth(); }
-      bt.cErr = ''; toast(r.mapCut ? 'Claude’s reply was cut off · the booth used everything up to where it stopped. Send it again in a fresh chat for the full film.' : 'Claude’s reading is in · the stats are updated', r.mapCut ? 8000 : 3200); return done();
+      bt.lastReply = $('#b2Reply')?.value || '';
+      try { b2ApplyClaude(r, bt.lastReply); } catch (err) { bt.cErr = err.message; bt.cutAsk = !!err.cut; return renderBooth(); }
+      bt.cErr = ''; bt.cutAsk = false; bt.lastReply = ''; toast(r.mapCut ? 'Claude’s reply was cut off · the booth used everything up to where it stopped. Send it again in a fresh chat for the full film.' : 'Claude’s reading is in · the stats are updated', r.mapCut ? 8000 : 3200); return done();
+    }
+    case 'applycut': {
+      try { b2ApplyClaude(r, bt.lastReply || '', true); } catch (err) { bt.cErr = err.message; bt.cutAsk = false; return renderBooth(); }
+      bt.cErr = ''; bt.cutAsk = false; bt.lastReply = ''; toast('Used as sent · everything after the cut is one final stretch. Send it again in a fresh chat for the full film.', 8000); return done();
     }
     case 'afterc': bt.st = 'aims'; bt.ai = null; return done();
     case 'afteraims': b2AfterAims(r); return done();
@@ -4346,6 +4391,15 @@ function rescreenFilm(id) {
   rebuild();
   launchPlacement(placementRun(placementStart(byId(id), 'rescreen')), false);
 }
+// reorder from the vault: the same showdowns against its lineup, but only its spot changes; its record and the Vault stay as they were
+function reorderFilm(id) {
+  const f = byId(id); if (!f) return;
+  if (!canEdit()) return toast('Sign in to reorder a film.');
+  if (active || SHOW) return toast('Finish the current show first.');
+  db.wheel = db.wheel.filter(x => x !== id);   // off the reel for the showdowns only: nothing is logged until its new spot is set
+  rebuild();
+  launchPlacement(placementRun(placementStart(byId(id), 'reorder')), false);
+}
 function openReviewSheet(id) {
   const f = byId(id); if (!f) return;
   $('#rvsIn').innerHTML = `<div class="rvs-head">${posterHTML(f, 44)}<div><div class="lab">The critic’s review</div><div class="ti">${esc(f.title)}</div><div class="me"><span class="ax-x">${f.M} · ${esc(MAG_NAMES[f.M] || '')}</span></div></div></div>
@@ -4390,7 +4444,7 @@ function setScreenBg(A, B) {
   const key = (A ? A.id : '') + '|' + (B ? B.id : ''); h.dataset.pair = key;
 }
 // the Double Bill: both films' numbers, fight-card style, on the posters
-const VIA_SHOW = { edit: 'Update · ', rewrite: 'Rerun · ', spot: 'Rerun · ', rescreen: 'Re-screening · ', strike: 'Strike · ' };
+const VIA_SHOW = { edit: 'Update · ', rewrite: 'Rerun · ', spot: 'Rerun · ', rescreen: 'Re-screening · ', reorder: 'Reorder only · not recorded · ', strike: 'Strike · ' };
 
 /* ---------- the full picture, carried from the booth into the auditorium ---------- */
 function boothStats(id) {
@@ -4642,7 +4696,7 @@ function renderFinal() {
       <div class="k">Where it landed · ${levelLine(A)}</div>
       <div class="grid">
         <div class="cell"><b>${st.overall ? '#' + st.overall : '—'}</b><span>${st.overall ? 'Of ' + st.of : 'Off the reel'}</span></div>
-        <div class="cell"><b>${w}–${l}</b><span>This show</span></div>
+        <div class="cell"><b>${w}–${l}</b><span>${S.via === 'reorder' ? 'Reorder · not recorded' : 'This show'}</span></div>
         <div class="cell"><b>${lr.Ml ? '#' + lr.Ml : '—'}</b><span>${lr.Ml ? `Of ${lr.Mn} in ${MAG_NAMES[A.M]}` : 'Its lineup'}</span></div>
         <div class="cell"><b>${st.stars != null ? st.stars.toFixed(1) : '—'}</b><span>Stars</span></div>
       </div>
@@ -4849,13 +4903,13 @@ function benchHTML(c) {
     ${vaultShifts && sh.length ? `<div class="vshifts"><b>Lane shifts</b>${sh.slice().reverse().map(x => `<p>${vDate(x.at)} · ${shiftText(x.d, x.cause)}</p>`).join('')}</div>` : ''}
     ${(r.strikes || []).length ? `<div class="vshifts"><b>Strikes</b>${r.strikes.slice().reverse().map(s => `<p>${vDate(s.at)} · #${s.from} → #${s.to} · ${esc(s.why)}</p>`).join('')}</div>` : ''}
     <div class="foot">
-      ${canEdit() ? `<button class="btn new" data-rescreen="${esc(f.id)}">＋ Add new film · Re-screen it</button>` : ''}
+      ${canEdit() ? `<button class="btn new" data-rescreen="${esc(f.id)}">＋ Add new film · Re-screen it</button>${f.pos != null ? `<button class="btn" data-reorder="${esc(f.id)}">⇅ Reorder only · no record</button>` : ''}` : ''}
       ${lastV ? `<button class="btn go" data-watch="${esc(lastV.id)}">▶ Project its latest show</button>` : ''}
       <button class="btn" data-film="${esc(f.id)}">Film profile</button>
       <button class="btn ${vaultShifts ? 'on' : ''}" data-vshifts ${sh.length ? '' : 'disabled'}>Lane shifts · ${sh.length}</button>
       ${lr ? `<span class="note2">${laneText(f)}</span>` : ''}
     </div>
-    ${canEdit() ? '<p class="rs-hint">Re-screening takes it off the reel and back to the Screening Room for a fresh showdown against its current magnitude lineup. Its stance stays as it is; the new showdowns become its next reel.</p>' : ''}
+    ${canEdit() ? '<p class="rs-hint">Re-screening takes it off the reel and back to the Screening Room for a fresh showdown against its current magnitude lineup. Its stance stays as it is; the new showdowns become its next reel. Reorder only runs the same showdowns but just moves it: its wins and losses, form and Vault reels stay exactly as they were.</p>' : ''}
   </div>`;
 }
 function renderVault() {
@@ -4930,6 +4984,7 @@ $('#vault').addEventListener('click', e => {
   const t = e.target.closest('[data-vtab]'); if (t) { vaultTab = t.dataset.vtab; return renderVault(); }
   const k = e.target.closest('[data-vk]'); if (k) { vaultKind = k.dataset.vk; document.querySelectorAll('#vaultIn .vchip').forEach(c => c.classList.toggle('on', c === k)); return renderVaultGrid(); }
   const rs = e.target.closest('[data-rescreen]'); if (rs) return rescreenFilm(rs.dataset.rescreen);
+  const ro = e.target.closest('[data-reorder]'); if (ro) return reorderFilm(ro.dataset.reorder);
   if (e.target.closest('[data-vshifts]')) { vaultShifts = !vaultShifts; return renderVaultGrid(); }
   const w = e.target.closest('[data-watch]'); if (w) return replayShow(VAULT.find(v => v.id === w.dataset.watch));
   const b = e.target.closest('[data-film]'); if (b && b.dataset.film) return openProfile(b.dataset.film);
@@ -5500,7 +5555,7 @@ function renderPlaybill() {
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>You answer · the booth reads the plot and keeps the stats</small></div>
     ${it('1', 'What bugged me', 'first, in my words', 'Before any aims or plot, I type each detection and grade it Nitpick to Problem.')}
-    ${it('2', 'Claude researches it', 'one trip, one paste each way', 'The booth copies the film and my detections and opens my booth project in Claude. Claude searches everything it can (screenplay, transcripts, detailed synopses), works out the film’s aims sorted Central to Minor, breaks the film into its scenes with rough times, and lines each aim and detection up with them. I paste its reply back. It never rates or judges anything; the stats run on screen time.')}
+    ${it('2', 'Claude researches it', 'one trip, one paste each way', 'The booth copies the film and my detections and opens my booth project in Claude. Claude searches everything it can (screenplay, transcripts, detailed synopses), works out the film’s aims sorted Central to Minor, breaks the film into its scenes with rough times, and lines each aim and detection up with them, giving its reason for each. The reasons show in the full picture at the end. I paste its reply back. It never rates or judges anything; the stats run on screen time.')}
     ${it('3', 'Rate the aims', 'on the description alone', 'Each aim comes up, Central first, with the scenes still hidden. I rate how it went for me: Zilch, Edge, Supporting or Core (the peak), with a few aims I’ve rated Core before shown as a yardstick, and I can change the tier Claude gave it. Then the full picture is revealed at the end.')}
     ${it('★', 'The largest', 'suggested', 'With two or more detections, the booth suggests the one that reaches furthest into the aims and I confirm or pick another. It is the footprint: only it counts toward the lean. The others stay on record.')}
     <div class="pb-axis"><span>How the aims went</span></div>
