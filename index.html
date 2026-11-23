@@ -2141,6 +2141,14 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .b2-why .sm{display:block;font:500 12.5px var(--body);color:rgba(243,230,200,.55);margin:2px 0 4px}
 .b2-why p{margin:0;font:500 15px/1.45 var(--body);color:rgba(243,230,200,.86)}
 .b2-why-r{margin:6px 0 10px;font:italic 500 15.5px/1.5 var(--body);color:rgba(243,230,200,.86)}
+.b2-rate .b2-test{display:block;margin-top:4px;font:italic 500 12.5px var(--body);opacity:.65}
+.b2-spread{margin:10px 0 0;font:500 13px var(--body);color:rgba(243,230,200,.55)}
+.b2-boxes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+@media (max-width:760px){.b2-boxes{grid-template-columns:1fr}}
+.b2-box{border:1px solid rgba(232,190,106,.22);border-radius:8px;padding:12px 14px;background:rgba(0,0,0,.14)}
+.b2-box.beats{border-color:rgba(143,209,139,.35)}
+.b2-det.beat{border-left-color:#8fd18b}
+.b2-why.beat{border-left-color:#8fd18b}
 .b2-tier{margin:2px 0 8px;font:500 13.5px var(--body);color:rgba(243,230,200,.6)}
 .b2-tier .bx-link{font-size:13.5px}
 .b2-tier .bx-link.on{color:var(--gold-hi,#f3d48a);font-weight:700;text-decoration:none}
@@ -2698,7 +2706,18 @@ function axisBegin(P, ax) { P.ax = ax; P.pool = ladderOf(ax, lvOf(P.f, ax)).filt
 function placementRun(P) {
   if (!P.ax) axisBegin(P, 'M');
   P.ask = null;
-  if (P.lo < P.hi) { const mid = (P.lo + P.hi) >> 1; P.ask = { opp: P.pool[mid], oppRank: mid + 1, ax: P.ax, level: lvOf(P.f, P.ax), of: P.pool.length, flip: Math.random() < 0.5 }; return P; }
+  while (P.lo < P.hi) {
+    const mid = (P.lo + P.hi) >> 1; P.ask = { opp: P.pool[mid], oppRank: mid + 1, ax: P.ax, level: lvOf(P.f, P.ax), of: P.pool.length, flip: Math.random() < 0.5 };
+    const au = P.ax === 'M' ? sdAuto(P.f, byId(P.ask.opp)) : null;
+    if (!au) return P;   // a dead heat (or a film with no standing): the arena is your call
+    // decided by standing: filed like any showdown, marked as automatic
+    snapshot(P); P.hist[P.hist.length - 1].auto = true;
+    const q = P.ask, f = P.f, o = byId(q.opp), newAbove = au.winner === f.id;
+    P.battles.push({ opp: o.id, oppRank: q.oppRank, newWins: newAbove, ax: q.ax, level: q.level, of: q.of, key: AX_NAME[q.ax], margin: 0, chance: 1, sa: q.level, sb: q.level, even: false, note: '', auto: true, sd: sdSnap(f, o),
+      reason: `${MAG_NAMES[q.level]} showdown: decided by standing, ${esc((newAbove ? f : o).title)} ${au.hi} to ${esc((newAbove ? o : f).title)} ${au.lo}.` });
+    if (newAbove) P.hi = q.oppRank - 1; else P.lo = q.oppRank;
+    P.ask = null;
+  }
   P.done[P.ax] = P.lo;
   return P;
 }
@@ -2723,7 +2742,8 @@ function uncommitPlacement(P) {
 }
 function undoAnswer(P) {
   if (P.committed) uncommitPlacement(P);
-  const h = (P.hist || []).pop(); if (!h) return false;
+  // automatic showdowns go back with the answer before them: you only ever take back your own calls
+  let h = (P.hist || []).pop(); while (h && h.auto && P.hist.length && P.hist.some(x => !x.auto)) h = P.hist.pop(); if (!h) return false;
   Object.assign(P, { ax: h.ax, lo: h.lo, hi: h.hi, pool: h.pool, ask: h.ask }); P.done.M = h.doneM; P.battles.length = h.n;
   return true;
 }
@@ -2747,7 +2767,8 @@ function commitPlacement(P) {
     P.committed = { pid, sid: null }; rebuild();
     return { film: id, pos: db.wheel.indexOf(id), of: db.wheel.length, battles: P.battles, order: P.order, via: P.mode, pid, lanes: { M: P.done.M + 1, mOf: P.pools.M.length + 1, ml: f.M } };
   }
-  P.battles.forEach((b, i) => db.matches.push({ id: 'match:' + uid(), place: pid, a: id, b: b.opp, winner: b.newWins ? id : b.opp, margin: 0, chance: 1, key: b.key, ax: b.ax, level: b.level, ...(b.even ? { even: true } : {}), ...(b.note ? { note: b.note } : {}), ...(b.sd ? { sd: b.sd } : {}), sa: b.sa, sb: b.sb, oppRank: b.oppRank, at: t + i }));
+  P.retune = true;
+  P.battles.forEach((b, i) => db.matches.push({ id: 'match:' + uid(), place: pid, a: id, b: b.opp, winner: b.newWins ? id : b.opp, margin: 0, chance: 1, key: b.key, ax: b.ax, level: b.level, ...(b.even ? { even: true } : {}), ...(b.note ? { note: b.note } : {}), ...(b.sd ? { sd: b.sd } : {}), ...(b.auto ? { auto: true } : {}), sa: b.sa, sb: b.sb, oppRank: b.oppRank, at: t + i }));
   insertBefore(ladderOf('M', f.M), P.pools.M[P.done.M], id);
   db.wheel = P.order.concat(id);
   rebuild();
@@ -3345,8 +3366,14 @@ function admitPending() {
 const WEIGHTS = ['Nitpick', 'Gripe', 'Drawback', 'Problem'];
 const CONSEQ = ['Petty', 'Minor', 'Major', 'Severe'];   // the consequences each one carries   // Port A · how I mean a detection
 const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // Port B · how well the aim worked in a stretch
-const DEF_DET = ['Petty consequences for this stretch.', 'Minor consequences for this stretch.', 'Major consequences for this stretch.', 'Severe consequences for this stretch.'];
-const DEF_AIM = ['I remember it not landing.', 'I remember it, but it’s in between: not clearly landing, not clearly missing.', 'I clearly remember it landing.', 'The peak: it landed as fully as I can picture this kind of aim landing.'];
+const DEF_DET = ['Petty consequences of this stretch.', 'Minor consequences of this stretch.', 'Major consequences of this stretch.', 'Severe consequences of this stretch.'];
+const BEAT_NAMES = ['Perk', 'Bonus', 'Strength', 'Asset'];
+const DEF_BEAT = ['A nice-to-have; a micro-detail.', 'A plus; a meso-feature.', 'An advantage; a macro, core component.', 'A selling point; the holistic, defining foundation or identity.'];
+const BEAT_COLOR = '#8fd18b', ITEM_MAX = 2;
+/* the two boxes of your view: detections (non-positive, graded by the consequences of the stretch against the aim's what)
+   and beats (positive, graded by the scope of the quality against the aim's how) */
+const B2_KIND = { d: { key: 'dets', pre: 'D', names: null, defs: null, one: 'detection', many: 'detections', big: 'footprint' }, b: { key: 'beats', pre: 'B', names: null, defs: null, one: 'beat', many: 'beats', big: 'hallmark' } };
+const DEF_AIM = ['Taken as a whole, the delivery fails to achieve what it’s going for.', 'Taken as a whole, the delivery falls short of what it’s going for.', 'Taken as a whole, the delivery achieves what it’s going for.', 'Taken as a whole, the delivery triumphs in what it’s going for.'];
 const DEF_WILD = 'Something I remember that isn’t part of any aim. It can stand alone or sit on top of an aim’s stretch. Remembered, so not Shutter.';
 const WILD_WEIGHTS = ['Minor', 'Secondary', 'Major', 'Central'];
 const DEF_WILDW = ['A small part of my View.', 'A noticeable part of my View.', 'A big part of my View.', 'At the heart of my View.'];
@@ -3371,7 +3398,7 @@ function clearDraft() { try { localStorage.removeItem('cmancinema_booth_draft_v1
 function startBooth() {
   const f = active?.film || {}, r = raw(f.id) || {};
   bt = { film: f.id, mode: active?.mode, mag: Number.isInteger(r.mag) ? r.mag : null,
-         snap: JSON.stringify({ plot: r.plot || null, plotSrc: r.plotSrc ?? null, dets: r.dets || [], aims: r.aims || [], cuts: r.cuts ?? null, cutsOk: !!r.cutsOk, wild: r.wild || [], footprint: r.footprint || '', aim: r.aim || '',
+         snap: JSON.stringify({ plot: r.plot || null, plotSrc: r.plotSrc ?? null, dets: r.dets || [], beats: r.beats || [], aims: r.aims || [], cuts: r.cuts ?? null, cutsOk: !!r.cutsOk, wild: r.wild || [], footprint: r.footprint || '', aim: r.aim || '',
            __map: Object.fromEntries(['carry', 'scenes', 'mapKey', 'mapMode', 'mapSources', 'mapEngine', 'mapCut', 'aimSrc', 'mapWhy'].map(k => [k, r[k] === undefined ? null : r[k]])) }) };
 }
 function lockedNotice(where) {
@@ -3585,11 +3612,12 @@ function splitAim(t) {
    ===================================================================== */
 /* one scale for the four ratings, from their definitions: landing is the big divide (Edge → Supporting)
    B2_VAL: how much of the aim landed · B2_DMG: how much a flaw there can undermine it = the share that didn't land */
-const B2_VAL = [null, 0, .25, .75, 1];
-const B2_DMG = [0, 1, .75, .25, 0];
+const B2_VAL = [null, .1, .25, .6, 1];   // fails 10 · falls short 25 · achieves 60 · triumphs 100
+const B2_DMG = [0, 1, .8, .4, 0];
 const b2RateName = v => v === 0 ? 'Doesn’t ring a bell' : AIM_WEIGHTS[v - 1] || 'not rated';                 // how much a flaw undermines an aim, by your rating of the aim
-const B2_RATE_DEF = ['It didn’t land for me.', 'In between: clearly not missing, but clearly not landing.', 'It landed: I clearly remember it working.', 'The peak: it landed as fully as I can picture this kind of aim landing.'];
-const B2_STEPS = [['dets', 'What bugged you'], ['claude', 'Send to Claude'], ['aims', 'Rate the aims'], ['largest', 'The largest'], ['lock', 'Choose and lock']];
+const B2_RATE_DEF = DEF_AIM;
+const B2_RATE_TEST = ['Fails', 'Falls short', 'Achieves', 'Triumphs'];
+const B2_STEPS = [['dets', 'Your view'], ['claude', 'Send to Claude'], ['aims', 'Grade the aims'], ['largest', 'Footprint & hallmark'], ['lock', 'Choose and lock']];
 
 const b2SKey = r => { const t = String(r.title || '') + '\u0001' + String(r.year || '') + '\u0001' + String(r.aim || ''); let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return 'S' + t.length + ':' + h; };
 const b2Fresh = r => r.mapMode === 'scenes' ? r.mapKey === b2SKey(r) && Array.isArray(r.scenes) : r.mapKey === b2Key(r);
@@ -3612,61 +3640,89 @@ function lean2(r) {
   const scenesMode = r.mapMode === 'scenes';
   const live = b2Live(r), unrated = live.filter(x => !Number.isInteger(x.a.rate)), unset = live.filter(x => x.a.central == null);
   const dets = (r.dets || []).filter(d => Number.isInteger(d.w) && (d.whole || (d.sents || []).length));
-  const ungraded = (r.dets || []).filter(d => !Number.isInteger(d.w)), unplaced = (r.dets || []).filter(d => Number.isInteger(d.w) && !b2Placed(d));
+  const all = [...(r.dets || []), ...(r.beats || [])], ungraded = all.filter(d => !Number.isInteger(d.w)), unplaced = all.filter(d => Number.isInteger(d.w) && !b2Placed(d));
   const out = { unrated, unset, ungraded, unplaced, dets, main: null, mainAims: [], cov: 0, F: null, B: null, score: null, t: null, heart: false, near: null };
   if (unrated.length || unset.length) return out;
-  const carry = r.carry.map(a => new Set(a || [])), cent = i => CENT_SIG[r.aims[i].central] || 0;
-  const counted = live.filter(x => x.a.rate !== 0), C = new Float32Array(n); counted.forEach(({ i }) => carry[i].forEach(s => { C[s] += cent(i); }));
+  const carry = r.carry.map(a => new Set(a || []));
   const main = dets.find(d => d.main) || dets[0] || null;
-  // an aim the largest detection plainly hurts outside its own scenes: those scenes join the aim's whole, so the bite never outgrows it
-  if (main) (main.add || []).forEach(i => { if (!r.aims[i] || r.aims[i].rate === 0 || r.aims[i].central === 0 || !live.some(x => x.i === i)) return; (main.whole ? [...Array(n).keys()] : main.sents || []).forEach(s => { if (!carry[i].has(s)) C[s] += cent(i); }); });
-  let T = 0; for (let s = 0; s < n; s++) T += len[s] * C[s];
-  const part = (d, s) => d.moment && scenesMode ? Math.min(1, B2_MOMENT / len[s]) : 1;   // how much of the scene the detection covers
+  const part = (d, s) => d.moment && scenesMode ? Math.min(1, B2_MOMENT / len[s]) : 1;   // a moment covers about half a minute of its scene
   const sceneSet = d => d.whole ? [...Array(n).keys()] : d.sents;
-  const Fs = new Float32Array(n), Bs = new Float32Array(n);
-  (main ? [main] : []).forEach(d => {   // the footprint is the single largest detection; the others stay on record
-    const f = 1, sev = SEV_SIG[d.w], hits = b2Hits(r, d), add = new Set(d.add || []);
-    sceneSet(d).forEach(s => {
-      const k = part(d, s);
-      Fs[s] = Math.max(Fs[s], sev * f * k);
-      let b = 0; hits.forEach(i => { if (r.aims[i].rate !== 0 && (carry[i].has(s) || add.has(i))) b += cent(i) * B2_DMG[r.aims[i].rate]; });
-      Bs[s] = Math.max(Bs[s], b * sev * f * k);   // a Nitpick bites a quarter as hard as a Problem
-    });
-  });
-  let fs = 0, bs = 0; for (let s = 0; s < n; s++) { fs += len[s] * Fs[s]; bs += len[s] * Bs[s]; }
-  out.F = Math.round(100 * fs / L); out.B = T ? Math.min(100, Math.round(100 * bs / T)) : 0;
+  out.F = 0;
   if (main) {
-    const ms = sceneSet(main), add = new Set(main.add || []), cover = s => len[s] * part(main, s);
+    const ms = sceneSet(main), mset = new Set(ms), add = new Set(main.add || []), cover = s => len[s] * part(main, s);
     out.main = main; out.mainAims = b2Hits(r, main);
-    out.cov = ms.reduce((t, s) => t + cover(s), 0) / L;
-    // the center of the View: the largest detection undermines at least half of a Major or Central aim, weighed by its grade
+    out.cov = ms.reduce((t, s) => t + cover(s), 0) / L; out.F = Math.round(100 * out.cov);
+    // the heart of the film: the footprint covers at least half of a Central or Major aim, weighed by its grade
     out.heart = out.mainAims.some(i => {
       if ((r.aims[i].central || 0) < 3 || r.aims[i].rate === 0) return false;
-      const own = add.has(i) ? [...new Set([...carry[i], ...ms])] : [...carry[i]], mset = new Set(ms);
+      const own = add.has(i) ? [...new Set([...carry[i], ...ms])] : [...carry[i]];
       const tot = own.reduce((t, s) => t + len[s], 0), hit = own.filter(s => mset.has(s)).reduce((t, s) => t + cover(s), 0);
-      return tot && hit * B2_DMG[r.aims[i].rate] * SEV_SIG[main.w] / tot >= .5;
+      return tot && hit / tot * SEV_SIG[main.w] >= .5;
     });
   }
-  const score = out.B; out.score = Math.round(score);   // the lean: the footprint against the aim
+  // the lean: the footprint's grade (which carries its significance) × the share of the film it covers
+  const score = main ? 100 * SEV_SIG[main.w] * out.cov : 0; out.B = null; out.score = Math.round(score);
   out.t = out.heart ? (score >= LEAN_CUT.whole ? 1 : score >= LEAN_CUT.spread ? 2 : 3) : (score >= LEAN_CUT.edge ? 4 : 5);
   const cuts = out.heart ? [[LEAN_CUT.spread, 3, 2], [LEAN_CUT.whole, 2, 1]] : [[LEAN_CUT.edge, 5, 4]];
   const [cut, light, heavy] = cuts.slice().sort((a, b) => Math.abs(score - a[0]) - Math.abs(score - b[0]))[0], dist = Math.abs(score - cut);
   if (dist <= LEAN_CUT.near) out.near = { dist: Math.round(dist * 10) / 10, toward: score < cut ? heavy : light };
   return out;
 }
-/* the detection that would push the lean furthest, if it were the largest */
-function b2Suggest(r) {
-  const ds = (r.dets || []).filter(d => Number.isInteger(d.w) && (d.whole || (d.sents || []).length)); if (ds.length < 2) return ds[0] || null;
-  const was = ds.map(d => d.main); let best = null, bs = -1;
-  ds.forEach(d => { ds.forEach(x => { x.main = x === d; }); const L = lean2(r); const v = L && L.score != null ? (L.heart ? 1e6 : 0) + L.B * 1000 + SEV_SIG[d.w] * L.cov * 100 : 0; /* furthest into the aims first, then the most film covered */ if (v > bs) { bs = v; best = d; } });
-  ds.forEach((d, i) => { d.main = was[i]; });
-  return best;
+/* share of the film an item covers (a moment ≈ half a minute) */
+function b2Cov(r, d) {
+  const len = b2Units(r), L = len.reduce((t, v) => t + v, 0); if (!L || !b2Placed(d)) return 0;
+  const ss = d.whole ? len.map((_, s) => s) : (d.sents || []);
+  return ss.reduce((t, s) => t + (d.moment ? Math.min(len[s] || 0, B2_MOMENT) : len[s] || 0), 0) / L;
 }
-
+/* the largest of a box: grade first (it carries the significance), then how much of the film it covers */
+function b2Suggest(r, key = 'dets') {
+  const ds = (r[key] || []).filter(d => Number.isInteger(d.w)); if (ds.length < 2) return ds[0] || null;
+  return ds.slice().sort((p, q) => (q.w - p.w) || (b2Cov(r, q) - b2Cov(r, p)))[0];
+}
+/* the largest and the second of a box, as they count: the largest in full, the second at half */
+function b2Ranked(r, key) { const ds = (r[key] || []).filter(d => Number.isInteger(d.w) && b2Placed(d)); const m = ds.find(d => d.main) || ds[0]; return m ? [m, ...ds.filter(d => d !== m)].slice(0, ITEM_MAX) : []; }
+/* THE STANDING · two views of the film, each counted once
+   close-up: your beats against your detections, grade first and size second · wide shot: your aim grades, weighted by tier */
+function b2CloseUp(r) {
+  const val = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d)), sum = key => b2Ranked(r, key).reduce((t, d, i) => t + (i ? .5 : 1) * val(d), 0);
+  return Math.max(0, Math.min(100, 50 + 50 * (sum('beats') - sum('dets')) / 1.5));
+}
+function b2WideShot(r) {
+  const as = (r.aims || []).filter(a => a && Number.isInteger(a.rate) && a.rate > 0 && Number.isInteger(a.central) && a.central > 0);
+  const W = as.reduce((t, a) => t + CENT_SIG[a.central], 0); return W ? 100 * as.reduce((t, a) => t + CENT_SIG[a.central] * B2_VAL[a.rate], 0) / W : null;
+}
+const SD_BAL0 = 1.2, SD_HEAT = 3, SD_TUNE_N = 10;
+const sdBal = () => { const b = db.settings.sdBal; return b && Number.isFinite(b.k) ? b.k : SD_BAL0; };
+/* standing: half the close-up + half the wide shot, the close-up balanced so each view moves it equally */
+function b2Standing(r, k = sdBal()) {
+  if (!r || !Array.isArray(r.carry) || (r.mapMode === 'scenes' && !b2Fresh(r))) return null;
+  const c = b2CloseUp(r), w = b2WideShot(r); if (w == null) return null;
+  return { close: Math.round(c), wide: Math.round(w), std: Math.round(10 * (.5 * (50 + (c - 50) * k) + .5 * w)) / 10 };
+}
+/* where your aim grades and what you named disagree sharply: shown in step 3 for you to settle */
+function b2Flags(r) {
+  if (!Array.isArray(r.carry) || !b2Fresh(r)) return [];
+  const len = b2Units(r), out = [], ok = new Set(r.flagsOk || []);
+  const share = (d, i) => { const own = (r.carry[i] || []), tot = own.reduce((t, s) => t + (len[s] || 0), 0); if (!tot) return d.whole ? 1 : 0;
+    const ms = new Set(d.whole ? len.map((_, s) => s) : d.sents || []); return own.filter(s => ms.has(s)).reduce((t, s) => t + (d.moment ? Math.min(len[s], B2_MOMENT) : len[s]), 0) / tot; };
+  b2Live(r).forEach(({ a, i }) => {
+    if (!Number.isInteger(a.rate) || a.rate < 1) return;
+    (r.dets || []).filter(d => Number.isInteger(d.w) && b2Placed(d) && d.w >= 3 && b2Hits(r, d).includes(i)).forEach(d => {
+      const sh = share(d, i), key = `${i}:${d.id}:${a.rate}:${d.w}`; if (a.rate === 4 && sh >= 1 / 3 && !ok.has(key))
+        out.push({ key, d, i, text: `You graded ${aimShort(a)} as a triumph, but ${b2Label(r, d)}, a ${WEIGHTS[d.w - 1]}, covers about ${Math.round(sh * 100)}% of it.` }); });
+    (r.beats || []).filter(d => Number.isInteger(d.w) && b2Placed(d) && d.w >= 3 && b2Hits(r, d).includes(i)).forEach(d => {
+      const sh = share(d, i), key = `${i}:${d.id}:${a.rate}:${d.w}`; if (a.rate <= 2 && sh >= 1 / 3 && !ok.has(key))
+        out.push({ key, d, i, text: `You graded ${aimShort(a)} as ${a.rate === 1 ? 'failing' : 'falling short'}, but ${b2Label(r, d)}, a ${BEAT_NAMES[d.w - 1]}, covers about ${Math.round(sh * 100)}% of it.` }); });
+  });
+  return out;
+}
 /* ---------- the booth ---------- */
 function b2AfterAims(r) {
-  const ds = (r.dets || []).filter(x => Number.isInteger(x.w));
-  if (ds.length >= 2) { if (!bt.mainPicked) { const sg = b2Suggest(r); r.dets.forEach(x => { x.main = x === sg; }); } bt.st = 'largest'; }
+  if (b2Flags(r).length) { bt.st = 'aims'; bt.ai = null; return; }
+  const ds = (r.dets || []).filter(x => Number.isInteger(x.w)), bs = (r.beats || []).filter(x => Number.isInteger(x.w));
+  if (bs.length >= 2 && !bt.hallPicked) { const sg = b2Suggest(r, 'beats'); r.beats.forEach(x => { x.main = x === sg; }); }
+  if (ds.length >= 2 && !bt.mainPicked) { const sg = b2Suggest(r); r.dets.forEach(x => { x.main = x === sg; }); }
+  if (ds.length >= 2 || bs.length >= 2) { bt.st = 'largest'; }
   else { if (ds[0]) r.dets.forEach(x => { x.main = x === ds[0]; }); bt.st = 'lock'; }
 }
 function b2Order(r) { return b2Live(r).slice().sort((p, q) => (q.a.central ?? 5) - (p.a.central ?? 5)); }
@@ -3687,7 +3743,7 @@ function renderBooth() {
   $('#b2Steps').innerHTML = B2_STEPS.map(([k, t], i) => `<li class="${k === st ? 'now' : ''}" data-b2="go" data-v="${k}" tabindex="0"><span class="no">${i + 1}</span><b>${t}</b><em>${b2StepNote(r, k, L)}</em></li>`).join('');
   const reading = ready && !b2Fresh(r), stale = !reading && b2Stale(r);
   $('#b2Stats').innerHTML = !ready ? '' : reading ? `<span class="b2-wait">The stats run once Claude’s reading comes back.</span>`
-    : L && L.score != null ? `<span>Footprint <b>${L.F}</b></span><span>Aim bite <b>${L.B}</b></span><span>Lean <b>${L.score}</b></span><span class="b2-tier">${magDisc(L.t)}<b>${L.t} · ${MAG_NAMES[L.t]}</b></span><small>${r.mapEngine === 'claude' ? (r.mapMode === 'scenes' ? `Read by Claude from the whole film${(r.scenes || []).length ? ` · ${r.scenes.length} scenes` : ''}` : 'Read by Claude') : r.mapEngine === 'model' ? 'Read for meaning' : 'Read by word matching'}${stale ? ' · some detections were added since: send it again to place them' : ''} · recalculates after every answer</small>`
+    : L && L.score != null ? `<span>Footprint covers <b>${L.F}%</b></span><span>Lean <b>${L.score}</b></span>${(() => { const S = b2Standing(r); return S ? `<span>Close-up <b>${S.close}</b></span><span>Wide shot <b>${S.wide}</b></span><span>Standing <b>${S.std}</b></span>` : ''; })()}<span class="b2-tier">${magDisc(L.t)}<b>${L.t} · ${MAG_NAMES[L.t]}</b></span><small>${r.mapEngine === 'claude' ? (r.mapMode === 'scenes' ? `Read by Claude from the whole film${(r.scenes || []).length ? ` · ${r.scenes.length} scenes` : ''}` : 'Read by Claude') : r.mapEngine === 'model' ? 'Read for meaning' : 'Read by word matching'}${stale ? ' · some detections were added since: send it again to place them' : ''} · recalculates after every answer</small>`
     : `<span class="b2-wait">The stats run once every aim is rated.</span>`;
   $('#b2Panel').innerHTML = !ready ? b2PasteHTML(r) : st === 'aims' ? b2AimsHTML(r) : st === 'dets' ? b2DetsHTML(r, L, reading) : st === 'claude' ? b2ClaudeHTML(r, L) : st === 'largest' ? b2LargestHTML(r, L) : b2LockHTML(r, L);
   $('#b2Foot').innerHTML = `<button class="bx-link" data-cancelwf>${active.mode === 'new' && !raw(active.film.id)?.mag ? 'Withdraw this ticket' : 'Cancel · put everything back'}</button>`;
@@ -3706,62 +3762,73 @@ function b2PasteHTML(r) {
 }
 function b2AimsHTML(r) {
   const order = b2Order(r); if (!order.length) return `<p class="b2-q">The aims come from Claude.</p><p class="b2-s">Send the film to Claude first; its reply brings the aims with it.</p><div class="b2-opts"><button class="bx-btn solid" data-b2="go" data-v="claude">Go to Send to Claude</button></div>`;
+  const flags = order.every(x => Number.isInteger(x.a.rate)) ? b2Flags(r) : [];
+  if (flags.length && bt.ai == null) return `<p class="b2-q">A check before the math</p>
+    <p class="b2-s">You graded your beats and detections before you saw these aims. Where an aim grade and something you named disagree sharply, keep both (they can stand together) or go back and re-grade.</p>
+    ${flags.map(f => `<div class="b2-ask" style="margin:10px 0"><b>${esc(f.text)}</b><div class="b2-opts"><button class="bx-btn" data-b2="flagok" data-v="${esc(f.key)}">Keep both</button><button class="bx-btn" data-b2="go" data-v="dets">Re-grade ${b2Label(r, f.d)}</button><button class="bx-link" data-b2="aim" data-v="${order.findIndex(x => x.i === f.i)}">Re-grade the aim</button></div></div>`).join('')}
+    ${b2PictureHTML(r, null)}`;
   if (bt.ai == null || !order[bt.ai]) { const k = order.findIndex(x => !Number.isInteger(x.a.rate)); bt.ai = k < 0 ? 0 : k; }
   const { a, i } = order[bt.ai], col = aimColor(r, a);
   return `<div class="b2-k">Aim ${bt.ai + 1} of ${order.length}${a.central != null ? ` · ${CENT_NAMES[a.central]}` : ''}</div>
     <div class="b2-aim" style="--c:${col}">${esc(a.text)}</div>
     ${a.central != null ? `<div class="b2-tier">Tier (Claude’s call, yours to change): ${[4, 3, 2, 1].map(c => `<button class="bx-link ${a.central === c ? 'on' : ''}" data-b2="cent" data-v="${c}">${CENT_NAMES[c]}</button>`).join(' · ')}</div>` : ''}
     ${a.central == null ? `<p class="b2-q">How central is it to the film?</p><div class="b2-opts">${[4, 3, 2, 1].map(c => `<button class="bx-btn" data-b2="cent" data-v="${c}">${CENT_NAMES[c]}</button>`).join('')}</div>`
-      : `<p class="b2-q">How did it go for you?</p>
-    <div class="b2-rates">${AIM_WEIGHTS.map((n, j) => `<button class="b2-rate ${a.rate === j + 1 ? 'on' : ''}" data-b2="rate" data-v="${j + 1}"><b>${n}</b><span>${B2_RATE_DEF[j]}</span></button>`).join('')}</div>
+      : `<p class="b2-q">Taken as a whole, did its delivery achieve what it’s going for?</p>
+    <p class="b2-s sm">The wide shot: the aim as a whole, with everything you can see in the full frame below. Your beats and detections are your close-up; they count on their own.</p>
+    <div class="b2-rates">${AIM_WEIGHTS.map((n, j) => `<button class="b2-rate ${a.rate === j + 1 ? 'on' : ''}" data-b2="rate" data-v="${j + 1}"><b>${n}</b><span>${B2_RATE_DEF[j]}</span><small class="b2-test">${B2_RATE_TEST[j]}</small></button>`).join('')}</div>
     <div class="b2-opts"><button class="bx-btn ${a.rate === 0 ? 'on' : ''}" data-b2="rate" data-v="0" title="Leaves this aim out of the stats: it counts toward nothing">Doesn’t ring a bell · leave it out</button></div>
-    ${(() => { const refs = coreRefs(a.central, active.film.id); return refs.length ? `<div class="b2-ref"><span>You’ve rated these Core</span>${refs.map(x => `<p><b>${esc(x.f.title)} · ${CENT_NAMES[x.c] || ''}</b> ${esc(trimTo(x.t, 120))}</p>`).join('')}<small>Did this one land as fully as those?</small></div>` : ''; })()}`}
+    ${b2SpreadHTML(active.film.id)}`}
     <div class="b2-list">${order.map((x, k) => `<button class="b2-pill ${k === bt.ai ? 'here' : ''}" data-b2="aim" data-v="${k}" style="--c:${aimColor(r, x.a)}"><i></i>${esc(aimShort(x.a))}<em>${b2RateName(x.a.rate)}</em></button>`).join('')}</div>
+    ${b2PictureHTML(r, null)}
     <div class="b2-nav">${bt.ai > 0 ? '<button class="bx-link" data-b2="prev">← Previous aim</button>' : '<span></span>'}${order.every(x => Number.isInteger(x.a.rate)) ? '<button class="bx-btn solid" data-b2="afteraims">Next →</button>' : '<span></span>'}</div>`;
 }
-function b2DetCard(r, d, L) {
-  const n = r.dets.indexOf(d) + 1, hits = b2Hits(r, d), live = b2Live(r), offs = live.filter(x => !hits.includes(x.i));
-  let lands;
-  if (!d.whole && !b2Placed(d)) lands = '<span class="b2-on">Goes to Claude with the rest</span>';
-  else if (d.placing) lands = '<span class="b2-read"><i></i>Finding where it lands…</span>';
-  else if (d.q === 'scope') lands = `<div class="b2-ask"><b>I couldn’t pin this one down.</b> Is it about the whole film, or one part of it?<div class="b2-opts"><button class="bx-btn" data-b2="whole" data-id="${esc(d.id)}">The whole film</button><button class="bx-btn" data-b2="part" data-id="${esc(d.id)}">One part</button></div></div>`;
-  else if (d.q === 'which') lands = `<div class="b2-ask"><b>Which aim did it hurt most?</b><div class="b2-opts">${live.map(x => `<button class="bx-btn" data-b2="which" data-id="${esc(d.id)}" data-v="${x.i}" style="border-color:${aimColor(r, x.a)}">${esc(aimShort(x.a))}</button>`).join('')}</div></div>`;
-  else lands = `<div class="b2-lands"><span class="b2-on">${d.whole ? 'The whole film · lands on' : d.where ? esc(d.where.replace(/^./, c => c.toUpperCase())) + ' · lands on' : 'Lands on'}</span>${hits.map(i => { const a = r.aims[i]; return `<span class="b2-tag" style="--c:${aimColor(r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${CENT_NAMES[a.central] || '—'}<button data-b2="drop" data-id="${esc(d.id)}" data-v="${i}" aria-label="Not this aim">×</button></span>`; }).join('') || '<span class="b2-on">no aim</span>'}
-      ${offs.length ? `<select class="b2-add" data-b2sel="${esc(d.id)}"><option value="">+ another aim</option>${offs.map(x => `<option value="${x.i}">${esc(aimShort(x.a))}</option>`).join('')}</select>` : ''}
-      ${d.conf === 'unsure' && !d.whole ? '<span class="b2-on" title="The match was weak">· a guess</span>' : ''}</div>`;
-  return `<div class="b2-det ${d.main ? 'main' : ''}"><div class="b2-dh"><b>D${n}${d.main ? ' ★' : ''}</b><span>${esc(d.note || '')}</span><button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
-    <div class="b2-opts sm">${WEIGHTS.map((w, j) => `<button class="bx-btn ${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(DEF_DET[j])}">${w}</button>`).join('')}
+const b2KindOf = (r, d) => (r.beats || []).includes(d) ? 'b' : 'd';
+const b2Names = k => k === 'b' ? BEAT_NAMES : WEIGHTS, b2Defs = k => k === 'b' ? DEF_BEAT : DEF_DET;
+const b2Label = (r, d) => { const k = b2KindOf(r, d); return B2_KIND[k].pre + ((r[B2_KIND[k].key] || []).indexOf(d) + 1); };
+function b2Item(r, id) { for (const k of ['d', 'b']) { const d = (r[B2_KIND[k].key] || []).find(x => x.id === id); if (d) return { d, k }; } return null; }
+function b2ItemCard(r, k, d) {
+  const K = B2_KIND[k], hits = b2Placed(d) ? b2Hits(r, d) : [], live = b2Live(r), offs = live.filter(x => !hits.includes(x.i));
+  const lands = !b2Placed(d) ? '<span class="b2-on">Goes to Claude with the rest</span>'
+    : `<div class="b2-lands"><span class="b2-on">${d.whole ? 'The whole film · touches' : d.moment ? 'A moment · touches' : 'Touches'}</span>${hits.map(i => { const a = r.aims[i]; return `<span class="b2-tag" style="--c:${aimColor(r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${CENT_NAMES[a.central] || '—'}<button data-b2="drop" data-id="${esc(d.id)}" data-v="${i}" aria-label="Not this aim">×</button></span>`; }).join('') || '<span class="b2-on">no aim</span>'}
+      ${offs.length ? `<select class="b2-add" data-b2sel="${esc(d.id)}"><option value="">+ another aim</option>${offs.map(x => `<option value="${x.i}">${esc(aimShort(x.a))}</option>`).join('')}</select>` : ''}</div>`;
+  return `<div class="b2-det ${k === 'b' ? 'beat' : ''} ${d.main ? 'main' : ''}"><div class="b2-dh"><b>${b2Label(r, d)}${d.main ? ' ★' : ''}</b><span>${esc(d.note || '')}</span><button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
+    <div class="b2-opts sm">${b2Names(k).map((w, j) => `<button class="bx-btn ${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
       <button class="bx-link" data-b2="${d.whole ? 'notwhole' : 'whole'}" data-id="${esc(d.id)}">${d.whole ? 'Not the whole film' : 'It’s the whole film'}</button></div>${lands}</div>`;
 }
+function b2BoxHTML(r, k) {
+  const K = B2_KIND[k], list = r[K.key] || [], full = list.length >= ITEM_MAX, txt = k === 'b' ? (bt.bn || '') : (bt.dn || ''), g = k === 'b' ? bt.bg : bt.dg;
+  return `<div class="b2-box ${k === 'b' ? 'beats' : 'dets'}">
+    <div class="b2-k">${k === 'b' ? 'Beats · positive' : 'Detections · non-positive'} · ${list.length} of ${ITEM_MAX}</div>
+    <p class="b2-s sm">${k === 'b' ? 'A positive thing from your own experience of the film: what it is and where. Grade the scope of that quality, against how the film delivers its effects.' : 'A non-positive thing from your own experience of the film: what it is and where. Grade the consequences of that stretch, against what the film is trying to accomplish.'}</p>
+    ${full ? `<p class="b2-s sm"><i>That’s two: the most that count. Remove one to name another.</i></p>` : `<textarea class="bx-ta" id="${k === 'b' ? 'b2BNote' : 'b2Note'}" rows="2" placeholder="${k === 'b' ? 'The final reunion at the radio station' : 'The second half piles on the misery'}">${esc(txt)}</textarea>
+    <div class="b2-opts">${b2Names(k).map((w, j) => `<button class="bx-btn ${g === j + 1 ? 'on' : ''}" data-b2="dg" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
+      <button class="bx-btn solid" data-b2="adddet" data-k="${k}" ${txt.trim() && g ? '' : 'disabled'}>Add it</button></div>
+    ${g ? `<p class="b2-s sm"><b>${b2Names(k)[g - 1]}:</b> ${esc(b2Defs(k)[g - 1])}</p>` : ''}`}
+    <div class="b2-dets">${list.map(d => b2ItemCard(r, k, d)).join('')}</div></div>`;
+}
 function b2DetsHTML(r, L, reading) {
-  const ds = r.dets || [];
-  const oldMarks = r.mapMode !== 'scenes' && ((r.dets || []).some(d => (d.ranges || []).length) || r.aims.some(a => stretches(a).length));
-  return `${oldMarks ? '<div class="b2-ask" style="margin:0 0 12px"><b>This film was marked in the old booth.</b> This booth starts it fresh: grade your detections below (old ones are kept as text), then send it to Claude. Cancel puts everything back as it was.</div>' : ''}<p class="b2-q">${ds.length ? 'Anything else bug you?' : 'Did anything bug you?'}</p>
-    <p class="b2-s">Say it in your own words and grade it. Name what happens (“the shootout drags”) or where (“the third act drags”, “after the heist”) and the booth finds it in the plot and works out which aims it hurts.</p>
-    <textarea class="bx-ta" id="b2Note" rows="2" placeholder="The third act drags once the heist is over">${esc(bt.dn || '')}</textarea>
-    <div class="b2-opts">${WEIGHTS.map((w, j) => `<button class="bx-btn ${bt.dg === j + 1 ? 'on' : ''}" data-b2="dg" data-v="${j + 1}" title="${esc(DEF_DET[j])}">${w}</button>`).join('')}
-      <button class="bx-btn solid" data-b2="adddet" ${(bt.dn || '').trim() && bt.dg ? '' : 'disabled'}>Add it</button></div>
-    ${bt.dg ? `<p class="b2-s sm"><b>${WEIGHTS[bt.dg - 1]}:</b> ${esc(DEF_DET[bt.dg - 1])}</p>` : ''}
-    
-    <div class="b2-dets">${ds.slice().reverse().map(d => b2DetCard(r, d, L)).join('')}</div>
-    <div class="b2-nav"><span></span><button class="bx-btn solid" data-b2="donedets">${ds.length ? 'That’s all · on to Claude →' : 'Nothing bugged me · on to Claude →'}</button></div>`;
+  const nd = (r.dets || []).length, nb = (r.beats || []).length;
+  return `<p class="b2-q">Your view</p>
+    <p class="b2-s">Name up to two of each, in your own words: what it is and where (“the second half”, “the final scene”, “the whole film”). You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. The largest of each becomes the footprint and the hallmark.</p>
+    <div class="b2-boxes">${b2BoxHTML(r, 'd')}${b2BoxHTML(r, 'b')}</div>
+    <div class="b2-nav"><span></span><button class="bx-btn solid" data-b2="donedets">${nd || nb ? 'That’s my view · on to Claude →' : 'Nothing to name · on to Claude →'}</button></div>`;
 }
 /* ---------- Claude does the reading ---------- */
-const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives my detections (D1, D2…: things that bugged me, in my words), and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
+const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives my detections (D1, D2: non-positive things from my own experience of it, in my words), my beats (B1, B2: positive things from my own experience of it, in my words), and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
 
 0. Research first, every time, however well you think you know the film: search everything available to you (the screenplay or shooting script, transcripts, detailed synopses, scene-by-scene breakdowns, reputable reviews) and cross-check what happens and when. If you can't search, say so in "sources".
-1. The aims. If the message gives AIMS, use them exactly as given, keeping their numbers. If not, work them out before you read the detections, from the film alone: the detections must not shape the aims in any way. Work out what the film itself is trying to accomplish on screen and sort it into Central, Major, Secondary and Minor: exactly one aim per tier, a single sentence summing up everything the film is trying to do at that level, so four aims at most; leave a tier out if nothing genuinely belongs there. Only what the film is trying to do on screen: nothing outside it, like its legacy, influence, reception or anyone's career.
+1. The aims. If the message gives AIMS, use them exactly as given, keeping their numbers. If not, work them out before you read the detections and beats, from the film alone: nothing I named may shape the aims in any way. Work out what the film itself is trying to accomplish on screen and sort it into Central, Major, Secondary and Minor: exactly one aim per tier, a single sentence summing up everything the film is trying to do at that level, so four aims at most; leave a tier out if nothing genuinely belongs there. Only what the film is trying to do on screen: nothing outside it, like its legacy, influence, reception or anyone's career.
 2. Break the whole film into its consecutive scenes or sequences, start to finish, covering the full runtime with no gaps (usually 25 to 60). Give each its approximate start and end in minutes and a short title saying what happens.
 3. For each aim, list the scenes where it clearly plays out on screen. Be strict: a scene counts only if what happens in it directly carries that aim, not just because the same characters appear. An aim about mood, music, camerawork or performance that isn't tied to specific events gets only the few scenes that most clearly embody it, or none.
-4. For each detection, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it hurts: the aims whose scenes it overlaps, or that it is plainly about.
-5. Explain your decisions. Give each aim a "why": one or two sentences (at most 40 words) on what in the film shows this is what it's going for, why it belongs in that tier, and why those scenes carry it. Give each detection a "why": one or two sentences (at most 40 words) on why it points to those scenes (or the whole film, or a moment) and why it hurts those aims. Add a "reading" of two or three sentences (at most 60 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
-6. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary outside the "why" and "reading" fields. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims and detections first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
-{"film":"<title>","runtime":102,"reading":"<how you read the film>","aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9],"why":"<your reasoning>"}],"detections":[{"d":1,"whole":false,"moment":false,"scenes":[12,13],"aims":[2],"why":"<your reasoning>"}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
+4. For each detection and each beat, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it touches: the aims whose scenes it overlaps, or that it is plainly about. Don't judge or grade any of it.
+5. Explain your decisions. Give each aim a "why" (at most 25 words) on what in the film shows this is what it's going for, why that tier, and why those scenes. Give each detection and each beat a "why" (at most 25 words) on why it points to those scenes (or the whole film, or a moment) and why it touches those aims. Add a "reading" (at most 50 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
+6. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary outside the "why" and "reading" fields. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims, detections and beats first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
+{"film":"<title>","runtime":102,"reading":"<how you read the film>","aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9],"why":"<your reasoning>"}],"detections":[{"d":1,"whole":false,"moment":false,"scenes":[12,13],"aims":[2],"why":"<your reasoning>"}],"beats":[{"b":1,"whole":false,"moment":false,"scenes":[20,21],"aims":[1],"why":"<your reasoning>"}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
 If you can't identify the film with confidence, reply {"error":"<why>"} instead of guessing.`;
 /* more than one aim per tier is from before the four-aim rule: Claude works them out again */
 const b2OldAims = r => r.aims.length > 4;
 const b2Placed = d => !!d.whole || (d.sents || []).length > 0;
-const b2Stale = r => (r.dets || []).some(d => !b2Placed(d));
+const b2Stale = r => [...(r.dets || []), ...(r.beats || [])].some(d => !b2Placed(d));
 function b2ClaudeMsg(r) {
   const f = active.film;
   return `${B2_INSTR}
@@ -3776,7 +3843,10 @@ ${r.aims.length && !b2OldAims(r) ? r.aims.map((a, i) => `[A${i + 1}]${a.central 
 DETECTIONS:
 ${(r.dets || []).length ? r.dets.map((d, i) => `[D${i + 1}] ${d.note}`).join('\n') : '(none)'}
 
-Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers.`;
+BEATS:
+${(r.beats || []).length ? r.beats.map((d, i) => `[B${i + 1}] ${d.note}`).join('\n') : '(none)'}
+
+Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers, every detection under "detections" and every beat under "beats".`;
 }
 /* reading Claude's reply: forgiving about its exact layout */
 /* repair what usually breaks a long reply: stray double quotes inside text, trailing commas */
@@ -3918,9 +3988,11 @@ function b2ApplyClaude(r, txt, allowCut) {
   r.carry = carry; r.scenes = scenes; r.mapMode = 'scenes';
   const src = b2Find(j, /^sources?$/i); r.mapSources = Array.isArray(src) ? src.map(String).slice(0, 12) : src ? [String(src)] : [];
   r.mapKey = b2SKey(r); r.mapEngine = 'claude';
-  const ids = bt.sentIds && bt.sentIds.length ? bt.sentIds : (r.dets || []).map(x => x.id), live = b2Live(r).map(x => x.i);
-  b2Entries(b2Pick(j, /^detections?$/i, /detect|bug|^d$/i), /^(d|id|detection|number|n|index)$/i).forEach(m => {
-    const d = (r.dets || []).find(x => x.id === ids[m.id - 1]); if (!d) return;
+  const live = b2Live(r).map(x => x.i);
+  [['dets', bt.sentIds, b2Pick(j, /^detections?$/i, /detect|bug|^d$/i), /^(d|id|detection|number|n|index)$/i], ['beats', bt.sentBIds, b2Pick(j, /^beats?$/i, /beat|^b$/i), /^(b|id|beat|number|n|index)$/i]].forEach(([KEY, IDS0, VAL, IDRE]) => {
+  const ids = IDS0 && IDS0.length ? IDS0 : (r[KEY] || []).map(x => x.id);
+  b2Entries(VAL, IDRE).forEach(m => {
+    const d = (r[KEY] || []).find(x => x.id === ids[m.id - 1]); if (!d) return;
     const v = m.val || {}, whole = typeof v === 'object' && !Array.isArray(v) && !!b2Find(v, /whole/i);
     d.whole = whole; d.sents = whole ? [] : [...new Set(sent(v))].sort((p, q) => p - q);
     const ha = typeof v === 'object' && !Array.isArray(v) ? b2Pick(v, /^aims?$|^aims?_?(affected|hurt|hit)$/i, /hurt|hits?|affect/i) ?? b2Find(v, /^aims?$|hurt|hits?|affected/i) : null;
@@ -3930,6 +4002,7 @@ function b2ApplyClaude(r, txt, allowCut) {
     d.placed = true; d.conf = 'solid'; delete d.q; delete d.where;
     const w = typeof v === 'object' && !Array.isArray(v) ? Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(why|reason|reasons|reasoning|because|rationale|explanation|justification)$/i.test(k)) : null;
     if (w) r.mapWhy.dets[d.id] = w[1].trim().slice(0, 600);
+  });
   });
 }
 function b2ClaudeHTML(r, L) {
@@ -3945,9 +4018,11 @@ function b2ClaudeHTML(r, L) {
     <div class="b2-nav"><button class="bx-link" data-b2="go" data-v="dets">← What bugged you</button>${back ? '<button class="bx-btn solid" data-b2="afterc">On to the aims →</button>' : '<span></span>'}</div>`;
 }
 function b2LargestHTML(r, L) {
-  const ds = (r.dets || []).filter(d => Number.isInteger(d.w)), sug = b2Suggest(r);
-  return `<p class="b2-q">Which one is the largest in your View?</p><p class="b2-s">It is the footprint: only the largest counts toward the lean, and the others stay on record. The booth suggests the one that reaches furthest into the aims (ties go to the one covering more of the film). You decide.</p>
-    <div class="b2-picks">${ds.map(d => `<button class="b2-pick ${d.main ? 'on' : ''}" data-b2="main" data-id="${esc(d.id)}"><b>D${r.dets.indexOf(d) + 1}</b><span>${esc(trimTo(d.note || '', 120))}</span><em>${WEIGHTS[d.w - 1]}${d === sug ? ' · suggested' : ''}</em></button>`).join('')}</div>
+  const sec = (key, k) => { const ds = (r[key] || []).filter(d => Number.isInteger(d.w)); if (ds.length < 2) return ''; const sg = b2Suggest(r, key);
+    return `<div class="b2-k" style="margin-top:12px">${k === 'b' ? 'The hallmark · the largest beat' : 'The footprint · the largest detection'}</div>
+    <div class="b2-picks">${ds.map(d => `<button class="b2-pick ${d.main ? 'on' : ''}" data-b2="main" data-id="${esc(d.id)}"><b>${b2Label(r, d)}</b><span>${esc(trimTo(d.note || '', 120))}</span><em>${b2Names(k)[d.w - 1]}${d === sg ? ' · suggested' : ''}</em></button>`).join('')}</div>`; };
+  return `<p class="b2-q">Which is the largest in your view?</p><p class="b2-s">The largest counts in full and the other at half. The footprint alone sets the tier. The booth suggests the higher grade, then the one covering more of the film. You decide.</p>
+    ${sec('dets', 'd')}${sec('beats', 'b')}
     <div class="b2-nav"><button class="bx-link" data-b2="go" data-v="aims">← The aims</button><button class="bx-btn solid" data-b2="go" data-v="lock">On to the plate →</button></div>`;
 }
 /* the full picture: what the booth worked out, laid out at the end */
@@ -3957,19 +4032,19 @@ function b2PictureHTML(r, L) {
   if (!Array.isArray(r.carry) || !b2Fresh(r)) return '';
   const scenesMode = r.mapMode === 'scenes', len = b2Units(r), n = len.length, tot = len.reduce((t, v) => t + v, 0) || 1;
   const live = b2Live(r), carry = r.carry.map(a => new Set(a || []));
-  const dets = (r.dets || []).filter(d => Number.isInteger(d.w)), dcol = d => DET_COLORS[r.dets.indexOf(d) % DET_COLORS.length], dn = d => 'D' + (r.dets.indexOf(d) + 1);
+  const isB = d => (r.beats || []).includes(d), dets = [...(r.dets || []), ...(r.beats || [])].filter(d => Number.isInteger(d.w)), dcol = d => isB(d) ? BEAT_COLOR : DET_COLORS[r.dets.indexOf(d) % DET_COLORS.length], dn = d => b2Label(r, d);
   const dset = d => d.whole ? null : new Set(d.sents || []);
   const aimRows = live.map(({ a, i }) => {
     const cov = Math.round([...carry[i]].reduce((t, s) => t + (len[s] || 0), 0) / tot * 100), hitBy = dets.filter(d => b2Hits(r, d).includes(i));
     return `<div class="b2-prow" style="--c:${aimColor(r, a)}"><i></i><b>${esc(aimShort(a))}</b><span>${CENT_NAMES[a.central] || '—'} · ${b2RateName(a.rate)}${a.rate === 0 ? ' · left out' : ''}</span><span>plays out across ${Math.max(cov, carry[i].size ? 1 : 0)}% of the ${scenesMode ? 'film' : 'plot'}</span><span>${hitBy.length ? 'hit by ' + hitBy.map(d => `<em style="background:${dcol(d)}">${dn(d)}</em>`).join(' ') : 'untouched'}</span></div>`;
   }).join('');
   const detRows = dets.map(d => { const hits = b2Hits(r, d), k = (d.sents || []).length;
-    return `<div class="b2-prow det" style="--c:${dcol(d)}"><i></i><b>${dn(d)}${d.main ? ' ★' : ''} · ${WEIGHTS[d.w - 1]}</b><span>${esc(trimTo(d.note || '', 90))}</span><span>${d.whole ? 'the whole film' : `${k} ${scenesMode ? 'scene' : 'sentence'}${k === 1 ? '' : 's'}`} · ${hits.length ? 'lands on ' + hits.map(i => esc(aimShort(r.aims[i]))).join(', ') : 'lands on no aim'}</span></div>`; }).join('');
+    return `<div class="b2-prow det" style="--c:${dcol(d)}"><i></i><b>${dn(d)}${d.main ? ' ★' : ''} · ${(isB(d) ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b><span>${esc(trimTo(d.note || '', 90))}</span><span>${d.whole ? 'the whole film' : `${k} ${scenesMode ? 'scene' : 'sentence'}${k === 1 ? '' : 's'}`} · ${hits.length ? 'lands on ' + hits.map(i => esc(aimShort(r.aims[i]))).join(', ') : 'lands on no aim'}</span></div>`; }).join('');
   const unitHTML = (s, text, pre) => {
     const aimsHere = live.filter(({ i }) => carry[i].has(s)).sort((p, q) => (q.a.central || 0) - (p.a.central || 0));
     const detsHere = dets.filter(d => { const ds = dset(d); return ds && ds.has(s); });
     const under = aimsHere.slice(0, 3).map((x, k) => `0 ${3 + k * 4}px 0 ${aimColor(r, x.a)}`).join(',');
-    const tip = [aimsHere.length ? 'Carries: ' + aimsHere.map(x => aimShort(x.a)).join(', ') : 'Carries no aim', detsHere.length ? 'Bugged you: ' + detsHere.map(dn).join(', ') : ''].filter(Boolean).join(' · ');
+    const tip = [aimsHere.length ? 'Carries: ' + aimsHere.map(x => aimShort(x.a)).join(', ') : 'Carries no aim', detsHere.length ? 'You named: ' + detsHere.map(dn).join(', ') : ''].filter(Boolean).join(' · ');
     return `${pre || ''}<span class="b2-ps${aimsHere.length ? '' : ' none'}" style="${under ? `box-shadow:${under};` : ''}${detsHere.length ? `background:color-mix(in srgb,${dcol(detsHere[0])} 34%,transparent);` : ''}margin-bottom:${aimsHere.length * 4}px" title="${esc(tip)}">${esc(text)}${detsHere.length ? `<sup>${detsHere.map(dn).join(' ')}</sup>` : ''}</span>`;
   };
   let body;
@@ -3979,9 +4054,9 @@ function b2PictureHTML(r, L) {
     body = '<p>' + Ss.map((x, s) => unitHTML(s, T.slice(x.s, x.e), s && paraAt.has(x.s) ? '</p><p>' : '') + ' ').join('') + '</p>';
   }
   const whole = dets.filter(d => d.whole), src = (r.mapSources || []).filter(Boolean);
-  return `<details class="b2-pic" open><summary>The full picture · how the booth put it together</summary>
+  return `<details class="b2-pic" open><summary>The full frame · Claude’s reading with your view placed on it</summary>
     <div class="b2-k" style="margin-top:12px">The aims</div><div class="b2-prows">${aimRows}</div>
-    ${detRows ? `<div class="b2-k" style="margin-top:14px">What bugged you</div><div class="b2-prows">${detRows}</div>` : ''}
+    ${detRows ? `<div class="b2-k" style="margin-top:14px">Your view · detections and beats</div><div class="b2-prows">${detRows}</div>` : ''}
     <div class="b2-k" style="margin-top:14px">${scenesMode ? `The film, scene by scene${r.scenes.length ? ` · ${b2Clock(r.scenes[r.scenes.length - 1].e)}` : ''}` : 'The plot'}</div>
     <p class="b2-s sm">Underlines show which aims each ${scenesMode ? 'scene' : 'sentence'} carries (strongest centrality on top); shading shows where a detection lands. Hover for the details.${whole.length ? ` ${whole.map(dn).join(', ')} cover${whole.length === 1 ? 's' : ''} the whole film.` : ''}</p>
     <div class="b2-plot">${body}</div>
@@ -3993,7 +4068,7 @@ function b2WhyHTML(r) {
   const W = r.mapWhy; if (!W || r.mapMode !== 'scenes') return '';
   const sl = list => { const k = [...new Set(list || [])].sort((p, q) => p - q); return k.length ? k.map(s => `${s + 1}`).join(', ') : 'none'; };
   const aimRows = b2Live(r).map(({ a, i }) => `<div class="b2-why" style="--c:${aimColor(r, a)}"><b>${CENT_NAMES[a.central] || 'Aim'} · ${esc(a.text || aimShort(a))}</b><span class="sm">Scenes ${sl((r.carry || [])[i])}</span><p>${W.aims && W.aims[i] ? esc(W.aims[i]) : '<i>Claude didn’t give a reason for this one.</i>'}</p></div>`).join('');
-  const detRows = (r.dets || []).map((d, k) => { const hits = b2Hits(r, d); return `<div class="b2-why det"><b>D${k + 1}${d.main ? ' ★' : ''} · ${esc(trimTo(d.note || '', 80))}</b><span class="sm">${d.whole ? 'The whole film' : `${d.moment ? 'A moment in scene' : 'Scenes'} ${sl(d.sents)}`} · ${hits.length ? 'hurts ' + hits.map(i => esc(aimShort(r.aims[i]))).join(', ') : 'hurts no aim'}</span><p>${W.dets && W.dets[d.id] ? esc(W.dets[d.id]) : '<i>Claude didn’t give a reason for this one.</i>'}</p></div>`; }).join('');
+  const detRows = [...(r.dets || []), ...(r.beats || [])].map((d, k) => { const hits = b2Hits(r, d); return `<div class="b2-why det ${(r.beats || []).includes(d) ? 'beat' : ''}"><b>${b2Label(r, d)}${d.main ? ' ★' : ''} · ${esc(trimTo(d.note || '', 80))}</b><span class="sm">${d.whole ? 'The whole film' : `${d.moment ? 'A moment in scene' : 'Scenes'} ${sl(d.sents)}`} · ${hits.length ? 'touches ' + hits.map(i => esc(aimShort(r.aims[i]))).join(', ') : 'touches no aim'}</span><p>${W.dets && W.dets[d.id] ? esc(W.dets[d.id]) : '<i>Claude didn’t give a reason for this one.</i>'}</p></div>`; }).join('');
   const any = W.reading || (W.aims || []).some(Boolean) || Object.keys(W.dets || {}).length;
   return `<div class="b2-k" style="margin-top:16px">Why Claude read it this way</div>
     ${any ? '' : '<p class="b2-s sm">This reading came back before the booth asked Claude for its reasons. Send the film again for them.</p>'}
@@ -4007,20 +4082,22 @@ function b2LockHTML(r, L) {
   else {
     if (L.unset.length) notes.push(`Set how central ${L.unset.map(x => aimShort(x.a)).join(', ')} ${L.unset.length === 1 ? 'is' : 'are'}.`);
     if (L.unrated.length) notes.push(`Rate ${L.unrated.map(x => aimShort(x.a)).join(', ')}.`);
-    if (L.ungraded.length) notes.push(`Grade ${L.ungraded.map(d => 'D' + (r.dets.indexOf(d) + 1)).join(', ')}.`);
-    if (L.unplaced.length) notes.push(`${L.unplaced.map(d => 'D' + (r.dets.indexOf(d) + 1)).join(', ')} ${L.unplaced.length === 1 ? 'hasn’t' : 'haven’t'} been placed in the film yet, so ${L.unplaced.length === 1 ? 'it doesn’t' : 'they don’t'} count. Send the film to Claude again before locking.`);
-    if (L.score != null && !L.dets.length) notes.push('No detections: nothing undermines the aim, so the lean is Incidental.');
+    if (L.ungraded.length) notes.push(`Grade ${L.ungraded.map(d => b2Label(r, d)).join(', ')}.`);
+    if (L.unplaced.length) notes.push(`${L.unplaced.map(d => b2Label(r, d)).join(', ')} ${L.unplaced.length === 1 ? 'hasn’t' : 'haven’t'} been placed in the film yet, so ${L.unplaced.length === 1 ? 'it doesn’t' : 'they don’t'} count. Send the film to Claude again before locking.`);
+    if (L.score != null && !L.dets.length) notes.push('No detections: there’s no footprint, so the lean is Incidental.');
+    { const fl = b2Flags(r); if (fl.length) notes.push(`${fl.length} check${fl.length === 1 ? '' : 's'} to settle in Grade the aims.`); }
     { const counted = b2Live(r).filter(x => x.a.rate > 0);
-      if (!counted.length) notes.push('Every aim is left out (doesn’t ring a bell), so there’s nothing to weigh a detection against: the lean can only say Incidental, and the showdowns get no lean. Choose the plate on your own view.');
+      if (!counted.length) notes.push('Every aim is left out (doesn’t ring a bell), so there’s no wide shot and the showdowns can’t decide this film on their own.');
       const bare = counted.filter(x => !((r.carry || [])[x.i] || []).length); if (bare.length) notes.push(`Claude gave no scenes for ${bare.map(x => aimShort(x.a)).join(', ')}, so a detection only reaches ${bare.length === 1 ? 'it' : 'them'} where Claude named ${bare.length === 1 ? 'it' : 'them'}.`); }
-    if (L.main) notes.push(`D${r.dets.indexOf(L.main) + 1}, the largest, covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and lands on ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]}, ${b2RateName(r.aims[i].rate)})`).join(', ') : 'no aim'}${L.heart ? ', undermining most of a central aim' : ''}.`);
+    if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (a ${WEIGHTS[L.main.w - 1]}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}${L.heart ? ': it reaches the heart of the film' : ''}.`);
+    { const S = b2Standing(r); if (S) notes.push(`Standing ${S.std}: close-up ${S.close}, wide shot ${S.wide}. It decides the showdowns within the tier; within ${SD_HEAT} points the arena is your call.`); }
     if (L.near) notes.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away.`);
-    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push(`${others} other detection${others === 1 ? '' : 's'} on record: only the largest counts toward the lean.`);
+    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('The other detection counts in the close-up at half; only the footprint sets the tier.');
   }
-  const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length, pick = blocked ? null : bt.mag;
-  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">Footprint ${L.F} · aim bite ${L.B}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
+  const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length || b2Flags(r).length, pick = blocked ? null : bt.mag;
+  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s grade × the ${L.F}% of the film it covers${L.heart ? ', reaching the heart of the film' : ''}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
     ${notes.length ? `<div class="bx-notes">${notes.map(n => `<span>${esc(n)}</span>`).join('')}</div>` : ''}
-    ${L ? `<div class="b2-opts" style="margin-top:10px"><button class="bx-link" data-b2="go" data-v="aims">Re-rate the aims</button></div>` : ''}
+    ${L ? `<div class="b2-opts" style="margin-top:10px"><button class="bx-link" data-b2="go" data-v="aims">Re-grade the aims</button><button class="bx-link" data-b2="go" data-v="dets">Your view</button></div>` : ''}
     ${b2PictureHTML(r, L)}
     <div class="bx-plates" style="margin-top:16px">${MAG_LV.map(l => { const isLean = l === lean, reach = lean && Math.abs(l - lean) === 1;
       return `<button class="bx-ap ${pick === l ? 'bx-pick' : ''} ${isLean ? 'lean' : reach ? 'reach' : ''}" data-b2="mag" data-v="${l}">${magDisc(l)}<span class="n">${l}</span><strong>${MAG_NAMES[l]}</strong><small>${MAG_TAG[l]}</small>${isLean ? '<span class="lt">The lean</span>' : reach ? '<span class="lt">Within reach</span>' : ''}</button>`; }).join('')}</div>
@@ -4030,13 +4107,12 @@ function b2LockHTML(r, L) {
 }
 /* the largest detection: the one the footprint is */
 function b2MainDet(r) { const ds = (r.dets || []).filter(d => Number.isInteger(d.w) && b2Placed(d)); return ds.find(d => d.main) || ds[0] || null; }
-/* past aims you rated Core, from other films: the yardstick for this one */
-function coreRefs(central, skipId) {
-  const out = [];
-  db.films.forEach(f => { if (f.id === skipId || !Array.isArray(f.aims) || !evaluated(f)) return; const P = splitAim(f.aim || ''); f.aims.forEach((a, i) => { if (a && a.rate === 4 && P[i]) out.push({ f, c: a.central, t: P[i].text }); }); });
-  return out.filter(x => x.c === central).concat(out.filter(x => x.c !== central)).slice(0, 3);
+/* how your aim ratings spread across your films: information only */
+function b2SpreadHTML(skipId) {
+  const n = [0, 0, 0, 0, 0]; db.films.forEach(f => { if (f.id === skipId || !Array.isArray(f.aims) || !evaluated(f)) return; f.aims.forEach(a => { if (a && Number.isInteger(a.rate) && a.rate >= 1 && a.rate <= 4) n[a.rate]++; }); });
+  const tot = n[1] + n[2] + n[3] + n[4]; if (!tot) return '';
+  return `<p class="b2-spread">Across your films: ${[4, 3, 2, 1].map(k => `${n[k]} ${AIM_WEIGHTS[k - 1]}`).join(' · ')}</p>`;
 }
-
 /* =====================================================================
    THE SHOWDOWN LEAN · what each film's aims achieved, by your ratings
    Both films already earned the same tier (the footprint against the aim), so the
@@ -4045,59 +4121,63 @@ function coreRefs(central, skipId) {
    points does the lighter footprint break the tie. Your rating of an aim is your
    whole view of it, flaws included, so nothing is taken off it twice.
    ===================================================================== */
-const SD_TRY = [['built', 'Your scale, weighted by tier'], ['even', 'Even steps between ratings'], ['flat', 'Every aim counts the same'], ['top', 'Central and Major aims only']];
-const SD_V = () => SD_TRY.some(x => x[0] === db.settings.sdV) ? db.settings.sdV : 'built';
-const SD_EVEN = [null, 0, 1 / 3, 2 / 3, 1];
-function sdOf(f) {
-  const r = raw(f.id) || f, b = boothStats(f.id);
-  const t = (Array.isArray(r.aims) ? r.aims : []).filter(a => a && Number.isInteger(a.central) && a.central > 0 && Number.isInteger(a.rate) && a.rate > 0).map(a => [a.central, a.rate]);
-  return { t, L: b && b.lean ? b.pct : null, A: sdAch(t, SD_V()) };
-}
-/* what the aims achieved, 0 to 100, under one way of weighing them */
-function sdAch(t, v = SD_V()) {
-  const use = (t || []).filter(([c]) => v !== 'top' || c >= 3); if (!use.length) return null;
-  const val = rt => (v === 'even' ? SD_EVEN : B2_VAL)[rt], w = c => v === 'flat' ? 1 : CENT_SIG[c];
-  const W = use.reduce((s, [c]) => s + w(c), 0); return W ? Math.round(100 * use.reduce((s, [c, rt]) => s + w(c) * val(rt), 0) / W) : null;
-}
-/* which film the lean picks, under one way of weighing: null when it can't say */
-function sdPick(a, b, v) {
-  const sa = sdAch(a.t, v), sb = sdAch(b.t, v); if (sa == null || sb == null) return { none: true, sa, sb };
-  if (Math.abs(sa - sb) >= 5) return { side: sa > sb ? 'a' : 'b', sa, sb, by: 'aims' };
-  if (a.L != null && b.L != null && a.L !== b.L) return { side: a.L < b.L ? 'a' : 'b', sa, sb, by: 'footprint' };
-  return { even: true, sa, sb };
+/* a film's standing, from its booth work */
+function sdOf(f) { const r = raw(f.id) || f, S = b2Standing(r); return S ? { close: S.close, wide: S.wide, std: S.std } : null; }
+/* does the standing decide this matchup? null when it's a dead heat (within SD_HEAT) or either film has no standing */
+function sdAuto(A, B) {
+  const a = sdOf(A), b = sdOf(B); if (!a || !b || Math.abs(a.std - b.std) < SD_HEAT) return null;
+  return a.std > b.std ? { winner: A.id, hi: a.std, lo: b.std } : { winner: B.id, hi: b.std, lo: a.std };
 }
 function sdLean(A, B) {
-  const a = sdOf(A), b = sdOf(B), p = sdPick(a, b, SD_V());
-  if (p.none) { const miss = [p.sa == null ? A : null, p.sb == null ? B : null].filter(Boolean); return { none: true, a, b, text: `No showdown lean: ${miss.map(f => esc(f.title)).join(' and ')} ${miss.length === 1 ? 'has' : 'have'} no rated aims from the booth. It’s your call.` }; }
-  if (p.even) return { even: true, a, b, text: `Too close to lean · the aims achieved ${p.sa} to ${p.sb}, and the footprints are even. It’s your call.` };
-  const W = p.side === 'a' ? A : B, w = p.side === 'a' ? a : b, l = p.side === 'a' ? b : a;
-  const why = p.by === 'aims' ? `its aims achieved more for you (${w.A} to ${l.A})` : `the aims are close (${w.A} to ${l.A}), and its footprint is lighter (lean ${w.L} to ${l.L})`;
-  return { pick: W.id, a, b, text: `The showdown lean · <b>${esc(W.title)}</b>: ${why}. A lean, not a verdict: the arena is your call.` };
+  const a = sdOf(A), b = sdOf(B);
+  if (!a || !b) { const miss = [!a ? A : null, !b ? B : null].filter(Boolean); return { none: true, a, b, text: `${miss.map(f => esc(f.title)).join(' and ')} ${miss.length === 1 ? 'has' : 'have'} no standing from the booth, so this one is your call on the arena.` }; }
+  const d = a.std - b.std;
+  if (Math.abs(d) < SD_HEAT) return { even: true, a, b, text: `A dead heat · standing ${a.std} to ${b.std}. Which does its own arena better? Your call.` };
+  const W = d > 0 ? A : B, w = d > 0 ? a : b, l = d > 0 ? b : a;
+  const why = Math.abs(w.close - l.close) > Math.abs(w.wide - l.wide) ? `its close-up is stronger (${w.close} to ${l.close})` : `its wide shot is stronger (${w.wide} to ${l.wide})`;
+  return { pick: W.id, a, b, text: `Decided by standing · <b>${esc(W.title)}</b>, ${w.std} to ${l.std}: ${why}.` };
 }
-const sdSnap = (A, B) => { const a = sdOf(A), b = sdOf(B); return { a: { t: a.t, L: a.L }, b: { t: b.t, L: b.L } }; };
+const sdSnap = (A, B) => ({ a: sdOf(A), b: sdOf(B) });
+/* re-tuning the balance from your own films, and re-sorting each tier when it moves */
+function sdSpread(xs) { const m = xs.reduce((t, v) => t + v, 0) / xs.length; return Math.sqrt(xs.reduce((t, v) => t + (v - m) * (v - m), 0) / xs.length); }
+function sdRetune() {
+  const rs = db.wheel.map(id => raw(id)).filter(r => r && b2Standing(r, 1));
+  if (rs.length < SD_TUNE_N) return false;
+  const c = sdSpread(rs.map(r => b2CloseUp(r))), w = sdSpread(rs.map(r => b2WideShot(r)));
+  if (!(c > 0.5) || !(w > 0.5)) return false;
+  const k = Math.round(100 * Math.max(.5, Math.min(2, w / c))) / 100, old = sdBal();
+  if (Math.abs(k - old) / old < .05) return false;
+  db.settings.sdBal = { k, n: rs.length, at: Date.now() }; sdResort('retune'); return true;
+}
+/* within each tier, order by standing; films within SD_HEAT of each other keep the order your arena calls gave them */
+function sdResort(why) {
+  let moved = 0;
+  MAG_LV.forEach(l => {
+    const a = ladderOf('M', l), st = id => { const r = raw(id), S = r && b2Standing(r); return S ? S.std : null; };
+    for (let i = 1; i < a.length; i++) { let j = i; while (j > 0) { const x = st(a[j - 1]), y = st(a[j]); if (x != null && y != null && y - x >= SD_HEAT) { [a[j - 1], a[j]] = [a[j], a[j - 1]]; j--; moved++; } else break; } }
+  });
+  if (!moved) return 0;
+  orderWheel(); rebuild();
+  db.wheelLog.push({ id: 'wl:' + uid(), type: 'order', order: db.wheel.slice(), via: why || 'resort', at: Date.now() });
+  rebuild(); return moved;
+}
 function sdAgreeHTML() {
-  const ms = db.matches.filter(m => m.ax === 'M' && m.sd && m.sd.a && m.sd.b && Array.isArray(m.sd.a.t) && !m.even);
-  if (!ms.length) return '<p class="gr-empty">No showdowns with a lean yet. Every showdown you answer from now on is recorded here, with whether you went with the lean.</p>';
-  const cur = SD_V(), pred = (m, v) => { const p = sdPick(m.sd.a, m.sd.b, v); return p.side ? (p.side === 'a' ? m.a : m.b) : null; };
-  const rows = SD_TRY.map(([v, nm]) => { let ag = 0, op = 0, ev = 0; ms.forEach(m => { const p = pred(m, v); if (p == null) ev++; else if (p === m.winner) ag++; else op++; }); return { v, nm, ag, op, ev, pct: ag + op ? Math.round(100 * ag / (ag + op)) : null }; });
-  const now = rows.find(x => x.v === cur), off = ms.filter(m => { const p = pred(m, cur); return p != null && p !== m.winner; }).slice(-5).reverse();
-  return `<div class="gr-big" style="margin:0 0 8px">${now.pct == null ? '—' : now.pct + '%'}<small> of your showdown calls went with the lean</small></div>
-    <div class="gr-meters">${rows.map(x => `<div class="gr-mrow"><span>${x.nm}${x.v === cur ? ' · in use' : ''}</span><span class="gr-meter"><i style="width:${x.pct ?? 0}%;background:${x.v === cur ? GR.seam : GR.place}"></i></span><b>${x.pct == null ? '—' : x.pct + '%'}</b>${x.v !== cur && canEdit() ? `<button class="gr-btn" data-sdv="${x.v}">Use this</button>` : ''}</div>`).join('')}</div>
-    <p class="gr-note">${ms.length} showdown${ms.length === 1 ? '' : 's'} recorded${now.ev ? ` · ${now.ev} too close to lean` : ''}.${ms.length < 12 ? ' Give it a dozen or so before switching.' : ''}</p>
-    ${off.length ? `<p class="gr-note">You went against it: ${off.map(m => `${esc(titleOf(m.winner))} over ${esc(titleOf(m.winner === m.a ? m.b : m.a))}`).join(' · ')}</p>` : ''}`;
+  const ms = db.matches.filter(m => m.ax === 'M'), auto = ms.filter(m => m.auto).length, mine = ms.length - auto, k = sdBal(), t = db.settings.sdBal;
+  if (!ms.length) return '<p class="gr-empty">No showdowns yet. Most will be decided by standing; dead heats come to you on the arena.</p>';
+  return `<div class="gr-big" style="margin:0 0 8px">${Math.round(100 * mine / ms.length)}%<small> of showdowns were dead heats, your call on the arena</small></div>
+    <div class="gr-meters"><div class="gr-mrow"><span>Decided by standing</span><span class="gr-meter"><i style="width:${Math.round(100 * auto / ms.length)}%;background:${GR.place}"></i></span><b>${auto}</b></div>
+    <div class="gr-mrow"><span>Your call on the arena</span><span class="gr-meter"><i style="width:${Math.round(100 * mine / ms.length)}%;background:${GR.seam}"></i></span><b>${mine}</b></div></div>
+    <p class="gr-note">The close-up is balanced against the wide shot by ${k}${t ? `, tuned from your ${t.n} films` : ` (the starting balance; it tunes itself from your films once ${SD_TUNE_N} are on the reel)`}. A dead heat is within ${SD_HEAT} points.</p>`;
 }
-document.addEventListener('click', async e => {
-  const b = e.target.closest && e.target.closest('[data-sdv]'); if (!b || !canEdit()) return;
-  db.settings.sdV = b.dataset.sdv; const nm = (SD_TRY.find(x => x[0] === db.settings.sdV) || [0, ''])[1];
-  if (await persist()) toast(`The showdown lean now uses: ${nm}`); renderGame();
-});
+
 document.addEventListener('input', e => {
   if (!bt || !active) return;
-  if (e.target.id === 'b2Note') { bt.dn = e.target.value; const b = $('[data-b2="adddet"]'); if (b) b.disabled = !(bt.dn.trim() && bt.dg); }
+  if (e.target.id === 'b2Note') { bt.dn = e.target.value; const b = $('[data-b2="adddet"][data-k="d"]'); if (b) b.disabled = !(bt.dn.trim() && bt.dg); }
+  if (e.target.id === 'b2BNote') { bt.bn = e.target.value; const b = $('[data-b2="adddet"][data-k="b"]'); if (b) b.disabled = !(bt.bn.trim() && bt.bg); }
 });
 document.addEventListener('change', e => {
   const s = e.target.closest && e.target.closest('[data-b2sel]'); if (!s || !bt || !active || !canEdit() || s.value === '') return;
-  const r = bxData(), d = (r.dets || []).find(x => x.id === s.dataset.b2sel); if (!d) return;
+  const r = bxData(), it = b2Item(r, s.dataset.b2sel), d = it && it.d; if (!d) return;
   const i = +s.value; d.add = [...new Set([...(d.add || []), i])]; d.drop = (d.drop || []).filter(x => x !== i);
   bxSave(); renderBooth();
 });
@@ -4105,30 +4185,31 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.ma
 document.addEventListener('click', async e => {
   const b = e.target.closest && e.target.closest('[data-b2]'); if (!b || !bt || !active || !canEdit()) return;
   const r = bxData(); if (!r) return;
-  const k = b.dataset.b2, v = b.dataset.v, d = b.dataset.id ? (r.dets || []).find(x => x.id === b.dataset.id) : null;
+  const k = b.dataset.b2, v = b.dataset.v, IT = b.dataset.id ? b2Item(r, b.dataset.id) : null, d = IT ? IT.d : null, KK = b.dataset.k === 'b' ? 'b' : 'd';
   const order = b2Order(r), done = () => { bxSave(); renderBooth(); };
   switch (k) {
-    case 'go': bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
+    case 'go': bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
     case 'useplot': { const t = $('#b2Plot')?.value || ''; if (!t.trim()) return toast('Paste the plot first'); r.footprint = t; return done(); }
     case 'useaim': { const t = $('#b2Aim')?.value || ''; if (!t.trim()) return toast('Paste the aim first'); r.aim = t; return done(); }
     case 'cent': { const a = order[bt.ai].a; a.central = +v; bt.ai = Math.max(0, b2Order(r).findIndex(x => x.a === a)); return done(); }
     case 'rate': {
       order[bt.ai].a.rate = +v;
       const nx = order.findIndex((x, j) => j > bt.ai && !Number.isInteger(x.a.rate)), any = order.findIndex(x => !Number.isInteger(x.a.rate));
-      if (nx >= 0) bt.ai = nx; else if (any >= 0) bt.ai = any; else b2AfterAims(r);
+      if (nx >= 0) bt.ai = nx; else if (any >= 0) bt.ai = any; else { bt.ai = null; b2AfterAims(r); }
       return done();
     }
     case 'aim': bt.ai = +v; return renderBooth();
     case 'prev': bt.ai = Math.max(0, bt.ai - 1); return renderBooth();
-    case 'dg': bt.dg = +v; return renderBooth();
+    case 'dg': if (KK === 'b') bt.bg = +v; else bt.dg = +v; return renderBooth();
     case 'adddet': {
-      const t = (bt.dn || '').trim(); if (!t || !bt.dg) return;
-      const nd = { id: 'd:' + uid(), note: t, w: bt.dg, sents: [], main: !(r.dets || []).length }; (r.dets ||= []).push(nd);
-      bt.dn = ''; bt.dg = null; renderBooth();
+      const key = B2_KIND[KK].key, t = (KK === 'b' ? bt.bn : bt.dn || '').trim(), g = KK === 'b' ? bt.bg : bt.dg; if (!t || !g) return;
+      if ((r[key] || []).length >= ITEM_MAX) return toast(`Two ${B2_KIND[KK].many} at most: remove one first`);
+      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: t, w: g, sents: [], main: !(r[key] || []).length }; (r[key] ||= []).push(nd);
+      if (KK === 'b') { bt.bn = ''; bt.bg = null; } else { bt.dn = ''; bt.dg = null; }
       return done();
     }
     case 'grade': if (d) d.w = +v; return done();
-    case 'del': if (!d) return; r.dets = r.dets.filter(x => x !== d); if (d.main && r.dets[0]) r.dets[0].main = true; return done();
+    case 'del': { if (!d) return; const key = B2_KIND[IT.k].key; r[key] = r[key].filter(x => x !== d); if (d.main && r[key][0]) r[key][0].main = true; return done(); }
     case 'whole': if (!d) return; d.whole = true; delete d.q; return done();
     case 'notwhole': if (!d) return; d.whole = false; if (!(d.sents || []).length) d.q = 'scope'; return done();
     case 'part': if (!d) return; d.q = 'which'; return renderBooth();
@@ -4136,7 +4217,7 @@ document.addEventListener('click', async e => {
     case 'drop': if (!d) return; { const i = +v; d.drop = [...new Set([...(d.drop || []), i])]; d.add = (d.add || []).filter(x => x !== i); } return done();
     case 'donedets': bt.st = 'claude'; return done();
     case 'copyc': {
-      const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id);
+      const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
       let ok = true; try { await navigator.clipboard.writeText(msg); } catch (err) { ok = false; }
       const url = (db.settings.boothProject || '').trim() || 'https://claude.ai/new';
       window.open(url, '_blank', 'noopener');
@@ -4159,7 +4240,8 @@ document.addEventListener('click', async e => {
     }
     case 'afterc': bt.st = 'aims'; bt.ai = null; return done();
     case 'afteraims': b2AfterAims(r); return done();
-    case 'main': r.dets.forEach(x => { x.main = x.id === b.dataset.id; }); bt.mainPicked = true; return done();
+    case 'main': { if (!IT) return; r[B2_KIND[IT.k].key].forEach(x => { x.main = x.id === b.dataset.id; }); if (IT.k === 'b') bt.hallPicked = true; else bt.mainPicked = true; return done(); }
+    case 'flagok': (r.flagsOk ||= []).includes(v) || r.flagsOk.push(v); { const fl = b2Flags(r); if (!fl.length && b2Order(r).every(x => Number.isInteger(x.a.rate))) b2AfterAims(r); } return done();
     case 'mag': bt.mag = +v; return renderBooth();
     case 'lock': case 'lockq': { const L = lean2(r); if (!L || L.score == null || L.unplaced.length || L.ungraded.length) return renderBooth(); return lockGate(k === 'lockq'); }
   }
@@ -4303,7 +4385,7 @@ $('#checkIn').addEventListener('click', e => {
 async function launchPlacement(P, marathon) {
   let info;
   if (P.ask) { rebuild(); persist(); info = { film: P.f.id, pos: null, of: P.order.length + 1, battles: P.battles, order: P.order, via: P.mode, P, pools: P.pools }; }
-  else { info = commitPlacement(P); info.pools = P.pools; await persist(); }
+  else { info = commitPlacement(P); info.pools = P.pools; sdRetune(); await persist(); }
   info.marathon = !!marathon;
   startShow(info);
 }
@@ -4320,6 +4402,7 @@ function spinAll() {
     }
     commitPlacement(P); k++;
   }
+  sdRetune();
   persist().then(ok => { if (ok) toast(`${k} film${k === 1 ? '' : 's'} placed · every battle is in the Film Vault`); });
   if (SHOW) { clearTimeout(SHOW.timer); SHOW = null; }
   if (current === 'auditorium') goTo('lobby'); else renderScene(current);
@@ -4505,25 +4588,25 @@ function doubleBillHTML(A, B, o) {
   const ba = boothStats(A.id), bb = boothStats(B.id), lowEdge = (x, y) => x == null || y == null || x === y ? '' : x < y ? 'a' : 'b';
   const sevN = b => b && b.m ? (b.v2 ? SEV_SIG[b.m.w] : rated(b.m) ? sevAvg(b.m) : null) : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null, num = (b, k) => b && b[k] != null ? b[k] : null;
   const lands = b => b && b.hits && b.hits.length ? b.hits.map(a => `${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}`).join(' · ') : '—';
-  const AW = ['Zilch', 'Edge', 'Supp', 'Core'], aimsWent = b => { const as = b && b.r && Array.isArray(b.r.aims) ? b.r.aims.filter(a => a && a.central !== 0 && Number.isInteger(a.central)).sort((p, q) => q.central - p.central) : []; return as.length ? `<small>${as.map(a => a.rate === 0 ? '–' : AW[a.rate - 1] || '?').join(' · ')}</small>` : '—'; };
+  const AW = ['Fails', 'Falls short', 'Achieves', 'Triumphs'], aimsWent = b => { const as = b && b.r && Array.isArray(b.r.aims) ? b.r.aims.filter(a => a && a.central !== 0 && Number.isInteger(a.central)).sort((p, q) => q.central - p.central) : []; return as.length ? `<small>${as.map(a => a.rate === 0 ? '–' : AW[a.rate - 1] || '?').join(' · ')}</small>` : '—'; };
   const leanTxt = b => b && b.lean ? `${b.lean.t} · ${MAG_NAMES[b.lean.t]} · ${b.lean.score}` : '—';
+  const ra = raw(A.id) || {}, rb = raw(B.id) || {};
+  const item = (r, key, names) => { const d = b2Ranked(r, key)[0]; return d ? `${names[d.w - 1]} <small>· ${Math.max(1, Math.round(100 * b2Cov(r, d)))}%</small>` : '—'; };
+  const sl = ax === 'M' ? sdLean(A, B) : null, sv = (x, k) => x ? x[k] : '—';
   rows += row('Arena', esc(A.genre || '—'), esc(B.genre || '—'), '')
-    + row('Largest detection', ba && ba.m ? ba.sev : '—', bb && bb.m ? bb.sev : '—', '')
-    + row('Lands on', lands(ba), lands(bb), '')
+    + row('Footprint', item(ra, 'dets', WEIGHTS), item(rb, 'dets', WEIGHTS), '')
+    + row('Hallmark', item(ra, 'beats', BEAT_NAMES), item(rb, 'beats', BEAT_NAMES), '')
     + row('How the aims went', aimsWent(ba), aimsWent(bb), '')
-    + row('Footprint', pctTxt(num(ba, 'F')), pctTxt(num(bb, 'F')), '')
-    + row('Aim bite', pctTxt(num(ba, 'B')), pctTxt(num(bb, 'B')), '')
-    + row('Film covered', covN(ba) != null ? covN(ba) + '%' : '—', covN(bb) != null ? covN(bb) + '%' : '—', '')
     + row('The lean', leanTxt(ba), leanTxt(bb), '');
-  const sl = ax === 'M' ? sdLean(A, B) : null;
-  if (sl) rows += row('What the aims achieved', sl.a.A != null ? sl.a.A : '—', sl.b.A != null ? sl.b.A : '—', sl.pick === A.id ? 'a' : sl.pick === B.id ? 'b' : '');
+  if (sl) rows += row('Close-up', sv(sl.a, 'close'), sv(sl.b, 'close'), '') + row('Wide shot', sv(sl.a, 'wide'), sv(sl.b, 'wide'), '')
+    + row('Standing', sv(sl.a, 'std'), sv(sl.b, 'std'), sl.pick === A.id ? 'a' : sl.pick === B.id ? 'b' : '');
   const met = db.matches.filter(m => ((m.a === A.id && m.b === B.id) || (m.a === B.id && m.b === A.id)) && (!o.pid || m.place !== o.pid)).sort((x, y) => x.at - y.at), last = met[met.length - 1];
   const h2h = !met.length ? 'Never met before' : `Met ${met.length === 1 ? 'once' : met.length + ' times'} · ${esc(titleOf(last.winner))} took the ${last.ax === 'M' ? `${MAG_NAMES[last.level]} showdown` : 'last one'}`;
   return `<div class="dbill">
     <div class="db-head"><span class="cor a">${o.tagA}</span><span class="db-t">The Double Bill</span><span class="cor b">${o.tagB}</span></div>
     <div class="db-rows">${rows}</div>
     ${sl ? `<p class="db-lean">${sl.text}</p>` : ''}
-    <p class="db-foot">${h2h}${ax ? ` · ${o.of} film${o.of === 1 ? '' : 's'} in the ${lineupName(ax, l)}` : ''} · <i class="db-edge" aria-hidden="true"></i> marks the edge${sl ? ' · on the aims-achieved row, the showdown lean' : ''}</p>
+    <p class="db-foot">${h2h}${ax ? ` · ${o.of} film${o.of === 1 ? '' : 's'} in the ${lineupName(ax, l)}` : ''} · <i class="db-edge" aria-hidden="true"></i> marks the edge${sl ? ' · on the standing row, who it favors' : ''}</p>
   </div>`;
 }
 // the bar under the cards: the decisive consideration for this matchup, and undo
@@ -4601,7 +4684,7 @@ function makeCall(pick, even) {
   const n0 = S.battles.length, note = String(($('#cqNote') && $('#cqNote').value) || S.P.draft || '').trim();
   S.P.draft = '';
   answerCall(S.P, pick, note, even);
-  if (placementDone(S.P)) { const info = commitPlacement(S.P); S.pos = info.pos; S.of = info.of; S.pid = info.pid; }
+  if (placementDone(S.P)) { const info = commitPlacement(S.P); S.pos = info.pos; S.of = info.of; S.pid = info.pid; if (sdRetune()) toast('The balance between close-up and wide shot was re-tuned from your films · each tier re-sorted', 6000); }
   persist();
   S.step = n0; S.phase = 'battle'; S.paused = false;
   renderShowFrame();
@@ -4613,7 +4696,7 @@ function countUp(el, to, ms) {
   const tick = now => { const k = Math.min(1, (now - t0) / ms), v = from + (to - from) * (1 - Math.pow(1 - k, 3)); el.textContent = String(Math.round(v)); if (k < 1 && SHOW) requestAnimationFrame(tick); else el.textContent = String(to); };
   requestAnimationFrame(tick);
 }
-const stampSub = b => b.ax ? `${b.ax === 'M' ? MAG_NAMES[b.level] : b.ax + b.level} · your call` : b.key === 'verdict' ? `${VERDICT[b.newWins ? b.sa : b.sb]} over ${VERDICT[b.newWins ? b.sb : b.sa]}` : b.key === 'call' || b.key === 'recall' ? 'your call' : `by ${b.margin}`;
+const stampSub = b => b.ax ? `${b.ax === 'M' ? MAG_NAMES[b.level] : b.ax + b.level} · ${b.auto ? 'by standing' : 'your call on the arena'}` : b.key === 'verdict' ? `${VERDICT[b.newWins ? b.sa : b.sb]} over ${VERDICT[b.newWins ? b.sb : b.sa]}` : b.key === 'call' || b.key === 'recall' ? 'your call' : `by ${b.margin}`;
 function playBattle() {
   const S = SHOW, b = S.battles[S.step], step = S.step, d0 = S.delay || 0;
   S.delay = 0;
@@ -5208,7 +5291,7 @@ function renderGame() {
       ${tiles}
       ${grCard(8, 'The reel, show by show', 'Every film’s standing after each show, top to bottom of the reel as it was then. Hover a line to follow one film.', `<div id="grBump" class="gr-scroll">${bumpHTML(H, ranked)}</div>`, grTabs('bump', [['all', 'All films'], ['top', 'Top 10']], grBump === 'auto' ? (ranked.length > 60 ? 'top' : 'all') : grBump))}
       ${(() => { const br = boothRows(); return grCard(6, 'The lean and your call', 'How often you locked a film where its marks leaned, and which way you went when you didn’t.', leanCallHTML(br))
-        + grCard(6, 'The showdown lean and your calls', 'How often your showdown picks matched the lean, and how other weightings would have done.', sdAgreeHTML())
+        + grCard(6, 'The showdowns', 'How many were decided by standing, and how many came to you as dead heats on the arena.', sdAgreeHTML())
         + grCard(6, 'The lean by tier', 'Every film’s lean, 0 to 100, in the tier you locked it. Left is lighter, right heavier.', leanStripHTML(br))
         + grCard(6, 'What detections land on', 'Where each film’s largest detection lands on the aim, the two halves of the lean, and how you meant it.', landsHTML(br))
         + grCard(6, 'Arenas', 'Sub-genres on the reel, split by magnitude.', arenasHTML(ranked)); })()}
@@ -5523,10 +5606,12 @@ const PB = {
     ['Current Integrated View', 'My conceptual understanding of the runtime, shaped and molded from the experience(s) I had with the film. Only one view.'],
     ['Footprint', 'The single largest detection’s place in my view.'],
     ['Detections', 'The content or basis of memory that shapes the footprint: non-positive things connected to my own experience. A word may come from elsewhere, but I make the connection to my shape myself.'],
+    ['Beats', 'Positive things connected to my own experience. I name what and where, and grade the scope of that quality against how the film delivers its effects.'],
+    ['Hallmark', 'The single largest beat’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
     ['Magnitude', 'Tiers that classify a film by adjudicating the size of its footprint to the significance of its aim.'],
     ['Arena', 'The film’s specific sub-genre. Every film is judged on its own arena, even against a film from a different one.'],
-    ['Showdown', 'The ordinal ranking within each tier: which does its own arena better, given the relationship of footprint to aim it earned to get in that tier?'],
+    ['Showdown', 'The ordinal ranking within each tier, decided by standing, and by which does its own arena better when they’re even.'],
   ],
   tiers: { 5: 'A piece somewhere in the view.', 4: 'The outer edge, bordering the view without reaching the center.', 3: 'The center of the view.', 2: 'The center, spreading outward.', 1: 'The whole view, edge to center.' },
 };
@@ -5553,45 +5638,51 @@ function renderPlaybill() {
     ${it('◎', 'The Arena Box', 'from the sub-genre', 'What that sub-genre sets out to do as a genre, and what doing it well looks like, regardless of any specific film. It sits beside the magnitude at the showdown.')}
     ${it('▣', 'The poster', 'the DVD cover', 'A picture address for the film’s one-sheet.')}
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
-  if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>You answer · the booth reads the plot and keeps the stats</small></div>
-    ${it('1', 'What bugged me', 'first, in my words', 'Before any aims or plot, I type each detection and grade it Nitpick to Problem.')}
-    ${it('2', 'Claude researches it', 'one trip, one paste each way', 'The booth copies the film and my detections and opens my booth project in Claude. Claude searches everything it can (screenplay, transcripts, detailed synopses), works out the film’s aims sorted Central to Minor, breaks the film into its scenes with rough times, and lines each aim and detection up with them, giving its reason for each. The reasons show in the full picture at the end. I paste its reply back. It never rates or judges anything; the stats run on screen time.')}
-    ${it('3', 'Rate the aims', 'on the description alone', 'Each aim comes up, Central first, with the scenes still hidden. I rate how it went for me: Zilch, Edge, Supporting or Core (the peak), with a few aims I’ve rated Core before shown as a yardstick, and I can change the tier Claude gave it. Then the full picture is revealed at the end.')}
-    ${it('★', 'The largest', 'suggested', 'With two or more detections, the booth suggests the one that reaches furthest into the aims and I confirm or pick another. It is the footprint: only it counts toward the lean. The others stay on record.')}
-    <div class="pb-axis"><span>How the aims went</span></div>
-    ${AIM_WEIGHTS.map((n, j) => it(String(j + 1), n, `${Math.round(B2_VAL[j + 1] * 100)} landed`, B2_RATE_DEF[j])).join('')}${it('–', 'Doesn’t ring a bell', '', 'I don’t remember it. The aim is left out of the stats and counts toward nothing.')}
+  if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>I name and grade · Claude maps · the booth keeps the stats</small></div>
+    ${it('1', 'My view', 'before Claude, two of each at most', 'Detections (D1, D2): non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats (B1, B2): positive things, what and where, graded by the scope of that quality against how the film delivers its effects. I grade against my own sense of the film; I haven’t seen its aims yet.')}
+    ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, breaks it into timed scenes, and places each detection and beat: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades.')}
+    ${it('3', 'The full frame, then the aims', 'my wide shot', 'With Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
+    ${it('★', 'Footprint & hallmark', 'suggested', 'With two of a kind, the booth suggests the higher grade (then the one covering more of the film) and I confirm. The largest counts in full and the other at half.')}
     <div class="pb-axis"><span>How I mean a detection</span></div>
     ${WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_DET[j])).join('')}
+    <div class="pb-axis"><span>How I mean a beat</span></div>
+    ${BEAT_NAMES.map((n, j) => it(String(j + 1), n, '', DEF_BEAT[j])).join('')}
+    <div class="pb-axis"><span>How an aim went · taken as a whole</span></div>
+    ${AIM_WEIGHTS.map((n, j) => it(String(j + 1), n, `${Math.round(B2_VAL[j + 1] * 100)}`, B2_RATE_DEF[j])).join('')}${it('–', 'Doesn’t ring a bell', '', 'I don’t remember it. The aim is left out and counts toward nothing.')}
     <div class="pb-axis"><span>Magnitude · top down</span></div>
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
-    <div class="pb-axis"><span>The stats · recalculated after every answer</span></div>
-    ${it('A', 'Footprint', '0 to 100', 'How much of the film the largest detection covers, weighted by how I mean it: Nitpick a quarter, Gripe a half, Drawback three quarters, Problem in full. Shown for the picture; it doesn’t decide the lean on its own.')}
-    ${it('B', 'Aim bite', '0 to 100', 'The damage the largest detection did to what the film was trying to accomplish. Where it lands on an aim, my rating of that aim says how much it undermined it (Zilch fully, Edge three quarters, Supporting a quarter, Core not at all: the share of the aim that didn’t land), and its grade says how hard it bites (a Nitpick a quarter as hard as a Problem). Weighted by how central the aim is, out of everything the film was trying to accomplish. A brief moment counts as half a minute of its scene.')}
-    ${it('↗', 'A lean, not a verdict', 'the aim bite', 'The lean is the aim bite: the footprint weighed against the aim, never on its own. If the largest detection undermined at least half of a Major or Central aim, weighed by its grade (so a Nitpick never gets there), it sits at the center of my View: Defining, Pervasive at 35, All-encompassing at 60. Otherwise it borders the View: Incidental, Peripheral at 20. Within 5 points of a line, the booth says which way it could tip.')}
-    ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdown, or waits in the queue.')}`;
+    <div class="pb-axis"><span>The stats</span></div>
+    ${it('↗', 'The lean · the tier', 'the footprint alone', 'The footprint’s grade (Nitpick a quarter, Gripe a half, Drawback three quarters, Problem in full) × the share of the film it covers. My grade already carries its significance, so nothing else is multiplied in. If it covers at least half of a Central or Major aim, weighed by its grade, it reaches the heart of the film: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. A lean, not a verdict.')}
+    ${it('◧', 'Close-up', '0 to 100, around 50', 'My beats against my detections: grade first, size second; the hallmark and footprint in full, the second of each at half.')}
+    ${it('◨', 'Wide shot', '0 to 100', 'My aim grades (fails 10, falls short 25, achieves 60, triumphs 100), weighted by tier.')}
+    ${it('⚖', 'Standing', 'decides the showdowns', 'Half the close-up and half the wide shot, balanced so each moves it equally. The balance tunes itself from my films once ten are on the reel.')}
+    ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdowns, or waits in the queue.')}`;
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Compass<small>Definitions · in my own words</small></div>
     ${PB.terms.map(term).join('')}
     <div class="pb-axis" style="margin-top:14px"><span>How I mean a detection</span></div>
     ${WEIGHTS.map((n, j) => term([n, DEF_DET[j]])).join('')}
-    <div class="pb-axis" style="margin-top:14px"><span>How well the aim worked</span></div>
+    <div class="pb-axis" style="margin-top:14px"><span>How I mean a beat</span></div>
+    ${BEAT_NAMES.map((n, j) => term([n, DEF_BEAT[j]])).join('')}
+    <div class="pb-axis" style="margin-top:14px"><span>How an aim went · taken as a whole</span></div>
     ${AIM_WEIGHTS.map((n, j) => term([n, DEF_AIM[j]])).join('')}
-    <div class="pb-axis" style="margin-top:14px"><span>How central an aim is · from Google</span></div>
-    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Google ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Positive means it isn’t detection-worthy: it stood out in a good way, nothing counts against it, and it only adds to the whole weight, so it can only help (bonus points only). Neutral is just remembered, neither good nor bad, so a detection in the same stretch bites it like Edge (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A detection sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
+    <div class="pb-axis" style="margin-top:14px"><span>How central an aim is · from Claude, yours to change</span></div>
+    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Claude ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Positive means it isn’t detection-worthy: it stood out in a good way, nothing counts against it, and it only adds to the whole weight, so it can only help (bonus points only). Neutral is just remembered, neither good nor bad, so a detection in the same stretch bites it like Edge (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A detection sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
     <div class="pb-axis" style="margin-top:14px"><span>Magnitude</span></div>
     ${MAG_LV.map(l => term([`${l} · ${MAG_NAMES[l]}`, PB.tiers[l]])).join('')}
     <p class="pb-note">Incidental heads the rankings; All-encompassing sits at the bottom.</p>`;
   if (pbTab === 'Q') {
     const ex = [{ title: 'Heat', genre: 'Crime Thriller', M: here ? here.M : 3 }, { title: 'Casablanca', genre: 'Romantic Drama', M: here ? here.M : 3 }];
     body = `<div class="pb-sec">Act III · The Showdown<small>One question · within each tier</small></div>
-      <div class="pb-it here"><span class="n">?</span><div class="pb-q">${showdownStatement(ex[0], ex[1])}<i>The film whose statement I’d make ranks higher</i></div></div>
+      <div class="pb-it here"><span class="n">?</span><div class="pb-q">${showdownStatement(ex[0], ex[1])}<i>Asked only in a dead heat: the film whose statement I’d make ranks higher</i></div></div>
       ${it('▤', 'Lineups', 'one per tier', 'A film only meets the films in its own magnitude tier. Each answer narrows its spot (a binary search) until it lands.')}
-      ${it('◎', 'Its own arena', 'not a shared one', 'Each film is judged on how it does its own sub-genre, even when the two arenas differ, given the footprint to aim it earned to get in.')}
+      ${it('⚖', 'Decided by standing', 'automatic', 'Each matchup goes to the film with the higher standing. Within 3 points it’s a dead heat, and the arena question comes to me.')}
+      ${it('◎', 'Its own arena', 'the dead-heat call', 'In a dead heat, each film is judged on how it does its own sub-genre, even when the two arenas differ.')}
       ${it('⇅', 'The reel', 'top down', 'The tiers stack from Incidental down to All-encompassing, each in my showdown order.')}
-      ${it('🎞', 'The Double Bill', 'the screen', 'Reel numbers, then the booth’s: arena, largest detection, what it lands on, how the aims went, the footprint, the aim bite, film covered and the lean. The booth rows inform; they don’t point to a winner.')}
-      ${it('⚖', 'The showdown lean', 'a suggestion', 'What the aims achieved, 0 to 100: my ratings on one scale (Zilch 0, Edge 25, Supporting 75, Core 100), weighted by how central each aim is. Both films already earned the same tier, so the footprint isn’t counted again, except to break a near tie: within 5 points, the lighter footprint gets the nod. The arrow on that row marks the lean. The Game Room tracks how often I go with it, and how other weightings would have matched me.')}
+      ${it('🎞', 'The Double Bill', 'the screen', 'Reel numbers, then the booth’s: arena, footprint, hallmark, how the aims went, the lean, close-up, wide shot and standing. The arrow on the standing row shows who it favors.')}
       ${it('◐', 'From the booth', 'each poster', 'The film’s footprint map and lean, its largest detection in my words, its footprint and aim bite, what it lands on by name, the lean against where I locked it, and its arena. Flip the call card (↻) for the full arena.')}
       ${it('✎', 'The decisive consideration', 'optional', 'One line on what decides the matchup, filed with the battle and editable in the Film Vault.')}
-      ${it('↶', 'Undo', 'misclicks', 'Take back my last answer, even the one that finished the show.')}
+      ${it('↶', 'Undo', 'misclicks', 'Take back my last dead-heat call, even the one that finished the show. Showdowns decided by standing go back with it.')}
+      ${it('⇄', 'Re-balanced', 'automatic', 'When the balance between close-up and wide shot re-tunes from my films, each tier re-sorts by standing; films within 3 points keep the order my calls gave them.')}
       ${it('◆', 'Influence', 'beside the record', '70% placement on the whole reel · 30% standing in its own tier. It never moves a film; my showdowns do that.')}
       ${it('?', 'Spot-check', 'the lobby', 'Asks about a pair in a tier that the reel ranked but never showed me. Disagree, and rerun either film.')}
       ${it('🥫', 'The Film Vault', 'one can per film', 'A reel for every show it played and the newer films that challenged it. Re-screen it from the can to meet its tier again.')}
@@ -5599,6 +5690,7 @@ function renderPlaybill() {
   }
   if (pbTab === 'E') body = `<div class="pb-sec">Epilogue · After the Show<small>What happens to a film once it’s on the reel</small></div>
     ${it('↻', 'A new stance', 'buy another ticket', 'Back to the booth, as if I rewatched it. Mark it again and choose its magnitude. Locking the gate takes it off the reel and reruns its showdown.')}
+    ${it('⟲', 'Start fresh', 'the Office', 'A backup downloads first. Then clear booth work only, or everything ranked. The film list always stays.')}
     ${it('✕', 'Dump the reel', 'the Office', 'Clears the reel, every lineup and every showdown. Each film keeps its magnitude, booth marks, sub-genre and year, and waits in the queue.')}
     ${it('🗄', 'The archives', 'the Film Vault', 'Earlier reels, including the old X/Y reel, are filed in the vault and never used for ranking.')}`;
   $('#pbCard').innerHTML = `<button class="pb-x" data-pbx aria-label="Close">✕</button>
@@ -5658,6 +5750,9 @@ function renderOffice() {
         <p>Download everything — films, stances, the reel and its matchups, lists and the Film Vault — as one file.</p>
         <div class="figs"><div><b>${db.films.length}</b><span>Films</span></div><div><b>${db.matches.length}</b><span>Battles</span></div><div><b>${nV}</b><span>Shows</span></div></div>
         <div class="btnrow2"><button class="btn-ink solid" data-o="export">Download backup</button></div>
+        <div class="ask" style="margin-top:12px"><b>Start fresh.</b> A backup downloads first, then you choose what to clear. Your film list (titles, years, sub-genres, arenas, posters) always stays.
+          <div class="btnrow2"><button class="btn-ink" data-o="fresh1">Clear booth work only</button><button class="btn-ink" data-o="fresh2">Clear everything ranked</button></div>
+          ${officeMsg.fresh ? `<div class="${officeMsg.fresh.startsWith('✓') ? 'okline' : 'badline'}">${esc(officeMsg.fresh)}</div>` : ''}</div>
         ${officeMsg.backup ? `<div class="okline">${esc(officeMsg.backup)}</div>` : ''}</div>
 
       <div class="ledger"><span class="tabk">The delivery door</span><h3>Import a backup</h3>
@@ -5727,6 +5822,18 @@ $('#office').addEventListener('click', async e => {
   if (o === 'seed') { try { await cloudSeed(); toast('The house is open'); } catch (err) { officeMsg.signin = err.message; } return renderOffice(); }
   if (!canEdit()) return;
   if (o === 'export') return exportBackup();
+  if (o === 'fresh1' || o === 'fresh2') {
+    const all = o === 'fresh2';
+    if (!confirm(all ? 'Start fresh: clear all booth work AND the reel, showdowns, records and Vault history? Your film list stays. A backup downloads first.' : 'Start fresh: clear all booth work (detections, beats, aims and Claude’s readings)? Tiers and the reel stay. A backup downloads first.')) return;
+    exportBackup();
+    if (active) endWorkflow();
+    const BOOTH = ['dets', 'beats', 'aims', 'aim', 'carry', 'scenes', 'mapKey', 'mapMode', 'mapSources', 'mapEngine', 'mapCut', 'aimSrc', 'mapWhy', 'flagsOk', 'plot', 'plotSrc', 'cuts', 'cutsOk', 'wild', 'footprint'];
+    db.films.forEach(f => { BOOTH.forEach(k => delete f[k]); f.dets = []; f.beats = []; f.aims = []; if (all) { delete f.mag; delete f.M; ['strikes', 'strikeCount', 'locked', 'comp'].forEach(k => delete f[k]); } });
+    if (all) { db.wheel = []; db.matches = []; db.wheelLog = []; db.archives = []; db.ties = {}; db.ladders = { M: {} }; delete db.archive; delete db.settings.sdBal; vaultOpen.clear(); }
+    rebuild();
+    officeMsg.fresh = (await persist()) ? `✓ ${all ? 'Everything ranked was cleared' : 'Booth work was cleared'} · your backup downloaded first` : 'Cleared here, but not saved to the cloud';
+    return renderOffice();
+  }
   if (o === 'copyinstr') { try { await navigator.clipboard.writeText(B2_INSTR); officeMsg.proj = '✓ Instructions copied · paste them into the project’s instructions'; } catch (err) { officeMsg.proj = 'Copy was blocked by the browser'; } return renderOffice(); }
   if (o === 'saveproj') { const v = ($('#oProj')?.value || '').trim(); if (v && !/^https:\/\/claude\.ai\//i.test(v)) { officeMsg.proj = 'Paste a link that starts with https://claude.ai/'; return renderOffice(); }
     db.settings.boothProject = v; officeMsg.proj = (await persist()) ? (v ? '✓ Saved · the booth opens this project' : '✓ Cleared · the booth opens a new chat') : 'The link was not saved'; return renderOffice(); }
