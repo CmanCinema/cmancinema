@@ -3472,6 +3472,7 @@ const DEF_DET = ['Petty consequences of this stretch.', 'Minor consequences of t
 const BEAT_NAMES = ['Perk', 'Bonus', 'Strength', 'Asset'];
 const DEF_BEAT = ['A nice-to-have; a micro-detail.', 'A plus; a meso-feature.', 'An advantage; a macro, core component.', 'A selling point; the holistic, defining foundation or identity.'];
 const BEAT_COLOR = '#8fd18b', ITEM_MAX = 2;
+const art = w => (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w;
 /* the two boxes of your view: detections (non-positive, graded by the consequences of the stretch against the aim's what)
    and beats (positive, graded by the scope of the quality against the aim's how) */
 const B2_KIND = { d: { key: 'dets', pre: 'D', names: null, defs: null, one: 'detection', many: 'detections', big: 'footprint' }, b: { key: 'beats', pre: 'B', names: null, defs: null, one: 'beat', many: 'beats', big: 'hallmark' } };
@@ -3754,16 +3755,28 @@ function lean2(r) {
     const ms = sceneSet(main), mset = new Set(ms), add = new Set(main.add || []), cover = s => len[s] * part(main, s);
     out.main = main; out.mainAims = b2Hits(r, main);
     out.cov = ms.reduce((t, s) => t + cover(s), 0) / L; out.F = Math.round(100 * out.cov);
-    // the heart of the film: the footprint covers at least half of a Central or Major aim, weighed by its grade
-    out.heart = out.mainAims.some(i => {
-      if ((r.aims[i].central || 0) < 3 || r.aims[i].rate === 0) return false;
-      const own = add.has(i) ? [...new Set([...carry[i], ...ms])] : [...carry[i]];
-      const tot = own.reduce((t, s) => t + len[s], 0), hit = own.filter(s => mset.has(s)).reduce((t, s) => t + cover(s), 0);
-      return tot && hit / tot * SEV_SIG[main.w] >= .5;
-    });
   }
-  // the lean: the footprint's grade (which carries its significance) × the share of the film it covers
-  const score = main ? 100 * SEV_SIG[main.w] * out.cov : 0; out.B = null; out.score = Math.round(score);
+  // MAGNITUDE, relative to the film itself: the footprint against its hallmark and how its aims went
+  const hall = b2Ranked(r, 'beats')[0] || null, hset = hall ? new Set(hall.whole ? [...Array(n).keys()] : hall.sents || []) : null;
+  const wv = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d));
+  const Fw = main ? SEV_SIG[main.w] * (.5 + .5 * (out.cov || 0)) : 0, Hw = hall ? wv(hall) : 0, Wd = b2WideShot(r), Aw = Wd == null ? 0 : Wd / 100;
+  out.Fw = Fw; out.Hw = Hw; out.Aw = Aw; out.hall = hall;
+  // the lean: the footprint's share of the film's whole view
+  const score = main && Fw + Hw + Aw > 0 ? 100 * Fw / (Fw + Hw + Aw) : 0; out.B = null; out.score = Math.round(score);
+  // the heart: at the Central and Major aims, the footprint takes up more than a third of what's there
+  out.heart = false; out.core = 0;
+  if (main) {
+    const ms = sceneSet(main), mset = new Set(ms), add = new Set(main.add || []), drop = new Set(main.drop || []), cover = s => len[s] * part(main, s);
+    let neg = 0, pos = 0;
+    live.forEach(({ a, i }) => {
+      if ((a.central || 0) < 3 || !Number.isInteger(a.rate) || a.rate < 1) return;
+      const own = add.has(i) ? [...new Set([...carry[i], ...ms])] : [...carry[i]], tot = own.reduce((t, s) => t + len[s], 0), c = CENT_SIG[a.central];
+      const fShare = !tot || drop.has(i) ? 0 : own.filter(s => mset.has(s)).reduce((t, s) => t + cover(s), 0) / tot;
+      const hShare = !tot || !hall ? 0 : own.filter(s => hset.has(s)).reduce((t, s) => t + len[s] * (hall.moment ? Math.min(1, B2_MOMENT / len[s]) : 1), 0) / tot;
+      neg += c * fShare * SEV_SIG[main.w]; pos += c * (B2_VAL[a.rate] + (hall ? hShare * SEV_SIG[hall.w] : 0));
+    });
+    out.core = neg + pos > 0 ? neg / (neg + pos) : 0; out.heart = out.core > 1 / 3;
+  }
   out.t = out.heart ? (score >= LEAN_CUT.whole ? 1 : score >= LEAN_CUT.spread ? 2 : 3) : (score >= LEAN_CUT.edge ? 4 : 5);
   const cuts = out.heart ? [[LEAN_CUT.spread, 3, 2], [LEAN_CUT.whole, 2, 1]] : [[LEAN_CUT.edge, 5, 4]];
   const [cut, light, heavy] = cuts.slice().sort((a, b) => Math.abs(score - a[0]) - Math.abs(score - b[0]))[0], dist = Math.abs(score - cut);
@@ -3811,10 +3824,10 @@ function b2Flags(r) {
     if (!Number.isInteger(a.rate) || a.rate < 1) return;
     (r.dets || []).filter(d => Number.isInteger(d.w) && b2Placed(d) && d.w >= 3 && b2Hits(r, d).includes(i)).forEach(d => {
       const sh = share(d, i), key = `${i}:${d.id}:${a.rate}:${d.w}`; if (a.rate === 4 && sh >= 1 / 3 && !ok.has(key))
-        out.push({ key, d, i, text: `You graded ${aimShort(a)} as a triumph, but ${b2Label(r, d)}, a ${WEIGHTS[d.w - 1]}, covers about ${Math.round(sh * 100)}% of it.` }); });
+        out.push({ key, d, i, text: `You graded ${aimShort(a)} as a triumph, but ${b2Label(r, d)}, ${art(WEIGHTS[d.w - 1])}, covers about ${Math.round(sh * 100)}% of it.` }); });
     (r.beats || []).filter(d => Number.isInteger(d.w) && b2Placed(d) && d.w >= 3 && b2Hits(r, d).includes(i)).forEach(d => {
       const sh = share(d, i), key = `${i}:${d.id}:${a.rate}:${d.w}`; if (a.rate <= 2 && sh >= 1 / 3 && !ok.has(key))
-        out.push({ key, d, i, text: `You graded ${aimShort(a)} as ${a.rate === 1 ? 'failing' : 'falling short'}, but ${b2Label(r, d)}, a ${BEAT_NAMES[d.w - 1]}, covers about ${Math.round(sh * 100)}% of it.` }); });
+        out.push({ key, d, i, text: `You graded ${aimShort(a)} as ${a.rate === 1 ? 'failing' : 'falling short'}, but ${b2Label(r, d)}, ${art(BEAT_NAMES[d.w - 1])}, covers about ${Math.round(sh * 100)}% of it.` }); });
   });
   return out;
 }
@@ -4191,13 +4204,13 @@ function b2LockHTML(r, L) {
     { const counted = b2Live(r).filter(x => x.a.rate > 0);
       if (!counted.length) notes.push('Every aim is left out (doesn’t ring a bell), so there’s no wide shot and the showdowns can’t decide this film on their own.');
       const bare = counted.filter(x => !((r.carry || [])[x.i] || []).length); if (bare.length) notes.push(`Claude gave no scenes for ${bare.map(x => aimShort(x.a)).join(', ')}, so a detection only reaches ${bare.length === 1 ? 'it' : 'them'} where Claude named ${bare.length === 1 ? 'it' : 'them'}.`); }
-    if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (a ${WEIGHTS[L.main.w - 1]}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}${L.heart ? ': it reaches the heart of the film' : ''}.`);
+    if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (${art(WEIGHTS[L.main.w - 1])}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}. Weighed against ${L.hall ? `the hallmark (${b2Label(r, L.hall)}, ${art(BEAT_NAMES[L.hall.w - 1])})` : 'no hallmark'} and how the aims went, it takes ${L.score}% of the film’s view, and ${Math.round(100 * L.core)}% of its core${L.heart ? ': it reaches the heart' : ''}.`);
     { const S = b2Standing(r); if (S) notes.push(`Standing ${S.std}: close-up ${S.close}, wide shot ${S.wide}. It decides the showdowns within the tier; within ${SD_HEAT} points the arena is your call.`); }
     if (L.near) notes.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away.`);
     const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('The other detection counts in the close-up at half; only the footprint sets the tier.');
   }
   const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length || b2Flags(r).length, pick = blocked ? null : bt.mag;
-  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s grade × the ${L.F}% of the film it covers${L.heart ? ', reaching the heart of the film' : ''}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
+  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s share of this film’s view, against its hallmark and how its aims went${L.heart ? `; at the core it takes ${Math.round(100 * L.core)}%, reaching the heart` : `; ${Math.round(100 * L.core)}% of the core, short of the heart`}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
     ${notes.length ? `<div class="bx-notes">${notes.map(n => `<span>${esc(n)}</span>`).join('')}</div>` : ''}
     ${L ? `<div class="b2-opts" style="margin-top:10px"><button class="bx-link" data-b2="go" data-v="aims">Re-grade the aims</button><button class="bx-link" data-b2="go" data-v="dets">Your view</button></div>` : ''}
     ${b2PictureHTML(r, L)}
@@ -5737,7 +5750,7 @@ const PB = {
     ['Beats', 'Positive things connected to my own experience. I name what and where, and grade the scope of that quality against how the film delivers its effects.'],
     ['Hallmark', 'The single largest beat’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
-    ['Magnitude', 'Tiers that classify a film by adjudicating the size of its footprint to the significance of its aim.'],
+    ['Magnitude', 'Tiers that classify a film by adjudicating its footprint against its hallmark and how its aims went: the footprint’s place in the film’s own view.'],
     ['Arena', 'The film’s specific sub-genre. Every film is judged on its own arena, even against a film from a different one.'],
     ['Showdown', 'The ordinal ranking within each tier, decided by standing, and by which does its own arena better when they’re even.'],
   ],
@@ -5780,7 +5793,7 @@ function renderPlaybill() {
     <div class="pb-axis"><span>Magnitude · top down</span></div>
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
     <div class="pb-axis"><span>The stats</span></div>
-    ${it('↗', 'The lean · the tier', 'the footprint alone', 'The footprint’s grade (Nitpick a quarter, Gripe a half, Drawback three quarters, Problem in full) × the share of the film it covers. My grade already carries its significance, so nothing else is multiplied in. If it covers at least half of a Central or Major aim, weighed by its grade, it reaches the heart of the film: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. A lean, not a verdict.')}
+    ${it('↗', 'The lean · the tier', 'relative to the film itself', 'The footprint weighed against the hallmark and how the aims went, all scored the same way (grade first, size second). The lean is the footprint’s share of the film’s whole view. The heart: at the Central and Major aims, does the footprint take up more than a third of what’s there (how those aims went, plus the hallmark where it lands)? If so, it sits at the center of my view: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. No grade is barred; it all depends on the film. A lean, not a verdict.')}
     ${it('◧', 'Close-up', '0 to 100, around 50', 'My beats against my detections: grade first, size second; the hallmark and footprint in full, the second of each at half.')}
     ${it('◨', 'Wide shot', '0 to 100', 'My aim grades (fails 10, falls short 25, achieves 60, triumphs 100), weighted by tier.')}
     ${it('⚖', 'Standing', 'decides the showdowns', 'Half the close-up and half the wide shot, balanced so each moves it equally. The balance tunes itself from my films once ten are on the reel.')}
