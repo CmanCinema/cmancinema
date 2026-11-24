@@ -2339,10 +2339,11 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
             </div>
             <label for="fG1">Sub-genre <span style="text-transform:none;letter-spacing:0;font-weight:500;font-style:italic">· always two parts</span></label>
             <a class="dvd-btn" id="genreBtn" href="#" target="_blank" rel="noopener" style="margin-bottom:10px">Ask Google for its single sub-genre ↗</a>
-            <div class="genre2"><input id="fG1" placeholder="Gangster" maxlength="24"><i>·</i><input id="fG2" placeholder="Film" maxlength="24"></div>
+            <div class="genre2"><input id="fG1" placeholder="Gangster" maxlength="24" list="dlG1"><i>·</i><input id="fG2" placeholder="Film" maxlength="24" list="dlG2"></div><datalist id="dlG1"></datalist><datalist id="dlG2"></datalist>
             <label for="fArena">The Arena Box</label>
             <a class="dvd-btn" id="arenaBtn" href="#" target="_blank" rel="noopener">What does this sub-genre set out to do? ↗</a>
             <textarea id="fArena" class="aim-in" rows="4" placeholder="Paste Google’s answer about the sub-genre"></textarea>
+            <p class="hint" id="arenaHint" hidden></p>
             <label>Poster</label>
             <a class="dvd-btn" id="dvdBtn" href="#" target="_blank" rel="noopener">Find the DVD on Google ↗</a>
             <input id="fPoster" placeholder="Paste the picture address here" inputmode="url">
@@ -3426,7 +3427,28 @@ $('#takeSeat').addEventListener('click', () => {
   if (!pending || !canEdit() || active) return;
   mfOpen({ src: 'new', film: pending });
 });
-function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fFoot.value = fAim.value = fArena.value = ''; boUpdate(); }
+function clearTicket() { $('#ticketZone').innerHTML = ''; $('#takeSeat').classList.remove('show'); fTitle.value = fYear.value = fPoster.value = fG1.value = fG2.value = fFoot.value = fAim.value = fArena.value = ''; fArena.dataset.auto = ''; $('#arenaHint').hidden = true; boUpdate(); }
+/* the Arena Box follows the sub-genre: if a film already in the collection has the same one, its arena comes along */
+const genreKeyOf = g => (Array.isArray(g) ? g.join(' ') : String(g || '')).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function arenaFrom(g, skipId) {
+  const k = genreKeyOf(g); if (!k) return null;
+  const hit = db.films.filter(f => f.id !== skipId && genreKeyOf(f.genre) === k && String(f.arena || '').trim())
+    .sort((a, b) => (db.wheel.includes(b.id) - db.wheel.includes(a.id)) || ((b.added || 0) - (a.added || 0)))[0];
+  return hit ? { text: String(hit.arena).trim(), title: hit.title, onReel: db.wheel.includes(hit.id) } : null;
+}
+function boArenaFill() {
+  const hint = $('#arenaHint'), auto = fArena.dataset.auto === '1', g = [fG1.value.trim(), fG2.value.trim()];
+  if (fArena.value.trim() && !auto) return;   // you wrote your own: it stays
+  const hit = g[0] && g[1] ? arenaFrom(g) : null;
+  if (hit) { fArena.value = hit.text; fArena.dataset.auto = '1'; hint.hidden = false; hint.innerHTML = `Filled from <b>${esc(hit.title)}</b>${hit.onReel ? ' on the reel' : ''}, which shares the ${esc(g.map(capWord).join(' · '))} arena. Edit it if this film needs its own.`; }
+  else if (auto) { fArena.value = ''; fArena.dataset.auto = ''; hint.hidden = true; }
+}
+function boGenreLists() {
+  const parts = i => [...new Set(db.films.map(f => Array.isArray(f.genre) ? f.genre[i] : String(f.genre || '').split(/[,·]\s*|\s+/)[i]).filter(Boolean).map(capWord))].sort();
+  $('#dlG1').innerHTML = parts(0).map(x => `<option value="${esc(x)}">`).join(''); $('#dlG2').innerHTML = parts(1).map(x => `<option value="${esc(x)}">`).join('');
+}
+[fG1, fG2].forEach(i => { i.addEventListener('input', boArenaFill); i.addEventListener('focus', boGenreLists); });
+fArena.addEventListener('input', () => { fArena.dataset.auto = ''; $('#arenaHint').hidden = true; });
 function admitPending() {
   if (!pending || !canEdit() || active) return;
   const tk = $('#ticket'); if (tk) tk.classList.add('torn');
@@ -5510,10 +5532,12 @@ $('#brief').addEventListener('click', async e => {
   if (!g1 || !g2) return $('#bfErr').textContent = 'Give the sub-genre in two parts, like Silent · Comedy.';
   const r = raw(bf.id); if (!r || !canEdit()) return briefClose();
   r.genre = [g1, g2];
+  let took = null; if (!String(r.arena || '').trim()) { took = arenaFrom(r.genre, r.id); if (took) r.arena = took.text; }
   const m = bf.mode; briefClose(); rebuild();
   const ok = await persist();
+  if (ok && took) toast(`Sub-genre saved · its Arena Box came from ${took.title}`, 5000);
   if (m === 'reel') { if (current === 'auditorium') enterAuditorium(); }
-  else { if (ok) toast('Sub-genre saved'); openProfile(r.id); }
+  else { if (ok && !took) toast('Sub-genre saved'); openProfile(r.id); }
 });
 
 /* the argument card: each film measured against its opponent, each tied to its own sub-genre */
