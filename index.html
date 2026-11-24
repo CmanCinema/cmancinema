@@ -151,6 +151,81 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .aim-bx{max-width:680px;margin:4px auto 14px;text-align:left}
 .aim-bx label{display:block;font:800 10px var(--serif);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-hi,#f3d48a);margin-bottom:5px}
 .aim-bx textarea{width:100%;border:1px solid rgba(232,190,106,.45);border-radius:4px;background:rgba(0,0,0,.25);color:#f3e6c8;font:500 16px/1.45 var(--body);padding:8px 10px;resize:vertical;outline:none}
+.ph-nav{display:none}
+@media (max-width:640px){
+  #screenCard .k{font-size:9.5px;letter-spacing:.14em;line-height:1.5}
+  #screenCard .db-q{font-size:22px}
+  #screenCard .db-sd{font-size:10px;letter-spacing:.12em}
+  .dbill .db-r .m{font-size:8.5px;letter-spacing:.1em;padding:0 4px}
+  .dbill .db-r .a,.dbill .db-r .b{font-size:15px}
+  .dbill .db-r small{font-size:10px}
+  .dbill .db-lean{font-size:14px!important}
+  .ph-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px auto 0;max-width:420px;padding:6px;border:1px solid rgba(232,190,106,.4);border-radius:999px;background:rgba(14,3,6,.7)}
+  .ph-nav span{font:700 11px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi,#f3d48a);text-align:center}
+  .ph-nav button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(232,190,106,.55);background:rgba(232,190,106,.12);color:var(--gold-hi,#f3d48a);font-size:16px;cursor:pointer}
+  .ph-nav button[disabled]{opacity:.3}
+  /* the cards: the Double Bill already carries the booth numbers, so the cards keep only what you need */
+  .showing .bpanel .bp-map,.showing .bpanel .bp-k,.showing .bpanel .bp-item,.showing .bpanel .bp-det,.showing .bpanel .bp-lean{display:none}
+  .showing .bpanel{display:block;padding:0;border:0;background:none}
+  .showing .bpanel .bp-arena{font-size:13px;line-height:1.4;margin:0}
+  .showing .bpanel .bp-arena b{display:block;font-size:9.5px;letter-spacing:.14em;margin-bottom:3px}
+  .tape-ctl{gap:8px 14px}
+  .tape-ctl .linkish{font-size:11px;letter-spacing:.12em}
+}
+.bp-item{margin:4px 0 6px;padding-left:8px;border-left:3px solid #e6785a}
+.bp-item.b{border-left-color:#8fd18b}
+.bp-item b{display:block;font:800 11px var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.bp-item span{display:block;font:500 14px/1.4 var(--body)}
+.bp-item small{display:block;font:500 12px var(--body);opacity:.7}
+.pmq{position:relative;margin-top:14px;border-radius:14px;padding:12px;background:radial-gradient(120% 140% at 50% -20%,rgba(255,214,140,.22),rgba(40,8,14,.0) 55%),linear-gradient(180deg,#2a0a10,#14040a);border:1px solid rgba(232,190,106,.45);box-shadow:0 18px 40px rgba(0,0,0,.45),inset 0 0 40px rgba(0,0,0,.5);overflow:hidden}
+.pmq-bulbs{position:absolute;inset:5px;border-radius:10px;pointer-events:none;background:
+  radial-gradient(circle,#ffe9b8 0 2.2px,rgba(255,200,110,.0) 3.4px) 0 0/22px 22px repeat-x,
+  radial-gradient(circle,#ffe9b8 0 2.2px,rgba(255,200,110,.0) 3.4px) 0 100%/22px 22px repeat-x,
+  radial-gradient(circle,#ffe9b8 0 2.2px,rgba(255,200,110,.0) 3.4px) 0 0/22px 22px repeat-y,
+  radial-gradient(circle,#ffe9b8 0 2.2px,rgba(255,200,110,.0) 3.4px) 100% 0/22px 22px repeat-y;filter:drop-shadow(0 0 4px rgba(255,210,130,.8));animation:pmqTw 2.4s steps(2) infinite}
+@keyframes pmqTw{50%{opacity:.72}}
+@media (prefers-reduced-motion:reduce){.pmq-bulbs{animation:none}}
+.pmq-in{position:relative;padding:18px 18px 14px}
+.pmq-k{display:block;text-align:center;font:800 11px var(--serif);letter-spacing:.3em;text-transform:uppercase;color:var(--gold-hi,#f3d48a);margin-bottom:8px}
+.pmq-row{display:grid;grid-template-columns:1fr 1.35fr 1fr;align-items:end;gap:8px}
+.pmq-g{position:relative;text-align:center}
+.pmq-g svg{width:100%;max-width:150px;display:block;margin:0 auto}
+.pmq-g .trk{fill:none;stroke:rgba(255,240,210,.12);stroke-width:9;stroke-linecap:round}
+.pmq-g .val{fill:none;stroke:#e8be6a;stroke-width:9;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(255,200,110,.55))}
+.pmq-g.c .val{stroke:#8fd18b;filter:drop-shadow(0 0 6px rgba(143,209,139,.5))}
+.pmq-g.w .val{stroke:#9cc4ff;filter:drop-shadow(0 0 6px rgba(156,196,255,.5))}
+.pmq-g b{position:absolute;left:0;right:0;top:38%;font:800 26px var(--serif);color:#fff4d8}
+.pmq-g.big b{font-size:40px;top:32%;text-shadow:0 0 18px rgba(255,210,130,.6)}
+.pmq-g.big svg{max-width:210px}
+.pmq-g span{display:block;margin-top:2px;font:700 10.5px var(--serif);letter-spacing:.22em;text-transform:uppercase;color:rgba(243,230,200,.7)}
+.pmq-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.pmq-chip{font:700 12px var(--serif);letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid rgba(232,190,106,.45);color:#f6ead0;background:rgba(0,0,0,.25)}
+.pmq-chip.t5,.pmq-chip.t4{border-color:rgba(143,209,139,.6)}.pmq-chip.t3,.pmq-chip.t2,.pmq-chip.t1{border-color:rgba(230,120,90,.7)}
+.pmq-aims{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+@media (max-width:640px){.pmq-aims{grid-template-columns:repeat(2,1fr)}.pmq-g b{font-size:20px}.pmq-g.big b{font-size:30px}.pmq-in{padding:20px 20px 16px}.pmq-g span{letter-spacing:.12em;font-size:9.5px}.pmq-k{letter-spacing:.2em}}
+.pmq-aim{position:relative;padding:8px 10px 10px;border-radius:8px;background:rgba(255,240,210,.05);border:1px solid rgba(232,190,106,.2);overflow:hidden}
+.pmq-aim em{display:block;font:700 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:rgba(243,230,200,.55);font-style:normal}
+.pmq-aim b{display:block;font:700 16px var(--serif);color:#f6ead0;margin-top:2px}
+.pmq-aim i{position:absolute;left:0;bottom:0;height:3px;background:#e8be6a}
+.pmq-aim.v4 b{color:var(--gold-hi,#f3d48a);text-shadow:0 0 10px rgba(255,210,130,.5)}.pmq-aim.v1 b,.pmq-aim.v2 b{color:rgba(243,230,200,.6)}
+.pmq-hl{margin-top:14px}
+.pmq-hl>.pmq-k{text-align:left}
+.pmq-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.pmq-cols{grid-template-columns:1fr}}
+.pmq-stub{position:relative;margin-bottom:10px;padding:12px 14px 10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,240,210,.07),rgba(255,240,210,.02));border:1px dashed rgba(143,209,139,.45);border-left:4px solid #8fd18b}
+.pmq-stub.d{border-color:rgba(230,120,90,.5);border-left-color:#e6785a}
+.pmq-stub:not(.big){opacity:.85}
+.pmq-stub::before,.pmq-stub::after{content:'';position:absolute;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:#1a060b}
+.pmq-stub::before{left:-9px}.pmq-stub::after{right:-8px}
+.pmq-sh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pmq-sh em{font:700 10.5px var(--serif);letter-spacing:.2em;text-transform:uppercase;font-style:normal;color:rgba(243,230,200,.6)}
+.pmq-sh b{font:800 15px var(--serif);letter-spacing:.08em;text-transform:uppercase;color:#8fd18b}
+.pmq-stub.d .pmq-sh b{color:#f0957a}
+.pmq-stub p{margin:6px 0 8px;font:500 15.5px/1.45 var(--body);color:#f6ead0}
+.pmq-stub.big p{font-size:16.5px}
+.pmq-sf{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:500 12.5px var(--body);color:rgba(243,230,200,.6)}
+.pmq-none{font:italic 500 14px var(--body);color:rgba(243,230,200,.5);margin:6px 2px}
+.pmq.empty{padding:18px;text-align:center}.pmq.empty p{margin:4px 0 0;font:italic 500 15px var(--body);color:rgba(243,230,200,.7)}
 .paim{margin-top:12px;padding:10px 12px;border-left:3px solid var(--gold-hi,#f3d48a);background:rgba(255,240,210,.05);border-radius:4px}
 .paim p{margin:4px 0 0;font:500 16px/1.5 var(--body);white-space:pre-line}
 .paim .none{opacity:.6;font-style:italic}
@@ -1235,7 +1310,12 @@ div.row:focus-visible{outline:3px solid var(--gold-hi);outline-offset:2px}
 .tp.on{border-color:var(--gold-hi);color:var(--gold-hi);box-shadow:0 0 16px rgba(255,214,140,.35)}
 .tp.w{border-color:#5fc27e;color:#c9f5d4} .tp.w span{background:#1f6b3a;border-color:#5fc27e}
 .tp.l{border-color:#c4655c;color:#ffc4be} .tp.l span{background:#6b1a1a;border-color:#ff8a80}
-.tape-ctl{display:flex;justify-content:center;gap:22px;margin-top:4px}
+.tape-ctl{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px 22px;margin-top:4px}
+button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
+.tp small{font:600 10px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.tp.au small{color:#bcd9ff}
+.tape-pos{font:600 13px var(--body);color:rgba(243,230,200,.7);letter-spacing:.06em}
+.tape-ctl .linkish[disabled]{opacity:.35;pointer-events:none}
 .tape-ctl .linkish{color:var(--gold);font-size:13px}
 /* the profile's score */
 .pscore{margin-top:10px;padding:12px 14px;border-radius:3px;background:rgba(14,3,6,.45);border:1px solid rgba(232,190,106,.25)}
@@ -2724,7 +2804,7 @@ function placementRun(P) {
 const placementDone = P => P.done.M != null;
 // the call to action, in the argument card's words: the claim word or the case verb for that level, read against each film's own sub-genre
 function showdownReason(ax, l, W, L, even) {
-  if (ax === 'M') return even ? `${MAG_NAMES[l]} showdown: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `${MAG_NAMES[l]} showdown: ${esc(W.title)} does its own arena better than ${esc(L.title)} does its own, given the footprint to aim each earned.`; return even ? `${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${l}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${l}: ${argueCase(W, L, ax)}`; }
+  if (ax === 'M') return even ? `${MAG_NAMES[l]} showdown: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `${MAG_NAMES[l]} showdown: ${esc(W.title)} does its own arena better than ${esc(L.title)} does its own: your call in a dead heat.`; return even ? `${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${l}: too close to call, so ${esc(L.title)} was placed just below ${esc(W.title)}.` : `${ax === 'X' ? 'Condition' : 'Recommendation'} · ${ax}${l}: ${argueCase(W, L, ax)}`; }
 const ctaQuestion = (ax, l) => `Pick the statement you’d make · ${ax === 'X' ? X_NAMES[l] : Y_NAMES[l]}`;
 // pick: the film whose call-to-action statement you agree with; it ranks higher in the lineup
 // every answer can be taken back until the placement is saved
@@ -3177,8 +3257,7 @@ function openProfile(id, show) {
       <div class="sub" style="font-size:16px">${st.n ? `${st.n} battle${st.n === 1 ? '' : 's'}` : 'No battles yet'}${st.entry ? ` · entered at #${st.entry}` : ''}${strikeBadge(f)}</div>
       <div class="pscore"><div class="lab">Magnitude <b>${f.M} · ${MAG_NAMES[f.M]}</b></div><div class="fc-eq"><span>Its lineup <b>${laneText(f)}</b></span>${f.genre ? `<span>Arena <b>${esc(f.genre)}</b></span>` : ''}</div>
         <div class="pform"><span>Form · last five</span>${formHTML(st.form)}${callsOf(id) ? `<span class="pcalls">${callsOf(id)} showdown${callsOf(id) === 1 ? '' : 's'} you’ve answered with this film</span>` : ''}</div></div>
-      <div class="paim"><span class="dc-k">The Aim Box</span>${f.aim ? `<p>${esc(f.aim)}</p>` : '<p class="none">No aim attached yet.</p>'}</div>
-      <div class="paim"><span class="dc-k">The Arena Box${f.genre ? ' · ' + esc(f.genre) : ''}</span>${f.arena ? `<p>${esc(f.arena)}</p>` : '<p class="none">No arena attached yet.</p>'}</div>
+      ${profBoothHTML(f)}
       ${editor ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" data-aimedit="aim">${f.aim ? 'Edit the Aim' : 'Add the Aim'}</button><button class="btn-line" data-aimedit="arena">${f.arena ? 'Edit the Arena' : 'Add the Arena'}</button><button class="btn-line" data-brief>${f.genre ? 'Edit sub-genre' : 'Add sub-genre'}</button><button class="btn-line" data-poster>${f.poster ? 'Change poster' : 'Add poster'}</button></div>` : ''}
       ${lastNote ? `<div class="dc pdc"><span class="dc-k">The latest decisive consideration${lastNote.vs ? ` · vs ${esc(titleOf(lastNote.vs))}` : ''}</span><p class="dc-note">“${esc(lastNote.note)}”</p></div>` : ''}
       ${entries.length ? `<div style="margin-top:10px"><button class="btn-line" data-vaultfilm>Its battles are in the Film Vault · ${entries.length} show${entries.length === 1 ? '' : 's'}</button></div>` : ''}
@@ -3192,6 +3271,29 @@ function openProfile(id, show) {
   $('#sheet').classList.add('show');
   $('#sheet').dataset.id = id;
   if (show === 'ticket') setTimeout(() => { const c = $('#confirmBox'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+}
+/* the profile's marquee: its standing for the showdowns, and the highlights of its booth work */
+function profBoothHTML(f) {
+  const r = raw(f.id); if (!r) return '';
+  const S = b2Standing(r), b = boothStats(f.id), L = b && b.lean;
+  if (!S && !(r.dets || []).length && !(r.beats || []).length) return `<div class="pmq empty"><span class="pmq-k">Now showing</span><p>No booth reading yet. Its standing and highlights appear once it’s been through the booth.</p></div>`;
+  const gauge = (v, lab, cls) => `<div class="pmq-g ${cls || ''}"><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M10 64 A50 50 0 0 1 110 64" class="trk"/><path d="M10 64 A50 50 0 0 1 110 64" class="val" style="stroke-dasharray:${(157 * Math.max(0, Math.min(100, v || 0)) / 100).toFixed(1)} 157"/></svg><b>${v == null ? '—' : Math.round(v)}</b><span>${lab}</span></div>`;
+  const where = d => { if (d.whole) return 'The whole film'; const sc = (d.sents || []).map(x => (r.scenes || [])[x]).filter(Boolean); if (!sc.length) return ''; const a = sc[0], z = sc[sc.length - 1]; return `${b2Clock(a.s)}–${b2Clock(z.e)} · ${esc(trimTo(a.t, 40))}${sc.length > 1 ? ` <i>+${sc.length - 1} more</i>` : ''}`; };
+  const stub = (d, k, big) => d ? `<div class="pmq-stub ${k} ${big ? 'big' : ''}"><div class="pmq-sh"><em>${big ? (k === 'b' ? 'The hallmark' : 'The footprint') : (k === 'b' ? 'Second beat · at half' : 'Second detection · at half')}</em><b>${(k === 'b' ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b></div>
+      <p>${esc(trimTo(d.note || '', big ? 220 : 120))}</p><div class="pmq-sf"><span>${where(d)}</span><span>${Math.max(1, Math.round(100 * b2Cov(r, d)))}% of the film</span></div></div>` : '';
+  const D = b2Ranked(r, 'dets'), Bt = b2Ranked(r, 'beats'), VERB = ['Fails', 'Falls short', 'Achieves', 'Triumphs'];
+  const aims = b2Live(r).filter(x => Number.isInteger(x.a.central) && x.a.central > 0).sort((p, q) => q.a.central - p.a.central);
+  return `<div class="pmq">
+    <div class="pmq-bulbs" aria-hidden="true"></div>
+    <div class="pmq-in">
+      <span class="pmq-k">Now showing · its standing in the showdowns</span>
+      <div class="pmq-row">${gauge(S && S.close, 'Close-up', 'c')}<div class="pmq-main">${gauge(S && S.std, 'Standing', 'big')}</div>${gauge(S && S.wide, 'Wide shot', 'w')}</div>
+      <div class="pmq-chips">${L ? `<span class="pmq-chip t${L.t}">${L.t} · ${MAG_NAMES[L.t]}</span><span class="pmq-chip">Lean ${L.score}</span><span class="pmq-chip">${L.heart ? 'Reaches the heart' : 'Short of the heart'}</span>` : '<span class="pmq-chip">No tier lean yet</span>'}</div>
+      ${aims.length ? `<div class="pmq-aims">${aims.map(({ a }) => `<div class="pmq-aim v${a.rate || 0}"><em>${CENT_NAMES[a.central]}</em><b>${a.rate > 0 ? VERB[a.rate - 1] : a.rate === 0 ? 'Doesn’t ring a bell' : '—'}</b><i style="width:${a.rate > 0 ? Math.round(B2_VAL[a.rate] * 100) : 0}%"></i></div>`).join('')}</div>` : ''}
+    </div></div>
+    ${D.length || Bt.length ? `<div class="pmq-hl"><span class="pmq-k">Booth highlights</span>
+      <div class="pmq-cols"><div>${stub(Bt[0], 'b', true)}${stub(Bt[1], 'b')}${Bt.length ? '' : '<p class="pmq-none">No beats named.</p>'}</div>
+      <div>${stub(D[0], 'd', true)}${stub(D[1], 'd')}${D.length ? '' : '<p class="pmq-none">No detections named.</p>'}</div></div></div>` : ''}`;
 }
 function strikeBadge() { return ''; }   // strikes are gone: edit freely
 function closeSheet() { $('#sheet').classList.remove('show'); }
@@ -4550,14 +4652,14 @@ function boothStatsOld(id) {
 }
 const pctTxt = v => v == null ? '—' : String(v);
 function boothPanelHTML(f) {
-  const b = boothStats(f.id); if (!b) return '';
-  const chips = (b.hits || []).map(a => `<span class="bp-chip ${isCore(a) ? 'core' : ''}" style="--c:${aimColor(b.r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}</span>`).join('');
+  const b = boothStats(f.id), r = raw(f.id); if (!b || !r) return '';
+  const S = b2Standing(r), D = b2Ranked(r, 'dets')[0], Bt = b2Ranked(r, 'beats')[0];
+  const line = (d, k) => d ? `<div class="bp-item ${k}"><b>${k === 'b' ? 'Hallmark' : 'Footprint'} · ${(k === 'b' ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b><span>${d.note ? `“${esc(trimTo(d.note, 110))}”` : '<em>No words written</em>'}</span><small>${Math.max(1, Math.round(100 * b2Cov(r, d)))}% of the film</small></div>` : '';
   const arena = String(f.arena || '').replace(/\s+/g, ' ').trim();
-  return `<div class="bpanel"><div class="bp-map">${b.v2 ? magDisc(b.lean ? b.lean.t : f.M) : bxMapSVG(b.r)}<small>Lean ${pctTxt(b.pct)}</small></div><div class="bp-body">
-    <div class="bp-k">From the booth · the full picture</div>
-    ${b.m ? `<div class="bp-det">D${detNum(b.r, b.m)} ★ ${b.m.note ? `“${esc(trimTo(b.m.note, 140))}”` : '<em>No words written</em>'}</div>
-    <div class="bp-row"><span class="bp-sev">${b.sev}</span><span class="bp-meta">· footprint ${pctTxt(b.F)} · aim bite ${pctTxt(b.B)} · lands on</span>${chips || '<span class="bp-meta">no aim stretch</span>'}</div>` : '<div class="bp-det"><em>No detections marked in the booth</em></div>'}
-    <div class="bp-lean">${b.lean ? `The marks leaned ${b.lean.t} · ${MAG_NAMES[b.lean.t]}${b.heart ? ', undermining most of a central aim' : ''}` : 'No lean from the marks'} · you locked it at ${f.M} · ${MAG_NAMES[f.M]}</div>
+  return `<div class="bpanel"><div class="bp-map">${magDisc(b.lean ? b.lean.t : f.M)}<small>${S ? `Standing ${S.std}` : `Lean ${pctTxt(b.pct)}`}</small></div><div class="bp-body">
+    <div class="bp-k">From the booth</div>
+    ${line(Bt, 'b')}${line(D, 'd')}${!D && !Bt ? '<div class="bp-det"><em>Nothing named in the booth</em></div>' : ''}
+    <div class="bp-lean">${b.lean ? `Lean ${b.lean.score} · ${MAG_NAMES[b.lean.t]}${b.lean.heart ? ' · reaches the heart' : ''}` : 'No lean from the booth'}${S ? ` · close-up ${S.close} · wide shot ${S.wide}` : ''}</div>
     ${arena ? `<div class="bp-arena"><b>The arena · ${esc(f.genre || '')}</b>${esc(trimTo(arena, 220))}</div>` : ''}
   </div></div>`;
 }
@@ -4589,7 +4691,7 @@ function doubleBillHTML(A, B, o) {
   const sevN = b => b && b.m ? (b.v2 ? SEV_SIG[b.m.w] : rated(b.m) ? sevAvg(b.m) : null) : null, covN = b => b && b.m ? Math.round(b.cov * 100) : null, num = (b, k) => b && b[k] != null ? b[k] : null;
   const lands = b => b && b.hits && b.hits.length ? b.hits.map(a => `${esc(aimShort(a))} · ${a.central == null ? '—' : CENT_NAMES[a.central]}`).join(' · ') : '—';
   const AW = ['Fails', 'Falls short', 'Achieves', 'Triumphs'], aimsWent = b => { const as = b && b.r && Array.isArray(b.r.aims) ? b.r.aims.filter(a => a && a.central !== 0 && Number.isInteger(a.central)).sort((p, q) => q.central - p.central) : []; return as.length ? `<small>${as.map(a => a.rate === 0 ? '–' : AW[a.rate - 1] || '?').join(' · ')}</small>` : '—'; };
-  const leanTxt = b => b && b.lean ? `${b.lean.t} · ${MAG_NAMES[b.lean.t]} · ${b.lean.score}` : '—';
+  const leanTxt = b => b && b.lean ? `${MAG_NAMES[b.lean.t]} <small>· ${b.lean.score}</small>` : '—';
   const ra = raw(A.id) || {}, rb = raw(B.id) || {};
   const item = (r, key, names) => { const d = b2Ranked(r, key)[0]; return d ? `${names[d.w - 1]} <small>· ${Math.max(1, Math.round(100 * b2Cov(r, d)))}%</small>` : '—'; };
   const sl = ax === 'M' ? sdLean(A, B) : null, sv = (x, k) => x ? x[k] : '—';
@@ -4624,11 +4726,12 @@ function tapeHTML() {
   const S = SHOW, n = S.battles.length, pend = pendingCall(S);
   return `<div class="tape-row">${S.battles.map((b, i) => {
     const o = byId(b.opp), done = i < S.step || S.phase === 'final' || S.phase === 'ask', st = done ? (b.newWins ? 'w' : 'l') : i === S.step ? 'on' : '';
-    return `<div class="tp ${st}${b.key === 'call' || b.key === 'recall' ? ' cl' : ''}"><span>${b.ax === 'M' ? b.level : b.ax ? b.ax + b.level : i + 1}</span><em>${esc(o ? trimTo(o.title, 18) : '—')}</em></div>`;
-  }).join('')}${pend ? `<div class="tp q ${S.phase === 'ask' ? 'on' : ''}"><span>${S.P.ask.level}</span><em>Your answer</em></div>` : ''}${n || pend ? '' : '<div class="tp on"><span>★</span><em>First on the reel</em></div>'}</div>
-  <div class="tape-ctl">${S.phase === 'final' ? '<button class="linkish" data-replay>↺ Replay the show</button>'
-    : S.phase === 'ask' ? '<span class="tape-wait">Waiting on your answer</span>'
-    : `<button class="linkish" data-pause>${S.paused ? '▶ Play' : '❚❚ Pause'}</button><button class="linkish" data-skip>${pend ? 'Skip to the next question ⏭' : 'Skip to the verdict ⏭'}</button>`}</div>`;
+    return `<button class="tp ${st}${b.key === 'call' || b.key === 'recall' ? ' cl' : ''}${b.auto ? ' au' : ''}" data-tp="${i}" title="Showdown ${i + 1}: ${esc(o ? o.title : '')}${b.auto ? ' · by standing' : ' · your call'}"><span>${i + 1}</span><em>${esc(o ? trimTo(o.title, 18) : '—')}</em><small>${b.auto ? 'by standing' : b.even ? 'too close' : 'your call'}</small></button>`;
+  }).join('')}${pend ? `<button class="tp q ${S.phase === 'ask' ? 'on' : ''}" data-tp="q"><span>?</span><em>Your answer</em><small>a dead heat</small></button>` : ''}${n || pend ? '' : '<div class="tp on"><span>★</span><em>First on the reel</em></div>'}</div>
+  <div class="tape-ctl">${S.phase === 'final' ? `${n ? '<button class="linkish" data-tp="0">◀ Scroll through the showdowns</button>' : ''}<button class="linkish" data-replay>↺ Replay the show</button>`
+    : S.phase === 'ask' ? `${n ? `<button class="linkish" data-tp="${n - 1}">◀ Look back</button>` : ''}<span class="tape-wait">Waiting on your answer</span>`
+    : `<button class="linkish" data-shprev ${S.step > 0 ? '' : 'disabled'}>◀ Previous</button><span class="tape-pos">${S.step + 1} of ${n}</span><button class="linkish" data-shnext>${S.step < n - 1 ? 'Next ▶' : pend ? 'Your answer ▶' : 'The verdict ▶'}</button>
+       <button class="linkish" data-pause>${S.paused ? '▶ Play' : '❚❚ Pause'}</button><button class="linkish" data-skip>${pend ? 'Skip to the question ⏭' : 'Skip to the verdict ⏭'}</button>`}</div>`;
 }
 function frameBase() {
   setFocus(showFocus());
@@ -4642,9 +4745,11 @@ function renderShowFrame() {
   if (S.phase === 'final' || !S.battles.length) return renderFinal();
   const b = S.battles[S.step], B = byId(b.opp), pool = (b.ax && S.pools && S.pools[b.ax]) || S.order, lineup = b.ax ? lineupName(b.ax, b.level) : 'reel';
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA_SHOW[S.via] || ''}${esc(A.title)} · ${b.ax === 'M' ? `${b.level} · ${MAG_NAMES[b.level]} showdown · ` : ''}battle ${S.step + 1} of ${S.battles.length}${pendingCall(S) ? '+' : ''}</div>
-    ${b.ax ? `<h2 class="db-q">Which does its own arena better?</h2><p class="db-sd">The ${MAG_NAMES[b.level] || ''} showdown · given the footprint to aim each earned to get in</p>` : `<h2 class="bt-h">${esc(A.title)} <i>vs</i> ${esc(B.title)}</h2>`}
+    ${b.ax && b.auto ? `<h2 class="db-q">Decided by standing</h2><p class="db-sd">The ${MAG_NAMES[b.level] || ''} showdown · more than ${SD_HEAT} points apart, so the arena question didn’t come up</p>`
+      : b.ax ? `<h2 class="db-q">Which does its own arena better?</h2><p class="db-sd">The ${MAG_NAMES[b.level] || ''} showdown · ${b.even ? 'too close to call' : 'a dead heat on standing · your call on the arena'}</p>` : `<h2 class="bt-h">${esc(A.title)} <i>vs</i> ${esc(B.title)}</h2>`}
     ${doubleBillHTML(A, B, { ax: b.ax, level: b.level, oppRank: b.oppRank, of: pool.length, arriving: true, pid: S.pid, tagA: S.replay ? 'The arrival' : 'The new film', tagB: b.ax ? `${lineup} · #${b.oppRank}` : `On the reel · #${b.oppRank}` })}
-    <div class="dq"><span id="bfactor">&nbsp;</span><p id="breason">&nbsp;</p></div>`;
+    <div class="dq"><span id="bfactor">&nbsp;</span><p id="breason">&nbsp;</p></div>
+    <div class="ph-nav"><button data-shprev ${S.step > 0 ? '' : 'disabled'} aria-label="Previous showdown">◀</button><span>Showdown ${S.step + 1} of ${S.battles.length}${b.auto ? ' · by standing' : ' · your call'}</span><button data-shnext aria-label="Next showdown">▶</button></div>`;
   drum.innerHTML = pool.filter(id => byId(id)).map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === b.opp));
   $('#rvMine').innerHTML = duelCard(A, { label: 'The new film' });
@@ -4665,7 +4770,7 @@ function renderAsk() {
   S.delay = 0;
   $('#screenCard').innerHTML = `<div class="k">The Screening Room · ${VIA_SHOW[S.via] || ''}${esc(A.title)} · ${l} · ${MAG_NAMES[l]} showdown · battle ${S.battles.length + 1} · your answer</div>
     <h2 class="db-q">Which does its own arena better?</h2>
-    <p class="db-sd">Given the footprint to aim each earned to get into ${MAG_NAMES[l]} · <b>the winner ranks higher</b></p>
+    <p class="db-sd">A dead heat on standing in ${MAG_NAMES[l]} · <b>the film that does its own arena better ranks higher</b></p>
     ${doubleBillHTML(A, B, { ax, level: l, oppRank: q.oppRank, of: pool.length, arriving: true, tagA: VIA_SHOW[S.via] ? VIA_SHOW[S.via].replace(' · ', '') : 'The new film', tagB: `${lineup} · #${q.oppRank}` })}`;
   drum.innerHTML = pool.map(id => slotHTML(byId(id), false)).join('');
   drum.querySelectorAll('.slot').forEach(el => el.classList.toggle('peek', el.dataset.id === q.opp));
@@ -4711,13 +4816,33 @@ function playBattle() {
       else { $(winSel).classList.add('win'); $(loseSel).classList.add('lose');
         hd(winSel).insertAdjacentHTML('beforeend', `<div class="stamp-big win">Wins<small>${stampSub(b)}</small></div>`);
         hd(loseSel).insertAdjacentHTML('beforeend', '<div class="stamp-big lose">Falls</div>'); }
-      $('#bfactor').textContent = `${FACTOR_NAME[b.key] || 'The math'} decides it`;
+      $('#bfactor').textContent = b.auto ? 'The standing decides it' : b.ax ? 'Your call on the arena decides it' : `${FACTOR_NAME[b.key] || 'The math'} decides it`;
       $('#breason').innerHTML = (b.reason || liveReason(b)) + (b.note ? `<span class="bnote">“${esc(b.note)}”</span>` : '');
       $('#tape').innerHTML = tapeHTML();
       if (!S.paused) at(2600, nextBattle);
     });
   });
 }
+/* scrolling through the projector: jump to any showdown of this show; playback pauses so each frame holds */
+function showJump(to) {
+  const S = SHOW; if (!S) return; clearTimeout(S.timer); $('#results')?.classList.remove('show');
+  if (to === 'q' && pendingCall(S)) { S.step = S.battles.length; S.phase = 'ask'; }
+  else if (to === 'final') S.phase = 'final';
+  else { const i = Math.max(0, Math.min(S.battles.length - 1, +to)); if (!S.battles.length) return; S.step = i; S.phase = 'battle'; }
+  S.paused = true; S.delay = 0; renderShowFrame();
+}
+const showStepBy = d => { const S = SHOW; if (!S || !S.battles.length) return;
+  if (S.phase === 'final') return d < 0 ? showJump(S.battles.length - 1) : null;
+  if (S.phase === 'ask') return d < 0 ? showJump(S.battles.length - 1) : null;
+  const i = S.step + d; if (i < 0) return; if (i >= S.battles.length) return showJump(pendingCall(S) ? 'q' : 'final'); showJump(i); };
+document.addEventListener('keydown', e => {
+  if (!SHOW || current !== 'auditorium' || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || ''))) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); showStepBy(-1); } else if (e.key === 'ArrowRight') { e.preventDefault(); showStepBy(1); }
+});
+{ let x0 = null, y0 = null;   // swipe the screen left or right on a phone
+  document.addEventListener('touchstart', e => { if (!SHOW || current !== 'auditorium' || !e.target.closest('#screenCard, #stage')) return; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > 1.5 * Math.abs(dy)) showStepBy(dx < 0 ? 1 : -1); }, { passive: true }); }
 function nextBattle() {
   const S = SHOW; if (!S) return;
   clearTimeout(S.timer);
@@ -4788,7 +4913,7 @@ function renderFinal() {
         : close ? `<p class="filed">Closest battle: ${esc(byId(close.opp)?.title || '')}, by ${close.margin} · ${(FACTOR_NAME[close.key] || 'the math').toLowerCase()} decided it</p>` : ''}
       ${S.battles.some(b => b.note) ? `<div class="dc"><span class="dc-k">Your decisive considerations</span>${S.battles.filter(b => b.note).map(b => `<p class="dc-note"><b>vs ${esc(titleOf(b.opp))}</b> “${esc(b.note)}”</p>`).join('')}</div>` : ''}
       <p class="filed" style="font-size:15px;opacity:.75">Every battle is filed in its can in the Film Vault.</p>
-      <div>${canUndo ? '<button class="again" data-undo>↶ Undo last answer</button>' : ''}${more ? `<button class="again" data-marathon>Keep spinning · ${QUEUE.length} in the queue</button>` : ''}<button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open its can in the vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
+      <div>${canUndo ? '<button class="again" data-undo>↶ Undo last answer</button>' : ''}${more ? `<button class="again" data-marathon>Keep spinning · ${QUEUE.length} in the queue</button>` : ''}${S.battles.length ? `<button class="again" data-tp="0">◀ Scroll through the showdowns</button>` : ''}<button class="again" data-goto="lobby">See it in the lobby</button><button class="again" data-goto="vault">Open its can in the vault</button><button class="again" data-goto="boxoffice">Admit another film</button></div>
       <span class="orn"></span></div>`;
   $('#results').classList.add('show');
   // the show is over: the showdown leaves the screen and the house goes dark again, with where the film landed
@@ -4866,6 +4991,9 @@ $('#auditorium').addEventListener('click', e => {
     const id = fl.closest('.rv').querySelector('[data-id]')?.dataset.id || fl.closest('.rv').dataset.film; return openReviewSheet(id);
   }
   if (SHOW) {
+    const tp = e.target.closest('[data-tp]'); if (tp) return showJump(tp.dataset.tp);
+    if (e.target.closest('[data-shprev]')) return showStepBy(-1);
+    if (e.target.closest('[data-shnext]')) return showStepBy(1);
     if (e.target.closest('[data-pause]')) { SHOW.paused = !SHOW.paused; $('#tape').innerHTML = tapeHTML(); if (!SHOW.paused) nextBattle(); else clearTimeout(SHOW.timer); return; }
     const fl = e.target.closest('[data-ctaflip]'); if (fl) { e.stopPropagation(); const w = fl.closest('.cta-flip'); if (w) w.classList.toggle('flipped'); return; }
     const cl = e.target.closest('[data-call]'); if (cl) return makeCall(cl.dataset.call);
@@ -5383,7 +5511,7 @@ const X_BASE = { 5: 'master', 4: 'preserve', 3: 'compromise', 2: 'defeat', 1: 'd
 /* the showdown statement: each film judged on its own arena */
 function showdownStatement(A, B) {
   const lv = MAG_NAMES[A.M] || '', arenaA = A.genre ? esc(A.genre.toLowerCase()) : 'its', arenaB = B.genre && B.genre !== A.genre ? `its ${esc(B.genre.toLowerCase())} arena` : 'its own';
-  return `Given the footprint to aim it earned to get into ${lv}, ${esc(A.title)} <b>does its ${arenaA} arena better</b> than ${esc(B.title)} does ${arenaB}.`;
+  return `In a ${lv} dead heat, ${esc(A.title)} <b>does its ${arenaA} arena better</b> than ${esc(B.title)} does ${arenaB}.`;
 }
 function argueCase(A, B, ax) {
   if (ax === 'M') return showdownStatement(A, B);
