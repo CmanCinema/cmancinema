@@ -4027,8 +4027,8 @@ function lvOpen(k) {
 const lvClose = () => $('#lvCard').classList.remove('show');
 document.addEventListener('click', e => { const t = e.target.closest('[data-lv]'); if (t) { e.preventDefault(); return t.dataset.lv === 'x' ? lvClose() : lvOpen(t.dataset.lv); } if (e.target.id === 'lvCard') lvClose(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') lvClose(); });
-/* at least one of each: not to manufacture, to put every film on the same playing field */
-const b2HasBoth = r => slotsOf(r.dets).length > 0 && slotsOf(r.beats).length > 0;
+/* at least one beat; detections are optional (never manufactured: no detections, no footprint, lean 0) */
+const b2HasBoth = r => slotsOf(r.beats).length > 0;
 function b2BoxHTML(r, k) {
   const K = B2_KIND[k], S = slotsOf(r[K.key]), taken = new Set(S.map(x => x.slot)), open = S.length < ITEM_MAX ? SLOTS : [];
   const sk = k === 'b' ? 'bs' : 'ds'; if (!open.includes(bt[sk])) bt[sk] = open.find(x => !taken.has(x)) || open[0] || null;
@@ -4049,9 +4049,9 @@ function b2BoxHTML(r, k) {
 function b2DetsHTML(r, L, reading) {
   const nd = (r.dets || []).length, nb = (r.beats || []).length;
   return `<p class="b2-q">Your view</p>
-    <p class="b2-s">First decide which type it is: macro (the whole), meso (a part) or micro (a point). <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Then name it and grade it. Every film gets at least one detection and one beat: not to manufacture anything, but to put every film on the same playing field. Non-positive doesn’t mean negative: a detection can be as small as a Nitpick. Past that, three slots are room, not a quota: if two or three genuinely make up the shape of your view, use them; if one does, one is the shape. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. Your macro detection is the footprint and your macro beat is the hallmark; if there’s no macro, the meso takes its place, then the micro.</p>
+    <p class="b2-s">First decide which type it is: macro (the whole), meso (a part) or micro (a point). <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Then name it and grade it. Every film gets at least one beat. Detections are optional: name one only if it’s there (non-positive doesn’t mean negative: it can be as small as a Nitpick). With none, there’s no footprint and the lean is 0. Three slots are room, not a quota: if two or three genuinely make up the shape of your view, use them; if one does, one is the shape. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. Your macro detection is the footprint and your macro beat is the hallmark; if there’s no macro, the meso takes its place, then the micro.</p>
     <div class="b2-boxes">${b2BoxHTML(r, 'd')}${b2BoxHTML(r, 'b')}</div>
-    <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>${!nd && !nb ? 'At least one detection and one beat.' : !nd ? 'At least one detection too.' : 'At least one beat too.'}</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
+    <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>At least one beat.</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
 }
 /* ---------- Claude does the reading ---------- */
 const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives my detections (D1, D2: non-positive things from my own experience of it, in my words), my beats (B1, B2: positive things from my own experience of it, in my words), and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
@@ -4428,7 +4428,7 @@ document.addEventListener('click', async e => {
   const k = b.dataset.b2, v = b.dataset.v, IT = b.dataset.id ? b2Item(r, b.dataset.id) : null, d = IT ? IT.d : null, KK = b.dataset.k === 'b' ? 'b' : 'd';
   const order = b2Order(r), done = () => { bxSave(); renderBooth(); };
   switch (k) {
-    case 'go': if (v !== 'dets' && !b2HasBoth(r)) { bt.st = 'dets'; toast('Name at least one detection and one beat first'); return renderBooth(); } bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
+    case 'go': if (v !== 'dets' && !b2HasBoth(r)) { bt.st = 'dets'; toast('Name at least one beat first'); return renderBooth(); } bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
     case 'useplot': { const t = $('#b2Plot')?.value || ''; if (!t.trim()) return toast('Paste the plot first'); r.footprint = t; return done(); }
     case 'useaim': { const t = $('#b2Aim')?.value || ''; if (!t.trim()) return toast('Paste the aim first'); r.aim = t; return done(); }
     case 'cent': { const a = order[bt.ai].a; a.central = +v; bt.ai = Math.max(0, b2Order(r).findIndex(x => x.a === a)); return done(); }
@@ -4462,7 +4462,7 @@ document.addEventListener('click', async e => {
     case 'part': if (!d) return; d.q = 'which'; return renderBooth();
     case 'which': if (!d) return; { const i = +v; d.add = [i]; d.drop = []; d.sents = (r.carry || [])[i] || []; d.manual = true; d.conf = 'solid'; delete d.q; } return done();
     case 'drop': if (!d) return; { const i = +v; d.drop = [...new Set([...(d.drop || []), i])]; d.add = (d.add || []).filter(x => x !== i); } return done();
-    case 'donedets': if (!b2HasBoth(r)) return toast('Name at least one detection and one beat'); bt.st = 'claude'; return done();
+    case 'donedets': if (!b2HasBoth(r)) return toast('Name at least one beat'); bt.st = 'claude'; return done();
     case 'copyc': {
       b2FixSlots(r); const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
       let ok = true; try { await navigator.clipboard.writeText(msg); } catch (err) { ok = false; }
@@ -5914,7 +5914,7 @@ function renderPlaybill() {
     ${it('▣', 'The poster', 'the DVD cover', 'A picture address for the film’s one-sheet.')}
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>I name and grade · Claude maps · the booth keeps the stats</small></div>
-    ${it('1', 'My view', 'before Claude, three slots a side', 'Detections: a macro view, a meso take and a micro stance; non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats: a macro pillar, a meso feature and a micro detail; positive qualities and where they live, graded by the effect of their delivery against how the film delivers its effects. At least one of each, so every film is on the same playing field (non-positive doesn’t mean negative); past that, the slots are room, not a quota. I grade against my own sense of the film; I haven’t seen its aims yet.')}
+    ${it('1', 'My view', 'before Claude, three slots a side', 'Detections: a macro view, a meso take and a micro stance; non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats: a macro pillar, a meso feature and a micro detail; positive qualities and where they live, graded by the effect of their delivery against how the film delivers its effects. At least one beat; detections are optional, named only if they’re there (non-positive doesn’t mean negative). Past that, the slots are room, not a quota. I grade against my own sense of the film; I haven’t seen its aims yet.')}
     ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, breaks it into timed scenes, and places each detection and beat: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades.')}
     ${it('3', 'The full frame, then the aims', 'my wide shot', 'With Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
     ${it('★', 'Footprint & hallmark', 'the macro slots', 'My macro detection is the footprint and my macro beat is the hallmark. If a macro slot is empty, the largest one I did fill takes its place.')}
