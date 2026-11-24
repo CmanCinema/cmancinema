@@ -842,6 +842,28 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .lf-empty{grid-column:1/-1;text-align:center;font:italic 500 19px var(--body);color:rgba(243,230,200,.7);padding:30px 0}
 #mf{position:fixed;inset:0;z-index:46;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.82);backdrop-filter:blur(3px)}
 #mf.show{display:grid}
+#lvCard{position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:16px;background:rgba(8,2,4,.82);backdrop-filter:blur(3px)}
+#lvCard.show{display:grid}
+.lvc{width:min(680px,100%)}
+.lv-x{position:absolute;top:10px;right:12px;border:0;background:none;font:600 18px var(--body);color:#7a1a22;cursor:pointer}
+.lv-lv{margin-top:16px;padding-top:12px;border-top:1px solid rgba(122,26,34,.25)}
+.lv-h{display:flex;align-items:baseline;gap:10px}
+.lv-h b{font:400 22px var(--deco);letter-spacing:.08em;color:#5a0f22}
+.lv-h em{font:italic 600 17px var(--body);color:#7a1a22}
+.lv-what{margin:4px 0 8px;font:600 16.5px/1.4 var(--body);color:#2a160e}
+.lv-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.lv-two{grid-template-columns:1fr}}
+.lv-side{padding:8px 11px;border-radius:4px;background:rgba(90,15,34,.06);font:500 15px/1.4 var(--body);color:#3a2418;border:1px solid transparent}
+.lv-side.on{border-color:rgba(184,135,60,.8);background:rgba(184,135,60,.14)}
+.lv-side small{display:block;margin-bottom:3px;font:700 9.5px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a1a22}
+.lv-test{margin:8px 0 0;font:italic 500 15.5px/1.4 var(--body);color:#3a2418}
+.lv-rules{margin-top:16px;padding:12px 14px;border-left:3px solid #c4202f;background:rgba(90,15,34,.06)}
+.lv-rules p{margin:0 0 7px;font:500 15px/1.45 var(--body);color:#3a2418}
+.lv-rules p:last-child{margin:0}
+.b2-dial{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.b2-dial span{font:italic 600 13px var(--body);opacity:.75;margin-right:4px}
+.b2-dial .bx-btn{padding:4px 10px;font-size:10px}
+.b2-lvbtn{margin-left:8px;border:0;background:none;padding:0;font:italic 600 13px var(--body);color:var(--gold-hi,#f3d58f);text-decoration:underline dotted;cursor:pointer}
 .mfc{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:22px 24px 24px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
 .mfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
 .mfc h2{margin:2px 0 0;text-align:center;font:400 30px/1.05 var(--deco);letter-spacing:.1em;color:#5a0f22}
@@ -2173,15 +2195,29 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
 .b2-opts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
 .b2-opts.sm{margin:8px 0 4px}
 .b2-opts.sm .bx-btn{padding:5px 10px;font-size:10px}
-.b2-opts .bx-btn.on{background:linear-gradient(#ffe9b3,#d9a14a);color:#2a160e;border-color:#5a3a12}
+.b2-opts .bx-btn.on,.b2-dial .bx-btn.on{background:linear-gradient(#ffe9b3,#d9a14a);color:#2a160e;border-color:#5a3a12}
 .b2-opts .bx-btn:disabled{opacity:.4;cursor:default}
 .b2-nav{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:20px;padding-top:14px;border-top:1px dashed rgba(232,190,106,.22)}
 .b2-dets{display:grid;gap:10px;margin-top:16px}
 .b2-det{padding:12px 14px;border-radius:8px;border:1px solid rgba(232,190,106,.2);background:rgba(255,255,255,.035)}
 .b2-det.main{border-color:rgba(232,190,106,.6)}
 .b2-dh{display:flex;gap:10px;align-items:baseline}
-.b2-dh b{font:400 18px var(--deco);color:var(--gold-hi);flex:none}
-.b2-dh span{flex:1;font:500 17px/1.4 var(--body);color:#f6ead0}
+.b2-dh b{font:400 17px var(--deco);color:var(--gold-hi);flex:none}
+.b2-dh .b2-meta{flex:1;min-width:0;font:700 10px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:rgba(232,190,106,.75)}
+.b2-dh .b2-meta em{font-style:normal;color:var(--gold-hi)}
+.b2-dh .bx-x{font-size:12.5px}
+.b2-note{margin:4px 0 8px;font:500 17px/1.35 var(--body);color:#f6ead0}
+.b2-row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.b2-seg{display:inline-flex;border:1px solid rgba(232,190,106,.35);border-radius:6px;overflow:hidden}
+.b2-seg button{border:0;border-left:1px solid rgba(232,190,106,.22);background:none;padding:5px 8px;font:700 9.5px var(--serif);letter-spacing:.12em;text-transform:uppercase;color:rgba(243,213,143,.8);cursor:pointer}
+.b2-seg button:first-of-type{border-left:0}
+.b2-seg button{white-space:nowrap}
+@media (max-width:560px){.b2-seg{display:flex;width:100%}.b2-seg button{flex:1;padding:6px 3px;letter-spacing:.06em;font-size:9px}.b2-seg.dial span{padding:6px 6px}}
+.b2-seg button.on{background:linear-gradient(#ffe9b3,#d9a14a);color:#2a160e}
+.b2-seg.dial span{padding:5px 8px;font:italic 600 12px var(--body);color:rgba(243,230,200,.6);border-right:1px solid rgba(232,190,106,.22)}
+.b2-more{display:flex;flex-wrap:wrap;gap:2px 12px;margin:6px 0 2px}
+.b2-more .bx-link{font-size:13px}
+.b2-det .b2-on{display:block;margin-top:4px}
 .b2-lands{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
 .b2-on{font:600 10px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:rgba(232,190,106,.6)}
 .b2-tag{display:inline-flex;align-items:center;gap:4px;font:700 10px var(--serif);letter-spacing:.1em;text-transform:uppercase;padding:3px 4px 3px 9px;border-radius:20px;border:1px solid var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
@@ -2223,6 +2259,17 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
 .b2-why-r{margin:6px 0 10px;font:italic 500 15.5px/1.5 var(--body);color:rgba(243,230,200,.86)}
 .b2-rate .b2-test{display:block;margin-top:4px;font:italic 500 12.5px var(--body);opacity:.65}
 .b2-spread{margin:10px 0 0;font:500 13px var(--body);color:rgba(243,230,200,.55)}
+.b2-comp{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(232,190,106,.25)}
+.b2-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.b2-slot{appearance:none;-webkit-appearance:none;cursor:pointer;padding:7px 6px;border-radius:6px;border:1px solid rgba(232,190,106,.35);background:rgba(0,0,0,.2);color:#f6ead0;text-align:center}
+.b2-slot b{display:block;font:700 11.5px var(--serif);letter-spacing:.1em;text-transform:uppercase}
+.b2-slot small{display:block;font:500 11px var(--body);opacity:.65;margin-top:2px}
+.b2-slot.on{border-color:var(--gold-hi,#f3d48a);background:rgba(232,190,106,.18)}
+.b2-slot[disabled]{opacity:.3;cursor:default}
+.b2-box.beats .b2-slot.on{border-color:#8fd18b;background:rgba(143,209,139,.15)}
+.bx-wiki{display:inline-block;margin-top:8px;font:700 12.5px var(--body);letter-spacing:.04em;color:#5a3a1a;text-decoration:none;border-bottom:1px solid rgba(90,58,26,.45)}
+.bx-wiki:hover{color:#2a1608;border-bottom-color:#2a1608}
+.b2-role{font:italic 600 .78em var(--body);letter-spacing:.03em;opacity:.75}
 .b2-boxes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
 @media (max-width:760px){.b2-boxes{grid-template-columns:1fr}}
 .b2-box{border:1px solid rgba(232,190,106,.22);border-radius:8px;padding:12px 14px;background:rgba(0,0,0,.14)}
@@ -2281,7 +2328,7 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
       <div class="sign">
         <div class="bulbs" id="signBulbs"></div>
         <h1>CmanCinema</h1>
-        <div class="sub">Footprint. Aim. Magnitude. The showdown decides.</div>
+        <div class="sub">Footprint. Hallmark. Aims. Magnitude. Standing.</div>
       </div>
       <div class="letterboard">
         <div id="nowShowing">NOW SHOWING</div>
@@ -2308,6 +2355,7 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
 <section class="scene" id="lostfound"><div class="vt lf" id="lfIn"></div></section>
 <div id="brief" role="dialog" aria-modal="true" aria-label="The Ordinal Brief"><div class="bfc" id="bfIn"></div></div>
 <div id="lfSlip" role="dialog" aria-modal="true" aria-label="Claim slip"></div>
+<div id="lvCard" role="dialog" aria-modal="true" aria-label="The three levels"><div class="mfc lvc" id="lvIn"></div></div>
 <div id="mf" role="dialog" aria-modal="true" aria-label="The Memory Filter"><div class="mfc" id="mfIn"></div></div>
 
 <div id="rvSheet" role="dialog" aria-modal="true" aria-label="The critic’s review"><div class="rvs-in" id="rvsIn"></div></div>
@@ -3280,7 +3328,7 @@ function profBoothHTML(f) {
   if (!S && !(r.dets || []).length && !(r.beats || []).length) return `<div class="pmq empty"><span class="pmq-k">Now showing</span><p>No booth reading yet. Its standing and highlights appear once it’s been through the booth.</p></div>`;
   const gauge = (v, lab, cls) => `<div class="pmq-g ${cls || ''}"><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M10 64 A50 50 0 0 1 110 64" class="trk"/><path d="M10 64 A50 50 0 0 1 110 64" class="val" style="stroke-dasharray:${(157 * Math.max(0, Math.min(100, v || 0)) / 100).toFixed(1)} 157"/></svg><b>${v == null ? '—' : Math.round(v)}</b><span>${lab}</span></div>`;
   const where = d => { if (d.whole) return 'The whole film'; const sc = (d.sents || []).map(x => (r.scenes || [])[x]).filter(Boolean); if (!sc.length) return ''; const a = sc[0], z = sc[sc.length - 1]; return `${b2Clock(a.s)}–${b2Clock(z.e)} · ${esc(trimTo(a.t, 40))}${sc.length > 1 ? ` <i>+${sc.length - 1} more</i>` : ''}`; };
-  const stub = (d, k, big) => d ? `<div class="pmq-stub ${k} ${big ? 'big' : ''}"><div class="pmq-sh"><em>${big ? (k === 'b' ? 'The hallmark' : 'The footprint') : (k === 'b' ? 'Second beat · at half' : 'Second detection · at half')}</em><b>${(k === 'b' ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b></div>
+  const stub = (d, k, big) => d ? `<div class="pmq-stub ${k} ${big ? 'big' : ''}"><div class="pmq-sh"><em>${big ? (k === 'b' ? 'The hallmark' : 'The footprint') + ' · ' + SLOT_NAMES[k][b2SlotOf(r, d)].toLowerCase() : SLOT_NAMES[k][b2SlotOf(r, d)] + ' · ' + b2SizeWord(r, d)}</em><b>${(k === 'b' ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b></div>
       <p>${esc(trimTo(d.note || '', big ? 220 : 120))}</p><div class="pmq-sf"><span>${where(d)}</span><span>${Math.max(1, Math.round(100 * b2Cov(r, d)))}% of the film</span></div></div>` : '';
   const D = b2Ranked(r, 'dets'), Bt = b2Ranked(r, 'beats'), VERB = ['Fails', 'Falls short', 'Achieves', 'Triumphs'];
   const aims = b2Live(r).filter(x => Number.isInteger(x.a.central) && x.a.central > 0).sort((p, q) => q.a.central - p.a.central);
@@ -3293,8 +3341,8 @@ function profBoothHTML(f) {
       ${aims.length ? `<div class="pmq-aims">${aims.map(({ a }) => `<div class="pmq-aim v${a.rate || 0}"><em>${CENT_NAMES[a.central]}</em><b>${a.rate > 0 ? VERB[a.rate - 1] : a.rate === 0 ? 'Doesn’t ring a bell' : '—'}</b><i style="width:${a.rate > 0 ? Math.round(B2_VAL[a.rate] * 100) : 0}%"></i></div>`).join('')}</div>` : ''}
     </div></div>
     ${D.length || Bt.length ? `<div class="pmq-hl"><span class="pmq-k">Booth highlights</span>
-      <div class="pmq-cols"><div>${stub(Bt[0], 'b', true)}${stub(Bt[1], 'b')}${Bt.length ? '' : '<p class="pmq-none">No beats named.</p>'}</div>
-      <div>${stub(D[0], 'd', true)}${stub(D[1], 'd')}${D.length ? '' : '<p class="pmq-none">No detections named.</p>'}</div></div></div>` : ''}`;
+      <div class="pmq-cols"><div>${Bt.map((d, i) => stub(d, 'b', !i)).join('')}${Bt.length ? '' : '<p class="pmq-none">No beats named.</p>'}</div>
+      <div>${D.map((d, i) => stub(d, 'd', !i)).join('')}${D.length ? '' : '<p class="pmq-none">No detections named.</p>'}</div></div></div>` : ''}`;
 }
 function strikeBadge() { return ''; }   // strikes are gone: edit freely
 function closeSheet() { $('#sheet').classList.remove('show'); }
@@ -3491,12 +3539,32 @@ const WEIGHTS = ['Nitpick', 'Gripe', 'Drawback', 'Problem'];
 const CONSEQ = ['Petty', 'Minor', 'Major', 'Severe'];   // the consequences each one carries   // Port A · how I mean a detection
 const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // Port B · how well the aim worked in a stretch
 const DEF_DET = ['Petty consequences of this stretch.', 'Minor consequences of this stretch.', 'Major consequences of this stretch.', 'Severe consequences of this stretch.'];
-const BEAT_NAMES = ['Perk', 'Bonus', 'Strength', 'Asset'];
-const DEF_BEAT = ['A nice-to-have; a micro-detail.', 'A plus; a meso-feature.', 'An advantage; a macro, core component.', 'A selling point; the holistic, defining foundation or identity.'];
-const BEAT_COLOR = '#8fd18b', ITEM_MAX = 2;
+const BEAT_NAMES = ['Could-see', 'Should-see', 'Must-see', 'Essential'];
+const DEF_BEAT = ['A dependable perk: the baseline of presumed appeal; it delivers what you’d expect.', 'A stellar, impactful bonus: I appreciate how it’s delivered because of what it gave me, like a reward.', 'An exceptionally high-caliber strength: the caliber of the realization itself becomes the defining effect of the experience.', 'An extraordinary asset: that defining effect is so extraordinary it profoundly alters my broader conception of the kind of experience the film is striving for.'];
+const BEAT_COLOR = '#8fd18b', ITEM_MAX = 3;
+/* three slots on each side, largest to smallest in your view; each item still graded on its own dial */
+const SLOTS = ['macro', 'meso', 'micro'], SLOT_W = { macro: 1, meso: .5, micro: .25 };
+const SLOT_NAMES = { d: { macro: 'Macro view', meso: 'Meso take', micro: 'Micro stance' }, b: { macro: 'Macro pillar', meso: 'Meso feature', micro: 'Micro detail' } };
+const SLOT_WORD = { macro: 'in full', meso: 'at half', micro: 'at a quarter' };
+/* a dial inside a level, only when two or more share it: upper (the level's full size), middle, lower; bands never overlap the next level */
+const DIALS = ['upper', 'middle', 'lower'], DIAL_W = { macro: [1, .85, .7], meso: [.5, .43, .36], micro: [.25, .2, .15] };
+const dialIx = d => Math.max(0, DIALS.indexOf(d.dial));
+/* each item with its level, largest first: by level, then by its dial; items from before the levels take the free ones */
+function slotsOf(list) {
+  const out = [], used = new Set();
+  (list || []).filter(d => SLOTS.includes(d.slot)).forEach(d => { used.add(d.slot); out.push({ d, slot: d.slot }); });
+  (list || []).filter(d => !out.some(x => x.d === d)).sort((a, b) => (b.main ? 1 : 0) - (a.main ? 1 : 0))
+    .forEach(d => { const sl = SLOTS.find(x => !used.has(x)) || 'micro'; used.add(sl); out.push({ d, slot: sl }); });
+  return out.sort((a, b) => SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot) || dialIx(a.d) - dialIx(b.d)).slice(0, ITEM_MAX);
+}
+const b2Shares = (list, d, slot) => slotsOf(list).filter(x => x.slot === slot).length > 1;
+/* the item's size: its level, and its dial when it shares the level */
+function b2SizeW(list, d, slot) { return b2Shares(list, d, slot) ? DIAL_W[slot][dialIx(d)] : SLOT_W[slot]; }
+/* keep each box in order (so D1 is the largest), and the largest marked as the footprint or hallmark */
+function b2FixSlots(r) { ['dets', 'beats'].forEach(key => { const S = slotsOf(r[key]); S.forEach(x => { x.d.slot = x.slot; }); r[key] = S.map(x => x.d); r[key].forEach((d, i) => { d.main = i === 0; if (!b2Shares(r[key], d, d.slot)) delete d.dial; }); }); }
 const art = w => (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w;
 /* the two boxes of your view: detections (non-positive, graded by the consequences of the stretch against the aim's what)
-   and beats (positive, graded by the scope of the quality against the aim's how) */
+   and beats (positive, graded by the effect of its delivery against the aim's how: could-see to essential) */
 const B2_KIND = { d: { key: 'dets', pre: 'D', names: null, defs: null, one: 'detection', many: 'detections', big: 'footprint' }, b: { key: 'beats', pre: 'B', names: null, defs: null, one: 'beat', many: 'beats', big: 'hallmark' } };
 const DEF_AIM = ['Taken as a whole, the delivery fails to achieve what it’s going for.', 'Taken as a whole, the delivery falls short of what it’s going for.', 'Taken as a whole, the delivery achieves what it’s going for.', 'Taken as a whole, the delivery triumphs in what it’s going for.'];
 const DEF_WILD = 'Something I remember that isn’t part of any aim. It can stand alone or sit on top of an aim’s stretch. Remembered, so not Shutter.';
@@ -3730,7 +3798,7 @@ function splitAim(t) {
    2. In the background the system reads the plot and lines each aim up with the
       sentences where it plays out (never shown). A small language model runs in the
       browser for this (free, no key); if it can't load, word matching stands in.
-   3. You type what bugged you and grade it; the system finds where it happens and
+   3. You name your detections and beats and grade them; the system finds where it happens and
       which aims it hurts. If it can't pin one down, it asks.
    4. The stats recalculate after every answer: footprint, aim bite, the lean.
    5. You choose the plate and lock the gate.
@@ -3742,7 +3810,7 @@ const B2_DMG = [0, 1, .8, .4, 0];
 const b2RateName = v => v === 0 ? 'Doesn’t ring a bell' : AIM_WEIGHTS[v - 1] || 'not rated';                 // how much a flaw undermines an aim, by your rating of the aim
 const B2_RATE_DEF = DEF_AIM;
 const B2_RATE_TEST = ['Fails', 'Falls short', 'Achieves', 'Triumphs'];
-const B2_STEPS = [['dets', 'Your view'], ['claude', 'Send to Claude'], ['aims', 'Grade the aims'], ['largest', 'Footprint & hallmark'], ['lock', 'Choose and lock']];
+const B2_STEPS = [['dets', 'Your view'], ['claude', 'Send to Claude'], ['aims', 'Grade the aims'], ['lock', 'Choose and lock']];
 
 const b2SKey = r => { const t = String(r.title || '') + '\u0001' + String(r.year || '') + '\u0001' + String(r.aim || ''); let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return 'S' + t.length + ':' + h; };
 const b2Fresh = r => r.mapMode === 'scenes' ? r.mapKey === b2SKey(r) && Array.isArray(r.scenes) : r.mapKey === b2Key(r);
@@ -3769,7 +3837,7 @@ function lean2(r) {
   const out = { unrated, unset, ungraded, unplaced, dets, main: null, mainAims: [], cov: 0, F: null, B: null, score: null, t: null, heart: false, near: null };
   if (unrated.length || unset.length) return out;
   const carry = r.carry.map(a => new Set(a || []));
-  const main = dets.find(d => d.main) || dets[0] || null;
+  const main = b2Ranked(r, 'dets')[0] || null;
   const part = (d, s) => d.moment && scenesMode ? Math.min(1, B2_MOMENT / len[s]) : 1;   // a moment covers about half a minute of its scene
   const sceneSet = d => d.whole ? [...Array(n).keys()] : d.sents;
   out.F = 0;
@@ -3817,12 +3885,14 @@ function b2Suggest(r, key = 'dets') {
   return ds.slice().sort((p, q) => (q.w - p.w) || (b2Cov(r, q) - b2Cov(r, p)))[0];
 }
 /* the largest and the second of a box, as they count: the largest in full, the second at half */
-function b2Ranked(r, key) { const ds = (r[key] || []).filter(d => Number.isInteger(d.w) && b2Placed(d)); const m = ds.find(d => d.main) || ds[0]; return m ? [m, ...ds.filter(d => d !== m)].slice(0, ITEM_MAX) : []; }
+function b2Ranked(r, key) { return slotsOf(r[key]).filter(x => Number.isInteger(x.d.w) && b2Placed(x.d)).map(x => x.d); }
+const b2SlotOf = (r, d) => { const k = (r.beats || []).includes(d) ? 'beats' : 'dets', x = slotsOf(r[k]).find(y => y.d === d); return x ? x.slot : 'macro'; };
+function b2SizeWord(r, d) { const k = (r.beats || []).includes(d) ? 'beats' : 'dets', sl = b2SlotOf(r, d); return b2Shares(r[k], d, sl) ? `${DIALS[dialIx(d)]} · ${Math.round(100 * DIAL_W[sl][dialIx(d)])}%` : SLOT_WORD[sl]; }
 /* THE STANDING · two views of the film, each counted once
    close-up: your beats against your detections, grade first and size second · wide shot: your aim grades, weighted by tier */
 function b2CloseUp(r) {
-  const val = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d)), sum = key => b2Ranked(r, key).reduce((t, d, i) => t + (i ? .5 : 1) * val(d), 0);
-  return Math.max(0, Math.min(100, 50 + 50 * (sum('beats') - sum('dets')) / 1.5));
+  const val = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d)), sum = key => slotsOf(r[key]).filter(x => Number.isInteger(x.d.w) && b2Placed(x.d)).reduce((t, x) => t + b2SizeW(r[key], x.d, x.slot) * val(x.d), 0);
+  return Math.max(0, Math.min(100, 50 + 50 * (sum('beats') - sum('dets')) / 1.75));
 }
 function b2WideShot(r) {
   const as = (r.aims || []).filter(a => a && Number.isInteger(a.rate) && a.rate > 0 && Number.isInteger(a.central) && a.central > 0);
@@ -3857,10 +3927,7 @@ function b2Flags(r) {
 function b2AfterAims(r) {
   if (b2Flags(r).length) { bt.st = 'aims'; bt.ai = null; return; }
   const ds = (r.dets || []).filter(x => Number.isInteger(x.w)), bs = (r.beats || []).filter(x => Number.isInteger(x.w));
-  if (bs.length >= 2 && !bt.hallPicked) { const sg = b2Suggest(r, 'beats'); r.beats.forEach(x => { x.main = x === sg; }); }
-  if (ds.length >= 2 && !bt.mainPicked) { const sg = b2Suggest(r); r.dets.forEach(x => { x.main = x === sg; }); }
-  if (ds.length >= 2 || bs.length >= 2) { bt.st = 'largest'; }
-  else { if (ds[0]) r.dets.forEach(x => { x.main = x === ds[0]; }); bt.st = 'lock'; }
+  b2FixSlots(r); bt.st = 'lock';
 }
 function b2Order(r) { return b2Live(r).slice().sort((p, q) => (q.a.central ?? 5) - (p.a.central ?? 5)); }
 function b2Step(r) {
@@ -3871,10 +3938,10 @@ function renderBooth() {
   const open = canEdit() && active && active.stage === 'booth' && bt;
   $('#boothDark').hidden = !!open; $('#bxRoom').hidden = !open;
   if (!open) { $('#boothDark').innerHTML = lockedNotice('The Projection Booth'); return; }
-  const r = bxData(), f = active.film;
+  const r = bxData(), f = active.film; b2FixSlots(r);
   $('#bxHead').innerHTML = `<div class="bx-can" aria-hidden="true"></div>
-    <div class="bx-label"><div class="k">Projection Booth · Reel in hand</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${f.year ? ' · ' : ''}${active.mode === 'rewrite' ? 'A new stance' : active.mode === 'edit' ? 'Updating its marks' : 'Evaluation'}</div></div>
-    <div class="bx-status"><span class="bx-lamp"><i></i>Lamp lit</span><small>Rate the aims · say what bugged you · the booth does the rest</small></div>`;
+    <div class="bx-label"><div class="k">Projection Booth · Reel in hand</div><h2>${esc(f.title)}</h2><div class="fm">${esc(f.year || '')}${f.year ? ' · ' : ''}${active.mode === 'rewrite' ? 'A new stance' : active.mode === 'edit' ? 'Updating its marks' : 'Evaluation'}</div><a class="bx-wiki" href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(`${f.title || ''}${f.year ? ' ' + f.year : ''} film`)}" target="_blank" rel="noopener">The film on Wikipedia ↗</a></div>
+    <div class="bx-status"><span class="bx-lamp"><i></i>Lamp lit</span><small>Name your view · Claude maps it · grade the aims · the booth does the rest</small></div>`;
   const ready = true;
   const st = b2Step(r), L = ready && b2Fresh(r) ? lean2(r) : null;
   $('#b2Steps').innerHTML = B2_STEPS.map(([k, t], i) => `<li class="${k === st ? 'now' : ''}" data-b2="go" data-v="${k}" tabindex="0"><span class="no">${i + 1}</span><b>${t}</b><em>${b2StepNote(r, k, L)}</em></li>`).join('');
@@ -3923,32 +3990,68 @@ const b2KindOf = (r, d) => (r.beats || []).includes(d) ? 'b' : 'd';
 const b2Names = k => k === 'b' ? BEAT_NAMES : WEIGHTS, b2Defs = k => k === 'b' ? DEF_BEAT : DEF_DET;
 const b2Label = (r, d) => { const k = b2KindOf(r, d); return B2_KIND[k].pre + ((r[B2_KIND[k].key] || []).indexOf(d) + 1); };
 function b2Item(r, id) { for (const k of ['d', 'b']) { const d = (r[B2_KIND[k].key] || []).find(x => x.id === id); if (d) return { d, k }; } return null; }
-function b2ItemCard(r, k, d) {
-  const K = B2_KIND[k], hits = b2Placed(d) ? b2Hits(r, d) : [], live = b2Live(r), offs = live.filter(x => !hits.includes(x.i));
+function b2ItemCard(r, k, d, slot) {
+  const hits = b2Placed(d) ? b2Hits(r, d) : [], live = b2Live(r), offs = live.filter(x => !hits.includes(x.i));
+  const list = r[B2_KIND[k].key], others = SLOTS.filter(sl => sl !== slot), shared = b2Shares(list, d, slot), editing = bt.edit === d.id;
   const lands = !b2Placed(d) ? '<span class="b2-on">Goes to Claude with the rest</span>'
     : `<div class="b2-lands"><span class="b2-on">${d.whole ? 'The whole film · touches' : d.moment ? 'A moment · touches' : 'Touches'}</span>${hits.map(i => { const a = r.aims[i]; return `<span class="b2-tag" style="--c:${aimColor(r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${CENT_NAMES[a.central] || '—'}<button data-b2="drop" data-id="${esc(d.id)}" data-v="${i}" aria-label="Not this aim">×</button></span>`; }).join('') || '<span class="b2-on">no aim</span>'}
       ${offs.length ? `<select class="b2-add" data-b2sel="${esc(d.id)}"><option value="">+ another aim</option>${offs.map(x => `<option value="${x.i}">${esc(aimShort(x.a))}</option>`).join('')}</select>` : ''}</div>`;
-  return `<div class="b2-det ${k === 'b' ? 'beat' : ''} ${d.main ? 'main' : ''}"><div class="b2-dh"><b>${b2Label(r, d)}${d.main ? ' ★' : ''}</b><span>${esc(d.note || '')}</span><button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
-    <div class="b2-opts sm">${b2Names(k).map((w, j) => `<button class="bx-btn ${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
-      <button class="bx-link" data-b2="${d.whole ? 'notwhole' : 'whole'}" data-id="${esc(d.id)}">${d.whole ? 'Not the whole film' : 'It’s the whole film'}</button></div>${lands}</div>`;
+  return `<div class="b2-det ${k === 'b' ? 'beat' : ''} ${d.main ? 'main' : ''}">
+    <div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${SLOT_NAMES[k][slot]}${shared ? ` · ${DIALS[dialIx(d)]}` : ''}${d.main ? `<em> · the ${B2_KIND[k].big}</em>` : ''}</span>${editing ? '' : `<button class="bx-x" data-b2="edit" data-id="${esc(d.id)}">Edit</button>`}<button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
+    ${editing ? `<textarea class="bx-ta" id="b2Edit" rows="3">${esc(d.note || '')}</textarea><div class="b2-opts sm"><button class="bx-btn solid" data-b2="editsave" data-id="${esc(d.id)}">Save the words</button><button class="bx-link" data-b2="editcancel">Cancel</button>${b2Placed(d) ? '<span class="b2-on">Claude’s placement stays. If you changed where it is, send it to Claude again.</span>' : ''}</div>` : `<p class="b2-note">${esc(d.note || '')}</p>`}
+    <div class="b2-row"><div class="b2-seg">${b2Names(k).map((w, j) => `<button class="${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div>
+      ${shared ? `<div class="b2-seg dial" title="Its size inside the ${slot}"><span>${slot}</span>${DIALS.map((x, j) => `<button class="${dialIx(d) === j ? 'on' : ''}" data-b2="dial" data-id="${esc(d.id)}" data-v="${x}">${x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div>` : ''}</div>
+    <div class="b2-more"><button class="bx-link" data-b2="${d.whole ? 'notwhole' : 'whole'}" data-id="${esc(d.id)}">${d.whole ? 'Not the whole film' : 'It’s the whole film'}</button>${others.map(sl => `<button class="bx-link" data-b2="slot" data-id="${esc(d.id)}" data-v="${sl}">Make it ${art(SLOT_NAMES[k][sl].toLowerCase())}</button>`).join('')}</div>
+    ${lands}</div>`;
 }
+/* the three levels: how much of the film it reaches, on both sides */
+const LEVELS = [
+  { slot: 'macro', name: 'Macro', reach: 'the whole', what: 'It shapes how the entire film reads: it runs through it, or defines what it is.', d: 'The film’s tone, its structure, a lead performance that carries it, an approach to the whole.', b: 'It holds the film up: “Karloff’s presence, throughout”, “melodramatic dynamism, throughout”.', test: 'If it were different, would the whole film read differently?' },
+  { slot: 'meso', name: 'Meso', reach: 'a part', what: 'It shapes one section or strand of the film, not the whole.', d: 'A stretch that drags, a subplot, a supporting arc, one act.', b: 'A set piece, a sequence, a recurring element, a supporting performance.', test: 'Does it shape a part you could name by where it starts and stops?' },
+  { slot: 'micro', name: 'Micro', reach: 'a point', what: 'Something you could point at.', d: 'A line, a cut, a shot, a single choice.', b: 'A gesture, an image, one song, one moment.', test: 'Could you put your finger on it?' }];
+const LEVEL_RULES = [
+  ['The level isn’t the grade', 'A micro can be Essential; a macro can be a Nitpick. The slot says how far it reaches; the grade says what it did.'],
+  ['Relative to this film', 'It’s the film’s own shape that counts, not the clock: a ten-minute sequence is a part whether the film runs 70 minutes or three hours.'],
+  ['Scattered moments', 'They sit at the level of what they add up to: the film’s shape is macro, one strand is meso. If they’re really separate points, pick the one that matters.'],
+  ['Two at the same level', 'Combine them if they’re one quality in your memory. If not, both sit at that level, and each gets its own dial inside it: upper, middle or lower. Don’t push one down a level to make it fit.'],
+  ['No macro?', 'The meso stands in as the footprint or hallmark, then the micro. In the close-up it still counts at its own size.']];
+function lvOpen(k) {
+  const col = (x, side) => `<div class="lv-side ${side === k ? 'on' : ''}"><small>${side === 'd' ? 'Detection · ' + SLOT_NAMES.d[x.slot].toLowerCase() : 'Beat · ' + SLOT_NAMES.b[x.slot].toLowerCase()}</small>${esc(x[side])}</div>`;
+  $('#lvIn').innerHTML = `<button class="lv-x" data-lv="x" aria-label="Close">✕</button>
+    <div class="k">Projection Booth · Your view</div><h2>The three levels</h2><div class="film">how much of the film it reaches</div>
+    ${LEVELS.map(x => `<div class="lv-lv"><div class="lv-h"><b>${x.name}</b><em>${x.reach}</em></div><p class="lv-what">${x.what}</p>
+      <div class="lv-two">${col(x, 'd')}${col(x, 'b')}</div><p class="lv-test"><b>Test:</b> ${x.test}</p></div>`).join('')}
+    <div class="lv-rules">${LEVEL_RULES.map(([t, d]) => `<p><b>${t}${/[?.]$/.test(t) ? '' : '.'}</b> ${d}</p>`).join('')}</div>`;
+  $('#lvCard').classList.add('show');
+}
+const lvClose = () => $('#lvCard').classList.remove('show');
+document.addEventListener('click', e => { const t = e.target.closest('[data-lv]'); if (t) { e.preventDefault(); return t.dataset.lv === 'x' ? lvClose() : lvOpen(t.dataset.lv); } if (e.target.id === 'lvCard') lvClose(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') lvClose(); });
+/* at least one of each: not to manufacture, to put every film on the same playing field */
+const b2HasBoth = r => slotsOf(r.dets).length > 0 && slotsOf(r.beats).length > 0;
 function b2BoxHTML(r, k) {
-  const K = B2_KIND[k], list = r[K.key] || [], full = list.length >= ITEM_MAX, txt = k === 'b' ? (bt.bn || '') : (bt.dn || ''), g = k === 'b' ? bt.bg : bt.dg;
+  const K = B2_KIND[k], S = slotsOf(r[K.key]), taken = new Set(S.map(x => x.slot)), open = S.length < ITEM_MAX ? SLOTS : [];
+  const sk = k === 'b' ? 'bs' : 'ds'; if (!open.includes(bt[sk])) bt[sk] = open.find(x => !taken.has(x)) || open[0] || null;
+  const txt = k === 'b' ? (bt.bn || '') : (bt.dn || ''), g = k === 'b' ? bt.bg : bt.dg, sl = bt[sk];
   return `<div class="b2-box ${k === 'b' ? 'beats' : 'dets'}">
-    <div class="b2-k">${k === 'b' ? 'Beats · positive' : 'Detections · non-positive'} · ${list.length} of ${ITEM_MAX}</div>
-    <p class="b2-s sm">${k === 'b' ? 'A positive thing from your own experience of the film: what it is and where. Grade the scope of that quality, against how the film delivers its effects.' : 'A non-positive thing from your own experience of the film: what it is and where. Grade the consequences of that stretch, against what the film is trying to accomplish.'}</p>
-    ${full ? `<p class="b2-s sm"><i>That’s two: the most that count. Remove one to name another.</i></p>` : `<textarea class="bx-ta" id="${k === 'b' ? 'b2BNote' : 'b2Note'}" rows="2" placeholder="${k === 'b' ? 'The final reunion at the radio station' : 'The second half piles on the misery'}">${esc(txt)}</textarea>
-    <div class="b2-opts">${b2Names(k).map((w, j) => `<button class="bx-btn ${g === j + 1 ? 'on' : ''}" data-b2="dg" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
-      <button class="bx-btn solid" data-b2="adddet" data-k="${k}" ${txt.trim() && g ? '' : 'disabled'}>Add it</button></div>
-    ${g ? `<p class="b2-s sm"><b>${b2Names(k)[g - 1]}:</b> ${esc(b2Defs(k)[g - 1])}</p>` : ''}`}
-    <div class="b2-dets">${list.map(d => b2ItemCard(r, k, d)).join('')}</div></div>`;
+    <div class="b2-k">${k === 'b' ? 'Beats · positive' : 'Detections · non-positive'} · ${S.length} of ${ITEM_MAX}</div>
+    <p class="b2-s sm">${k === 'b' ? 'A positive thing from your own experience of the film: name the quality and where it lives (“Karloff’s presence, throughout”, “the drowning scene”), not a verdict. Grade the effect of its delivery, against how the film delivers its effects.' : 'A non-positive thing from your own experience of the film (not necessarily negative): what it is and where. Grade the consequences of that stretch, against what the film is trying to accomplish.'}</p>
+    <div class="b2-dets">${S.map(x => b2ItemCard(r, k, x.d, x.slot)).join('')}</div>
+    ${!open.length ? `<p class="b2-s sm"><i>Three is the most. Remove one to name another.</i></p>` : `<div class="b2-comp">
+      <p class="b2-s sm" style="margin:0 0 6px"><b>Which type is it?</b><button class="b2-lvbtn" data-lv="${k}">The three levels</button></p>
+      <div class="b2-slots">${SLOTS.map(x => `<button class="b2-slot ${x === sl ? 'on' : ''}" data-b2="pickslot" data-k="${k}" data-v="${x}" ><b>${SLOT_NAMES[k][x]}</b><small>${LEVELS.find(l => l.slot === x).reach}</small></button>`).join('')}</div>
+      <textarea class="bx-ta" id="${k === 'b' ? 'b2BNote' : 'b2Note'}" rows="2" placeholder="${k === 'b' ? 'The quality and where it lives: melodramatic dynamism, throughout' : 'What it is and where: the second half piles on the misery'}">${esc(txt)}</textarea>
+      <div class="b2-opts">${b2Names(k).map((w, j) => `<button class="bx-btn ${g === j + 1 ? 'on' : ''}" data-b2="dg" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
+        <button class="bx-btn solid" data-b2="adddet" data-k="${k}" ${txt.trim() && g && sl ? '' : 'disabled'}>Add as ${sl ? art(SLOT_NAMES[k][sl].toLowerCase()) : '—'}</button></div>
+      ${sl && taken.has(sl) ? `<p class="b2-s sm"><i>It shares the ${sl} with one you’ve named: you’ll set each one’s dial inside it (upper, middle, lower).</i></p>` : ''}
+      ${g ? `<p class="b2-s sm"><b>${b2Names(k)[g - 1]}:</b> ${esc(b2Defs(k)[g - 1])}</p>` : ''}</div>`}</div>`;
 }
 function b2DetsHTML(r, L, reading) {
   const nd = (r.dets || []).length, nb = (r.beats || []).length;
   return `<p class="b2-q">Your view</p>
-    <p class="b2-s">Name up to two of each, in your own words: what it is and where (“the second half”, “the final scene”, “the whole film”). You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. The largest of each becomes the footprint and the hallmark.</p>
+    <p class="b2-s">First decide which type it is: macro (the whole), meso (a part) or micro (a point). <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Then name it and grade it. Every film gets at least one detection and one beat: not to manufacture anything, but to put every film on the same playing field. Non-positive doesn’t mean negative: a detection can be as small as a Nitpick. Past that, three slots are room, not a quota: if two or three genuinely make up the shape of your view, use them; if one does, one is the shape. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. Your macro detection is the footprint and your macro beat is the hallmark; if there’s no macro, the meso takes its place, then the micro.</p>
     <div class="b2-boxes">${b2BoxHTML(r, 'd')}${b2BoxHTML(r, 'b')}</div>
-    <div class="b2-nav"><span></span><button class="bx-btn solid" data-b2="donedets">${nd || nb ? 'That’s my view · on to Claude →' : 'Nothing to name · on to Claude →'}</button></div>`;
+    <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>${!nd && !nb ? 'At least one detection and one beat.' : !nd ? 'At least one detection too.' : 'At least one beat too.'}</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
 }
 /* ---------- Claude does the reading ---------- */
 const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives my detections (D1, D2: non-positive things from my own experience of it, in my words), my beats (B1, B2: positive things from my own experience of it, in my words), and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
@@ -3978,10 +4081,10 @@ AIMS:
 ${r.aims.length && !b2OldAims(r) ? r.aims.map((a, i) => `[A${i + 1}]${a.central != null ? ' (' + CENT_NAMES[a.central] + ')' : ''} ${a.text}`).join('\n') + '\n(Use these aims exactly as given.)' : '(none given: work them out, step 1)'}
 
 DETECTIONS:
-${(r.dets || []).length ? r.dets.map((d, i) => `[D${i + 1}] ${d.note}`).join('\n') : '(none)'}
+${(r.dets || []).length ? slotsOf(r.dets).map((x, i) => `[D${i + 1} · ${SLOT_NAMES.d[x.slot].toLowerCase()}] ${x.d.note}`).join('\n') : '(none)'}
 
 BEATS:
-${(r.beats || []).length ? r.beats.map((d, i) => `[B${i + 1}] ${d.note}`).join('\n') : '(none)'}
+${(r.beats || []).length ? slotsOf(r.beats).map((x, i) => `[B${i + 1} · ${SLOT_NAMES.b[x.slot].toLowerCase()}] ${x.d.note}`).join('\n') : '(none)'}
 
 Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers, every detection under "detections" and every beat under "beats".`;
 }
@@ -4152,7 +4255,7 @@ function b2ClaudeHTML(r, L) {
     <textarea class="bx-ta" id="b2Reply" rows="4" placeholder='{"film": …}'>${esc(bt.lastReply || '')}</textarea>
     <div class="b2-opts"><button class="bx-btn solid" data-b2="applyc">Bring it back</button></div>
     ${bt.cErr ? `<div class="pst-err">${esc(bt.cErr)}</div>${bt.cutAsk ? `<div class="b2-opts"><button class="bx-btn" data-b2="applycut">Use it anyway</button></div>` : ''}` : ''}
-    <div class="b2-nav"><button class="bx-link" data-b2="go" data-v="dets">← What bugged you</button>${back ? '<button class="bx-btn solid" data-b2="afterc">On to the aims →</button>' : '<span></span>'}</div>`;
+    <div class="b2-nav"><button class="bx-link" data-b2="go" data-v="dets">← Your view</button>${back ? '<button class="bx-btn solid" data-b2="afterc">On to the aims →</button>' : '<span></span>'}</div>`;
 }
 function b2LargestHTML(r, L) {
   const sec = (key, k) => { const ds = (r[key] || []).filter(d => Number.isInteger(d.w)); if (ds.length < 2) return ''; const sg = b2Suggest(r, key);
@@ -4229,7 +4332,7 @@ function b2LockHTML(r, L) {
     if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (${art(WEIGHTS[L.main.w - 1])}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}. Weighed against ${L.hall ? `the hallmark (${b2Label(r, L.hall)}, ${art(BEAT_NAMES[L.hall.w - 1])})` : 'no hallmark'} and how the aims went, it takes ${L.score}% of the film’s view, and ${Math.round(100 * L.core)}% of its core${L.heart ? ': it reaches the heart' : ''}.`);
     { const S = b2Standing(r); if (S) notes.push(`Standing ${S.std}: close-up ${S.close}, wide shot ${S.wide}. It decides the showdowns within the tier; within ${SD_HEAT} points the arena is your call.`); }
     if (L.near) notes.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away.`);
-    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('The other detection counts in the close-up at half; only the footprint sets the tier.');
+    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('Your other detections count in the close-up by their size; only the footprint sets the tier.');
   }
   const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length || b2Flags(r).length, pick = blocked ? null : bt.mag;
   return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s share of this film’s view, against its hallmark and how its aims went${L.heart ? `; at the core it takes ${Math.round(100 * L.core)}%, reaching the heart` : `; ${Math.round(100 * L.core)}% of the core, short of the heart`}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
@@ -4243,7 +4346,7 @@ function b2LockHTML(r, L) {
       : `<button class="bx-seal" data-b2="lock" ${pick ? '' : 'disabled'}>${pick ? `Lock the gate at ${pick}` : 'Lock the gate'}<small>${pick ? `${MAG_NAMES[pick]} · down to the showdown` : blocked ? 'finish the notes above first' : 'choose a plate first'}</small></button>${pick ? '<button class="bx-link" data-b2="lockq">or lock it and leave it in the queue</button>' : ''}`}</div>`;
 }
 /* the largest detection: the one the footprint is */
-function b2MainDet(r) { const ds = (r.dets || []).filter(d => Number.isInteger(d.w) && b2Placed(d)); return ds.find(d => d.main) || ds[0] || null; }
+function b2MainDet(r) { return b2Ranked(r, 'dets')[0] || null; }
 /* how your aim ratings spread across your films: information only */
 function b2SpreadHTML(skipId) {
   const n = [0, 0, 0, 0, 0]; db.films.forEach(f => { if (f.id === skipId || !Array.isArray(f.aims) || !evaluated(f)) return; f.aims.forEach(a => { if (a && Number.isInteger(a.rate) && a.rate >= 1 && a.rate <= 4) n[a.rate]++; }); });
@@ -4325,7 +4428,7 @@ document.addEventListener('click', async e => {
   const k = b.dataset.b2, v = b.dataset.v, IT = b.dataset.id ? b2Item(r, b.dataset.id) : null, d = IT ? IT.d : null, KK = b.dataset.k === 'b' ? 'b' : 'd';
   const order = b2Order(r), done = () => { bxSave(); renderBooth(); };
   switch (k) {
-    case 'go': bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
+    case 'go': if (v !== 'dets' && !b2HasBoth(r)) { bt.st = 'dets'; toast('Name at least one detection and one beat first'); return renderBooth(); } bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
     case 'useplot': { const t = $('#b2Plot')?.value || ''; if (!t.trim()) return toast('Paste the plot first'); r.footprint = t; return done(); }
     case 'useaim': { const t = $('#b2Aim')?.value || ''; if (!t.trim()) return toast('Paste the aim first'); r.aim = t; return done(); }
     case 'cent': { const a = order[bt.ai].a; a.central = +v; bt.ai = Math.max(0, b2Order(r).findIndex(x => x.a === a)); return done(); }
@@ -4338,23 +4441,30 @@ document.addEventListener('click', async e => {
     case 'aim': bt.ai = +v; return renderBooth();
     case 'prev': bt.ai = Math.max(0, bt.ai - 1); return renderBooth();
     case 'dg': if (KK === 'b') bt.bg = +v; else bt.dg = +v; return renderBooth();
+    case 'pickslot': bt[KK === 'b' ? 'bs' : 'ds'] = v; return renderBooth();
+    case 'slot': { if (!d || !SLOTS.includes(v)) return; const key = B2_KIND[IT.k].key; b2FixSlots(r); const join = (r[key] || []).some(x => x !== d && x.slot === v); d.slot = v; if (join) d.dial = 'middle'; else delete d.dial; b2FixSlots(r); return done(); }
+    case 'dial': { if (!d || !DIALS.includes(v)) return; d.dial = v; b2FixSlots(r); return done(); }
+    case 'edit': bt.edit = b.dataset.id; renderBooth(); { const t = $('#b2Edit'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } } return;
+    case 'editcancel': bt.edit = null; return renderBooth();
+    case 'editsave': { if (!d) return; const t = String($('#b2Edit')?.value || '').trim(); if (!t) return toast('Keep some words, or remove it'); d.note = t; bt.edit = null; return done(); }
     case 'adddet': {
       const key = B2_KIND[KK].key, t = (KK === 'b' ? bt.bn : bt.dn || '').trim(), g = KK === 'b' ? bt.bg : bt.dg; if (!t || !g) return;
-      if ((r[key] || []).length >= ITEM_MAX) return toast(`Two ${B2_KIND[KK].many} at most: remove one first`);
-      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: t, w: g, sents: [], main: !(r[key] || []).length }; (r[key] ||= []).push(nd);
+      const sl = bt[KK === 'b' ? 'bs' : 'ds']; b2FixSlots(r);
+      if (!sl || (r[key] || []).length >= ITEM_MAX) return toast(`Three ${B2_KIND[KK].many} at most`);
+      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: t, w: g, sents: [], slot: sl }; if ((r[key] || []).some(x => x.slot === sl)) nd.dial = 'middle'; (r[key] ||= []).push(nd); b2FixSlots(r);
       if (KK === 'b') { bt.bn = ''; bt.bg = null; } else { bt.dn = ''; bt.dg = null; }
       return done();
     }
     case 'grade': if (d) d.w = +v; return done();
-    case 'del': { if (!d) return; const key = B2_KIND[IT.k].key; r[key] = r[key].filter(x => x !== d); if (d.main && r[key][0]) r[key][0].main = true; return done(); }
+    case 'del': { if (!d) return; const key = B2_KIND[IT.k].key; r[key] = r[key].filter(x => x !== d); b2FixSlots(r); return done(); }
     case 'whole': if (!d) return; d.whole = true; delete d.q; return done();
     case 'notwhole': if (!d) return; d.whole = false; if (!(d.sents || []).length) d.q = 'scope'; return done();
     case 'part': if (!d) return; d.q = 'which'; return renderBooth();
     case 'which': if (!d) return; { const i = +v; d.add = [i]; d.drop = []; d.sents = (r.carry || [])[i] || []; d.manual = true; d.conf = 'solid'; delete d.q; } return done();
     case 'drop': if (!d) return; { const i = +v; d.drop = [...new Set([...(d.drop || []), i])]; d.add = (d.add || []).filter(x => x !== i); } return done();
-    case 'donedets': bt.st = 'claude'; return done();
+    case 'donedets': if (!b2HasBoth(r)) return toast('Name at least one detection and one beat'); bt.st = 'claude'; return done();
     case 'copyc': {
-      const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
+      b2FixSlots(r); const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
       let ok = true; try { await navigator.clipboard.writeText(msg); } catch (err) { ok = false; }
       const url = (db.settings.boothProject || '').trim() || 'https://claude.ai/new';
       window.open(url, '_blank', 'noopener');
@@ -5771,7 +5881,7 @@ const PB = {
     ['Current Integrated View', 'My conceptual understanding of the runtime, shaped and molded from the experience(s) I had with the film. Only one view.'],
     ['Footprint', 'The single largest detection’s place in my view.'],
     ['Detections', 'The content or basis of memory that shapes the footprint: non-positive things connected to my own experience. A word may come from elsewhere, but I make the connection to my shape myself.'],
-    ['Beats', 'Positive things connected to my own experience. I name what and where, and grade the scope of that quality against how the film delivers its effects.'],
+    ['Beats', 'Positive things connected to my own experience. I name the quality and where it lives, and grade the effect of its delivery against how the film delivers its effects: could-see, should-see, must-see, essential.'],
     ['Hallmark', 'The single largest beat’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
     ['Magnitude', 'Tiers that classify a film by adjudicating its footprint against its hallmark and how its aims went: the footprint’s place in the film’s own view.'],
@@ -5804,10 +5914,13 @@ function renderPlaybill() {
     ${it('▣', 'The poster', 'the DVD cover', 'A picture address for the film’s one-sheet.')}
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>I name and grade · Claude maps · the booth keeps the stats</small></div>
-    ${it('1', 'My view', 'before Claude, two of each at most', 'Detections (D1, D2): non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats (B1, B2): positive things, what and where, graded by the scope of that quality against how the film delivers its effects. I grade against my own sense of the film; I haven’t seen its aims yet.')}
+    ${it('1', 'My view', 'before Claude, three slots a side', 'Detections: a macro view, a meso take and a micro stance; non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats: a macro pillar, a meso feature and a micro detail; positive qualities and where they live, graded by the effect of their delivery against how the film delivers its effects. At least one of each, so every film is on the same playing field (non-positive doesn’t mean negative); past that, the slots are room, not a quota. I grade against my own sense of the film; I haven’t seen its aims yet.')}
     ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, breaks it into timed scenes, and places each detection and beat: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades.')}
     ${it('3', 'The full frame, then the aims', 'my wide shot', 'With Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
-    ${it('★', 'Footprint & hallmark', 'suggested', 'With two of a kind, the booth suggests the higher grade (then the one covering more of the film) and I confirm. The largest counts in full and the other at half.')}
+    ${it('★', 'Footprint & hallmark', 'the macro slots', 'My macro detection is the footprint and my macro beat is the hallmark. If a macro slot is empty, the largest one I did fill takes its place.')}
+    <div class="pb-axis"><span>The three levels · how much of the film it reaches</span></div>
+    ${LEVELS.map(x => it(x.name[0], x.name, x.reach, `${x.what} Detection: ${x.d} Beat: ${x.b} Test: ${x.test}`)).join('')}
+    ${LEVEL_RULES.map(([t, d]) => it('·', t, '', d)).join('')}
     <div class="pb-axis"><span>How I mean a detection</span></div>
     ${WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_DET[j])).join('')}
     <div class="pb-axis"><span>How I mean a beat</span></div>
@@ -5818,7 +5931,7 @@ function renderPlaybill() {
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
     <div class="pb-axis"><span>The stats</span></div>
     ${it('↗', 'The lean · the tier', 'relative to the film itself', 'The footprint weighed against the hallmark and how the aims went, all scored the same way (grade first, size second). The lean is the footprint’s share of the film’s whole view. The heart: at the Central and Major aims, does the footprint take up more than a third of what’s there (how those aims went, plus the hallmark where it lands)? If so, it sits at the center of my view: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. No grade is barred; it all depends on the film. A lean, not a verdict.')}
-    ${it('◧', 'Close-up', '0 to 100, around 50', 'My beats against my detections: grade first, size second; the hallmark and footprint in full, the second of each at half.')}
+    ${it('◧', 'Close-up', '0 to 100, around 50', 'My beats against my detections: grade first, size second; macro in full, meso at half, micro at a quarter. When two share a level, each one’s dial sets its size inside that level (macro 100/85/70%, meso 50/43/36%, micro 25/20/15%), never overlapping the next level.')}
     ${it('◨', 'Wide shot', '0 to 100', 'My aim grades (fails 10, falls short 25, achieves 60, triumphs 100), weighted by tier.')}
     ${it('⚖', 'Standing', 'decides the showdowns', 'Half the close-up and half the wide shot, balanced so each moves it equally. The balance tunes itself from my films once ten are on the reel.')}
     ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdowns, or waits in the queue.')}`;
