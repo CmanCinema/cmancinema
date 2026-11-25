@@ -857,12 +857,38 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .lv-side.on{border-color:rgba(184,135,60,.8);background:rgba(184,135,60,.14)}
 .lv-side small{display:block;margin-bottom:3px;font:700 9.5px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a1a22}
 .lv-test{margin:8px 0 0;font:italic 500 15.5px/1.4 var(--body);color:#3a2418}
+.lv-dial{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.lv-dial small{grid-column:1/-1;font:700 9.5px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:#7a1a22}
+.lv-dial div{padding:6px 9px;border-radius:4px;border:1px dashed rgba(122,26,34,.3);font:500 14px/1.35 var(--body);color:#3a2418}
+.lv-dial b{display:block;font:700 10px var(--serif);letter-spacing:.16em;text-transform:uppercase;color:#5a0f22;margin-bottom:2px}
+@media (max-width:560px){.lv-dial{grid-template-columns:1fr}}
 .lv-rules{margin-top:16px;padding:12px 14px;border-left:3px solid #c4202f;background:rgba(90,15,34,.06)}
 .lv-rules p{margin:0 0 7px;font:500 15px/1.45 var(--body);color:#3a2418}
 .lv-rules p:last-child{margin:0}
 .b2-dial{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 .b2-dial span{font:italic 600 13px var(--body);opacity:.75;margin-right:4px}
 .b2-dial .bx-btn{padding:4px 10px;font-size:10px}
+.b2-sz{margin:8px 0;padding:10px 12px;border-radius:10px;border:1px solid rgba(232,190,106,.25);background:rgba(0,0,0,.18)}
+.b2-sz.need{border-color:rgba(232,190,106,.6)}
+.b2-szwhy{margin:6px 0 8px;font:italic 500 14px/1.35 var(--body);color:rgba(243,230,200,.65)}
+.b2-addrow{margin-top:8px;width:100%;border-style:dashed}
+.b2-row-ta{margin:4px 0 8px}
+.b2-gdef{margin:6px 0 0;font:italic 500 13.5px/1.35 var(--body);color:rgba(243,230,200,.6)}
+.b2-dump{min-height:120px;max-height:420px;overflow:auto;padding:10px 12px;border-radius:8px;border:1px solid rgba(232,190,106,.3);background:rgba(0,0,0,.25);font:500 17px/1.55 var(--body);color:#f6ead0;white-space:pre-wrap;outline:none}
+.b2-dump:focus{border-color:rgba(232,190,106,.7)}
+.b2-dump:empty::before{content:attr(data-ph);color:rgba(243,230,200,.35);font-style:italic}
+.b2-dump mark{color:inherit;border-radius:3px;padding:0 2px;background:rgba(232,190,106,.18);box-shadow:inset 0 -2px 0 rgba(232,190,106,.55)}
+.b2-dump mark[data-g="1"]{background:rgba(232,190,106,.12)}.b2-dump mark[data-g="2"]{background:rgba(232,190,106,.2)}.b2-dump mark[data-g="3"]{background:rgba(232,150,90,.28)}.b2-dump mark[data-g="4"]{background:rgba(222,90,80,.32)}
+.b2-box.beats .b2-dump mark{box-shadow:inset 0 -2px 0 rgba(143,209,139,.7)}
+.b2-box.beats .b2-dump mark[data-g="1"]{background:rgba(143,209,139,.12)}.b2-box.beats .b2-dump mark[data-g="2"]{background:rgba(143,209,139,.2)}.b2-box.beats .b2-dump mark[data-g="3"]{background:rgba(143,209,139,.3)}.b2-box.beats .b2-dump mark[data-g="4"]{background:rgba(143,209,139,.42)}
+.b2-dump mark::after{content:attr(data-gn);margin-left:4px;font:700 9px var(--serif);letter-spacing:.12em;text-transform:uppercase;vertical-align:super;opacity:.75}
+.b2-tagbar{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:8px 0}
+.b2-tagbar>span{font:italic 600 13px var(--body);color:rgba(243,230,200,.6)}
+.b2-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.b2-tagc{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 4px 3px 8px;border-radius:5px;background:rgba(255,255,255,.05);border:1px solid rgba(232,190,106,.25);font:500 13.5px var(--body);color:#f3e6c8}
+.b2-tagc b{font:700 9px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi)}
+.b2-tagc button{border:0;background:none;color:rgba(243,230,200,.55);cursor:pointer;font-size:15px;padding:0 4px}
+.b2-sz.main{border-color:rgba(232,190,106,.85);background:rgba(232,190,106,.06)}
 .b2-lvbtn{margin-left:8px;border:0;background:none;padding:0;font:italic 600 13px var(--body);color:var(--gold-hi,#f3d58f);text-decoration:underline dotted;cursor:pointer}
 .mfc{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:22px 24px 24px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
 .mfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
@@ -2137,6 +2163,12 @@ button.tp{font:inherit;cursor:pointer;appearance:none;-webkit-appearance:none}
 }
 
 .plot-src{display:flex;gap:8px;flex-wrap:wrap}.plot-src .dvd-btn{flex:1 1 200px}
+.bp-aims{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:5px;margin-top:8px}
+.bp-aims span{display:flex;flex-direction:column;padding:5px 8px;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid rgba(232,190,106,.18);font:600 13.5px var(--body);color:#f3e6c8}
+.bp-aims span em{font:700 9px var(--serif);font-style:normal;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,190,106,.7)}
+.bp-aims span.v4{border-color:rgba(232,190,106,.6);background:rgba(232,190,106,.1)}
+.bp-aims span.v1{opacity:.7}
+.bp-count{margin-top:6px;font:italic 500 12.5px var(--body);color:rgba(243,230,200,.55)}
 .bpanel{margin:12px 0 4px;padding:12px;border-radius:8px;background:rgba(0,0,0,.28);border:1px solid rgba(232,190,106,.3);display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:start;text-align:left}
 .bp-map{text-align:center}.bp-map .bx-disc{width:64px;height:64px;margin:0 auto}
 .bp-map small{display:block;margin-top:6px;font:800 10px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi)}
@@ -3341,8 +3373,8 @@ function profBoothHTML(f) {
       ${aims.length ? `<div class="pmq-aims">${aims.map(({ a }) => `<div class="pmq-aim v${a.rate || 0}"><em>${CENT_NAMES[a.central]}</em><b>${a.rate > 0 ? VERB[a.rate - 1] : a.rate === 0 ? 'Doesn’t ring a bell' : '—'}</b><i style="width:${a.rate > 0 ? Math.round(B2_VAL[a.rate] * 100) : 0}%"></i></div>`).join('')}</div>` : ''}
     </div></div>
     ${D.length || Bt.length ? `<div class="pmq-hl"><span class="pmq-k">Booth highlights</span>
-      <div class="pmq-cols"><div>${Bt.map((d, i) => stub(d, 'b', !i)).join('')}${Bt.length ? '' : '<p class="pmq-none">No beats named.</p>'}</div>
-      <div>${D.map((d, i) => stub(d, 'd', !i)).join('')}${D.length ? '' : '<p class="pmq-none">No detections named.</p>'}</div></div></div>` : ''}`;
+      <div class="pmq-cols"><div>${Bt.map((d, i) => stub(d, 'b', !i)).join('')}${Bt.length ? '' : '<p class="pmq-none">No strengths named.</p>'}</div>
+      <div>${D.map((d, i) => stub(d, 'd', !i)).join('')}${D.length ? '' : '<p class="pmq-none">No flaws named.</p>'}</div></div></div>` : ''}`;
 }
 function strikeBadge() { return ''; }   // strikes are gone: edit freely
 function closeSheet() { $('#sheet').classList.remove('show'); }
@@ -3529,24 +3561,24 @@ function admitPending() {
 /* =====================================================================
    THE PROJECTION BOOTH · Magnitude
    Both ports work off the plot, the runtime's blueprint.
-   Port A: my detections, highlighted where they land, each rated by how I mean it.
+   Port A: my flaws, highlighted where they land, each rated by how I mean it.
    Port B: the aim, part by part. Google decides how central each part is to what the film
    is trying to accomplish; I tag what I remember of it, stretch by stretch. The rest of the plot stays Shutter.
    The lean weighs both ports equally. I lock the gate.
    Everything typed saves straight onto the film.
    ===================================================================== */
 const WEIGHTS = ['Nitpick', 'Gripe', 'Drawback', 'Problem'];
-const CONSEQ = ['Petty', 'Minor', 'Major', 'Severe'];   // the consequences each one carries   // Port A · how I mean a detection
+const CONSEQ = ['Petty', 'Minor', 'Major', 'Severe'];   // the consequences each one carries   // Port A · how I mean a flaw
 const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // Port B · how well the aim worked in a stretch
-const DEF_DET = ['Petty consequences of this stretch.', 'Minor consequences of this stretch.', 'Major consequences of this stretch.', 'Severe consequences of this stretch.'];
-const BEAT_NAMES = ['Could-see', 'Should-see', 'Must-see', 'Essential'];
-const DEF_BEAT = ['A dependable perk: the baseline of presumed appeal; it delivers what you’d expect.', 'A stellar, impactful bonus: I appreciate how it’s delivered because of what it gave me, like a reward.', 'An exceptionally high-caliber strength: the caliber of the realization itself becomes the defining effect of the experience.', 'An extraordinary asset: that defining effect is so extraordinary it profoundly alters my broader conception of the kind of experience the film is striving for.'];
+const DEF_DET = ['Petty consequences of this flaw.', 'Minor consequences of this flaw.', 'Major consequences of this flaw.', 'Severe consequences of this flaw.'];
+const BEAT_NAMES = ['Perk', 'Bonus', 'Advantage', 'Asset'];
+const DEF_BEAT = ['Petty significance of this strength.', 'Minor significance of this strength.', 'Major significance of this strength.', 'Extraordinary significance of this strength.'];
 const BEAT_COLOR = '#8fd18b', ITEM_MAX = 3;
 /* three slots on each side, largest to smallest in your view; each item still graded on its own dial */
 const SLOTS = ['macro', 'meso', 'micro'], SLOT_W = { macro: 1, meso: .5, micro: .25 };
 const SLOT_NAMES = { d: { macro: 'Macro view', meso: 'Meso take', micro: 'Micro stance' }, b: { macro: 'Macro pillar', meso: 'Meso feature', micro: 'Micro detail' } };
 const SLOT_WORD = { macro: 'in full', meso: 'at half', micro: 'at a quarter' };
-/* a dial inside a level, only when two or more share it: upper (the level's full size), middle, lower; bands never overlap the next level */
+/* a dial inside a level, on every item: upper (the level's full size, and the default), middle, lower; bands never overlap the next level */
 const DIALS = ['upper', 'middle', 'lower'], DIAL_W = { macro: [1, .85, .7], meso: [.5, .43, .36], micro: [.25, .2, .15] };
 const dialIx = d => Math.max(0, DIALS.indexOf(d.dial));
 /* each item with its level, largest first: by level, then by its dial; items from before the levels take the free ones */
@@ -3559,29 +3591,29 @@ function slotsOf(list) {
 }
 const b2Shares = (list, d, slot) => slotsOf(list).filter(x => x.slot === slot).length > 1;
 /* the item's size: its level, and its dial when it shares the level */
-function b2SizeW(list, d, slot) { return b2Shares(list, d, slot) ? DIAL_W[slot][dialIx(d)] : SLOT_W[slot]; }
+function b2SizeW(list, d, slot) { return DIAL_W[slot][dialIx(d)]; }
 /* keep each box in order (so D1 is the largest), and the largest marked as the footprint or hallmark */
-function b2FixSlots(r) { ['dets', 'beats'].forEach(key => { const S = slotsOf(r[key]); S.forEach(x => { x.d.slot = x.slot; }); r[key] = S.map(x => x.d); r[key].forEach((d, i) => { d.main = i === 0; if (!b2Shares(r[key], d, d.slot)) delete d.dial; }); }); }
+function b2FixSlots(r) { ['dets', 'beats'].forEach(key => { const S = slotsOf(r[key]); S.forEach(x => { x.d.slot = x.slot; }); r[key] = S.map(x => x.d); r[key].forEach((d, i) => { d.main = i === 0; }); }); }
 const art = w => (/^[aeiou]/i.test(w) ? 'an ' : 'a ') + w;
-/* the two boxes of your view: detections (non-positive, graded by the consequences of the stretch against the aim's what)
-   and beats (positive, graded by the effect of its delivery against the aim's how: could-see to essential) */
-const B2_KIND = { d: { key: 'dets', pre: 'D', names: null, defs: null, one: 'detection', many: 'detections', big: 'footprint' }, b: { key: 'beats', pre: 'B', names: null, defs: null, one: 'beat', many: 'beats', big: 'hallmark' } };
+/* the two boxes of your view: flaws (what broke through the firewall and bugged me, graded by the consequences of the stretch against the aim's what)
+   and effects (positive, graded by the effect of its delivery against the aim's how: could-see to essential) */
+const B2_KIND = { d: { key: 'dets', pre: 'F', names: null, defs: null, one: 'flaw', many: 'flaws', big: 'footprint' }, b: { key: 'beats', pre: 'S', names: null, defs: null, one: 'strength', many: 'strengths', big: 'hallmark' } };
 const DEF_AIM = ['Taken as a whole, the delivery fails to achieve what it’s going for.', 'Taken as a whole, the delivery falls short of what it’s going for.', 'Taken as a whole, the delivery achieves what it’s going for.', 'Taken as a whole, the delivery triumphs in what it’s going for.'];
 const DEF_WILD = 'Something I remember that isn’t part of any aim. It can stand alone or sit on top of an aim’s stretch. Remembered, so not Shutter.';
 const WILD_WEIGHTS = ['Minor', 'Secondary', 'Major', 'Central'];
 const DEF_WILDW = ['A small part of my View.', 'A noticeable part of my View.', 'A big part of my View.', 'At the heart of my View.'];
 const WILD_COLOR = '#cfc6b4', WILD_POS = '#9fd18b';
 const WILD_TONES = { pos: 'Positive', neu: 'Neutral' };
-const DEF_TONE = { pos: 'Not detection-worthy: it stood out to me in a good way. Nothing counts against it, so it can only help. Bonus points only.', neu: 'Just something I remember, neither good nor bad. A flaw in the same stretch mostly bites it, like Edge.' };
+const DEF_TONE = { pos: 'Not flaw-worthy: it stood out to me in a good way. Nothing counts against it, so it can only help. Bonus points only.', neu: 'Just something I remember, neither good nor bad. A flaw in the same stretch mostly bites it, like Edge.' };
 const wildCol = x => x && x.t === 'pos' ? WILD_POS : WILD_COLOR;
 const wildName = x => `Wild card · ${WILD_TONES[x.t] || 'Neutral'} · ${x.c ? WILD_WEIGHTS[x.c - 1] : 'weight not set'}`;
 const DEF_SHUTTER = 'I went through it line by line and nothing rings a bell. Counts toward nothing.';
 const CENT_NAMES = { 0: 'Outside the film', 1: 'Minor', 2: 'Secondary', 3: 'Major', 4: 'Central' };   // from Google: how central the aim is to the film
 const CENT_SIG = { 0: 0, 1: .25, 2: .5, 3: .75, 4: 1 };
 const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating, for drawing: stronger rating, stronger fill
-const DMG_SIG = [0, 1, .65, .15, 0];     // under a detection: how much the flaw undermined the aim there (Zilch fully · Core not at all)
+const DMG_SIG = [0, 1, .65, .15, 0];     // under a flaw: how much the flaw undermined the aim there (Zilch fully · Core not at all)
 const WILD_DMG = { pos: 0, neu: DMG_SIG[2] };   // Positive is bonus only: nothing counts against it. Neutral takes what Edge takes
-const SEV_SIG = [0, .25, .5, .75, 1];    // by detection rating
+const SEV_SIG = [0, .25, .5, .75, 1];    // by flaw rating
 const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, heartCent: 3, near: 5, other: .5 };
 const AIM_COLORS = ['#e8be6a', '#5ad1c8', '#c58fe6', '#9fd18b', '#f08fb0', '#8fb0e6', '#e6a05a', '#d1d15a'];
 const DET_COLORS = ['#e07a5a', '#8fb0e6', '#9fd18b', '#e6c25a', '#c58fe6', '#5ad1c8', '#f08fb0', '#b9a37a'];
@@ -3651,14 +3683,14 @@ const isCore = a => a.central === 4;                                   // Centra
 const counts = a => a.central != null && a.central > 0;                // set and not outside the film
 const detStretches = d => (Array.isArray(d.ranges) ? d.ranges : []).filter(x => x && x.e > x.s).map(x => ({ s: x.s, e: x.e, w: Number.isInteger(x.w) ? x.w : (Number.isInteger(d.weight) ? d.weight : null) })).sort((a, b) => a.s - b.s);
 const rated = d => detStretches(d).every(x => Number.isInteger(x.w));
-/* a detection's grade, summed up: one name, or its range when its stretches differ */
+/* a flaw's grade, summed up: one name, or its range when its stretches differ */
 function sevName(d) {
   const ws = detStretches(d).map(x => x.w).filter(Number.isInteger);
   if (!ws.length) return detStretches(d).length ? 'Not rated yet' : (Number.isInteger(d.weight) ? WEIGHTS[d.weight - 1] : 'Not rated yet');
   const lo = Math.min(...ws), hi = Math.max(...ws);
   return lo === hi ? WEIGHTS[lo - 1] : `${WEIGHTS[lo - 1]} to ${WEIGHTS[hi - 1]}`;
 }
-/* a detection's average grade, weighted by how much plot each stretch covers (0 to 1) */
+/* a flaw's average grade, weighted by how much plot each stretch covers (0 to 1) */
 function sevAvg(d) { let n = 0, t = 0; detStretches(d).forEach(x => { if (Number.isInteger(x.w)) { n += x.e - x.s; t += SEV_SIG[x.w] * (x.e - x.s); } }); return n ? t / n : null; }
 const heaviest = d => { const ws = detStretches(d).map(x => x.w).filter(Number.isInteger); return ws.length ? Math.max(...ws) : null; };
 /* Shutter lives in Port B: whatever no aim stretch covers. Port A and the Full Picture only mirror it */
@@ -3667,31 +3699,31 @@ const cutOut = (rs, s, e) => (rs || []).flatMap(x => x.e <= s || x.s >= e ? [x] 
 /* share of the plot remembered, counted over the stretches themselves (the gaps between them don't count) */
 const stretchWt = (a, x) => (CENT_SIG[a.central] ?? 0) * DEL_SIG[x.w || 2];
 const overlap = (A, B) => { for (const x of A || []) for (const y of B || []) if (x.s < y.e && y.s < x.e) return true; return false; };
-/* a detection hits every aim part whose stretch of the plot it overlaps */
+/* a flaw hits every aim part whose stretch of the plot it overlaps */
 const detHits = (r, d) => r.aims.filter(a => a.central !== 0 && overlap(d.ranges, stretches(a)));
-/* the stretches of an aim that a detection overlaps */
+/* the stretches of an aim that a flaw overlaps */
 const hitStretches = (d, a) => stretches(a).filter(x => overlap(d.ranges, [x]));
 /* the aim's whole weight: everything the film was trying to accomplish across my View (centrality × presence) */
 const aimTotal = r => r.aims.reduce((t, a) => counts(a) ? t + CENT_SIG[a.central] * rangeLen(stretches(a)) : t, 0) + (r.wild || []).reduce((t, x) => t + (CENT_SIG[x.c] || 0) * (x.e - x.s), 0);
 const dmgWt = (a, x) => (CENT_SIG[a.central] ?? 0) * DMG_SIG[x.w || 2];
-/* one detection's bite: the damage it did to the aim, out of the aim's whole weight */
+/* one flaw's bite: the damage it did to the aim, out of the aim's whole weight */
 function footShare(r, d) {
   const T = aimTotal(r); if (!T) return null;
   return r.aims.reduce((t, a) => counts(a) ? t + stretches(a).reduce((u, x) => u + dmgWt(a, x) * overlapLen(d.ranges, [x]), 0) : t, 0) / T;
 }
-/* how much of one aim's own presence a detection undermined (damage-weighted) */
+/* how much of one aim's own presence a flaw undermined (damage-weighted) */
 function aimDamage(d, a) { const n = rangeLen(stretches(a)); return n ? stretches(a).reduce((u, x) => u + DMG_SIG[x.w || 2] * overlapLen(d.ranges, [x]), 0) / n : 0; }
 const reachesHeart = (r, d) => r.aims.some(a => counts(a) && a.central >= LEAN_CUT.heartCent && aimDamage(d, a) >= LEAN_CUT.heart);
 
 /* ---------- the lean: both ports, equally, never a verdict ----------
-   Footprint (Port A): how much of the blueprint my detections cover, weighted by how I mean them
-     (Nitpick .25 · Gripe .5 · Drawback .75 · Problem 1). The largest detection counts in full,
+   Footprint (Port A): how much of the blueprint my flaws cover, weighted by how I mean them
+     (Nitpick .25 · Gripe .5 · Drawback .75 · Problem 1). The largest flaw counts in full,
      the others at half; overlapping highlights count once.
-   Aim bite (Port B): the damage my detections did to what the film was trying to accomplish. Under a detection, the
+   Aim bite (Port B): the damage my flaws did to what the film was trying to accomplish. Under a flaw, the
      stretch's rating says how much the flaw undermined the aim there (Zilch fully · Edge .65 · Supporting .15 · Core not at all),
      weighted by how central the aim is (Google: Central 1 · Major .75 · Secondary .5 · Minor .25),
      out of the aim's whole weight (centrality × presence across the View).
-   The lean = the two averaged. Place: if the largest detection undermined at least half of a Major or Central aim's
+   The lean = the two averaged. Place: if the largest flaw undermined at least half of a Major or Central aim's
    presence, it is at the center of the View (Defining, Pervasive at 35, All-encompassing at 60); otherwise at the edge
    (Incidental, Peripheral at 20). */
 function leanParts(r) {
@@ -3725,11 +3757,11 @@ function bxLean(r) {
   const near = dist <= LEAN_CUT.near ? { cut, dist: Math.round(dist * 10) / 10, toward: score < cut ? heavy : light } : null;
   const hits = detHits(r, p.m), names = hits.map(a => `${aimShort(a)} (${CENT_NAMES[a.central] ?? 'centrality not set'})`);
   const where = hits.length ? `lands on ${names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names.slice(-1) : names[0]}` : 'doesn’t overlap any stretch of the aim';
-  const why = `D${detNum(r, p.m)}, your ${r.dets.length > 1 ? 'largest ' : ''}detection, ${where}${p.heart ? ', undermining most of a central aim' : ''}. Footprint ${Math.round(p.F)} (Port A) · aim bite ${Math.round(p.B)} (Port B).`;
+  const why = `F${detNum(r, p.m)}, your ${r.dets.length > 1 ? 'largest ' : ''}flaw, ${where}${p.heart ? ', undermining most of a central aim' : ''}. Footprint ${Math.round(p.F)} (Port A) · aim bite ${Math.round(p.B)} (Port B).`;
   return { t, score: Math.round(score), F: Math.round(p.F), B: Math.round(p.B), heart: p.heart, near, share: p.B / 100, why, parts: p };
 }
 const bxWeightPct = r => { const L = bxLean(r); return L ? L.score : null; };
-/* the film's own map: drawn from where my detections land on the aim */
+/* the film's own map: drawn from where my flaws land on the aim */
 function bxMapSVG(r) {
   let s = MAG_SVG.ring, k = 0;
   r.dets.forEach((d, i) => {
@@ -3798,7 +3830,7 @@ function splitAim(t) {
    2. In the background the system reads the plot and lines each aim up with the
       sentences where it plays out (never shown). A small language model runs in the
       browser for this (free, no key); if it can't load, word matching stands in.
-   3. You name your detections and beats and grade them; the system finds where it happens and
+   3. You name your flaws and effects and grade them; the system finds where it happens and
       which aims it hurts. If it can't pin one down, it asks.
    4. The stats recalculate after every answer: footprint, aim bite, the lean.
    5. You choose the plate and lock the gate.
@@ -3887,9 +3919,9 @@ function b2Suggest(r, key = 'dets') {
 /* the largest and the second of a box, as they count: the largest in full, the second at half */
 function b2Ranked(r, key) { return slotsOf(r[key]).filter(x => Number.isInteger(x.d.w) && b2Placed(x.d)).map(x => x.d); }
 const b2SlotOf = (r, d) => { const k = (r.beats || []).includes(d) ? 'beats' : 'dets', x = slotsOf(r[k]).find(y => y.d === d); return x ? x.slot : 'macro'; };
-function b2SizeWord(r, d) { const k = (r.beats || []).includes(d) ? 'beats' : 'dets', sl = b2SlotOf(r, d); return b2Shares(r[k], d, sl) ? `${DIALS[dialIx(d)]} · ${Math.round(100 * DIAL_W[sl][dialIx(d)])}%` : SLOT_WORD[sl]; }
+function b2SizeWord(r, d) { const k = (r.beats || []).includes(d) ? 'beats' : 'dets', sl = b2SlotOf(r, d); return `${DIALS[dialIx(d)]} · ${Math.round(100 * DIAL_W[sl][dialIx(d)])}%`; }
 /* THE STANDING · two views of the film, each counted once
-   close-up: your beats against your detections, grade first and size second · wide shot: your aim grades, weighted by tier */
+   close-up: your effects against your flaws, grade first and size second · wide shot: your aim grades, weighted by tier */
 function b2CloseUp(r) {
   const val = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d)), sum = key => slotsOf(r[key]).filter(x => Number.isInteger(x.d.w) && b2Placed(x.d)).reduce((t, x) => t + b2SizeW(r[key], x.d, x.slot) * val(x.d), 0);
   return Math.max(0, Math.min(100, 50 + 50 * (sum('beats') - sum('dets')) / 1.75));
@@ -3947,7 +3979,7 @@ function renderBooth() {
   $('#b2Steps').innerHTML = B2_STEPS.map(([k, t], i) => `<li class="${k === st ? 'now' : ''}" data-b2="go" data-v="${k}" tabindex="0"><span class="no">${i + 1}</span><b>${t}</b><em>${b2StepNote(r, k, L)}</em></li>`).join('');
   const reading = ready && !b2Fresh(r), stale = !reading && b2Stale(r);
   $('#b2Stats').innerHTML = !ready ? '' : reading ? `<span class="b2-wait">The stats run once Claude’s reading comes back.</span>`
-    : L && L.score != null ? `<span>Footprint covers <b>${L.F}%</b></span><span>Lean <b>${L.score}</b></span>${(() => { const S = b2Standing(r); return S ? `<span>Close-up <b>${S.close}</b></span><span>Wide shot <b>${S.wide}</b></span><span>Standing <b>${S.std}</b></span>` : ''; })()}<span class="b2-tier">${magDisc(L.t)}<b>${L.t} · ${MAG_NAMES[L.t]}</b></span><small>${r.mapEngine === 'claude' ? (r.mapMode === 'scenes' ? `Read by Claude from the whole film${(r.scenes || []).length ? ` · ${r.scenes.length} scenes` : ''}` : 'Read by Claude') : r.mapEngine === 'model' ? 'Read for meaning' : 'Read by word matching'}${stale ? ' · some detections were added since: send it again to place them' : ''} · recalculates after every answer</small>`
+    : L && L.score != null ? `<span>Footprint covers <b>${L.F}%</b></span><span>Lean <b>${L.score}</b></span>${(() => { const S = b2Standing(r); return S ? `<span>Close-up <b>${S.close}</b></span><span>Wide shot <b>${S.wide}</b></span><span>Standing <b>${S.std}</b></span>` : ''; })()}<span class="b2-tier">${magDisc(L.t)}<b>${L.t} · ${MAG_NAMES[L.t]}</b></span><small>${r.mapEngine === 'claude' ? (r.mapMode === 'scenes' ? `Read by Claude from the whole film${(r.scenes || []).length ? ` · ${r.scenes.length} scenes` : ''}` : 'Read by Claude') : r.mapEngine === 'model' ? 'Read for meaning' : 'Read by word matching'}${stale ? ' · some flaws were added since: send it again to place them' : ''} · recalculates after every answer</small>`
     : `<span class="b2-wait">The stats run once every aim is rated.</span>`;
   $('#b2Panel').innerHTML = !ready ? b2PasteHTML(r) : st === 'aims' ? b2AimsHTML(r) : st === 'dets' ? b2DetsHTML(r, L, reading) : st === 'claude' ? b2ClaudeHTML(r, L) : st === 'largest' ? b2LargestHTML(r, L) : b2LockHTML(r, L);
   $('#b2Foot').innerHTML = `<button class="bx-link" data-cancelwf>${active.mode === 'new' && !raw(active.film.id)?.mag ? 'Withdraw this ticket' : 'Cancel · put everything back'}</button>`;
@@ -3955,20 +3987,41 @@ function renderBooth() {
 function b2StepNote(r, k, L) {
   const live = b2Live(r), rated = live.filter(x => Number.isInteger(x.a.rate)).length, ds = (r.dets || []).length;
   if (k === 'aims') return live.length ? `${rated} of ${live.length} rated` : 'From Claude';
-  if (k === 'dets') return ds ? `${ds} detection${ds === 1 ? '' : 's'}` : 'None yet';
+  if (k === 'dets') return ds ? `${ds} flaw${ds === 1 ? '' : 's'}` : 'None yet';
   if (k === 'claude') return b2Fresh(r) ? (b2Stale(r) ? 'Send again' : 'Read') : 'Not sent yet';
-  if (k === 'largest') { const m = (r.dets || []).find(d => d.main); return m ? `D${r.dets.indexOf(m) + 1}` : ds > 1 ? 'Not chosen' : '—'; }
+  if (k === 'largest') { const m = (r.dets || []).find(d => d.main); return m ? `F${r.dets.indexOf(m) + 1}` : ds > 1 ? 'Not chosen' : '—'; }
   return bt.mag ? `You chose ${bt.mag} · ${MAG_NAMES[bt.mag]}` : L && L.t ? `Leans ${MAG_NAMES[L.t]}` : '—';
 }
 function b2PasteHTML(r) {
   if (false) return `<p class="b2-q">The plot didn’t come through from the Box Office.</p><p class="b2-s">Paste it from Wikipedia.</p><textarea class="bx-ta" id="b2Plot" rows="6"></textarea><div class="b2-opts"><button class="bx-btn solid" data-b2="useplot">Use this plot</button></div>`;
   return `<p class="b2-q">The aim didn’t come through from the Box Office.</p><p class="b2-s">Paste Google’s answer about what the film is trying to accomplish for itself.</p><textarea class="bx-ta" id="b2Aim" rows="6"></textarea><div class="b2-opts"><button class="bx-btn solid" data-b2="useaim">Use this aim</button></div>`;
 }
+function b2SizesHTML(r) {
+  const need = new Set(b2NeedSize(r).map(x => x.id)), why = (r.mapWhy && r.mapWhy.size) || {};
+  const tagsOf = k => dumpTags(r[DUMP_KEY[k]], k);
+  const row = (k, d) => { const src = tagsOf(k).filter(t => (d.from || []).includes(t.id)), mixed = new Set(src.map(t => t.g)).size > 1;
+    return `<div class="b2-sz ${need.has(d.id) ? 'need' : ''} ${d.main ? 'main' : ''}"><div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${d.main ? `<em>The ${B2_KIND[k].big} · </em>` : ''}${d.lvPend ? 'Claude gave no size: pick one' : need.has(d.id) ? 'Claude’s suggestion' : 'Yours'}</span></div>
+    <p class="b2-note">${esc(d.note || '')}</p>
+    ${src.length ? `<div class="b2-tags sm">${src.map(t => `<span class="b2-tagc g${t.g}"><b>${b2Names(k)[t.g - 1]}</b>${esc(trimTo(t.text, 90))}</span>`).join('')}</div>` : ''}
+    ${why[d.id] ? `<p class="b2-szwhy">Claude: ${esc(why[d.id])}</p>` : ''}
+    <div class="b2-row" style="margin-bottom:6px"><span class="b2-s sm" style="margin:0 6px 0 0">Grade${mixed ? ' (your strongest tag)' : ''}:</span><div class="b2-seg">${b2Names(k).map((w, j) => `<button class="${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div></div>
+    <div class="b2-row"><div class="b2-seg">${SLOTS.map(sl => `<button class="${!d.lvPend && d.slot === sl ? 'on' : ''}" data-b2="slot" data-id="${esc(d.id)}" data-v="${sl}">${SLOT_NAMES[k][sl]}</button>`).join('')}</div>
+      <div class="b2-seg dial">${DIALS.map((x, j) => `<button class="${!d.lvPend && dialIx(d) === j ? 'on' : ''}" data-b2="dial" data-id="${esc(d.id)}" data-v="${x}">${x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div></div></div>`; };
+  const D = slotsOf(r.dets), B = slotsOf(r.beats), pend = b2NeedSize(r).some(x => x.lvPend);
+  const miss = r.mapMiss ? [...(r.mapMiss.dets || []), ...(r.mapMiss.beats || [])] : [];
+  return `<p class="b2-q">A quick look · Claude’s fold and sizes</p>
+    <p class="b2-s">Claude folded your tagged passages into these, sized each by how much of the film’s shape it reaches, and put the largest first: the footprint and the hallmark. Keep it or change it: a different level or dial can change which one leads, and anything you change is yours. <button class="b2-lvbtn" data-lv="b" style="margin:0">The three levels</button></p>
+    ${miss.length ? `<p class="b2-ask" style="margin:8px 0">Claude left out ${miss.join(', ')}. Send it to Claude again to fold everything in.</p>` : ''}
+    ${D.length ? `<div class="b2-k" style="margin-top:12px">Flaws</div>${D.map(x => row('d', x.d)).join('')}` : ''}
+    ${B.length ? `<div class="b2-k" style="margin-top:12px">Strengths</div>${B.map(x => row('b', x.d)).join('')}` : ''}
+    <div class="b2-nav"><span></span><button class="bx-btn solid" data-b2="sizeok" ${pend ? 'disabled' : ''}>${pend ? 'Pick a size for each one' : 'These are right · on to the aims →'}</button></div>`;
+}
 function b2AimsHTML(r) {
+  if (b2Fresh(r) && b2NeedSize(r).length) return b2SizesHTML(r);
   const order = b2Order(r); if (!order.length) return `<p class="b2-q">The aims come from Claude.</p><p class="b2-s">Send the film to Claude first; its reply brings the aims with it.</p><div class="b2-opts"><button class="bx-btn solid" data-b2="go" data-v="claude">Go to Send to Claude</button></div>`;
   const flags = order.every(x => Number.isInteger(x.a.rate)) ? b2Flags(r) : [];
   if (flags.length && bt.ai == null) return `<p class="b2-q">A check before the math</p>
-    <p class="b2-s">You graded your beats and detections before you saw these aims. Where an aim grade and something you named disagree sharply, keep both (they can stand together) or go back and re-grade.</p>
+    <p class="b2-s">You graded your effects and flaws before you saw these aims. Where an aim grade and something you named disagree sharply, keep both (they can stand together) or go back and re-grade.</p>
     ${flags.map(f => `<div class="b2-ask" style="margin:10px 0"><b>${esc(f.text)}</b><div class="b2-opts"><button class="bx-btn" data-b2="flagok" data-v="${esc(f.key)}">Keep both</button><button class="bx-btn" data-b2="go" data-v="dets">Re-grade ${b2Label(r, f.d)}</button><button class="bx-link" data-b2="aim" data-v="${order.findIndex(x => x.i === f.i)}">Re-grade the aim</button></div></div>`).join('')}
     ${b2PictureHTML(r, null)}`;
   if (bt.ai == null || !order[bt.ai]) { const k = order.findIndex(x => !Number.isInteger(x.a.rate)); bt.ai = k < 0 ? 0 : k; }
@@ -3978,7 +4031,7 @@ function b2AimsHTML(r) {
     ${a.central != null ? `<div class="b2-tier">Tier (Claude’s call, yours to change): ${[4, 3, 2, 1].map(c => `<button class="bx-link ${a.central === c ? 'on' : ''}" data-b2="cent" data-v="${c}">${CENT_NAMES[c]}</button>`).join(' · ')}</div>` : ''}
     ${a.central == null ? `<p class="b2-q">How central is it to the film?</p><div class="b2-opts">${[4, 3, 2, 1].map(c => `<button class="bx-btn" data-b2="cent" data-v="${c}">${CENT_NAMES[c]}</button>`).join('')}</div>`
       : `<p class="b2-q">Taken as a whole, did its delivery achieve what it’s going for?</p>
-    <p class="b2-s sm">The wide shot: the aim as a whole, with everything you can see in the full frame below. Your beats and detections are your close-up; they count on their own.</p>
+    <p class="b2-s sm">The wide shot: the aim as a whole, with everything you can see in the full frame below. Your strengths and flaws are your close-up; they count on their own.</p>
     <div class="b2-rates">${AIM_WEIGHTS.map((n, j) => `<button class="b2-rate ${a.rate === j + 1 ? 'on' : ''}" data-b2="rate" data-v="${j + 1}"><b>${n}</b><span>${B2_RATE_DEF[j]}</span><small class="b2-test">${B2_RATE_TEST[j]}</small></button>`).join('')}</div>
     <div class="b2-opts"><button class="bx-btn ${a.rate === 0 ? 'on' : ''}" data-b2="rate" data-v="0" title="Leaves this aim out of the stats: it counts toward nothing">Doesn’t ring a bell · leave it out</button></div>
     ${b2SpreadHTML(active.film.id)}`}
@@ -3992,79 +4045,119 @@ const b2Label = (r, d) => { const k = b2KindOf(r, d); return B2_KIND[k].pre + ((
 function b2Item(r, id) { for (const k of ['d', 'b']) { const d = (r[B2_KIND[k].key] || []).find(x => x.id === id); if (d) return { d, k }; } return null; }
 function b2ItemCard(r, k, d, slot) {
   const hits = b2Placed(d) ? b2Hits(r, d) : [], live = b2Live(r), offs = live.filter(x => !hits.includes(x.i));
-  const list = r[B2_KIND[k].key], others = SLOTS.filter(sl => sl !== slot), shared = b2Shares(list, d, slot), editing = bt.edit === d.id;
+  const list = r[B2_KIND[k].key], others = SLOTS.filter(sl => sl !== slot), shared = true, editing = bt.edit === d.id;
   const lands = !b2Placed(d) ? '<span class="b2-on">Goes to Claude with the rest</span>'
     : `<div class="b2-lands"><span class="b2-on">${d.whole ? 'The whole film · touches' : d.moment ? 'A moment · touches' : 'Touches'}</span>${hits.map(i => { const a = r.aims[i]; return `<span class="b2-tag" style="--c:${aimColor(r, a)}" title="${esc(a.text)}">${esc(aimShort(a))} · ${CENT_NAMES[a.central] || '—'}<button data-b2="drop" data-id="${esc(d.id)}" data-v="${i}" aria-label="Not this aim">×</button></span>`; }).join('') || '<span class="b2-on">no aim</span>'}
       ${offs.length ? `<select class="b2-add" data-b2sel="${esc(d.id)}"><option value="">+ another aim</option>${offs.map(x => `<option value="${x.i}">${esc(aimShort(x.a))}</option>`).join('')}</select>` : ''}</div>`;
-  return `<div class="b2-det ${k === 'b' ? 'beat' : ''} ${d.main ? 'main' : ''}">
-    <div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${SLOT_NAMES[k][slot]}${shared ? ` · ${DIALS[dialIx(d)]}` : ''}${d.main ? `<em> · the ${B2_KIND[k].big}</em>` : ''}</span>${editing ? '' : `<button class="bx-x" data-b2="edit" data-id="${esc(d.id)}">Edit</button>`}<button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
-    ${editing ? `<textarea class="bx-ta" id="b2Edit" rows="3">${esc(d.note || '')}</textarea><div class="b2-opts sm"><button class="bx-btn solid" data-b2="editsave" data-id="${esc(d.id)}">Save the words</button><button class="bx-link" data-b2="editcancel">Cancel</button>${b2Placed(d) ? '<span class="b2-on">Claude’s placement stays. If you changed where it is, send it to Claude again.</span>' : ''}</div>` : `<p class="b2-note">${esc(d.note || '')}</p>`}
-    <div class="b2-row"><div class="b2-seg">${b2Names(k).map((w, j) => `<button class="${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div>
-      ${shared ? `<div class="b2-seg dial" title="Its size inside the ${slot}"><span>${slot}</span>${DIALS.map((x, j) => `<button class="${dialIx(d) === j ? 'on' : ''}" data-b2="dial" data-id="${esc(d.id)}" data-v="${x}">${x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div>` : ''}</div>
-    <div class="b2-more"><button class="bx-link" data-b2="${d.whole ? 'notwhole' : 'whole'}" data-id="${esc(d.id)}">${d.whole ? 'Not the whole film' : 'It’s the whole film'}</button>${others.map(sl => `<button class="bx-link" data-b2="slot" data-id="${esc(d.id)}" data-v="${sl}">Make it ${art(SLOT_NAMES[k][sl].toLowerCase())}</button>`).join('')}</div>
+  const sized = !d.lvPend;
+  return `<div class="b2-det ${k === 'b' ? 'beat' : ''} ${d.main && sized ? 'main' : ''}">
+    <div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${sized ? `${SLOT_NAMES[k][slot]} · ${DIALS[dialIx(d)]}${d.lvSrc === 'claude' && !d.lvOk ? ' · suggested' : ''}${d.main ? `<em> · the ${B2_KIND[k].big}</em>` : ''}` : 'Size: Claude suggests'}</span><button class="bx-x" data-b2="del" data-id="${esc(d.id)}">Remove</button></div>
+    <textarea class="bx-ta b2-row-ta" data-note="${esc(d.id)}" rows="2" placeholder="${k === 'b' ? 'One strength and where it lives: melodramatic dynamism, throughout' : 'One flaw and where it is: the second half piles on the misery'}">${esc(d.note || '')}</textarea>
+    <div class="b2-row"><div class="b2-seg">${b2Names(k).map((w, j) => `<button class="${d.w === j + 1 ? 'on' : ''}" data-b2="grade" data-id="${esc(d.id)}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div>${Number.isInteger(d.w) ? '' : '<span class="b2-s sm"><i>Grade it</i></span>'}</div>
+    ${Number.isInteger(d.w) ? `<p class="b2-gdef">${esc(b2Defs(k)[d.w - 1])}</p>` : ''}
+    <div class="b2-more"><button class="bx-link" data-b2="${d.whole ? 'notwhole' : 'whole'}" data-id="${esc(d.id)}">${d.whole ? 'Not the whole film' : 'It’s the whole film'}</button>${b2Placed(d) ? '<span class="b2-s sm"><i>Claude’s placement stays if you change the words; if you change where it is, send it again.</i></span>' : ''}</div>
     ${lands}</div>`;
 }
 /* the three levels: how much of the film it reaches, on both sides */
 const LEVELS = [
-  { slot: 'macro', name: 'Macro', reach: 'the whole', what: 'It shapes how the entire film reads: it runs through it, or defines what it is.', d: 'The film’s tone, its structure, a lead performance that carries it, an approach to the whole.', b: 'It holds the film up: “Karloff’s presence, throughout”, “melodramatic dynamism, throughout”.', test: 'If it were different, would the whole film read differently?' },
-  { slot: 'meso', name: 'Meso', reach: 'a part', what: 'It shapes one section or strand of the film, not the whole.', d: 'A stretch that drags, a subplot, a supporting arc, one act.', b: 'A set piece, a sequence, a recurring element, a supporting performance.', test: 'Does it shape a part you could name by where it starts and stops?' },
-  { slot: 'micro', name: 'Micro', reach: 'a point', what: 'Something you could point at.', d: 'A line, a cut, a shot, a single choice.', b: 'A gesture, an image, one song, one moment.', test: 'Could you put your finger on it?' }];
+  { slot: 'macro', name: 'Macro', reach: 'the whole', what: 'It shapes how the entire film reads: it runs through it, or defines what it is.', d: 'The film’s tone, its structure, a lead performance that carries it, an approach to the whole.', b: 'It holds the film up: “Karloff’s presence, throughout”, “melodramatic dynamism, throughout”.', test: 'If it were different, would the whole film read differently?', dial: ['It is the film’s spine: everything else rides on it.', 'It runs through the whole, but alongside the spine rather than as it.', 'It touches the whole, but lightly or on and off: a little less and it would be a part.'] },
+  { slot: 'meso', name: 'Meso', reach: 'a part', what: 'It shapes one section or strand of the film, not the whole.', d: 'A stretch that drags, a subplot, a supporting arc, one act.', b: 'A set piece, a sequence, a recurring element, a supporting performance.', test: 'Does it shape a part you could name by where it starts and stops?', dial: ['It shapes a major part (a whole act, a strand the film leans on), close to reaching the whole.', 'A contained section with a clear start and stop: it shapes that stretch and not much beyond.', 'A small section, only just bigger than a single moment.'] },
+  { slot: 'micro', name: 'Micro', reach: 'a point', what: 'Something you could point at.', d: 'A line, a cut, a shot, a single choice.', b: 'A gesture, an image, one song, one moment.', test: 'Could you put your finger on it?', dial: ['A single point whose echo carries past its own scene.', 'A point that lands in its scene and stays there.', 'A passing touch, only just there.'] }];
 const LEVEL_RULES = [
-  ['The level isn’t the grade', 'A micro can be Essential; a macro can be a Nitpick. The slot says how far it reaches; the grade says what it did.'],
+  ['The level isn’t the grade', 'A micro can be an Asset; a macro can be a Nitpick. The slot says how far it reaches; the grade says what it did.'],
   ['Relative to this film', 'It’s the film’s own shape that counts, not the clock: a ten-minute sequence is a part whether the film runs 70 minutes or three hours.'],
   ['Scattered moments', 'They sit at the level of what they add up to: the film’s shape is macro, one strand is meso. If they’re really separate points, pick the one that matters.'],
-  ['Two at the same level', 'Combine them if they’re one quality in your memory. If not, both sit at that level, and each gets its own dial inside it: upper, middle or lower. Don’t push one down a level to make it fit.'],
+  ['Two at the same level', 'Combine them if they’re one quality in your memory. If not, both sit at that level, each with its own dial. Don’t push one down a level to make it fit.'],
+  ['The dial', 'Every item has one: where it sits inside its level, judged on its own, so two can share a setting. Upper: does it push toward the level above? Lower: does it nearly drop to the level below? Middle: neither. Reach, not quality: the grade says how good or bad it was.'],
   ['No macro?', 'The meso stands in as the footprint or hallmark, then the micro. In the close-up it still counts at its own size.']];
 function lvOpen(k) {
-  const col = (x, side) => `<div class="lv-side ${side === k ? 'on' : ''}"><small>${side === 'd' ? 'Detection · ' + SLOT_NAMES.d[x.slot].toLowerCase() : 'Beat · ' + SLOT_NAMES.b[x.slot].toLowerCase()}</small>${esc(x[side])}</div>`;
+  const col = (x, side) => `<div class="lv-side ${side === k ? 'on' : ''}"><small>${side === 'd' ? 'Flaw · ' + SLOT_NAMES.d[x.slot].toLowerCase() : 'Strength · ' + SLOT_NAMES.b[x.slot].toLowerCase()}</small>${esc(x[side])}</div>`;
   $('#lvIn').innerHTML = `<button class="lv-x" data-lv="x" aria-label="Close">✕</button>
     <div class="k">Projection Booth · Your view</div><h2>The three levels</h2><div class="film">how much of the film it reaches</div>
     ${LEVELS.map(x => `<div class="lv-lv"><div class="lv-h"><b>${x.name}</b><em>${x.reach}</em></div><p class="lv-what">${x.what}</p>
-      <div class="lv-two">${col(x, 'd')}${col(x, 'b')}</div><p class="lv-test"><b>Test:</b> ${x.test}</p></div>`).join('')}
+      <div class="lv-two">${col(x, 'd')}${col(x, 'b')}</div><p class="lv-test"><b>Test:</b> ${x.test}</p>
+      <div class="lv-dial"><small>The dial · where it sits inside the ${x.slot}</small>${DIALS.map((w, j) => `<div><b>${w[0].toUpperCase() + w.slice(1)}</b><span>${x.dial[j]}</span></div>`).join('')}</div></div>`).join('')}
     <div class="lv-rules">${LEVEL_RULES.map(([t, d]) => `<p><b>${t}${/[?.]$/.test(t) ? '' : '.'}</b> ${d}</p>`).join('')}</div>`;
   $('#lvCard').classList.add('show');
 }
 const lvClose = () => $('#lvCard').classList.remove('show');
 document.addEventListener('click', e => { const t = e.target.closest('[data-lv]'); if (t) { e.preventDefault(); return t.dataset.lv === 'x' ? lvClose() : lvOpen(t.dataset.lv); } if (e.target.id === 'lvCard') lvClose(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') lvClose(); });
-/* at least one beat; detections are optional (never manufactured: no detections, no footprint, lean 0) */
-const b2HasBoth = r => slotsOf(r.beats).length > 0;
-function b2BoxHTML(r, k) {
-  const K = B2_KIND[k], S = slotsOf(r[K.key]), taken = new Set(S.map(x => x.slot)), open = S.length < ITEM_MAX ? SLOTS : [];
-  const sk = k === 'b' ? 'bs' : 'ds'; if (!open.includes(bt[sk])) bt[sk] = open.find(x => !taken.has(x)) || open[0] || null;
-  const txt = k === 'b' ? (bt.bn || '') : (bt.dn || ''), g = k === 'b' ? bt.bg : bt.dg, sl = bt[sk];
-  return `<div class="b2-box ${k === 'b' ? 'beats' : 'dets'}">
-    <div class="b2-k">${k === 'b' ? 'Beats · positive' : 'Detections · non-positive'} · ${S.length} of ${ITEM_MAX}</div>
-    <p class="b2-s sm">${k === 'b' ? 'A positive thing from your own experience of the film: name the quality and where it lives (“Karloff’s presence, throughout”, “the drowning scene”), not a verdict. Grade the effect of its delivery, against how the film delivers its effects.' : 'A non-positive thing from your own experience of the film (not necessarily negative): what it is and where. Grade the consequences of that stretch, against what the film is trying to accomplish.'}</p>
-    <div class="b2-dets">${S.map(x => b2ItemCard(r, k, x.d, x.slot)).join('')}</div>
-    ${!open.length ? `<p class="b2-s sm"><i>Three is the most. Remove one to name another.</i></p>` : `<div class="b2-comp">
-      <p class="b2-s sm" style="margin:0 0 6px"><b>Which type is it?</b><button class="b2-lvbtn" data-lv="${k}">The three levels</button></p>
-      <div class="b2-slots">${SLOTS.map(x => `<button class="b2-slot ${x === sl ? 'on' : ''}" data-b2="pickslot" data-k="${k}" data-v="${x}" ><b>${SLOT_NAMES[k][x]}</b><small>${LEVELS.find(l => l.slot === x).reach}</small></button>`).join('')}</div>
-      <textarea class="bx-ta" id="${k === 'b' ? 'b2BNote' : 'b2Note'}" rows="2" placeholder="${k === 'b' ? 'The quality and where it lives: melodramatic dynamism, throughout' : 'What it is and where: the second half piles on the misery'}">${esc(txt)}</textarea>
-      <div class="b2-opts">${b2Names(k).map((w, j) => `<button class="bx-btn ${g === j + 1 ? 'on' : ''}" data-b2="dg" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}
-        <button class="bx-btn solid" data-b2="adddet" data-k="${k}" ${txt.trim() && g && sl ? '' : 'disabled'}>Add as ${sl ? art(SLOT_NAMES[k][sl].toLowerCase()) : '—'}</button></div>
-      ${sl && taken.has(sl) ? `<p class="b2-s sm"><i>It shares the ${sl} with one you’ve named: you’ll set each one’s dial inside it (upper, middle, lower).</i></p>` : ''}
-      ${g ? `<p class="b2-s sm"><b>${b2Names(k)[g - 1]}:</b> ${esc(b2Defs(k)[g - 1])}</p>` : ''}</div>`}</div>`;
+/* both boxes optional: never manufactured (no flaws, no footprint, lean 0; the wide shot still covers the film) */
+const b2HasBoth = r => true;
+/* ---------- Your view: one dump per side; highlighted passages carry my grade ---------- */
+const DUMP_KEY = { d: 'dumpF', b: 'dumpS' }, TAG_PRE = { d: 'FT', b: 'ST' };
+/* keep only text, line breaks and my grade tags */
+function dumpClean(root, k) {
+  let n = 0; const used = new Set(), out = [];
+  root.querySelectorAll('mark[data-t]').forEach(m => { const x = parseInt(String(m.dataset.t).replace(/\D/g, ''), 10); if (x) n = Math.max(n, x); });
+  const walk = (node, inMark) => node.childNodes.forEach(c => {
+    if (c.nodeType === 3) { out.push(esc(c.nodeValue)); return; }
+    if (c.nodeType !== 1) return;
+    const tag = c.tagName;
+    if (tag === 'BR') { out.push('<br>'); return; }
+    if (tag === 'MARK' && !inMark && /^[1-4]$/.test(c.dataset.g || '') && c.textContent.trim()) {
+      let t = c.dataset.t; if (!t || used.has(t)) t = TAG_PRE[k] + (++n); used.add(t);
+      out.push(`<mark data-g="${c.dataset.g}" data-t="${t}" data-gn="${esc(b2Names(k)[+c.dataset.g - 1])}">`); walk(c, true); out.push('</mark>'); return;
+    }
+    const block = /^(DIV|P|LI)$/.test(tag); if (block && out.length && out[out.length - 1] !== '<br>') out.push('<br>');
+    walk(c, inMark);
+  });
+  walk(root, false);
+  return out.join('').replace(/(<br>)+$/, '');
 }
+function dumpTags(html, k) {
+  const el = document.createElement('div'); el.innerHTML = html || '';
+  return [...el.querySelectorAll('mark[data-t]')].map(m => ({ id: m.dataset.t, g: +m.dataset.g, text: m.textContent.replace(/\s+/g, ' ').trim() })).filter(t => t.g >= 1 && t.g <= 4 && t.text);
+}
+function dumpPlain(html) {
+  const el = document.createElement('div'); el.innerHTML = String(html || '').replace(/<br>/g, '\n');
+  el.querySelectorAll('mark[data-t]').forEach(m => { m.replaceWith(`⟦${m.dataset.t}: ${m.textContent}⟧`); });
+  return el.textContent.trim();
+}
+const dumpSig = r => String(r.dumpF || '') + '\u0001' + String(r.dumpS || '');
+/* films from before the dump: their items become tagged passages */
+function dumpSeed(r, k) {
+  const key = DUMP_KEY[k]; if (typeof r[key] === 'string') return;
+  const list = r[B2_KIND[k].key] || []; let n = 0;
+  r[key] = list.filter(d => String(d.note || '').trim() && Number.isInteger(d.w)).map(d => { d.from = [TAG_PRE[k] + (++n)]; return `<mark data-g="${d.w}" data-t="${TAG_PRE[k] + n}" data-gn="${esc(b2Names(k)[d.w - 1])}">${esc(d.note)}</mark>`; }).join('<br>');
+}
+function b2BoxHTML(r, k) {
+  dumpSeed(r, k);
+  const html = r[DUMP_KEY[k]] || '', tags = dumpTags(html, k);
+  return `<div class="b2-box ${k === 'b' ? 'beats' : 'dets'}">
+    <div class="b2-k">${k === 'b' ? 'Strengths · what stood out' : 'Flaws · what bugged you'}${tags.length ? ` · ${tags.length} tagged` : ''}</div>
+    <p class="b2-s sm">${k === 'b' ? 'Something that stood out to you as strong in how the film delivered its effects as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space.' : 'Something that bugged you: enough to break through your firewall, not just an imperfection. What seems weak to others but plays as an absence of strength to you is left to the wide shot.'}</p>
+    <div class="b2-dump" contenteditable="true" spellcheck="true" data-dump="${k}" data-ph="${k === 'b' ? 'Dump every strength, what and where, in your own words…' : 'Dump every flaw, what and where, in your own words…'}">${html}</div>
+    <div class="b2-tagbar"><span>Highlight a passage, then tag it:</span><div class="b2-seg">${b2Names(k).map((w, j) => `<button data-b2="tag" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div></div>
+    ${tags.length ? `<div class="b2-tags">${tags.map(t => `<span class="b2-tagc g${t.g}"><b>${b2Names(k)[t.g - 1]}</b>${esc(trimTo(t.text, 70))}<button data-b2="untag" data-k="${k}" data-v="${esc(t.id)}" aria-label="Remove the tag">×</button></span>`).join('')}</div>` : ''}</div>`;
+}
+
 function b2DetsHTML(r, L, reading) {
   const nd = (r.dets || []).length, nb = (r.beats || []).length;
   return `<p class="b2-q">Your view</p>
-    <p class="b2-s">First decide which type it is: macro (the whole), meso (a part) or micro (a point). <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Then name it and grade it. Every film gets at least one beat. Detections are optional: name one only if it’s there (non-positive doesn’t mean negative: it can be as small as a Nitpick). With none, there’s no footprint and the lean is 0. Three slots are room, not a quota: if two or three genuinely make up the shape of your view, use them; if one does, one is the shape. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for. Your macro detection is the footprint and your macro beat is the hallmark; if there’s no macro, the meso takes its place, then the micro.</p>
+    <p class="b2-s">Dump everything in your own words: every flaw in one box, every strength in the other. Highlight each passage that counts and tag it with its grade: that grade is yours, and untagged words are only context. Claude folds what you tagged into at most three of each (only as many as are really there), sizes them, and picks the footprint and hallmark; you look them over before grading the aims. <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Both boxes are optional. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for.</p>
     <div class="b2-boxes">${b2BoxHTML(r, 'd')}${b2BoxHTML(r, 'b')}</div>
-    <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>At least one beat.</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
+    <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>At least one strength.</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
 }
 /* ---------- Claude does the reading ---------- */
-const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives my detections (D1, D2: non-positive things from my own experience of it, in my words), my beats (B1, B2: positive things from my own experience of it, in my words), and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
+const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives two dumps in my own words, one of flaws (things that bugged me) and one of strengths (what stood out to me as strong in how the film delivered its effects to me as it played), with the passages I tagged and graded (FT1, FT2…; ST1, ST2…); either may be empty, and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
 
 0. Research first, every time, however well you think you know the film: search everything available to you (the screenplay or shooting script, transcripts, detailed synopses, scene-by-scene breakdowns, reputable reviews) and cross-check what happens and when. If you can't search, say so in "sources".
-1. The aims. If the message gives AIMS, use them exactly as given, keeping their numbers. If not, work them out before you read the detections and beats, from the film alone: nothing I named may shape the aims in any way. Work out what the film itself is trying to accomplish on screen and sort it into Central, Major, Secondary and Minor: exactly one aim per tier, a single sentence summing up everything the film is trying to do at that level, so four aims at most; leave a tier out if nothing genuinely belongs there. Only what the film is trying to do on screen: nothing outside it, like its legacy, influence, reception or anyone's career.
+1. The aims. If the message gives AIMS, use them exactly as given, keeping their numbers. If not, work them out before you read the flaws and strengths, from the film alone: nothing I named may shape the aims in any way. Work out what the film itself is trying to accomplish on screen and sort it into Central, Major, Secondary and Minor: exactly one aim per tier, a single sentence summing up everything the film is trying to do at that level, so four aims at most; leave a tier out if nothing genuinely belongs there. Only what the film is trying to do on screen: nothing outside it, like its legacy, influence, reception or anyone's career.
 2. Break the whole film into its consecutive scenes or sequences, start to finish, covering the full runtime with no gaps (usually 25 to 60). Give each its approximate start and end in minutes and a short title saying what happens.
 3. For each aim, list the scenes where it clearly plays out on screen. Be strict: a scene counts only if what happens in it directly carries that aim, not just because the same characters appear. An aim about mood, music, camerawork or performance that isn't tied to specific events gets only the few scenes that most clearly embody it, or none.
-4. For each detection and each beat, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it touches: the aims whose scenes it overlaps, or that it is plainly about. Don't judge or grade any of it.
-5. Explain your decisions. Give each aim a "why" (at most 25 words) on what in the film shows this is what it's going for, why that tier, and why those scenes. Give each detection and each beat a "why" (at most 25 words) on why it points to those scenes (or the whole film, or a moment) and why it touches those aims. Add a "reading" (at most 50 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
-6. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary outside the "why" and "reading" fields. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims, detections and beats first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
-{"film":"<title>","runtime":102,"reading":"<how you read the film>","aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9],"why":"<your reasoning>"}],"detections":[{"d":1,"whole":false,"moment":false,"scenes":[12,13],"aims":[2],"why":"<your reasoning>"}],"beats":[{"b":1,"whole":false,"moment":false,"scenes":[20,21],"aims":[1],"why":"<your reasoning>"}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
+4. Fold my dumps into items: at most three flaws and three strengths, and only as many as are genuinely there (one is fine; never pad to three). Every tagged passage goes into exactly one item of its own kind; untagged words are context only and never make an item by themselves. Combine passages that are one quality in the film. Give each item a "name": a short what-and-where, in my words as far as possible, and list the tags it draws on in "from". Don't grade anything: my tags carry the grades.
+5. For each item, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it touches: the aims whose scenes it overlaps, or that it is plainly about.
+6. Size each item by how much of the film's shape it reaches (not by running time, and not by how good or bad it is): "level" is "macro" (it shapes how the whole film reads), "meso" (it shapes one part or strand) or "micro" (a single point you could put a finger on); "dial" is where it sits inside that level: "upper" (it pushes toward the level above), "middle", or "lower" (it nearly drops to the level below). Give a "size_why" (at most 15 words). List each kind largest first: flaw 1 is the footprint and strength 1 is the hallmark, so give each the largest size of its kind.
+7. Explain your decisions. Give each aim a "why" (at most 25 words) on what in the film shows this is what it's going for, why that tier, and why those scenes. Give each item a "why" (at most 25 words) on why it points to those scenes (or the whole film, or a moment) and why it touches those aims. Add a "reading" (at most 50 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
+8. Reply with only one JSON block and nothing else. Keep it short so it isn't cut off: scene titles of 3 to 8 words, at most 3 sources of a few words each, no commentary outside the "why", "size_why" and "reading" fields. It must be valid JSON: never put double quotes inside any text (use single quotes). Put the aims, flaws and strengths first, the scenes after, exactly in this order and shape (aim and scene numbers count from 1):
+{"film":"<title>","runtime":102,"reading":"<how you read the film>","aims":[{"aim":1,"tier":"Central","text":"<the aim>","scenes":[3,4,9],"why":"<your reasoning>"}],"flaws":[{"f":1,"from":["FT1","FT3"],"name":"<what and where>","whole":false,"moment":false,"scenes":[12,13],"aims":[2],"level":"meso","dial":"middle","size_why":"<why that size>","why":"<your reasoning>"}],"strengths":[{"s":1,"from":["ST2"],"name":"<what and where>","whole":false,"moment":false,"scenes":[20,21],"aims":[1],"level":"macro","dial":"upper","size_why":"<why that size>","why":"<your reasoning>"}],"scenes":[{"n":1,"start":0,"end":4,"title":"<what happens>"}],"sources":["<what you checked>"]}
 If you can't identify the film with confidence, reply {"error":"<why>"} instead of guessing.`;
+/* a size I set or confirmed is mine and stays; anything pending or only suggested is Claude's to (re)suggest */
+const b2LvKept = d => !d.lvPend && (d.lvSrc !== 'claude' || d.lvOk);
+const b2NeedSize = r => [...(r.dets || []), ...(r.beats || [])].filter(d => d.lvPend || (d.lvSrc === 'claude' && !d.lvOk));
+const b2DumpStale = r => typeof r.dumpAt === 'string' && b2Fresh(r) && r.dumpAt !== dumpSig(r);
 /* more than one aim per tier is from before the four-aim rule: Claude works them out again */
 const b2OldAims = r => r.aims.length > 4;
 const b2Placed = d => !!d.whole || (d.sents || []).length > 0;
@@ -4080,13 +4173,19 @@ FILM: ${f.title}${f.year ? ' (' + f.year + ')' : ''}${f.genre ? ' · ' + f.genre
 AIMS:
 ${r.aims.length && !b2OldAims(r) ? r.aims.map((a, i) => `[A${i + 1}]${a.central != null ? ' (' + CENT_NAMES[a.central] + ')' : ''} ${a.text}`).join('\n') + '\n(Use these aims exactly as given.)' : '(none given: work them out, step 1)'}
 
-DETECTIONS:
-${(r.dets || []).length ? slotsOf(r.dets).map((x, i) => `[D${i + 1} · ${SLOT_NAMES.d[x.slot].toLowerCase()}] ${x.d.note}`).join('\n') : '(none)'}
+FLAWS · MY DUMP (⟦FT…: …⟧ marks a passage I tagged):
+${dumpPlain(r.dumpF) || '(none)'}
 
-BEATS:
-${(r.beats || []).length ? slotsOf(r.beats).map((x, i) => `[B${i + 1} · ${SLOT_NAMES.b[x.slot].toLowerCase()}] ${x.d.note}`).join('\n') : '(none)'}
+TAGGED FLAWS (my grades: Nitpick < Gripe < Drawback < Problem):
+${dumpTags(r.dumpF, 'd').map(t => `[${t.id} · ${WEIGHTS[t.g - 1]}] ${t.text}`).join('\n') || '(none)'}
 
-Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers, every detection under "detections" and every beat under "beats".`;
+STRENGTHS · MY DUMP (⟦ST…: …⟧ marks a passage I tagged):
+${dumpPlain(r.dumpS) || '(none)'}
+
+TAGGED STRENGTHS (my grades: Perk < Bonus < Advantage < Asset):
+${dumpTags(r.dumpS, 'b').map(t => `[${t.id} · ${BEAT_NAMES[t.g - 1]}] ${t.text}`).join('\n') || '(none)'}
+
+Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers, and every tagged passage must sit in exactly one flaw or strength.`;
 }
 /* reading Claude's reply: forgiving about its exact layout */
 /* repair what usually breaks a long reply: stray double quotes inside text, trailing commas */
@@ -4220,7 +4319,7 @@ function b2ApplyClaude(r, txt, allowCut) {
     aims.splice(0, aims.length, ...got.map((x, k) => ({ id: k + 1, val: aims.find(y => y.id === x.id).val })));
   }
   const carry = r.aims.map((x, i) => { const m = aims.find(y => y.id === i + 1); return x.central === 0 || !m ? [] : [...new Set(sent(m.val))].sort((p, q) => p - q); });
-  // Claude's reasons: why each aim, its tier and its scenes; why each detection lands where it does; how it read the film
+  // Claude's reasons: why each aim, its tier and its scenes; why each flaw lands where it does; how it read the film
   const whyOf = v => { if (!v || typeof v !== 'object' || Array.isArray(v)) return ''; const e = Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(why|reason|reasons|reasoning|because|rationale|explanation|justification)$/i.test(k)); return e ? e[1].trim().slice(0, 600) : ''; };
   const rd = Object.entries(j).find(([k, y]) => typeof y === 'string' && /^(reading|overview|approach|interpretation|notes?)$/i.test(k));
   r.mapWhy = { reading: rd ? rd[1].trim().slice(0, 900) : '', aims: r.aims.map((x, i) => { const m = aims.find(y => y.id === i + 1); return m ? whyOf(m.val) : ''; }), dets: {} };
@@ -4229,8 +4328,22 @@ function b2ApplyClaude(r, txt, allowCut) {
   const src = b2Find(j, /^sources?$/i); r.mapSources = Array.isArray(src) ? src.map(String).slice(0, 12) : src ? [String(src)] : [];
   r.mapKey = b2SKey(r); r.mapEngine = 'claude';
   const live = b2Live(r).map(x => x.i);
-  [['dets', bt.sentIds, b2Pick(j, /^detections?$/i, /detect|bug|^d$/i), /^(d|id|detection|number|n|index)$/i], ['beats', bt.sentBIds, b2Pick(j, /^beats?$/i, /beat|^b$/i), /^(b|id|beat|number|n|index)$/i]].forEach(([KEY, IDS0, VAL, IDRE]) => {
-  const ids = IDS0 && IDS0.length ? IDS0 : (r[KEY] || []).map(x => x.id);
+  [['dets', bt.sentIds, b2Pick(j, /^(detections?|flaws?)$/i, /detect|flaw|bug|^d$|^f$/i), /^(d|f|id|detection|flaw|number|n|index)$/i], ['beats', bt.sentBIds, b2Pick(j, /^(beats?|effects?|strengths?)$/i, /beat|effect|strength|^b$|^e$|^s$/i), /^(b|e|s|id|beat|effect|strength|number|n|index)$/i]].forEach(([KEY, IDS0, VAL, IDRE]) => {
+  let ids = IDS0 && IDS0.length ? IDS0 : (r[KEY] || []).map(x => x.id);
+  const kk = KEY === 'beats' ? 'b' : 'd';
+  if (typeof r[DUMP_KEY[kk]] === 'string') {
+    const tags = dumpTags(r[DUMP_KEY[kk]], kk), made = [], arr = [], seen = new Set();
+    b2Entries(VAL, IDRE).sort((p, q) => p.id - q.id).forEach(m => {
+      const v = m.val && typeof m.val === 'object' && !Array.isArray(m.val) ? m.val : {}; if (made.length >= ITEM_MAX) return;
+      const fr = JSON.stringify(v.from ?? v.tags ?? v.passages ?? '').toUpperCase().match(new RegExp(TAG_PRE[kk] + '\\d+', 'g')) || [];
+      const ts = tags.filter(t => fr.includes(t.id) && !seen.has(t.id)); if (!ts.length) return; ts.forEach(t => seen.add(t.id));
+      const nm = Object.entries(v).find(([k2, y]) => typeof y === 'string' && /^(name|label|title|item)$/i.test(k2));
+      const d = { id: (kk === 'b' ? 'b:' : 'd:') + uid(), note: nm ? nm[1].trim().slice(0, 240) : ts.map(t => t.text).join(' / '), w: Math.max(...ts.map(t => t.g)), from: ts.map(t => t.id), sents: [], slot: 'micro', dial: 'lower', lvPend: true };
+      made.push(d); arr[m.id - 1] = d.id;
+    });
+    r[KEY] = made; ids = arr;
+    (r.mapMiss ||= {})[KEY] = tags.filter(t => !seen.has(t.id)).map(t => t.id);
+  }
   b2Entries(VAL, IDRE).forEach(m => {
     const d = (r[KEY] || []).find(x => x.id === ids[m.id - 1]); if (!d) return;
     const v = m.val || {}, whole = typeof v === 'object' && !Array.isArray(v) && !!b2Find(v, /whole/i);
@@ -4242,13 +4355,20 @@ function b2ApplyClaude(r, txt, allowCut) {
     d.placed = true; d.conf = 'solid'; delete d.q; delete d.where;
     const w = typeof v === 'object' && !Array.isArray(v) ? Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(why|reason|reasons|reasoning|because|rationale|explanation|justification)$/i.test(k)) : null;
     if (w) r.mapWhy.dets[d.id] = w[1].trim().slice(0, 600);
+    if (!b2LvKept(d) && typeof v === 'object' && !Array.isArray(v)) {
+      const str = re => { const e = Object.entries(v).find(([k, y]) => typeof y === 'string' && re.test(k)); return e ? e[1].toLowerCase().trim() : ''; }, lv = str(/^(level|size|scale)$/i), dl = str(/^(dial|within|position)$/i);
+      const sw = Object.entries(v).find(([k, y]) => typeof y === 'string' && /^(size_?why|level_?why|why_?(size|level)|size_?reason)$/i.test(k));
+      if (SLOTS.includes(lv)) { d.slot = lv; d.dial = DIALS.includes(dl) ? dl : 'upper'; d.lvSrc = 'claude'; d.lvOk = false; delete d.lvPend; }
+      (r.mapWhy.size ||= {})[d.id] = sw ? sw[1].trim().slice(0, 200) : '';
+    }
   });
   });
+  b2FixSlots(r); r.dumpAt = dumpSig(r);
 }
 function b2ClaudeHTML(r, L) {
   const proj = (db.settings.boothProject || '').trim(), back = b2Fresh(r), stale = back && b2Stale(r);
-  return `<p class="b2-q">${b2OldAims(r) ? 'This film has more than four aims from before. Send it to Claude for its four.' : back && !stale ? 'Claude has read it.' : stale ? 'You added detections since Claude read it.' : 'Send it to Claude to read.'}</p>
-    <p class="b2-s">${proj ? 'It opens your booth project. Start a new chat there and paste.' : 'It opens a new Claude chat. To use one project for every film, save its link in the Office.'} Claude researches the film, works out its aims, breaks it into its scenes and lines the aims and your detections up with them; nothing is rated or judged there. You’ll rate the aims next, before seeing any of it. Web search needs to be on in Claude for it to look things up.</p>
+  return `${b2DumpStale(r) ? '<p class="b2-ask" style="margin:0 0 10px">Your dumps changed since Claude read them. Send it again so Claude can fold the new version.</p>' : ''}<p class="b2-q">${b2OldAims(r) ? 'This film has more than four aims from before. Send it to Claude for its four.' : back && !stale ? 'Claude has read it.' : stale ? 'You added flaws since Claude read it.' : 'Send it to Claude to read.'}</p>
+    <p class="b2-s">${proj ? 'It opens your booth project. Start a new chat there and paste.' : 'It opens a new Claude chat. To use one project for every film, save its link in the Office.'} Claude researches the film, works out its aims, breaks it into its scenes and lines the aims and your flaws up with them; nothing is rated or judged there. You’ll rate the aims next, before seeing any of it. Web search needs to be on in Claude for it to look things up.</p>
     <div class="b2-opts"><button class="bx-btn solid" data-b2="copyc">${back ? 'Copy it again and open Claude' : 'Copy everything and open Claude'}</button><button class="bx-link" data-b2="showmsg">${bt.showMsg ? 'Hide the message' : 'Show the message'}</button>${r.aims.length ? '<button class="bx-link" data-b2="freshaims">Ask Claude for fresh aims</button>' : ''}</div>
     ${bt.showMsg ? `<textarea class="bx-ta" rows="6" readonly onclick="this.select()">${esc(b2ClaudeMsg(r))}</textarea>` : ''}
     <p class="b2-s" style="margin-top:14px">Then paste Claude’s reply here.</p>
@@ -4259,7 +4379,7 @@ function b2ClaudeHTML(r, L) {
 }
 function b2LargestHTML(r, L) {
   const sec = (key, k) => { const ds = (r[key] || []).filter(d => Number.isInteger(d.w)); if (ds.length < 2) return ''; const sg = b2Suggest(r, key);
-    return `<div class="b2-k" style="margin-top:12px">${k === 'b' ? 'The hallmark · the largest beat' : 'The footprint · the largest detection'}</div>
+    return `<div class="b2-k" style="margin-top:12px">${k === 'b' ? 'The hallmark · the largest strength' : 'The footprint · the largest flaw'}</div>
     <div class="b2-picks">${ds.map(d => `<button class="b2-pick ${d.main ? 'on' : ''}" data-b2="main" data-id="${esc(d.id)}"><b>${b2Label(r, d)}</b><span>${esc(trimTo(d.note || '', 120))}</span><em>${b2Names(k)[d.w - 1]}${d === sg ? ' · suggested' : ''}</em></button>`).join('')}</div>`; };
   return `<p class="b2-q">Which is the largest in your view?</p><p class="b2-s">The largest counts in full and the other at half. The footprint alone sets the tier. The booth suggests the higher grade, then the one covering more of the film. You decide.</p>
     ${sec('dets', 'd')}${sec('beats', 'b')}
@@ -4296,9 +4416,9 @@ function b2PictureHTML(r, L) {
   const whole = dets.filter(d => d.whole), src = (r.mapSources || []).filter(Boolean);
   return `<details class="b2-pic" open><summary>The full frame · Claude’s reading with your view placed on it</summary>
     <div class="b2-k" style="margin-top:12px">The aims</div><div class="b2-prows">${aimRows}</div>
-    ${detRows ? `<div class="b2-k" style="margin-top:14px">Your view · detections and beats</div><div class="b2-prows">${detRows}</div>` : ''}
+    ${detRows ? `<div class="b2-k" style="margin-top:14px">Your view · flaws and strengths</div><div class="b2-prows">${detRows}</div>` : ''}
     <div class="b2-k" style="margin-top:14px">${scenesMode ? `The film, scene by scene${r.scenes.length ? ` · ${b2Clock(r.scenes[r.scenes.length - 1].e)}` : ''}` : 'The plot'}</div>
-    <p class="b2-s sm">Underlines show which aims each ${scenesMode ? 'scene' : 'sentence'} carries (strongest centrality on top); shading shows where a detection lands. Hover for the details.${whole.length ? ` ${whole.map(dn).join(', ')} cover${whole.length === 1 ? 's' : ''} the whole film.` : ''}</p>
+    <p class="b2-s sm">Underlines show which aims each ${scenesMode ? 'scene' : 'sentence'} carries (strongest centrality on top); shading shows where a flaw lands. Hover for the details.${whole.length ? ` ${whole.map(dn).join(', ')} cover${whole.length === 1 ? 's' : ''} the whole film.` : ''}</p>
     <div class="b2-plot">${body}</div>
     ${scenesMode ? `<p class="b2-s sm" style="margin-top:10px">${src.length ? 'Claude checked: ' + src.map(x => esc(trimTo(x, 80))).join(' · ') : 'Claude listed no sources, so it may have worked from memory alone. Turn on web search in Claude for a researched reading.'}</p>` : ''}
     ${b2WhyHTML(r)}</details>`;
@@ -4324,15 +4444,15 @@ function b2LockHTML(r, L) {
     if (L.unrated.length) notes.push(`Rate ${L.unrated.map(x => aimShort(x.a)).join(', ')}.`);
     if (L.ungraded.length) notes.push(`Grade ${L.ungraded.map(d => b2Label(r, d)).join(', ')}.`);
     if (L.unplaced.length) notes.push(`${L.unplaced.map(d => b2Label(r, d)).join(', ')} ${L.unplaced.length === 1 ? 'hasn’t' : 'haven’t'} been placed in the film yet, so ${L.unplaced.length === 1 ? 'it doesn’t' : 'they don’t'} count. Send the film to Claude again before locking.`);
-    if (L.score != null && !L.dets.length) notes.push('No detections: there’s no footprint, so the lean is Incidental.');
+    if (L.score != null && !L.dets.length) notes.push('No flaws: there’s no footprint, so the lean is Incidental.');
     { const fl = b2Flags(r); if (fl.length) notes.push(`${fl.length} check${fl.length === 1 ? '' : 's'} to settle in Grade the aims.`); }
     { const counted = b2Live(r).filter(x => x.a.rate > 0);
       if (!counted.length) notes.push('Every aim is left out (doesn’t ring a bell), so there’s no wide shot and the showdowns can’t decide this film on their own.');
-      const bare = counted.filter(x => !((r.carry || [])[x.i] || []).length); if (bare.length) notes.push(`Claude gave no scenes for ${bare.map(x => aimShort(x.a)).join(', ')}, so a detection only reaches ${bare.length === 1 ? 'it' : 'them'} where Claude named ${bare.length === 1 ? 'it' : 'them'}.`); }
+      const bare = counted.filter(x => !((r.carry || [])[x.i] || []).length); if (bare.length) notes.push(`Claude gave no scenes for ${bare.map(x => aimShort(x.a)).join(', ')}, so a flaw only reaches ${bare.length === 1 ? 'it' : 'them'} where Claude named ${bare.length === 1 ? 'it' : 'them'}.`); }
     if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (${art(WEIGHTS[L.main.w - 1])}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}. Weighed against ${L.hall ? `the hallmark (${b2Label(r, L.hall)}, ${art(BEAT_NAMES[L.hall.w - 1])})` : 'no hallmark'} and how the aims went, it takes ${L.score}% of the film’s view, and ${Math.round(100 * L.core)}% of its core${L.heart ? ': it reaches the heart' : ''}.`);
     { const S = b2Standing(r); if (S) notes.push(`Standing ${S.std}: close-up ${S.close}, wide shot ${S.wide}. It decides the showdowns within the tier; within ${SD_HEAT} points the arena is your call.`); }
     if (L.near) notes.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away.`);
-    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('Your other detections count in the close-up by their size; only the footprint sets the tier.');
+    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('Your other flaws count in the close-up by their size; only the footprint sets the tier.');
   }
   const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length || b2Flags(r).length, pick = blocked ? null : bt.mag;
   return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s share of this film’s view, against its hallmark and how its aims went${L.heart ? `; at the core it takes ${Math.round(100 * L.core)}%, reaching the heart` : `; ${Math.round(100 * L.core)}% of the core, short of the heart`}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
@@ -4345,7 +4465,7 @@ function b2LockHTML(r, L) {
       ${active.mode === 'edit' ? `<button class="bx-seal" data-b2="lock" ${pick ? '' : 'disabled'}>Save the marks<small>${blocked ? 'finish the notes above first' : !pick ? 'choose a plate first' : pick === was ? `stays ${MAG_NAMES[pick]}` : onReel ? `moves to ${MAG_NAMES[pick]} · its showdown there replaces the last one` : `now ${MAG_NAMES[pick]}`}</small></button>`
       : `<button class="bx-seal" data-b2="lock" ${pick ? '' : 'disabled'}>${pick ? `Lock the gate at ${pick}` : 'Lock the gate'}<small>${pick ? `${MAG_NAMES[pick]} · down to the showdown` : blocked ? 'finish the notes above first' : 'choose a plate first'}</small></button>${pick ? '<button class="bx-link" data-b2="lockq">or lock it and leave it in the queue</button>' : ''}`}</div>`;
 }
-/* the largest detection: the one the footprint is */
+/* the largest flaw: the one the footprint is */
 function b2MainDet(r) { return b2Ranked(r, 'dets')[0] || null; }
 /* how your aim ratings spread across your films: information only */
 function b2SpreadHTML(skipId) {
@@ -4410,9 +4530,12 @@ function sdAgreeHTML() {
     <p class="gr-note">The close-up is balanced against the wide shot by ${k}${t ? `, tuned from your ${t.n} films` : ` (the starting balance; it tunes itself from your films once ${SD_TUNE_N} are on the reel)`}. A dead heat is within ${SD_HEAT} points.</p>`;
 }
 
+let b2NoteT = null;
 document.addEventListener('input', e => {
   if (!bt || !active) return;
   if (e.target.id === 'b2Note') { bt.dn = e.target.value; const b = $('[data-b2="adddet"][data-k="d"]'); if (b) b.disabled = !(bt.dn.trim() && bt.dg); }
+  if (e.target.dataset && e.target.dataset.dump) { const r = bxData(), k = e.target.dataset.dump; if (r) { r[DUMP_KEY[k]] = dumpClean(e.target, k); clearTimeout(b2NoteT); b2NoteT = setTimeout(() => bxSave(), 600); } }
+  if (e.target.dataset && e.target.dataset.note) { const r = bxData(), it = r && b2Item(r, e.target.dataset.note); if (it) { it.d.note = e.target.value; clearTimeout(b2NoteT); b2NoteT = setTimeout(() => bxSave(), 500); } }
   if (e.target.id === 'b2BNote') { bt.bn = e.target.value; const b = $('[data-b2="adddet"][data-k="b"]'); if (b) b.disabled = !(bt.bn.trim() && bt.bg); }
 });
 document.addEventListener('change', e => {
@@ -4422,13 +4545,17 @@ document.addEventListener('change', e => {
   bxSave(); renderBooth();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches && e.target.matches('#b2Steps li')) e.target.click(); });
+document.addEventListener('mousedown', e => { if (e.target.closest && e.target.closest('[data-b2="tag"]')) e.preventDefault(); });
+let dumpLastRg = null;
+document.addEventListener('selectionchange', () => { const sel = window.getSelection(); if (!sel || !sel.rangeCount) return; const rg = sel.getRangeAt(0); if (rg.collapsed) return; const n = rg.commonAncestorContainer, el = n.nodeType === 1 ? n : n.parentElement, box = el && el.closest && el.closest('[data-dump]'); if (box) dumpLastRg = { k: box.dataset.dump, r: rg.cloneRange() }; });
+document.addEventListener('paste', e => { const box = e.target.closest && e.target.closest('[data-dump]'); if (!box) return; e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, t); });
 document.addEventListener('click', async e => {
   const b = e.target.closest && e.target.closest('[data-b2]'); if (!b || !bt || !active || !canEdit()) return;
   const r = bxData(); if (!r) return;
   const k = b.dataset.b2, v = b.dataset.v, IT = b.dataset.id ? b2Item(r, b.dataset.id) : null, d = IT ? IT.d : null, KK = b.dataset.k === 'b' ? 'b' : 'd';
   const order = b2Order(r), done = () => { bxSave(); renderBooth(); };
   switch (k) {
-    case 'go': if (v !== 'dets' && !b2HasBoth(r)) { bt.st = 'dets'; toast('Name at least one beat first'); return renderBooth(); } bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
+    case 'go': if (v === 'lock' && b2Fresh(r) && b2NeedSize(r).length) { bt.st = 'aims'; toast('Confirm the sizes first'); return renderBooth(); } if (v !== 'dets' && !b2HasBoth(r)) { bt.st = 'dets'; toast('Name at least one strength first'); return renderBooth(); } bt.st = v; if (v === 'largest' && (r.dets || []).filter(x => Number.isInteger(x.w)).length < 2 && (r.beats || []).filter(x => Number.isInteger(x.w)).length < 2) bt.st = 'lock'; return renderBooth();
     case 'useplot': { const t = $('#b2Plot')?.value || ''; if (!t.trim()) return toast('Paste the plot first'); r.footprint = t; return done(); }
     case 'useaim': { const t = $('#b2Aim')?.value || ''; if (!t.trim()) return toast('Paste the aim first'); r.aim = t; return done(); }
     case 'cent': { const a = order[bt.ai].a; a.central = +v; bt.ai = Math.max(0, b2Order(r).findIndex(x => x.a === a)); return done(); }
@@ -4442,16 +4569,37 @@ document.addEventListener('click', async e => {
     case 'prev': bt.ai = Math.max(0, bt.ai - 1); return renderBooth();
     case 'dg': if (KK === 'b') bt.bg = +v; else bt.dg = +v; return renderBooth();
     case 'pickslot': bt[KK === 'b' ? 'bs' : 'ds'] = v; return renderBooth();
-    case 'slot': { if (!d || !SLOTS.includes(v)) return; const key = B2_KIND[IT.k].key; b2FixSlots(r); const join = (r[key] || []).some(x => x !== d && x.slot === v); d.slot = v; if (join) d.dial = 'middle'; else delete d.dial; b2FixSlots(r); return done(); }
-    case 'dial': { if (!d || !DIALS.includes(v)) return; d.dial = v; b2FixSlots(r); return done(); }
+    case 'slot': { if (!d || !SLOTS.includes(v)) return; b2FixSlots(r); if (d.slot !== v) { d.slot = v; if (!false) delete d.dial; } d.lvSrc = 'me'; d.lvOk = true; delete d.lvPend; b2FixSlots(r); return done(); }
+    case 'dial': { if (!d || !DIALS.includes(v)) return; d.dial = v; d.lvSrc = 'me'; d.lvOk = true; delete d.lvPend; b2FixSlots(r); return done(); }
+    case 'sizeok': { b2NeedSize(r).forEach(x => { if (x.lvPend) { x.slot = x.slot || 'meso'; x.dial = x.dial || 'upper'; x.lvSrc = 'me'; delete x.lvPend; } x.lvOk = true; }); b2FixSlots(r); return done(); }
     case 'edit': bt.edit = b.dataset.id; renderBooth(); { const t = $('#b2Edit'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } } return;
     case 'editcancel': bt.edit = null; return renderBooth();
     case 'editsave': { if (!d) return; const t = String($('#b2Edit')?.value || '').trim(); if (!t) return toast('Keep some words, or remove it'); d.note = t; bt.edit = null; return done(); }
+    case 'tag': {
+      const box = document.querySelector(`[data-dump="${KK}"]`), sel = window.getSelection(); if (!box) return;
+      let rg = sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+      if (!rg || rg.collapsed || !box.contains(rg.commonAncestorContainer)) rg = dumpLastRg && dumpLastRg.k === KK && box.contains(dumpLastRg.r.commonAncestorContainer) ? dumpLastRg.r : null;
+      if (!rg || rg.collapsed) return toast('Highlight a passage in this box first');
+      const inMark = (rg.commonAncestorContainer.nodeType === 1 ? rg.commonAncestorContainer : rg.commonAncestorContainer.parentElement).closest('mark');
+      if (inMark && box.contains(inMark)) inMark.dataset.g = v;
+      else { const frag = rg.extractContents(); frag.querySelectorAll('mark').forEach(m => m.replaceWith(...m.childNodes)); const m = document.createElement('mark'); m.dataset.g = v; m.appendChild(frag); rg.insertNode(m); }
+      r[DUMP_KEY[KK]] = dumpClean(box, KK); if (sel) sel.removeAllRanges(); dumpLastRg = null; return done();
+    }
+    case 'untag': {
+      const el = document.createElement('div'); el.innerHTML = r[DUMP_KEY[KK]] || '';
+      el.querySelectorAll(`mark[data-t="${CSS.escape(v)}"]`).forEach(m => m.replaceWith(...m.childNodes));
+      r[DUMP_KEY[KK]] = dumpClean(el, KK); return done();
+    }
+    case 'newitem': {
+      const key = B2_KIND[KK].key; b2FixSlots(r);
+      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: '', w: null, sents: [], slot: 'micro', dial: 'lower', lvPend: true }; (r[key] ||= []).push(nd); b2FixSlots(r);
+      bxSave(); renderBooth(); const t = document.querySelector(`[data-note="${nd.id}"]`); if (t) t.focus(); return;
+    }
     case 'adddet': {
       const key = B2_KIND[KK].key, t = (KK === 'b' ? bt.bn : bt.dn || '').trim(), g = KK === 'b' ? bt.bg : bt.dg; if (!t || !g) return;
-      const sl = bt[KK === 'b' ? 'bs' : 'ds']; b2FixSlots(r);
-      if (!sl || (r[key] || []).length >= ITEM_MAX) return toast(`Three ${B2_KIND[KK].many} at most`);
-      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: t, w: g, sents: [], slot: sl }; if ((r[key] || []).some(x => x.slot === sl)) nd.dial = 'middle'; (r[key] ||= []).push(nd); b2FixSlots(r);
+      b2FixSlots(r);
+      if ((r[key] || []).length >= ITEM_MAX) return toast(`Three ${B2_KIND[KK].many} at most`);
+      const nd = { id: (KK === 'b' ? 'b:' : 'd:') + uid(), note: t, w: g, sents: [], slot: 'micro', dial: 'lower', lvPend: true }; (r[key] ||= []).push(nd); b2FixSlots(r);
       if (KK === 'b') { bt.bn = ''; bt.bg = null; } else { bt.dn = ''; bt.dg = null; }
       return done();
     }
@@ -4462,9 +4610,13 @@ document.addEventListener('click', async e => {
     case 'part': if (!d) return; d.q = 'which'; return renderBooth();
     case 'which': if (!d) return; { const i = +v; d.add = [i]; d.drop = []; d.sents = (r.carry || [])[i] || []; d.manual = true; d.conf = 'solid'; delete d.q; } return done();
     case 'drop': if (!d) return; { const i = +v; d.drop = [...new Set([...(d.drop || []), i])]; d.add = (d.add || []).filter(x => x !== i); } return done();
-    case 'donedets': if (!b2HasBoth(r)) return toast('Name at least one beat'); bt.st = 'claude'; return done();
+    case 'donedets': {
+      const bare = ['d', 'b'].filter(x => dumpPlain(r[DUMP_KEY[x]]).trim() && !dumpTags(r[DUMP_KEY[x]], x).length);
+      if (bare.length) return toast(`Tag at least one passage in your ${bare.map(x => x === 'b' ? 'strengths' : 'flaws').join(' and ')} with a grade, or clear the box`);
+    }
+    if (!b2HasBoth(r)) return toast('Name at least one strength'); bt.st = 'claude'; return done();
     case 'copyc': {
-      b2FixSlots(r); const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
+      b2FixSlots(r); r.dumpAt = dumpSig(r); const msg = b2ClaudeMsg(r); bt.sentIds = (r.dets || []).map(x => x.id); bt.sentBIds = (r.beats || []).map(x => x.id);
       let ok = true; try { await navigator.clipboard.writeText(msg); } catch (err) { ok = false; }
       const url = (db.settings.boothProject || '').trim() || 'https://claude.ai/new';
       window.open(url, '_blank', 'noopener');
@@ -4800,12 +4952,15 @@ function boothPanelHTML(f) {
   const b = boothStats(f.id), r = raw(f.id); if (!b || !r) return '';
   const S = b2Standing(r), D = b2Ranked(r, 'dets')[0], Bt = b2Ranked(r, 'beats')[0];
   const line = (d, k) => d ? `<div class="bp-item ${k}"><b>${k === 'b' ? 'Hallmark' : 'Footprint'} · ${(k === 'b' ? BEAT_NAMES : WEIGHTS)[d.w - 1]}</b><span>${d.note ? `“${esc(trimTo(d.note, 110))}”` : '<em>No words written</em>'}</span><small>${Math.max(1, Math.round(100 * b2Cov(r, d)))}% of the film</small></div>` : '';
-  const arena = String(f.arena || '').replace(/\s+/g, ' ').trim();
+  const VERB = ['Fails', 'Falls short', 'Achieves', 'Triumphs'];
+  const aims = b2Live(r).filter(x => Number.isInteger(x.a.central) && x.a.central > 0).sort((p, q) => q.a.central - p.a.central);
+  const nE = slotsOf(r.beats).length, nF = slotsOf(r.dets).length;
   return `<div class="bpanel"><div class="bp-map">${magDisc(b.lean ? b.lean.t : f.M)}<small>${S ? `Standing ${S.std}` : `Lean ${pctTxt(b.pct)}`}</small></div><div class="bp-body">
     <div class="bp-k">From the booth</div>
     ${line(Bt, 'b')}${line(D, 'd')}${!D && !Bt ? '<div class="bp-det"><em>Nothing named in the booth</em></div>' : ''}
     <div class="bp-lean">${b.lean ? `Lean ${b.lean.score} · ${MAG_NAMES[b.lean.t]}${b.lean.heart ? ' · reaches the heart' : ''}` : 'No lean from the booth'}${S ? ` · close-up ${S.close} · wide shot ${S.wide}` : ''}</div>
-    ${arena ? `<div class="bp-arena"><b>The arena · ${esc(f.genre || '')}</b>${esc(trimTo(arena, 220))}</div>` : ''}
+    ${aims.length ? `<div class="bp-aims">${aims.map(({ a }) => `<span class="v${a.rate || 0}"><em>${CENT_NAMES[a.central]}</em>${a.rate > 0 ? VERB[a.rate - 1] : a.rate === 0 ? 'Doesn’t ring a bell' : '—'}</span>`).join('')}</div>` : ''}
+    <div class="bp-count">${nE} strength${nE === 1 ? '' : 's'} · ${nF} flaw${nF === 1 ? '' : 's'} named</div>
   </div></div>`;
 }
 function doubleBillHTML(A, B, o) {
@@ -5509,7 +5664,7 @@ function leanStripHTML(rows) {
     <svg class="gr-svg" viewBox="0 0 ${W} ${MAG_LV.length * rh + 24}" role="img" aria-label="Lean percentage of each film by magnitude tier">${svg}</svg>`;
 }
 function landsHTML(rows) {
-  const x = rows.filter(r => r.b.m); if (!x.length) return '<p class="gr-empty">Shows up once detections are marked.</p>';
+  const x = rows.filter(r => r.b.m); if (!x.length) return '<p class="gr-empty">Shows up once flaws are marked.</p>';
   const best = r => { if (r.b.v2) return r.b.heart ? .6 : (r.b.hits || []).length ? .3 : 0; let w = 0; detHits(r.b.r, r.b.m).forEach(a => { if (counts(a)) w = Math.max(w, CENT_SIG[a.central] * aimDamage(r.b.m, a)); }); return w; };
   const v2 = x.filter(r => r.b.v2), v1 = x.filter(r => !r.b.v2);
   const land = [['Undermined most of a central aim', r => r.b.v2 ? r.b.heart : best(r) >= .5], ['Lands on an aim', r => r.b.v2 ? !r.b.heart && (r.b.hits || []).length > 0 : best(r) > 0 && best(r) < .5], ['Lands on no aim', r => r.b.v2 ? !(r.b.hits || []).length : best(r) === 0]].map(([n, f]) => [n, x.filter(f).length]);
@@ -5517,8 +5672,8 @@ function landsHTML(rows) {
   const mx = Math.max(1, ...land.map(a => a[1]), ...sev.map(a => a[1]));
   const rowsH = (arr, col) => arr.map(([n, k]) => `<div class="gr-mrow"><span>${n}</span><span class="gr-meter"><i style="width:${k / mx * 100}%;background:${col}"></i></span><b>${k}</b></div>`).join('');
   const lx = x.filter(r => r.b.lean), avg = k => lx.length ? Math.round(lx.reduce((t, r) => t + r.b.lean[k], 0) / lx.length) : '—';
-  return `<p class="gr-note" style="margin-top:0">The largest detection of each film · average footprint ${avg('F')} · average aim bite ${avg('B')}</p>
-    <div class="gr-axis">Where the largest detection lands</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
+  return `<p class="gr-note" style="margin-top:0">The largest flaw of each film · average footprint ${avg('F')} · average aim bite ${avg('B')}</p>
+    <div class="gr-axis">Where the largest flaw lands</div><div class="gr-meters">${rowsH(land, GR.case)}</div>
     <div class="gr-axis" style="margin-top:10px">How I meant it</div><div class="gr-meters">${rowsH(sev, GR.claim)}</div>`;
 }
 function arenasHTML(ranked) {
@@ -5566,7 +5721,7 @@ function renderGame() {
       ${(() => { const br = boothRows(); return grCard(6, 'The lean and your call', 'How often you locked a film where its marks leaned, and which way you went when you didn’t.', leanCallHTML(br))
         + grCard(6, 'The showdowns', 'How many were decided by standing, and how many came to you as dead heats on the arena.', sdAgreeHTML())
         + grCard(6, 'The lean by tier', 'Every film’s lean, 0 to 100, in the tier you locked it. Left is lighter, right heavier.', leanStripHTML(br))
-        + grCard(6, 'What detections land on', 'Where each film’s largest detection lands on the aim, the two halves of the lean, and how you meant it.', landsHTML(br))
+        + grCard(6, 'What flaws land on', 'Where each film’s largest flaw lands on the aim, the two halves of the lean, and how you meant it.', landsHTML(br))
         + grCard(6, 'Arenas', 'Sub-genres on the reel, split by magnitude.', arenasHTML(ranked)); })()}
       ${grCard(6, 'How influence is earned', 'The top ten, split into its two parts (each already weighted).', influenceHTML(ranked))}
       ${grCard(6, 'The lineups', 'Films in each magnitude tier, top down, with the showdowns asked there.', lineupsHTML(ms))}
@@ -5879,10 +6034,10 @@ document.addEventListener('visibilitychange', () => document.body.classList.togg
 const PB = {
   terms: [
     ['Current Integrated View', 'My conceptual understanding of the runtime, shaped and molded from the experience(s) I had with the film. Only one view.'],
-    ['Footprint', 'The single largest detection’s place in my view.'],
-    ['Detections', 'The content or basis of memory that shapes the footprint: non-positive things connected to my own experience. A word may come from elsewhere, but I make the connection to my shape myself.'],
-    ['Beats', 'Positive things connected to my own experience. I name the quality and where it lives, and grade the effect of its delivery against how the film delivers its effects: could-see, should-see, must-see, essential.'],
-    ['Hallmark', 'The single largest beat’s place in my view.'],
+    ['Footprint', 'The single largest flaw’s place in my view.'],
+    ['Flaws', 'Something that bugs me: enough to break through the firewall my brain keeps around what’s weak in a film. Not just an imperfection, however serious; what seems weak to others usually plays as an absence of strength to me, and the wide shot covers that. Optional: named only if one did.'],
+    ['Strengths', 'Something that stood out to me as strong in how the film delivered its effects experientially, as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space. I name it and where it lives, and grade the significance of this strength against how the film delivers its effects: perk, bonus, advantage, asset. Optional: named only if one did.'],
+    ['Hallmark', 'The single largest effect’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
     ['Magnitude', 'Tiers that classify a film by adjudicating its footprint against its hallmark and how its aims went: the footprint’s place in the film’s own view.'],
     ['Arena', 'The film’s specific sub-genre. Every film is judged on its own arena, even against a film from a different one.'],
@@ -5914,16 +6069,16 @@ function renderPlaybill() {
     ${it('▣', 'The poster', 'the DVD cover', 'A picture address for the film’s one-sheet.')}
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>I name and grade · Claude maps · the booth keeps the stats</small></div>
-    ${it('1', 'My view', 'before Claude, three slots a side', 'Detections: a macro view, a meso take and a micro stance; non-positive things from my own experience, what and where, graded by the consequences of that stretch against what the film is trying to accomplish. Beats: a macro pillar, a meso feature and a micro detail; positive qualities and where they live, graded by the effect of their delivery against how the film delivers its effects. At least one beat; detections are optional, named only if they’re there (non-positive doesn’t mean negative). Past that, the slots are room, not a quota. I grade against my own sense of the film; I haven’t seen its aims yet.')}
-    ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, breaks it into timed scenes, and places each detection and beat: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades.')}
-    ${it('3', 'The full frame, then the aims', 'my wide shot', 'With Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
-    ${it('★', 'Footprint & hallmark', 'the macro slots', 'My macro detection is the footprint and my macro beat is the hallmark. If a macro slot is empty, the largest one I did fill takes its place.')}
+    ${it('1', 'My view', 'before Claude, what, where and grade', 'Two dumps in my own words: every flaw in one box (things that bugged me, enough to break through my firewall), every strength in the other (what stood out as strong in how the film delivered its effects to me, not just something done well). I highlight each passage that counts and tag it with its grade; untagged words are only context. Both are optional, never coverage to fill space. I grade against my own sense of the film; I haven’t seen its aims yet.')}
+    ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, and folds my tagged passages into at most three flaws and three strengths (only as many as are really there). It breaks the film into timed scenes and places each flaw and strength: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades. It sizes each one and names the largest flaw and strength as the footprint and hallmark. Each item takes my strongest tag in it as its grade.')}
+    ${it('3', 'The sizes, the full frame, then the aims', 'my wide shot', 'First a quick look at Claude’s fold: each item with the passages it drew on, its grade, level and dial; I keep or change them, and a different size can change which one leads. Whatever I change is mine. Then, with Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
+    ${it('★', 'Footprint & hallmark', 'the largest of each', 'Once the sizes are confirmed, the largest flaw (by level, then dial) is the footprint and the largest strength is the hallmark.')}
     <div class="pb-axis"><span>The three levels · how much of the film it reaches</span></div>
-    ${LEVELS.map(x => it(x.name[0], x.name, x.reach, `${x.what} Detection: ${x.d} Beat: ${x.b} Test: ${x.test}`)).join('')}
+    ${LEVELS.map(x => it(x.name[0], x.name, x.reach, `${x.what} Flaw: ${x.d} Strength: ${x.b} Test: ${x.test} The dial · Upper: ${x.dial[0]} Middle: ${x.dial[1]} Lower: ${x.dial[2]}`)).join('')}
     ${LEVEL_RULES.map(([t, d]) => it('·', t, '', d)).join('')}
-    <div class="pb-axis"><span>How I mean a detection</span></div>
+    <div class="pb-axis"><span>How I mean a flaw</span></div>
     ${WEIGHTS.map((n, j) => it(String(j + 1), n, '', DEF_DET[j])).join('')}
-    <div class="pb-axis"><span>How I mean a beat</span></div>
+    <div class="pb-axis"><span>How I mean an effect</span></div>
     ${BEAT_NAMES.map((n, j) => it(String(j + 1), n, '', DEF_BEAT[j])).join('')}
     <div class="pb-axis"><span>How an aim went · taken as a whole</span></div>
     ${AIM_WEIGHTS.map((n, j) => it(String(j + 1), n, `${Math.round(B2_VAL[j + 1] * 100)}`, B2_RATE_DEF[j])).join('')}${it('–', 'Doesn’t ring a bell', '', 'I don’t remember it. The aim is left out and counts toward nothing.')}
@@ -5931,20 +6086,20 @@ function renderPlaybill() {
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
     <div class="pb-axis"><span>The stats</span></div>
     ${it('↗', 'The lean · the tier', 'relative to the film itself', 'The footprint weighed against the hallmark and how the aims went, all scored the same way (grade first, size second). The lean is the footprint’s share of the film’s whole view. The heart: at the Central and Major aims, does the footprint take up more than a third of what’s there (how those aims went, plus the hallmark where it lands)? If so, it sits at the center of my view: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. No grade is barred; it all depends on the film. A lean, not a verdict.')}
-    ${it('◧', 'Close-up', '0 to 100, around 50', 'My beats against my detections: grade first, size second; macro in full, meso at half, micro at a quarter. When two share a level, each one’s dial sets its size inside that level (macro 100/85/70%, meso 50/43/36%, micro 25/20/15%), never overlapping the next level.')}
+    ${it('◧', 'Close-up', '0 to 100, around 50', 'My strengths against my flaws: grade first, size second; macro in full, meso at half, micro at a quarter. Each item’s dial sets its size inside its level (upper, middle, lower: macro 100/85/70%, meso 50/43/36%, micro 25/20/15%), never overlapping the next level.')}
     ${it('◨', 'Wide shot', '0 to 100', 'My aim grades (fails 10, falls short 25, achieves 60, triumphs 100), weighted by tier.')}
     ${it('⚖', 'Standing', 'decides the showdowns', 'Half the close-up and half the wide shot, balanced so each moves it equally. The balance tunes itself from my films once ten are on the reel.')}
     ${it('🔒', 'Lock the gate', 'my call', 'I choose the plate. The film goes down to its showdowns, or waits in the queue.')}`;
   if (pbTab === 'C') body = `<div class="pb-sec">Interlude · The Compass<small>Definitions · in my own words</small></div>
     ${PB.terms.map(term).join('')}
-    <div class="pb-axis" style="margin-top:14px"><span>How I mean a detection</span></div>
+    <div class="pb-axis" style="margin-top:14px"><span>How I mean a flaw</span></div>
     ${WEIGHTS.map((n, j) => term([n, DEF_DET[j]])).join('')}
-    <div class="pb-axis" style="margin-top:14px"><span>How I mean a beat</span></div>
+    <div class="pb-axis" style="margin-top:14px"><span>How I mean an effect</span></div>
     ${BEAT_NAMES.map((n, j) => term([n, DEF_BEAT[j]])).join('')}
     <div class="pb-axis" style="margin-top:14px"><span>How an aim went · taken as a whole</span></div>
     ${AIM_WEIGHTS.map((n, j) => term([n, DEF_AIM[j]])).join('')}
     <div class="pb-axis" style="margin-top:14px"><span>How central an aim is · from Claude, yours to change</span></div>
-    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Claude ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Positive means it isn’t detection-worthy: it stood out in a good way, nothing counts against it, and it only adds to the whole weight, so it can only help (bonus points only). Neutral is just remembered, neither good nor bad, so a detection in the same stretch bites it like Edge (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A detection sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
+    ${term(['Central · Major · Secondary · Minor', 'How much the aim matters to what the film is trying to accomplish for itself, as Claude ranks it.'])}${term(['Wild card', 'Something in a stretch of Port B I remember apart from any aim. It can stand alone or stack on top of an aim’s stretch, and it counts as remembered, so it isn’t Shutter. Each one is Neutral or Positive, then gets its own weight, Minor to Central, for how much of my View it is (.25 to 1, like centrality). It joins the aim’s whole weight. Positive means it isn’t flaw-worthy: it stood out in a good way, nothing counts against it, and it only adds to the whole weight, so it can only help (bonus points only). Neutral is just remembered, neither good nor bad, so a flaw in the same stretch bites it like Edge (65%).'])}${term(['Shutter', 'Port B’s resting state. I went through the stretch line by line and nothing rings a bell, so it counts toward nothing. A flaw sitting there gets flagged: if I remember it bugging me, the stretch isn’t blank.'])}
     <div class="pb-axis" style="margin-top:14px"><span>Magnitude</span></div>
     ${MAG_LV.map(l => term([`${l} · ${MAG_NAMES[l]}`, PB.tiers[l]])).join('')}
     <p class="pb-note">Incidental heads the rankings; All-encompassing sits at the bottom.</p>`;
@@ -5957,7 +6112,7 @@ function renderPlaybill() {
       ${it('◎', 'Its own arena', 'the dead-heat call', 'In a dead heat, each film is judged on how it does its own sub-genre, even when the two arenas differ.')}
       ${it('⇅', 'The reel', 'top down', 'The tiers stack from Incidental down to All-encompassing, each in my showdown order.')}
       ${it('🎞', 'The Double Bill', 'the screen', 'Reel numbers, then the booth’s: arena, footprint, hallmark, how the aims went, the lean, close-up, wide shot and standing. The arrow on the standing row shows who it favors.')}
-      ${it('◐', 'From the booth', 'each poster', 'The film’s footprint map and lean, its largest detection in my words, its footprint and aim bite, what it lands on by name, the lean against where I locked it, and its arena. Flip the call card (↻) for the full arena.')}
+      ${it('◐', 'From the booth', 'each poster', 'Its standing, the hallmark and footprint in my words, the lean with the close-up and wide shot, how each aim went, and how many strengths and flaws I named. The arena lives on the call card: flip it (↻).')}
       ${it('✎', 'The decisive consideration', 'optional', 'One line on what decides the matchup, filed with the battle and editable in the Film Vault.')}
       ${it('↶', 'Undo', 'misclicks', 'Take back my last dead-heat call, even the one that finished the show. Showdowns decided by standing go back with it.')}
       ${it('⇄', 'Re-balanced', 'automatic', 'When the balance between close-up and wide shot re-tunes from my films, each tier re-sorts by standing; films within 3 points keep the order my calls gave them.')}
@@ -6102,7 +6257,7 @@ $('#office').addEventListener('click', async e => {
   if (o === 'export') return exportBackup();
   if (o === 'fresh1' || o === 'fresh2') {
     const all = o === 'fresh2';
-    if (!confirm(all ? 'Start fresh: clear all booth work AND the reel, showdowns, records and Vault history? Your film list stays. A backup downloads first.' : 'Start fresh: clear all booth work (detections, beats, aims and Claude’s readings)? Tiers and the reel stay. A backup downloads first.')) return;
+    if (!confirm(all ? 'Start fresh: clear all booth work AND the reel, showdowns, records and Vault history? Your film list stays. A backup downloads first.' : 'Start fresh: clear all booth work (flaws, strengths, aims and Claude’s readings)? Tiers and the reel stay. A backup downloads first.')) return;
     exportBackup();
     if (active) endWorkflow();
     const BOOTH = ['dets', 'beats', 'aims', 'aim', 'carry', 'scenes', 'mapKey', 'mapMode', 'mapSources', 'mapEngine', 'mapCut', 'aimSrc', 'mapWhy', 'flagsOk', 'plot', 'plotSrc', 'cuts', 'cutsOk', 'wild', 'footprint'];
