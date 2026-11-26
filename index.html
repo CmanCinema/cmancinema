@@ -889,6 +889,9 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .b2-tagc b{font:700 9px var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-hi)}
 .b2-tagc button{border:0;background:none;color:rgba(243,230,200,.55);cursor:pointer;font-size:15px;padding:0 4px}
 .b2-sz.main{border-color:rgba(232,190,106,.85);background:rgba(232,190,106,.06)}
+.b2-cat{margin:8px 0;padding:10px 12px;border-radius:10px;border:1px dashed rgba(143,209,139,.3);background:rgba(0,0,0,.15)}
+.b2-cat.on{border-style:solid;border-color:rgba(143,209,139,.55)}
+.b2-cat .b2-dh b{font-size:15px}
 .b2-lvbtn{margin-left:8px;border:0;background:none;padding:0;font:italic 600 13px var(--body);color:var(--gold-hi,#f3d58f);text-decoration:underline dotted;cursor:pointer}
 .mfc{position:relative;width:min(620px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:22px 24px 24px;border-radius:6px;background:linear-gradient(#f6ead0,#ecd9b0);color:#2a160e;box-shadow:0 0 0 2px #b8873c,0 0 0 7px #5a0f22,0 0 0 9px #b8873c,0 24px 60px rgba(0,0,0,.7);animation:pbIn .35s cubic-bezier(.2,1.3,.4,1)}
 .mfc .k{text-align:center;font:700 10px var(--serif);letter-spacing:.34em;text-transform:uppercase;color:#7a1a22}
@@ -3572,7 +3575,7 @@ const CONSEQ = ['Petty', 'Minor', 'Major', 'Severe'];   // the consequences each
 const AIM_WEIGHTS = ['Zilch', 'Edge', 'Supporting', 'Core'];                           // Port B · how well the aim worked in a stretch
 const DEF_DET = ['Petty consequences of this flaw.', 'Minor consequences of this flaw.', 'Major consequences of this flaw.', 'Severe consequences of this flaw.'];
 const BEAT_NAMES = ['Perk', 'Bonus', 'Advantage', 'Asset'];
-const DEF_BEAT = ['Petty significance of this strength.', 'Minor significance of this strength.', 'Major significance of this strength.', 'Extraordinary significance of this strength.'];
+const DEF_BEAT = ['A dependable effect from this strength.', 'A rewarding effect from this strength.', 'A high-caliber effect from this strength.', 'A profound effect from this strength.'];
 const BEAT_COLOR = '#8fd18b', ITEM_MAX = 3;
 /* three slots on each side, largest to smallest in your view; each item still graded on its own dial */
 const SLOTS = ['macro', 'meso', 'micro'], SLOT_W = { macro: 1, meso: .5, micro: .25 };
@@ -4000,7 +4003,7 @@ function b2SizesHTML(r) {
   const need = new Set(b2NeedSize(r).map(x => x.id)), why = (r.mapWhy && r.mapWhy.size) || {};
   const tagsOf = k => dumpTags(r[DUMP_KEY[k]], k);
   const row = (k, d) => { const src = tagsOf(k).filter(t => (d.from || []).includes(t.id)), mixed = new Set(src.map(t => t.g)).size > 1;
-    return `<div class="b2-sz ${need.has(d.id) ? 'need' : ''} ${d.main ? 'main' : ''}"><div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${d.main ? `<em>The ${B2_KIND[k].big} · </em>` : ''}${d.lvPend ? 'Claude gave no size: pick one' : need.has(d.id) ? 'Claude’s suggestion' : 'Yours'}</span></div>
+    return `<div class="b2-sz ${need.has(d.id) ? 'need' : ''} ${d.main ? 'main' : ''}"><div class="b2-dh"><b>${b2Label(r, d)}</b><span class="b2-meta">${d.main ? `<em>The ${B2_KIND[k].big} · </em>` : ''}${k === 'b' && catOf((d.from || [])[0]) && r.strC ? catOf(d.from[0]).name + ' · ' : ''}${d.lvPend ? 'Claude gave no size: pick one' : need.has(d.id) ? 'Claude’s suggestion' : 'Yours'}</span></div>
     <p class="b2-note">${esc(d.note || '')}</p>
     ${src.length ? `<div class="b2-tags sm">${src.map(t => `<span class="b2-tagc g${t.g}"><b>${b2Names(k)[t.g - 1]}</b>${esc(trimTo(t.text, 90))}</span>`).join('')}</div>` : ''}
     ${why[d.id] ? `<p class="b2-szwhy">Claude: ${esc(why[d.id])}</p>` : ''}
@@ -4081,7 +4084,7 @@ function lvOpen(k) {
   $('#lvCard').classList.add('show');
 }
 const lvClose = () => $('#lvCard').classList.remove('show');
-document.addEventListener('click', e => { const t = e.target.closest('[data-lv]'); if (t) { e.preventDefault(); return t.dataset.lv === 'x' ? lvClose() : lvOpen(t.dataset.lv); } if (e.target.id === 'lvCard') lvClose(); });
+document.addEventListener('click', e => { const t = e.target.closest('[data-lv]'); if (t) { e.preventDefault(); return t.dataset.lv === 'x' ? lvClose() : t.dataset.lv === 'cats' ? catsOpen() : lvOpen(t.dataset.lv); } if (e.target.id === 'lvCard') lvClose(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') lvClose(); });
 /* both boxes optional: never manufactured (no flaws, no footprint, lean 0; the wide shot still covers the film) */
 const b2HasBoth = r => true;
@@ -4106,6 +4109,36 @@ function dumpClean(root, k) {
   walk(root, false);
   return out.join('').replace(/(<br>)+$/, '');
 }
+/* strengths: one per category, each naming the source in the film, not the result */
+const STR_CATS = [
+  { c: 'sen', id: 'ST1', name: 'Sensory', q: 'What reached your eyes and ears', ph: 'The source: Keaton’s deadpan body in the stunts, the riverboat at night…' },
+  { c: 'emo', id: 'ST2', name: 'Emotional', q: 'What moved you', ph: 'The source: the father finally seeing his son, the duet in the jail…' },
+  { c: 'cog', id: 'ST3', name: 'Cognitive', q: 'What engaged your mind as it played', ph: 'The source: the gag set-ups paying off, the reveal at the end…' }];
+const STR_CAT_INFO = {
+  sen: { what: 'The source works on your senses: what you saw or heard, before you thought about it.', counts: 'Images and composition, light, movement, a physical performance, a face, a place, the sound, a voice, music or a song, the rhythm of the cutting or a stunt.', ex: '“Keaton’s deadpan body in the stunts” · “the fog-lit riverboat at night” · “Jolson’s voice”', test: 'Did it reach you through your eyes or ears first?' },
+  emo: { what: 'The source works on your feelings: it got to you because you cared about someone or something.', counts: 'A relationship, a character’s plight or longing, a performance’s vulnerability, a reconciliation or a loss, danger to someone you were with.', ex: '“the father finally seeing his son” · “the boy waiting by the radio”', test: 'Did it get to you through what you felt for someone or something?' },
+  cog: { what: 'The source works on your mind as the film plays: following, anticipating, catching or figuring something out.', counts: 'Set-ups and payoffs, suspense you track, a reveal or a misdirection, wit and wordplay, an irony you catch, a structure you feel click.', ex: '“the gag set-ups paying off in the cyclone” · “the reveal held to the last shot”', test: 'Did it work through you following, anticipating or working something out?' } };
+const STR_CAT_RULES = [
+  ['The source, not the result', 'Name what in the film produced it, and where: “the father’s silent nod at the dock”, not “it moved me”.'],
+  ['One source, more than one kind', 'Put it where it struck you most, and don’t list it twice.'],
+  ['Laughs', 'A laugh goes where its source is: a pratfall is sensory, a character you love being embarrassed is emotional, a joke you have to catch is cognitive.'],
+  ['Not plot, not theme', 'Not “the twist” or “a story about loyalty”: name how it reaches you, like “the reveal withheld until the last shot”.'],
+  ['When to leave it blank', 'If it can’t reach even a Perk (a dependable effect from this strength), leave that kind blank. A blank one isn’t a weakness: it just means nothing of that kind stood out as strong.']];
+function catsOpen() {
+  $('#lvIn').innerHTML = `<button class="lv-x" data-lv="x" aria-label="Close">✕</button>
+    <div class="k">Projection Booth · Your view</div><h2>The three kinds of strength</h2><div class="film">what counts as each</div>
+    ${STR_CATS.map(x => { const i = STR_CAT_INFO[x.c]; return `<div class="lv-lv"><div class="lv-h"><b>${x.name}</b><em>${x.q.toLowerCase()}</em></div><p class="lv-what">${i.what}</p>
+      <div class="lv-two"><div class="lv-side on"><small>What counts</small>${i.counts}</div><div class="lv-side"><small>Sources, for example</small>${i.ex}</div></div><p class="lv-test"><b>Test:</b> ${i.test}</p></div>`; }).join('')}
+    <div class="lv-rules">${STR_CAT_RULES.map(([t, d]) => `<p><b>${t}.</b> ${d}</p>`).join('')}</div>`;
+  $('#lvCard').classList.add('show');
+}
+const strFilled = r => STR_CATS.filter(x => r.strC && r.strC[x.c] && String(r.strC[x.c].note || '').trim());
+/* the categories become the tagged strengths the rest of the booth reads */
+function strSync(r) {
+  if (!r.strC) return;
+  r.dumpS = strFilled(r).filter(x => Number.isInteger(r.strC[x.c].w)).map(x => `<mark data-g="${r.strC[x.c].w}" data-t="${x.id}" data-c="${x.c}" data-gn="${esc(BEAT_NAMES[r.strC[x.c].w - 1])}">${esc(r.strC[x.c].note.trim())}</mark>`).join('<br>');
+}
+const catOf = id => STR_CATS.find(x => x.id === id);
 function dumpTags(html, k) {
   const el = document.createElement('div'); el.innerHTML = html || '';
   return [...el.querySelectorAll('mark[data-t]')].map(m => ({ id: m.dataset.t, g: +m.dataset.g, text: m.textContent.replace(/\s+/g, ' ').trim() })).filter(t => t.g >= 1 && t.g <= 4 && t.text);
@@ -4122,12 +4155,25 @@ function dumpSeed(r, k) {
   const list = r[B2_KIND[k].key] || []; let n = 0;
   r[key] = list.filter(d => String(d.note || '').trim() && Number.isInteger(d.w)).map(d => { d.from = [TAG_PRE[k] + (++n)]; return `<mark data-g="${d.w}" data-t="${TAG_PRE[k] + n}" data-gn="${esc(b2Names(k)[d.w - 1])}">${esc(d.note)}</mark>`; }).join('<br>');
 }
+function b2StrBoxHTML(r) {
+  if (!r.strC) dumpSeed(r, 'b');
+  const C = r.strC || {}, legacy = !r.strC && dumpTags(r.dumpS, 'b');
+  return `<div class="b2-box beats">
+    <div class="b2-k">Strengths · the source${strFilled(r).length ? ` · ${strFilled(r).length} of 3` : ''}</div>
+    <p class="b2-s sm">What stood out to you as strong in how the film delivered its effects as it played. Name the <b>source</b> in the film, not the result: what produced it, and where. One for each kind at most. If it can’t reach even a Perk (a dependable effect), leave that kind blank. Not just something done well, and never plot, themes or coverage to fill space. <button class="b2-lvbtn" data-lv="cats" style="margin:0">What counts as each</button></p>
+    ${legacy && legacy.length ? `<p class="b2-ask" style="margin:6px 0">From before the categories: ${legacy.map(t => esc(t.text)).join(' · ')}. Write each into its kind below (or leave it), and the old list is replaced.</p>` : ''}
+    ${STR_CATS.map(x => { const v = C[x.c] || {}, has = String(v.note || '').trim(); return `<div class="b2-cat ${has ? 'on' : ''}">
+      <div class="b2-dh"><b>${x.name}</b><span class="b2-meta">${x.q}</span><button class="b2-lvbtn" data-lv="cats" style="margin:0">?</button></div>
+      <textarea class="bx-ta b2-row-ta" data-strc="${x.c}" rows="2" placeholder="${esc(x.ph)}">${esc(v.note || '')}</textarea>
+      <div class="b2-row"><div class="b2-seg">${BEAT_NAMES.map((w, j) => `<button class="${v.w === j + 1 ? 'on' : ''}" data-b2="strgrade" data-v="${x.c}:${j + 1}" title="${esc(DEF_BEAT[j])}">${w}</button>`).join('')}</div>${has && !Number.isInteger(v.w) ? '<span class="b2-s sm"><i>Grade it</i></span>' : ''}</div></div>`; }).join('')}</div>`;
+}
 function b2BoxHTML(r, k) {
+  if (k === 'b') return b2StrBoxHTML(r);
   dumpSeed(r, k);
   const html = r[DUMP_KEY[k]] || '', tags = dumpTags(html, k);
   return `<div class="b2-box ${k === 'b' ? 'beats' : 'dets'}">
     <div class="b2-k">${k === 'b' ? 'Strengths · what stood out' : 'Flaws · what bugged you'}${tags.length ? ` · ${tags.length} tagged` : ''}</div>
-    <p class="b2-s sm">${k === 'b' ? 'Something that stood out to you as strong in how the film delivered its effects as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space.' : 'Something that bugged you: enough to break through your firewall, not just an imperfection. What seems weak to others but plays as an absence of strength to you is left to the wide shot.'}</p>
+    <p class="b2-s sm">${k === 'b' ? 'Something that stood out to you as strong in how the film delivered its effects as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space.' : 'Something that bugged you: enough to break through your firewall, not just an imperfection. What seems weak to others but plays as an absence of strength to you is left to the wide shot. If it can’t reach even a Nitpick (petty consequences), don’t tag it.'}</p>
     <div class="b2-dump" contenteditable="true" spellcheck="true" data-dump="${k}" data-ph="${k === 'b' ? 'Dump every strength, what and where, in your own words…' : 'Dump every flaw, what and where, in your own words…'}">${html}</div>
     <div class="b2-tagbar"><span>Highlight a passage, then tag it:</span><div class="b2-seg">${b2Names(k).map((w, j) => `<button data-b2="tag" data-k="${k}" data-v="${j + 1}" title="${esc(b2Defs(k)[j])}">${w}</button>`).join('')}</div></div>
     ${tags.length ? `<div class="b2-tags">${tags.map(t => `<span class="b2-tagc g${t.g}"><b>${b2Names(k)[t.g - 1]}</b>${esc(trimTo(t.text, 70))}<button data-b2="untag" data-k="${k}" data-v="${esc(t.id)}" aria-label="Remove the tag">×</button></span>`).join('')}</div>` : ''}</div>`;
@@ -4136,18 +4182,18 @@ function b2BoxHTML(r, k) {
 function b2DetsHTML(r, L, reading) {
   const nd = (r.dets || []).length, nb = (r.beats || []).length;
   return `<p class="b2-q">Your view</p>
-    <p class="b2-s">Dump everything in your own words: every flaw in one box, every strength in the other. Highlight each passage that counts and tag it with its grade: that grade is yours, and untagged words are only context. Claude folds what you tagged into at most three of each (only as many as are really there), sizes them, and picks the footprint and hallmark; you look them over before grading the aims. <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Both boxes are optional. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for.</p>
+    <p class="b2-s">Flaws: dump everything in your own words, then highlight each passage that counts and tag it with its grade (untagged words are only context); Claude folds them into at most three. Strengths: one sensory, one emotional, one cognitive at most, each naming the source in the film, with its grade. Claude sizes everything and picks the footprint and hallmark; you look them over before grading the aims. <button class="b2-lvbtn" data-lv="d" style="margin:0">See the three levels</button> Both boxes are optional. You haven’t seen the film’s aims yet, so grade against your own sense of what it’s going for.</p>
     <div class="b2-boxes">${b2BoxHTML(r, 'd')}${b2BoxHTML(r, 'b')}</div>
     <div class="b2-nav"><span></span>${b2HasBoth(r) ? '' : `<span class="b2-s sm"><i>At least one strength.</i></span>`}<button class="bx-btn solid" data-b2="donedets" ${b2HasBoth(r) ? '' : 'disabled'}>That’s my view · on to Claude →</button></div>`;
 }
 /* ---------- Claude does the reading ---------- */
-const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives two dumps in my own words, one of flaws (things that bugged me) and one of strengths (what stood out to me as strong in how the film delivered its effects to me as it played), with the passages I tagged and graded (FT1, FT2…; ST1, ST2…); either may be empty, and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
+const B2_INSTR = `You are the reader for the Projection Booth of my film-rating site. Each message names one film and gives a dump of my flaws in my own words (things that bugged me), with the passages I tagged and graded (FT1, FT2…), and up to three strengths, one sensory, one emotional and one cognitive (ST1, ST2, ST3: the source in the film of what stood out to me as strong in how it delivered its effects as it played), each graded; any of these may be empty, and sometimes its aims (A1, A2…). Your job is to know exactly what happens in the film, scene by scene, and to locate things in it. Don't judge, rate or comment on the film.
 
 0. Research first, every time, however well you think you know the film: search everything available to you (the screenplay or shooting script, transcripts, detailed synopses, scene-by-scene breakdowns, reputable reviews) and cross-check what happens and when. If you can't search, say so in "sources".
 1. The aims. If the message gives AIMS, use them exactly as given, keeping their numbers. If not, work them out before you read the flaws and strengths, from the film alone: nothing I named may shape the aims in any way. Work out what the film itself is trying to accomplish on screen and sort it into Central, Major, Secondary and Minor: exactly one aim per tier, a single sentence summing up everything the film is trying to do at that level, so four aims at most; leave a tier out if nothing genuinely belongs there. Only what the film is trying to do on screen: nothing outside it, like its legacy, influence, reception or anyone's career.
 2. Break the whole film into its consecutive scenes or sequences, start to finish, covering the full runtime with no gaps (usually 25 to 60). Give each its approximate start and end in minutes and a short title saying what happens.
 3. For each aim, list the scenes where it clearly plays out on screen. Be strict: a scene counts only if what happens in it directly carries that aim, not just because the same characters appear. An aim about mood, music, camerawork or performance that isn't tied to specific events gets only the few scenes that most clearly embody it, or none.
-4. Fold my dumps into items: at most three flaws and three strengths, and only as many as are genuinely there (one is fine; never pad to three). Every tagged passage goes into exactly one item of its own kind; untagged words are context only and never make an item by themselves. Combine passages that are one quality in the film. Give each item a "name": a short what-and-where, in my words as far as possible, and list the tags it draws on in "from". Don't grade anything: my tags carry the grades.
+4. Fold my flaws dump into items: at most three flaws, and only as many as are genuinely there (one is fine; never pad to three). Every tagged passage goes into exactly one flaw; untagged words are context only and never make an item by themselves. Combine passages that are one quality in the film. My strengths come already separate, at most one per kind (sensory, emotional, cognitive), each naming the source in the film: make each one its own strength, with its tag in "from"; never combine or split them. Give each item a "name": a short what-and-where, in my words as far as possible, and list the tags it draws on in "from". Don't grade anything: my tags carry the grades.
 5. For each item, list the scenes it is about. If it names a part of the runtime (the opening, the first act, the middle, the second half, the third act, the climax, the ending, after or before an event), take those scenes. If it is about the whole film, set "whole" to true and leave "scenes" empty. If it is about a brief moment (a line reading, a shot, a few seconds) rather than whole scenes, set "moment" to true and list just the scene it happens in. Then list the aims it touches: the aims whose scenes it overlaps, or that it is plainly about.
 6. Size each item by how much of the film's shape it reaches (not by running time, and not by how good or bad it is): "level" is "macro" (it shapes how the whole film reads), "meso" (it shapes one part or strand) or "micro" (a single point you could put a finger on); "dial" is where it sits inside that level: "upper" (it pushes toward the level above), "middle", or "lower" (it nearly drops to the level below). Give a "size_why" (at most 15 words). List each kind largest first: flaw 1 is the footprint and strength 1 is the hallmark, so give each the largest size of its kind.
 7. Explain your decisions. Give each aim a "why" (at most 25 words) on what in the film shows this is what it's going for, why that tier, and why those scenes. Give each item a "why" (at most 25 words) on why it points to those scenes (or the whole film, or a moment) and why it touches those aims. Add a "reading" (at most 50 words) on how you read the film overall and what you relied on most. Ground every reason in what happens on screen and what you found.
@@ -4179,11 +4225,8 @@ ${dumpPlain(r.dumpF) || '(none)'}
 TAGGED FLAWS (my grades: Nitpick < Gripe < Drawback < Problem):
 ${dumpTags(r.dumpF, 'd').map(t => `[${t.id} · ${WEIGHTS[t.g - 1]}] ${t.text}`).join('\n') || '(none)'}
 
-STRENGTHS · MY DUMP (⟦ST…: …⟧ marks a passage I tagged):
-${dumpPlain(r.dumpS) || '(none)'}
-
-TAGGED STRENGTHS (my grades: Perk < Bonus < Advantage < Asset):
-${dumpTags(r.dumpS, 'b').map(t => `[${t.id} · ${BEAT_NAMES[t.g - 1]}] ${t.text}`).join('\n') || '(none)'}
+STRENGTHS (one per kind at most; each names the source in the film; my grades: Perk < Bonus < Advantage < Asset):
+${r.strC ? (dumpTags(r.dumpS, 'b').map(t => `[${t.id} · ${(catOf(t.id) || {}).name || 'Strength'} · ${BEAT_NAMES[t.g - 1]}] ${t.text}`).join('\n') || '(none)') : (dumpTags(r.dumpS, 'b').map(t => `[${t.id} · ${BEAT_NAMES[t.g - 1]}] ${t.text}`).join('\n') || '(none)')}
 
 Reply with the JSON block only, in exactly the shape above. Research the film first. Every aim must be listed under "aims" with its scene numbers, and every tagged passage must sit in exactly one flaw or strength.`;
 }
@@ -4534,6 +4577,7 @@ let b2NoteT = null;
 document.addEventListener('input', e => {
   if (!bt || !active) return;
   if (e.target.id === 'b2Note') { bt.dn = e.target.value; const b = $('[data-b2="adddet"][data-k="d"]'); if (b) b.disabled = !(bt.dn.trim() && bt.dg); }
+  if (e.target.dataset && e.target.dataset.strc) { const r = bxData(), c = e.target.dataset.strc; if (r) { r.strC ||= {}; r.strC[c] ||= {}; r.strC[c].note = e.target.value; strSync(r); clearTimeout(b2NoteT); b2NoteT = setTimeout(() => bxSave(), 600); } }
   if (e.target.dataset && e.target.dataset.dump) { const r = bxData(), k = e.target.dataset.dump; if (r) { r[DUMP_KEY[k]] = dumpClean(e.target, k); clearTimeout(b2NoteT); b2NoteT = setTimeout(() => bxSave(), 600); } }
   if (e.target.dataset && e.target.dataset.note) { const r = bxData(), it = r && b2Item(r, e.target.dataset.note); if (it) { it.d.note = e.target.value; clearTimeout(b2NoteT); b2NoteT = setTimeout(() => bxSave(), 500); } }
   if (e.target.id === 'b2BNote') { bt.bn = e.target.value; const b = $('[data-b2="adddet"][data-k="b"]'); if (b) b.disabled = !(bt.bn.trim() && bt.bg); }
@@ -4585,6 +4629,10 @@ document.addEventListener('click', async e => {
       else { const frag = rg.extractContents(); frag.querySelectorAll('mark').forEach(m => m.replaceWith(...m.childNodes)); const m = document.createElement('mark'); m.dataset.g = v; m.appendChild(frag); rg.insertNode(m); }
       r[DUMP_KEY[KK]] = dumpClean(box, KK); if (sel) sel.removeAllRanges(); dumpLastRg = null; return done();
     }
+    case 'strgrade': {
+      const [c, g] = String(v).split(':'); if (!STR_CATS.some(x => x.c === c)) return; r.strC ||= {}; r.strC[c] ||= { note: '' };
+      r.strC[c].w = r.strC[c].w === +g ? null : +g; strSync(r); return done();
+    }
     case 'untag': {
       const el = document.createElement('div'); el.innerHTML = r[DUMP_KEY[KK]] || '';
       el.querySelectorAll(`mark[data-t="${CSS.escape(v)}"]`).forEach(m => m.replaceWith(...m.childNodes));
@@ -4611,7 +4659,9 @@ document.addEventListener('click', async e => {
     case 'which': if (!d) return; { const i = +v; d.add = [i]; d.drop = []; d.sents = (r.carry || [])[i] || []; d.manual = true; d.conf = 'solid'; delete d.q; } return done();
     case 'drop': if (!d) return; { const i = +v; d.drop = [...new Set([...(d.drop || []), i])]; d.add = (d.add || []).filter(x => x !== i); } return done();
     case 'donedets': {
-      const bare = ['d', 'b'].filter(x => dumpPlain(r[DUMP_KEY[x]]).trim() && !dumpTags(r[DUMP_KEY[x]], x).length);
+      const ung = strFilled(r).filter(x => !Number.isInteger(r.strC[x.c].w)); if (ung.length) return toast(`Grade your ${ung.map(x => x.name.toLowerCase()).join(' and ')} strength first, or clear it`);
+      strSync(r);
+      const bare = ['d'].filter(x => dumpPlain(r[DUMP_KEY[x]]).trim() && !dumpTags(r[DUMP_KEY[x]], x).length);
       if (bare.length) return toast(`Tag at least one passage in your ${bare.map(x => x === 'b' ? 'strengths' : 'flaws').join(' and ')} with a grade, or clear the box`);
     }
     if (!b2HasBoth(r)) return toast('Name at least one strength'); bt.st = 'claude'; return done();
@@ -6036,7 +6086,7 @@ const PB = {
     ['Current Integrated View', 'My conceptual understanding of the runtime, shaped and molded from the experience(s) I had with the film. Only one view.'],
     ['Footprint', 'The single largest flaw’s place in my view.'],
     ['Flaws', 'Something that bugs me: enough to break through the firewall my brain keeps around what’s weak in a film. Not just an imperfection, however serious; what seems weak to others usually plays as an absence of strength to me, and the wide shot covers that. Optional: named only if one did.'],
-    ['Strengths', 'Something that stood out to me as strong in how the film delivered its effects experientially, as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space. I name it and where it lives, and grade the significance of this strength against how the film delivers its effects: perk, bonus, advantage, asset. Optional: named only if one did.'],
+    ['Strengths', 'At most one sensory, one emotional and one cognitive, each naming the source in the film rather than the result. Something that stood out to me as strong in how the film delivered its effects experientially, as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space. I name it and where it lives, and grade the effect it delivered: perk (dependable), bonus (rewarding), advantage (high-caliber), asset (profound). Optional: named only if one did.'],
     ['Hallmark', 'The single largest effect’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
     ['Magnitude', 'Tiers that classify a film by adjudicating its footprint against its hallmark and how its aims went: the footprint’s place in the film’s own view.'],
@@ -6069,10 +6119,13 @@ function renderPlaybill() {
     ${it('▣', 'The poster', 'the DVD cover', 'A picture address for the film’s one-sheet.')}
     <p class="pb-note">The plot and the aims no longer come from the Box Office. In the booth, Claude researches the film itself, works out its aims and breaks it into its scenes.</p>`;
   if (pbTab === 'M') body = `<div class="pb-sec">Act II · The Booth<small>I name and grade · Claude maps · the booth keeps the stats</small></div>
-    ${it('1', 'My view', 'before Claude, what, where and grade', 'Two dumps in my own words: every flaw in one box (things that bugged me, enough to break through my firewall), every strength in the other (what stood out as strong in how the film delivered its effects to me, not just something done well). I highlight each passage that counts and tag it with its grade; untagged words are only context. Both are optional, never coverage to fill space. I grade against my own sense of the film; I haven’t seen its aims yet.')}
-    ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, and folds my tagged passages into at most three flaws and three strengths (only as many as are really there). It breaks the film into timed scenes and places each flaw and strength: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades. It sizes each one and names the largest flaw and strength as the footprint and hallmark. Each item takes my strongest tag in it as its grade.')}
+    ${it('1', 'My view', 'before Claude, what, where and grade', 'Two dumps in my own words: every flaw in one box (things that bugged me, enough to break through my firewall), and up to three strengths, one sensory, one emotional and one cognitive, each naming the source in the film of what stood out as strong in how it delivered its effects to me (not the result, and not just something done well). I tag each flaw passage that counts with its grade, and grade each strength. Both are optional, never coverage to fill space. I grade against my own sense of the film; I haven’t seen its aims yet.')}
+    ${it('2', 'Claude reads the film', 'one trip, one paste each way', 'Claude researches the film, works out its aims (one per tier) before reading anything I named, and folds my tagged flaw passages into at most three flaws (only as many as are really there), and takes each strength as its own. It breaks the film into timed scenes and places each flaw and strength: its scenes, a moment, or the whole film, and the aims it touches. It gives short reasons. It maps; it never grades. It sizes each one and names the largest flaw and strength as the footprint and hallmark. Each item takes my strongest tag in it as its grade.')}
     ${it('3', 'The sizes, the full frame, then the aims', 'my wide shot', 'First a quick look at Claude’s fold: each item with the passages it drew on, its grade, level and dial; I keep or change them, and a different size can change which one leads. Whatever I change is mine. Then, with Claude’s reading and my view laid out, I grade each aim taken as a whole: did its delivery achieve what it’s going for? Where an aim grade and something I named disagree sharply, the booth asks me to keep both or re-grade.')}
     ${it('★', 'Footprint & hallmark', 'the largest of each', 'Once the sizes are confirmed, the largest flaw (by level, then dial) is the footprint and the largest strength is the hallmark.')}
+    <div class="pb-axis"><span>The three kinds of strength · the source</span></div>
+    ${STR_CATS.map(x => it(x.name[0], x.name, x.q.toLowerCase(), `${STR_CAT_INFO[x.c].what} Counts: ${STR_CAT_INFO[x.c].counts} Test: ${STR_CAT_INFO[x.c].test}`)).join('')}
+    ${STR_CAT_RULES.map(([t, d]) => it('·', t, '', d)).join('')}
     <div class="pb-axis"><span>The three levels · how much of the film it reaches</span></div>
     ${LEVELS.map(x => it(x.name[0], x.name, x.reach, `${x.what} Flaw: ${x.d} Strength: ${x.b} Test: ${x.test} The dial · Upper: ${x.dial[0]} Middle: ${x.dial[1]} Lower: ${x.dial[2]}`)).join('')}
     ${LEVEL_RULES.map(([t, d]) => it('·', t, '', d)).join('')}
