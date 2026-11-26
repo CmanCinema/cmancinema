@@ -3617,7 +3617,7 @@ const DEL_SIG = [0, .15, .35, .65, 1];   // by stretch rating, for drawing: stro
 const DMG_SIG = [0, 1, .65, .15, 0];     // under a flaw: how much the flaw undermined the aim there (Zilch fully · Core not at all)
 const WILD_DMG = { pos: 0, neu: DMG_SIG[2] };   // Positive is bonus only: nothing counts against it. Neutral takes what Edge takes
 const SEV_SIG = [0, .25, .5, .75, 1];    // by flaw rating
-const LEAN_CUT = { edge: 20, spread: 35, whole: 60, heart: .5, heartCent: 3, near: 5, other: .5 };
+const LEAN_CUT = { edge: 25, spread: 40, whole: 60, heart: .5, heartCent: 3, near: 5, other: .5 };
 const AIM_COLORS = ['#e8be6a', '#5ad1c8', '#c58fe6', '#9fd18b', '#f08fb0', '#8fb0e6', '#e6a05a', '#d1d15a'];
 const DET_COLORS = ['#e07a5a', '#8fb0e6', '#9fd18b', '#e6c25a', '#c58fe6', '#5ad1c8', '#f08fb0', '#b9a37a'];
 
@@ -3881,27 +3881,29 @@ function lean2(r) {
     out.main = main; out.mainAims = b2Hits(r, main);
     out.cov = ms.reduce((t, s) => t + cover(s), 0) / L; out.F = Math.round(100 * out.cov);
   }
-  // MAGNITUDE, relative to the film itself: the footprint against its hallmark and how its aims went
-  const hall = b2Ranked(r, 'beats')[0] || null, hset = hall ? new Set(hall.whole ? [...Array(n).keys()] : hall.sents || []) : null;
-  const wv = d => SEV_SIG[d.w] * (.5 + .5 * b2Cov(r, d));
-  const Fw = main ? SEV_SIG[main.w] * (.5 + .5 * (out.cov || 0)) : 0, Hw = hall ? wv(hall) : 0, Wd = b2WideShot(r), Aw = Wd == null ? 0 : Wd / 100;
-  out.Fw = Fw; out.Hw = Hw; out.Aw = Aw; out.hall = hall;
-  // the lean: the footprint's share of the film's whole view
-  const score = main && Fw + Hw + Aw > 0 ? 100 * Fw / (Fw + Hw + Aw) : 0; out.B = null; out.score = Math.round(score);
-  // the heart: at the Central and Major aims, the footprint takes up more than a third of what's there
-  out.heart = false; out.core = 0;
-  if (main) {
-    const ms = sceneSet(main), mset = new Set(ms), add = new Set(main.add || []), drop = new Set(main.drop || []), cover = s => len[s] * part(main, s);
-    let neg = 0, pos = 0;
-    live.forEach(({ a, i }) => {
-      if ((a.central || 0) < 3 || !Number.isInteger(a.rate) || a.rate < 1) return;
-      const own = add.has(i) ? [...new Set([...carry[i], ...ms])] : [...carry[i]], tot = own.reduce((t, s) => t + len[s], 0), c = CENT_SIG[a.central];
-      const fShare = !tot || drop.has(i) ? 0 : own.filter(s => mset.has(s)).reduce((t, s) => t + cover(s), 0) / tot;
-      const hShare = !tot || !hall ? 0 : own.filter(s => hset.has(s)).reduce((t, s) => t + len[s] * (hall.moment ? Math.min(1, B2_MOMENT / len[s]) : 1), 0) / tot;
-      neg += c * fShare * SEV_SIG[main.w]; pos += c * (B2_VAL[a.rate] + (hall ? hShare * SEV_SIG[hall.w] : 0));
-    });
-    out.core = neg + pos > 0 ? neg / (neg + pos) : 0; out.heart = out.core > 1 / 3;
-  }
+  // MAGNITUDE: everything that held the film back against everything that carried it, in one pool: flaws and the aims' shortfalls against strengths and what the aims achieved
+  const hall = b2Ranked(r, 'beats')[0] || null; out.hall = hall;
+  const placed = list => (list || []).filter(d => Number.isInteger(d.w) && d.w >= 1 && b2Placed(d));
+  const sizeOf = (list, d) => { const x = slotsOf(list).find(y => y.d === d); return x ? b2SizeW(list, d, x.slot) : 1; };
+  const itemW = (list, d) => SEV_SIG[d.w] * sizeOf(list, d) * (.5 + .5 * b2Cov(r, d));
+  const FL = placed(r.dets), ST = placed(r.beats);
+  const NF = FL.reduce((t, d) => t + itemW(r.dets, d), 0), NS = ST.reduce((t, d) => t + itemW(r.beats, d), 0);
+  const rated = live.filter(({ a }) => (a.central || 0) > 0 && Number.isInteger(a.rate) && a.rate >= 1);
+  const aShort = rated.reduce((t, { a }) => t + CENT_SIG[a.central] * (1 - B2_VAL[a.rate]), 0), aAch = rated.reduce((t, { a }) => t + CENT_SIG[a.central] * B2_VAL[a.rate], 0);
+  const named = NF + NS > 0 ? NF / (NF + NS) : null, aimsL = aShort + aAch > 0 ? aShort / (aShort + aAch) : null;
+  const pool = NF + NS + aShort + aAch, score = pool > 0 ? 100 * (NF + aShort) / pool : 0;
+  Object.assign(out, { NF, NS, named, aimsL, held: NF + aShort, carried: NS + aAch, score: Math.round(score), B: null });
+  // the heart: the same weighing at the Central and Major aims; held back by more than half of what's there
+  const share = (d, i) => {   // how much of aim i's scenes this item covers, 0 to 1
+    const ds = new Set(d.whole ? [...Array(n).keys()] : (d.sents || [])); if ((d.drop || []).includes(i)) return 0;
+    const own = (d.add || []).includes(i) ? [...new Set([...carry[i], ...ds])] : [...carry[i]], tot = own.reduce((t, s) => t + len[s], 0);
+    return tot ? own.filter(s => ds.has(s)).reduce((t, s) => t + len[s] * part(d, s), 0) / tot : 0;
+  };
+  const core = rated.filter(({ a }) => a.central >= 3), cW = core.reduce((t, { a }) => t + CENT_SIG[a.central], 0);
+  const atCore = (list, d) => cW ? core.reduce((t, { a, i }) => t + CENT_SIG[a.central] * share(d, i), 0) / cW * SEV_SIG[d.w] * sizeOf(list, d) : 0;
+  const cF = FL.reduce((t, d) => t + atCore(r.dets, d), 0), cS = ST.reduce((t, d) => t + atCore(r.beats, d), 0);
+  const cShort = core.reduce((t, { a }) => t + CENT_SIG[a.central] * (1 - B2_VAL[a.rate]), 0);
+  const cPool = cF + cS + cW; out.core = cW && cPool > 0 ? (cF + cShort) / cPool : 0; out.heart = out.core > LEAN_CUT.heart;
   out.t = out.heart ? (score >= LEAN_CUT.whole ? 1 : score >= LEAN_CUT.spread ? 2 : 3) : (score >= LEAN_CUT.edge ? 4 : 5);
   const cuts = out.heart ? [[LEAN_CUT.spread, 3, 2], [LEAN_CUT.whole, 2, 1]] : [[LEAN_CUT.edge, 5, 4]];
   const [cut, light, heavy] = cuts.slice().sort((a, b) => Math.abs(score - a[0]) - Math.abs(score - b[0]))[0], dist = Math.abs(score - cut);
@@ -4487,18 +4489,16 @@ function b2LockHTML(r, L) {
     if (L.unrated.length) notes.push(`Rate ${L.unrated.map(x => aimShort(x.a)).join(', ')}.`);
     if (L.ungraded.length) notes.push(`Grade ${L.ungraded.map(d => b2Label(r, d)).join(', ')}.`);
     if (L.unplaced.length) notes.push(`${L.unplaced.map(d => b2Label(r, d)).join(', ')} ${L.unplaced.length === 1 ? 'hasn’t' : 'haven’t'} been placed in the film yet, so ${L.unplaced.length === 1 ? 'it doesn’t' : 'they don’t'} count. Send the film to Claude again before locking.`);
-    if (L.score != null && !L.dets.length) notes.push('No flaws: there’s no footprint, so the lean is Incidental.');
     { const fl = b2Flags(r); if (fl.length) notes.push(`${fl.length} check${fl.length === 1 ? '' : 's'} to settle in Grade the aims.`); }
     { const counted = b2Live(r).filter(x => x.a.rate > 0);
       if (!counted.length) notes.push('Every aim is left out (doesn’t ring a bell), so there’s no wide shot and the showdowns can’t decide this film on their own.');
       const bare = counted.filter(x => !((r.carry || [])[x.i] || []).length); if (bare.length) notes.push(`Claude gave no scenes for ${bare.map(x => aimShort(x.a)).join(', ')}, so a flaw only reaches ${bare.length === 1 ? 'it' : 'them'} where Claude named ${bare.length === 1 ? 'it' : 'them'}.`); }
-    if (L.main) notes.push(`The footprint, ${b2Label(r, L.main)} (${art(WEIGHTS[L.main.w - 1])}), covers about ${Math.max(1, Math.round(L.cov * 100))}% of the film and touches ${L.mainAims.length ? L.mainAims.map(i => `${aimShort(r.aims[i])} (${CENT_NAMES[r.aims[i].central]})`).join(', ') : 'no aim'}. Weighed against ${L.hall ? `the hallmark (${b2Label(r, L.hall)}, ${art(BEAT_NAMES[L.hall.w - 1])})` : 'no hallmark'} and how the aims went, it takes ${L.score}% of the film’s view, and ${Math.round(100 * L.core)}% of its core${L.heart ? ': it reaches the heart' : ''}.`);
+    if (L.score != null) notes.push(`Everything in one pool: held back ${(Math.round(100 * L.held) / 100).toFixed(2)} (flaws ${(Math.round(100 * L.NF) / 100).toFixed(2)}, the aims’ shortfalls ${(Math.round(100 * (L.held - L.NF)) / 100).toFixed(2)}) against carried ${(Math.round(100 * L.carried) / 100).toFixed(2)} (strengths ${(Math.round(100 * L.NS) / 100).toFixed(2)}, what the aims achieved ${(Math.round(100 * (L.carried - L.NS)) / 100).toFixed(2)}), so ${L.score}% is held back. At the core (Central and Major aims) ${Math.round(100 * L.core)}% is held back${L.heart ? ': more than half, so it reaches the heart' : ', short of the heart (more than half)'}.`);
     { const S = b2Standing(r); if (S) notes.push(`Standing ${S.std}: close-up ${S.close}, wide shot ${S.wide}. It decides the showdowns within the tier; within ${SD_HEAT} points the arena is your call.`); }
     if (L.near) notes.push(`Near the ${MAG_NAMES[L.near.toward]} line: ${L.near.dist} point${L.near.dist === 1 ? '' : 's'} away.`);
-    const others = L.dets.filter(d => d !== L.main).length; if (others) notes.push('Your other flaws count in the close-up by their size; only the footprint sets the tier.');
   }
   const lean = L && L.t, was = raw(active.film.id)?.mag, onReel = db.wheel.includes(active.film.id), blocked = !L || L.score == null || L.unplaced.length || L.ungraded.length || b2Flags(r).length, pick = blocked ? null : bt.mag;
-  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">The footprint’s share of this film’s view, against its hallmark and how its aims went${L.heart ? `; at the core it takes ${Math.round(100 * L.core)}%, reaching the heart` : `; ${Math.round(100 * L.core)}% of the core, short of the heart`}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
+  return `<div class="b2-lean">${lean ? `${magDisc(lean)}<div><div class="b2-k">The lean</div><p class="b2-q" style="margin:2px 0">${lean} · ${MAG_NAMES[lean]} · ${L.score}</p><p class="b2-s sm">What held this film back (flaws and the aims’ shortfalls) against what carried it (strengths and what the aims achieved)${L.heart ? `; at the core ${Math.round(100 * L.core)}% is held back, reaching the heart` : `; ${Math.round(100 * L.core)}% at the core, short of the heart`}. A lean, not a verdict: you choose.</p></div>` : '<p class="b2-q">No lean yet.</p>'}</div>
     ${notes.length ? `<div class="bx-notes">${notes.map(n => `<span>${esc(n)}</span>`).join('')}</div>` : ''}
     ${L ? `<div class="b2-opts" style="margin-top:10px"><button class="bx-link" data-b2="go" data-v="aims">Re-grade the aims</button><button class="bx-link" data-b2="go" data-v="dets">Your view</button></div>` : ''}
     ${b2PictureHTML(r, L)}
@@ -6089,7 +6089,7 @@ const PB = {
     ['Strengths', 'At most one sensory, one emotional and one cognitive, each naming the source in the film rather than the result. Something that stood out to me as strong in how the film delivered its effects experientially, as it played: a real sensory, emotional or cognitive moment or quality. Not just something done well: what’s merely done well plays as an absence of weakness, and the wide shot covers that. Never plot, themes or coverage to fill space. I name it and where it lives, and grade the effect it delivered: perk (dependable), bonus (rewarding), advantage (high-caliber), asset (profound). Optional: named only if one did.'],
     ['Hallmark', 'The single largest effect’s place in my view.'],
     ['Aim', 'How the film delivers its effects experientially in order to achieve what it is trying to accomplish specifically for itself.'],
-    ['Magnitude', 'Tiers that classify a film by adjudicating its footprint against its hallmark and how its aims went: the footprint’s place in the film’s own view.'],
+    ['Magnitude', 'Tiers that classify a film by weighing everything that held it back (its flaws and its aims’ shortfalls) against everything that carried it (its strengths and what its aims achieved): what held it back, and its place in the film’s own view.'],
     ['Arena', 'The film’s specific sub-genre. Every film is judged on its own arena, even against a film from a different one.'],
     ['Showdown', 'The ordinal ranking within each tier, decided by standing, and by which does its own arena better when they’re even.'],
   ],
@@ -6138,7 +6138,7 @@ function renderPlaybill() {
     <div class="pb-axis"><span>Magnitude · top down</span></div>
     ${MAG_LV.map(l => `<div class="pb-it ${here && here.M === l ? 'here' : ''}" style="display:flex;gap:12px;align-items:center"><span class="n">${l}</span>${disc(l)}<div><div class="t">${MAG_NAMES[l]}</div><p style="margin:2px 0 0">${PB.tiers[l]}</p></div></div>`).join('')}
     <div class="pb-axis"><span>The stats</span></div>
-    ${it('↗', 'The lean · the tier', 'relative to the film itself', 'The footprint weighed against the hallmark and how the aims went, all scored the same way (grade first, size second). The lean is the footprint’s share of the film’s whole view. The heart: at the Central and Major aims, does the footprint take up more than a third of what’s there (how those aims went, plus the hallmark where it lands)? If so, it sits at the center of my view: Defining, Pervasive at 35, All-encompassing at 60. If not: Incidental, Peripheral at 20. No grade is barred; it all depends on the film. A lean, not a verdict.')}
+    ${it('↗', 'The lean · the tier', 'everything, in one pool', 'Everything that held the film back against everything that carried it, on one scale. Held back: every flaw (grade × size × coverage) and every aim’s shortfall (what its grade didn’t achieve, by tier). Carried: every strength (grade × size × coverage) and what each aim achieved. The lean is the share held back. No flaws doesn’t mean Incidental: an aim that fell short still counts. The heart: the same weighing at the Central and Major aims; more than half held back reaches it. With the heart: Defining, Pervasive at 40, All-encompassing at 60. Without: Incidental, Peripheral at 25. To be calibrated on my redone films. A lean, not a verdict.')}
     ${it('◧', 'Close-up', '0 to 100, around 50', 'My strengths against my flaws: grade first, size second; macro in full, meso at half, micro at a quarter. Each item’s dial sets its size inside its level (upper, middle, lower: macro 100/85/70%, meso 50/43/36%, micro 25/20/15%), never overlapping the next level.')}
     ${it('◨', 'Wide shot', '0 to 100', 'My aim grades (fails 10, falls short 25, achieves 60, triumphs 100), weighted by tier.')}
     ${it('⚖', 'Standing', 'decides the showdowns', 'Half the close-up and half the wide shot, balanced so each moves it equally. The balance tunes itself from my films once ten are on the reel.')}
