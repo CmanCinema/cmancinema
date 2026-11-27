@@ -203,7 +203,18 @@ body.idle *,body.idle *::before,body.idle *::after{animation-play-state:paused!i
 .pmq-chip.t5,.pmq-chip.t4{border-color:rgba(143,209,139,.6)}.pmq-chip.t3,.pmq-chip.t2,.pmq-chip.t1{border-color:rgba(230,120,90,.7)}
 .pmq-aims{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
 @media (max-width:640px){.pmq-aims{grid-template-columns:repeat(2,1fr)}.pmq-g b{font-size:20px}.pmq-g.big b{font-size:30px}.pmq-in{padding:20px 20px 16px}.pmq-g span{letter-spacing:.12em;font-size:9.5px}.pmq-k{letter-spacing:.2em}}
-.pmq-aim{position:relative;padding:8px 10px 10px;border-radius:8px;background:rgba(255,240,210,.05);border:1px solid rgba(232,190,106,.2);overflow:hidden}
+.pmq-aim{position:relative;padding:8px 10px 10px;border-radius:8px;background:rgba(255,240,210,.05);border:1px solid rgba(232,190,106,.2);overflow:hidden;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.pmq-aim:hover{border-color:rgba(232,190,106,.5)}
+.pmq-aim .bk{display:none}
+.pmq-aim.flipped{grid-column:1/-1;animation:pmqFlip .45s ease;background:rgba(255,240,210,.09);border-color:rgba(232,190,106,.5)}
+.pmq-aim.flipped .f{display:none}
+.pmq-aim.flipped .bk{display:block}
+.pmq-aim .bk .tx{display:block;margin-top:4px;font:500 15px/1.42 var(--body);color:#f6ead0}
+.pmq-aim .bk small{display:block;margin-top:6px;font:italic 400 13px/1.4 var(--body);color:rgba(243,230,200,.65)}
+.pmq-turn{position:absolute;top:6px;right:8px;font:700 12px var(--serif);color:rgba(243,213,143,.6)}
+.pmq-hint{margin:6px 0 0;text-align:center;font:italic 400 12px var(--body);color:rgba(243,230,200,.5)}
+@keyframes pmqFlip{0%{transform:perspective(900px) rotateY(90deg);opacity:.2}100%{transform:perspective(900px) rotateY(0);opacity:1}}
+@media (prefers-reduced-motion:reduce){.pmq-aim.flipped{animation:none}}
 .pmq-aim em{display:block;font:700 10px var(--serif);letter-spacing:.2em;text-transform:uppercase;color:rgba(243,230,200,.55);font-style:normal}
 .pmq-aim b{display:block;font:700 16px var(--serif);color:#f6ead0;margin-top:2px}
 .pmq-aim i{position:absolute;left:0;bottom:0;height:3px;background:#e8be6a}
@@ -3339,7 +3350,8 @@ function profBoothHTML(f) {
       <span class="pmq-k">Now showing · its score in the showdowns</span>
       ${b2HasAim(r) ? `<p class="pmq-theaim"><b>The aim</b> ${esc(r.aimOne)}</p>` : ''}
       <div class="pmq-row" style="grid-template-columns:minmax(0,220px);justify-content:center"><div class="pmq-main">${gauge(sc, 'Score', 'big')}</div></div>
-      ${rows.length ? `<div class="pmq-aims">${rows.map(x => `<div class="pmq-aim v${x.a.rate || 0}"><em>${CENT_NAMES[x.a.central]} method · ${Math.round(100 * x.share)}% of the runtime</em><b>${x.a.rate > 0 ? VERB[x.a.rate - 1] : x.a.rate === 0 ? 'Doesn’t ring a bell' : '—'}</b><i style="width:${x.a.rate > 0 ? Math.round(B2_VAL[x.a.rate] * 100) : 0}%"></i></div>`).join('')}</div>` : ''}
+      ${rows.length ? `<div class="pmq-aims">${rows.map(x => { const went = x.a.rate > 0 ? VERB[x.a.rate - 1] : x.a.rate === 0 ? 'Doesn’t ring a bell' : '—', T = splitAim(r.aim || ''), txt = x.a.text || (T[x.i] || {}).text || '', why = ((r.mapWhy || {}).aims || [])[x.i] || '';
+        return `<button type="button" class="pmq-aim v${x.a.rate || 0}" data-pmqflip aria-expanded="false" title="Flip to see what was judged"><span class="f"><em>${CENT_NAMES[x.a.central]} · ${Math.round(100 * x.share)}%</em><b>${went}</b></span><span class="bk"><em>${CENT_NAMES[x.a.central]} method · ${went} · spans ${Math.round(100 * x.share)}% of the runtime</em><span class="tx">${esc(txt)}</span>${why ? `<small>Claude: ${esc(why)}</small>` : ''}</span><span class="pmq-turn" aria-hidden="true">↻</span><i style="width:${x.a.rate > 0 ? Math.round(B2_VAL[x.a.rate] * 100) : 0}%"></i></button>`; }).join('')}</div><p class="pmq-hint">Tap a method to flip it and see what was judged.</p>` : ''}
     </div></div>`;
 }
 function strikeBadge() { return ''; }   // strikes are gone: edit freely
@@ -5162,6 +5174,7 @@ function renderGame() {
     <div class="gr-tip" id="grTip" hidden></div>`;
   // the met card's title follows its tab
 }
+document.addEventListener('click', e => { const t = e.target.closest && e.target.closest('[data-pmqflip]'); if (!t) return; const on = !t.classList.contains('flipped'); t.classList.toggle('flipped', on); t.setAttribute('aria-expanded', on ? 'true' : 'false'); });
 $('#gameroom').addEventListener('click', e => {
   const ln = e.target.closest('[data-lane]');
   const t = e.target.closest('[data-gtab]');
