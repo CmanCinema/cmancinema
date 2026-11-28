@@ -3822,7 +3822,7 @@ function b2AimsHTML(r) {
     ${b2SpreadHTML(active.film.id)}
     <div class="b2-list">${order.map((x, k) => `<button class="b2-pill ${k === bt.ai ? 'here' : ''}" data-b2="aim" data-v="${k}" style="--c:${aimColor(r, x.a)}"><i></i>${esc(aimShort(x.a))}<em>${b2RateName(x.a.rate)}</em></button>`).join('')}</div>
     ${b2PictureHTML(r, null)}
-    <div class="b2-nav">${bt.ai > 0 ? '<button class="bx-link" data-b2="prev">← Previous method</button>' : '<span></span>'}${order.every(x => Number.isInteger(x.a.rate)) ? '<button class="bx-btn solid" data-b2="afteraims">Next →</button>' : '<span></span>'}</div>`;
+    <div class="b2-nav">${bt.ai > 0 ? '<button class="bx-link" data-b2="prev">← Previous method</button>' : '<span></span>'}${order.every(x => Number.isInteger(x.a.rate)) ? '<button class="bx-btn solid" data-b2="afteraims">On to the score →</button>' : '<span></span>'}</div>`;
 }
 const b2KindOf = (r, d) => (r.beats || []).includes(d) ? 'b' : 'd';
 const b2Names = k => k === 'b' ? BEAT_NAMES : WEIGHTS, b2Defs = k => k === 'b' ? DEF_BEAT : DEF_DET;
@@ -4219,7 +4219,7 @@ function sdAgreeHTML() {
     case 'rate': {
       order[bt.ai].a.rate = +v;
       const nx = order.findIndex((x, j) => j > bt.ai && !Number.isInteger(x.a.rate)), any = order.findIndex(x => !Number.isInteger(x.a.rate));
-      if (nx >= 0) bt.ai = nx; else if (any >= 0) bt.ai = any; else { bt.ai = null; b2AfterAims(r); }
+      if (nx >= 0) bt.ai = nx; else if (any >= 0) bt.ai = any;   // all graded: stay put; “Next →” moves on when you’re ready
       return done();
     }
     case 'aim': bt.ai = +v; return renderBooth();
